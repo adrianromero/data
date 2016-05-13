@@ -42,13 +42,5 @@ public class ValuesEntry {
 
     public void setValue(Object value) {
         this.value = value;
-    }
-    
-    public final static ValuesEntry fromJSON(String json) {
-        return JSONBuilder.INSTANCE.fromJSON(json, ValuesEntry.class);
-    }
-    
-    public final String toJSON() {
-        return JSONBuilder.INSTANCE.toJSON(this);
     } 
 }

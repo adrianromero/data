@@ -15,21 +15,13 @@ import java.util.List;
  */
 public class DataList {
     
-    private final List<RecordMap> data = new ArrayList<>();
+    private final List<Record> data = new ArrayList<>();
        
-    public DataList(RecordMap ... keyval) {
+    public DataList(Record ... keyval) {
         data.addAll(Arrays.asList(keyval));
     }
     
-    public List<RecordMap> getData() {
+    public List<Record> getData() {
         return data;
-    }
-    
-    public final static DataList fromJSON(String json) {
-        return JSONBuilder.INSTANCE.fromJSON(json, DataList.class);
-    }
-    
-    public final String toJSON() {
-        return JSONBuilder.INSTANCE.toJSON(this);
     }
 }

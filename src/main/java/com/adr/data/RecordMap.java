@@ -9,7 +9,7 @@ package com.adr.data;
  *
  * @author adrian
  */
-public class RecordMap {
+public class RecordMap implements Record {
     
     private final ValuesMap key;
     private final ValuesMap value;
@@ -19,19 +19,13 @@ public class RecordMap {
         this.value = value;
     }
     
-    public ValuesMap getKey() {
+    @Override
+    public Values getKey() {
         return key;
     }
 
-    public ValuesMap getValue() {
+    @Override
+    public Values getValue() {
         return value;
-    } 
-    
-    public final static RecordMap fromJSON(String json) {
-        return JSONBuilder.INSTANCE.fromJSON(json, RecordMap.class);
-    }
-    
-    public final String toJSON() {
-        return JSONBuilder.INSTANCE.toJSON(this);
     }    
 }

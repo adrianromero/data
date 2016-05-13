@@ -9,10 +9,7 @@ package com.adr.data;
  *
  * @author adrian
  */
-public interface DataLink {
-    public void execute(DataList l) throws DataException;
-    
-    public default void execute(Record keyval) throws DataException {
-        execute(new DataList(keyval));
-    }
+public interface Record {
+    public Values getKey();
+    public Values getValue();
 }

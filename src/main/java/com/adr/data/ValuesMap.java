@@ -14,35 +14,30 @@ import java.util.stream.Stream;
  *
  * @author adrian
  */
-public class ValuesMap {
+public class ValuesMap implements Values {
     
-    private Map<String, ValuesEntry> entries;
+    private final Map<String, ValuesEntry> entries;
     
     public ValuesMap(ValuesEntry... entries) {
          this.entries = Stream.of(entries).collect(Collectors.toMap(ValuesEntry::getName, Function.identity()));
     }
         
+    @Override
     public String [] getNames() {
         return entries.keySet().stream().toArray(String[]::new);
     }
     
+    @Override
     public Object getValue(String name) {
         return entries.get(name).getValue();
     }
     
+    @Override
     public Kind getKind(String name) {
         return entries.get(name).getKind();
     }  
     
     public ValuesEntry[] getEntries() {
         return entries.values().stream().toArray(ValuesEntry[]::new);
-    }
-    
-    public final static ValuesMap fromJSON(String json) {
-        return JSONBuilder.INSTANCE.fromJSON(json, ValuesMap.class);
-    }
-    
-    public final String toJSON() {
-        return JSONBuilder.INSTANCE.toJSON(this);
-    }   
+    } 
 }

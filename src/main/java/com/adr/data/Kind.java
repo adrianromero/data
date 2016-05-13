@@ -53,14 +53,6 @@ public abstract class Kind<T> {
         return value == null || value.equals("") ? null : _parseISO(value);
     }    
     
-    public final static Kind fromJSON(String json) {
-        return JSONBuilder.INSTANCE.fromJSON(json, Kind.class);
-    }
-    
-    public final String toJSON() {
-        return JSONBuilder.INSTANCE.toJSON(this);
-    }
-    
     private static final DateFormat dateISO = new SimpleDateFormat("yyyy-MM-dd");
     private static final DateFormat timeISO = new SimpleDateFormat("HH:mm:ss.SSS");
     private static final DateFormat datetimeISO = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");     

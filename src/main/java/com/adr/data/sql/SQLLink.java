@@ -8,9 +8,9 @@ package com.adr.data.sql;
 import com.adr.data.DataLink;
 import com.adr.data.DataException;
 import com.adr.data.DataList;
-import com.adr.data.RecordMap;
-import com.adr.data.ValuesMap;
 import com.adr.data.QueryLink;
+import com.adr.data.Record;
+import com.adr.data.Values;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -46,7 +46,7 @@ public class SQLLink implements DataLink, QueryLink {
         
         try (Connection c = ds.getConnection()) {
             c.setAutoCommit(false);
-            for (RecordMap keyval: l.getData()) {                
+            for (Record keyval: l.getData()) {                
                 execute(c, keyval);               
             }
             c.commit();
@@ -55,7 +55,7 @@ public class SQLLink implements DataLink, QueryLink {
         }     
     }
     
-    private void execute(Connection c, RecordMap keyval) throws DataException {
+    private void execute(Connection c, Record keyval) throws DataException {
         if (keyval.getValue() == null) {
             executeDelete(c, keyval);
         } else {
@@ -64,14 +64,14 @@ public class SQLLink implements DataLink, QueryLink {
     }
     
     // Strategy Insert
-    private void executeInsert(Connection c, RecordMap keyval) throws DataException {
+    private void executeInsert(Connection c, Record keyval) throws DataException {
         if (execute(c, buildCommandInsert(keyval), keyval) != 1) {
             throw new DataException("INSERT command must return 1 row");
         }
     }
     
     // Strategy Upsert
-    private void executeUpsert(Connection c, RecordMap keyval) throws DataException {
+    private void executeUpsert(Connection c, Record keyval) throws DataException {
         int rows = execute(c, buildCommandUpdate(keyval), keyval);
         if (rows == 0) {
             if (execute(c, buildCommandInsert(keyval), keyval) != 1) {
@@ -83,13 +83,13 @@ public class SQLLink implements DataLink, QueryLink {
     }
     
     // Strategy Delete
-    private void executeDelete(Connection c, RecordMap keyval) throws DataException {
+    private void executeDelete(Connection c, Record keyval) throws DataException {
         if (execute(c, buildCommandDelete(keyval), keyval) != 1) {
             throw new DataException("DELETE command must return 1 row");
         }
     }
     
-    private int execute(Connection c, CommandSQL command, RecordMap keyval) throws DataException {
+    private int execute(Connection c, CommandSQL command, Record keyval) throws DataException {
         
         try (PreparedStatement stmt = c.prepareStatement(command.getCommand())) {
             SQLKindParameters kindparams = new SQLKindParameters(stmt, command.getParamNames());
@@ -101,7 +101,7 @@ public class SQLLink implements DataLink, QueryLink {
         }              
     }  
     
-    private void write(SQLKindParameters kindparams, ValuesMap param) throws DataException {
+    private void write(SQLKindParameters kindparams, Values param) throws DataException {
         
         if (param == null) {
             return;
@@ -111,11 +111,11 @@ public class SQLLink implements DataLink, QueryLink {
         }           
     }
     
-    private String getTableName(RecordMap keyval) {
+    private String getTableName(Record keyval) {
         return keyval.getKey().getValue("_ENTITY").toString();
     }
     
-    private CommandSQL buildCommandInsert(RecordMap keyval) {
+    private CommandSQL buildCommandInsert(Record keyval) {
         
         StringBuilder sentence = new StringBuilder();
         StringBuilder values = new StringBuilder();
@@ -153,7 +153,7 @@ public class SQLLink implements DataLink, QueryLink {
         return new CommandSQL(sentence.toString(), fieldslist.toArray(new String[fieldslist.size()]));        
     }
     
-    private CommandSQL buildCommandUpdate(RecordMap keyval) {
+    private CommandSQL buildCommandUpdate(Record keyval) {
         
         StringBuilder sentence = new StringBuilder();
         ArrayList<String> keyfields = new ArrayList<>();
@@ -184,7 +184,7 @@ public class SQLLink implements DataLink, QueryLink {
         return new CommandSQL(sentence.toString(), keyfields.toArray(new String[keyfields.size()]));         
     }    
     
-    private CommandSQL buildCommandDelete(RecordMap keyval) {
+    private CommandSQL buildCommandDelete(Record keyval) {
         
         StringBuilder sentence = new StringBuilder();
         ArrayList<String> keyfields = new ArrayList<>();
@@ -206,12 +206,12 @@ public class SQLLink implements DataLink, QueryLink {
     }    
 
     @Override
-    public RecordMap find(RecordMap filter) throws DataException {
+    public Record find(Record filter) throws DataException {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
-    public DataList query(RecordMap filter) throws DataException {
+    public DataList query(Record filter) throws DataException {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 }

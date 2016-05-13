@@ -32,7 +32,7 @@ public class JSONBuilder {
         gsonb.serializeNulls();
 //        gsonb.setPrettyPrinting();
         gsonb.registerTypeAdapter(DataList.class, new DataListAdapter());
-        gsonb.registerTypeAdapter(ValuesMap.class, new MapValueAdapter());
+        gsonb.registerTypeAdapter(ValuesMap.class, new ValuesMapAdapter());
         gsonb.registerTypeAdapter(Kind.class, new KindAdapter());
         gson = gsonb.create();
     }
@@ -52,7 +52,7 @@ public class JSONBuilder {
         }
     }
     
-    private class MapValueAdapter implements JsonSerializer<ValuesMap>, JsonDeserializer<ValuesMap> {
+    private class ValuesMapAdapter implements JsonSerializer<ValuesMap>, JsonDeserializer<ValuesMap> {
         @Override
         public JsonElement serialize(ValuesMap t, Type type, JsonSerializationContext jsc) {
             return gson.toJsonTree(t.getEntries());
