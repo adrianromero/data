@@ -14,12 +14,12 @@ import java.util.stream.Stream;
  *
  * @author adrian
  */
-public class MapValue {
+public class ValuesMap {
     
-    private Map<String, MapValueEntry> entries;
+    private Map<String, ValuesEntry> entries;
     
-    public MapValue(MapValueEntry... entries) {
-         this.entries = Stream.of(entries).collect(Collectors.toMap(MapValueEntry::getName, Function.identity()));
+    public ValuesMap(ValuesEntry... entries) {
+         this.entries = Stream.of(entries).collect(Collectors.toMap(ValuesEntry::getName, Function.identity()));
     }
         
     public String [] getNames() {
@@ -34,12 +34,12 @@ public class MapValue {
         return entries.get(name).getKind();
     }  
     
-    public MapValueEntry[] getEntries() {
-        return entries.values().stream().toArray(MapValueEntry[]::new);
+    public ValuesEntry[] getEntries() {
+        return entries.values().stream().toArray(ValuesEntry[]::new);
     }
     
-    public final static MapValue fromJSON(String json) {
-        return JSONBuilder.INSTANCE.fromJSON(json, MapValue.class);
+    public final static ValuesMap fromJSON(String json) {
+        return JSONBuilder.INSTANCE.fromJSON(json, ValuesMap.class);
     }
     
     public final String toJSON() {

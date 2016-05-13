@@ -10,6 +10,6 @@ package com.adr.data;
  * @author adrian
  */
 public interface QueryLink {
-    public KeyValue find(KeyValue filter) throws DataException;
-    public DataList query(KeyValue filter) throws DataException;       
+    public RecordMap find(RecordMap filter) throws DataException;
+    public DataList query(RecordMap filter) throws DataException;       
 }

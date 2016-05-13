@@ -9,20 +9,20 @@ package com.adr.data;
  *
  * @author adrian
  */
-public class MapValueEntry {
+public class ValuesEntry {
     private String name;
     private Kind kind;
     private Object value;
     
-    public MapValueEntry(String name, String value) {
+    public ValuesEntry(String name, String value) {
         this(name, Kind.STRING, value);
     }
     
-    public MapValueEntry(String name, Kind kind) {
+    public ValuesEntry(String name, Kind kind) {
         this(name, kind, null);
     }
     
-    public MapValueEntry(String name, Kind kind, Object value) {
+    public ValuesEntry(String name, Kind kind, Object value) {
         this.name = name;
         this.value = value;
         this.kind = kind;
@@ -44,8 +44,8 @@ public class MapValueEntry {
         this.value = value;
     }
     
-    public final static MapValueEntry fromJSON(String json) {
-        return JSONBuilder.INSTANCE.fromJSON(json, MapValueEntry.class);
+    public final static ValuesEntry fromJSON(String json) {
+        return JSONBuilder.INSTANCE.fromJSON(json, ValuesEntry.class);
     }
     
     public final String toJSON() {

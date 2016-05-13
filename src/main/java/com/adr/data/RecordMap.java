@@ -9,26 +9,26 @@ package com.adr.data;
  *
  * @author adrian
  */
-public class KeyValue {
+public class RecordMap {
     
-    private final MapValue key;
-    private final MapValue value;
+    private final ValuesMap key;
+    private final ValuesMap value;
     
-    public KeyValue(MapValue key, MapValue value) {
+    public RecordMap(ValuesMap key, ValuesMap value) {
         this.key = key;
         this.value = value;
     }
     
-    public MapValue getKey() {
+    public ValuesMap getKey() {
         return key;
     }
 
-    public MapValue getValue() {
+    public ValuesMap getValue() {
         return value;
     } 
     
-    public final static KeyValue fromJSON(String json) {
-        return JSONBuilder.INSTANCE.fromJSON(json, KeyValue.class);
+    public final static RecordMap fromJSON(String json) {
+        return JSONBuilder.INSTANCE.fromJSON(json, RecordMap.class);
     }
     
     public final String toJSON() {

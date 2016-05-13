@@ -15,13 +15,13 @@ import java.util.List;
  */
 public class DataList {
     
-    private final List<KeyValue> data = new ArrayList<>();
+    private final List<RecordMap> data = new ArrayList<>();
        
-    public DataList(KeyValue ... keyval) {
+    public DataList(RecordMap ... keyval) {
         data.addAll(Arrays.asList(keyval));
     }
     
-    public List<KeyValue> getData() {
+    public List<RecordMap> getData() {
         return data;
     }
     

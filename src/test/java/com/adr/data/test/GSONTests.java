@@ -7,10 +7,10 @@ package com.adr.data.test;
 
 import com.adr.data.DataList;
 import com.adr.data.JSONBuilder;
-import com.adr.data.KeyValue;
+import com.adr.data.RecordMap;
 import com.adr.data.Kind;
-import com.adr.data.MapValue;
-import com.adr.data.MapValueEntry;
+import com.adr.data.ValuesMap;
+import com.adr.data.ValuesEntry;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -47,42 +47,42 @@ public class GSONTests {
      @Test
      public void hello() {
  
-        KeyValue keval = new KeyValue(     
-            new MapValue(
-                    new MapValueEntry("id", Kind.STRING, "1")),
-            new MapValue(
-                    new MapValueEntry("field", Kind.STRING, "pepeluis"),
-                    new MapValueEntry("value", Kind.STRING)));
+        RecordMap keval = new RecordMap(     
+            new ValuesMap(
+                    new ValuesEntry("id", Kind.STRING, "1")),
+            new ValuesMap(
+                    new ValuesEntry("field", Kind.STRING, "pepeluis"),
+                    new ValuesEntry("value", Kind.STRING)));
         
         
         DataList dl = new DataList(
-            new KeyValue(     
-                new MapValue(
-                        new MapValueEntry("id", Kind.STRING, "1")),
-                new MapValue(
-                        new MapValueEntry("field", Kind.STRING, "pepeluis"))),                
-            new KeyValue(     
-                new MapValue(
-                        new MapValueEntry("id", Kind.STRING, "2")),
-                new MapValue(
-                        new MapValueEntry("field", Kind.STRING, "hilario"))));
+            new RecordMap(     
+                new ValuesMap(
+                        new ValuesEntry("id", Kind.STRING, "1")),
+                new ValuesMap(
+                        new ValuesEntry("field", Kind.STRING, "pepeluis"))),                
+            new RecordMap(     
+                new ValuesMap(
+                        new ValuesEntry("id", Kind.STRING, "2")),
+                new ValuesMap(
+                        new ValuesEntry("field", Kind.STRING, "hilario"))));
         
         System.out.println(JSONBuilder.INSTANCE.toJSON(keval));  
-        System.out.println(JSONBuilder.INSTANCE.toJSON(JSONBuilder.INSTANCE.fromJSON(JSONBuilder.INSTANCE.toJSON(keval), KeyValue.class)));
+        System.out.println(JSONBuilder.INSTANCE.toJSON(JSONBuilder.INSTANCE.fromJSON(JSONBuilder.INSTANCE.toJSON(keval), RecordMap.class)));
 
         System.out.println(JSONBuilder.INSTANCE.toJSON(dl));
         System.out.println(JSONBuilder.INSTANCE.toJSON(JSONBuilder.INSTANCE.fromJSON(JSONBuilder.INSTANCE.toJSON(dl), DataList.class)));
         
-        MapValueEntry mve = new MapValueEntry("field", Kind.STRING, "pepeluis");
-        System.out.println(JSONBuilder.INSTANCE.toJSON(JSONBuilder.INSTANCE.fromJSON(JSONBuilder.INSTANCE.toJSON(mve), MapValueEntry.class)));
+        ValuesEntry mve = new ValuesEntry("field", Kind.STRING, "pepeluis");
+        System.out.println(JSONBuilder.INSTANCE.toJSON(JSONBuilder.INSTANCE.fromJSON(JSONBuilder.INSTANCE.toJSON(mve), ValuesEntry.class)));
         
-        MapValue mv = new MapValue(
-            new MapValueEntry("chopped", Kind.STRING, "2"),
-            new MapValueEntry("id", Kind.STRING, "2"));
-        System.out.println(JSONBuilder.INSTANCE.toJSON(JSONBuilder.INSTANCE.fromJSON(JSONBuilder.INSTANCE.toJSON(mv), MapValue.class)));
+        ValuesMap mv = new ValuesMap(
+            new ValuesEntry("chopped", Kind.STRING, "2"),
+            new ValuesEntry("id", Kind.STRING, "2"));
+        System.out.println(JSONBuilder.INSTANCE.toJSON(JSONBuilder.INSTANCE.fromJSON(JSONBuilder.INSTANCE.toJSON(mv), ValuesMap.class)));
         
 
-        System.out.println(JSONBuilder.INSTANCE.toJSON(JSONBuilder.INSTANCE.fromJSON(JSONBuilder.INSTANCE.toJSON(keval), KeyValue.class)));
+        System.out.println(JSONBuilder.INSTANCE.toJSON(JSONBuilder.INSTANCE.fromJSON(JSONBuilder.INSTANCE.toJSON(keval), RecordMap.class)));
         
         
     }

@@ -12,7 +12,7 @@ package com.adr.data;
 public interface DataLink {
     public void execute(DataList l) throws DataException;
     
-    public default void execute(KeyValue keyval) throws DataException {
+    public default void execute(RecordMap keyval) throws DataException {
         execute(new DataList(keyval));
     }
 }

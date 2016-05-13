@@ -32,7 +32,7 @@ public class JSONBuilder {
         gsonb.serializeNulls();
 //        gsonb.setPrettyPrinting();
         gsonb.registerTypeAdapter(DataList.class, new DataListAdapter());
-        gsonb.registerTypeAdapter(MapValue.class, new MapValueAdapter());
+        gsonb.registerTypeAdapter(ValuesMap.class, new MapValueAdapter());
         gsonb.registerTypeAdapter(Kind.class, new KindAdapter());
         gson = gsonb.create();
     }
@@ -48,19 +48,19 @@ public class JSONBuilder {
     private class DataListAdapter implements JsonDeserializer<DataList> {
         @Override
         public DataList deserialize(JsonElement je, Type type, JsonDeserializationContext jdc) throws JsonParseException {
-            return new DataList(gson.fromJson(je.getAsJsonObject().get("data"), KeyValue[].class));
+            return new DataList(gson.fromJson(je.getAsJsonObject().get("data"), RecordMap[].class));
         }
     }
     
-    private class MapValueAdapter implements JsonSerializer<MapValue>, JsonDeserializer<MapValue> {
+    private class MapValueAdapter implements JsonSerializer<ValuesMap>, JsonDeserializer<ValuesMap> {
         @Override
-        public JsonElement serialize(MapValue t, Type type, JsonSerializationContext jsc) {
+        public JsonElement serialize(ValuesMap t, Type type, JsonSerializationContext jsc) {
             return gson.toJsonTree(t.getEntries());
         }      
 
         @Override
-        public MapValue deserialize(JsonElement je, Type type, JsonDeserializationContext jdc) throws JsonParseException {
-            return new MapValue(gson.fromJson(je, MapValueEntry[].class));
+        public ValuesMap deserialize(JsonElement je, Type type, JsonDeserializationContext jdc) throws JsonParseException {
+            return new ValuesMap(gson.fromJson(je, ValuesEntry[].class));
         }
     }
      
