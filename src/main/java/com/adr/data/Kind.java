@@ -31,6 +31,7 @@ import java.util.Date;
  */
 public abstract class Kind<T> {
 
+    public final static Kind<Void> VOID = new KindVOID();
     public final static Kind<Number> INT = new KindINT();
     public final static Kind<String> STRING = new KindSTRING();
     public final static Kind<Number> DOUBLE = new KindDOUBLE();
@@ -43,6 +44,7 @@ public abstract class Kind<T> {
     public final static Kind<Object> OBJECT = new KindOBJECT();
     
     public abstract void set(KindParameters write, String name, T value) throws DataException;
+    public abstract T get(KindResults write, String name) throws DataException;
     
     public abstract String _formatISO(T value) throws DataException;
     public final String formatISO(T value) throws DataException {
@@ -58,7 +60,9 @@ public abstract class Kind<T> {
     private static final DateFormat datetimeISO = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");     
     
     public static final Kind<?> valueOf(String kind) {
-        if ("INT".equals(kind)) {
+        if ("VOID".equals(kind)) {
+            return Kind.VOID;
+        } else if ("INT".equals(kind)) {
             return Kind.INT;
         } else if ("STRING".equals(kind)) {
             return Kind.STRING;
@@ -83,10 +87,36 @@ public abstract class Kind<T> {
         }
     }
 
+    private static final class KindVOID extends Kind<Void> {
+        @Override
+        public void set(KindParameters write, String name, Void value) throws DataException {
+        }
+        @Override
+        public Void get(KindResults read, String name) throws DataException {
+            return null;
+        }
+        @Override
+        public String _formatISO(Void value) throws DataException {
+            return "";
+        }
+        @Override
+        public Void _parseISO(String value) throws DataException {          
+            return null;
+        }
+        @Override
+        public String toString() {
+            return "VOID";
+        }       
+    }
+
     private static final class KindINT extends Kind<Number> {
         @Override
         public void set(KindParameters write, String name, Number value) throws DataException {
             write.setInt(name, value);
+        }
+        @Override
+        public Number get(KindResults read, String name) throws DataException {
+            return read.getInt(name);
         }
         @Override
         public String _formatISO(Number value) throws DataException {
@@ -112,6 +142,10 @@ public abstract class Kind<T> {
             write.setString(name, value);
         }
         @Override
+        public String get(KindResults read, String name) throws DataException {
+            return read.getString(name);
+        }
+        @Override
         public String _formatISO(String value) throws DataException {
             return value;
         }
@@ -129,6 +163,10 @@ public abstract class Kind<T> {
          @Override
         public void set(KindParameters write, String name, Number value) throws DataException {
             write.setDouble(name, value);
+        }
+        @Override
+        public Number get(KindResults read, String name) throws DataException {
+            return read.getDouble(name);
         }
         @Override
         public String _formatISO(Number value) throws DataException {
@@ -154,6 +192,10 @@ public abstract class Kind<T> {
             write.setBigDecimal(name, value);
         }
         @Override
+        public BigDecimal get(KindResults read, String name) throws DataException {
+            return read.getBigDecimal(name);
+        }
+        @Override
         public String _formatISO(BigDecimal value) throws DataException {
             return ((BigDecimal) value).toString();
         }
@@ -177,6 +219,10 @@ public abstract class Kind<T> {
             write.setBoolean(name, value);
         }
         @Override
+        public Boolean get(KindResults read, String name) throws DataException {
+            return read.getBoolean(name);
+        }
+        @Override
         public String _formatISO(Boolean value) throws DataException {
             return value.toString();
         }
@@ -194,6 +240,10 @@ public abstract class Kind<T> {
         @Override
         public void set(KindParameters write, String name, Date value) throws DataException {
             write.setTimestamp(name, value);
+        }
+        @Override
+        public Date get(KindResults read, String name) throws DataException {
+            return read.getTimestamp(name);
         }
         @Override
         public String _formatISO(Date value) throws DataException {          
@@ -219,6 +269,10 @@ public abstract class Kind<T> {
             write.setDate(name, value);
         }
         @Override
+        public Date get(KindResults read, String name) throws DataException {
+            return read.getDate(name);
+        }
+        @Override
         public String _formatISO(Date value) throws DataException {          
             return dateISO.format(value);
         }
@@ -240,6 +294,10 @@ public abstract class Kind<T> {
         @Override
         public void set(KindParameters write, String name, Date value) throws DataException {
             write.setTime(name, value);
+        }
+        @Override
+        public Date get(KindResults read, String name) throws DataException {
+            return read.getTime(name);
         }
         @Override
         public String _formatISO(Date value) throws DataException {          
@@ -265,6 +323,10 @@ public abstract class Kind<T> {
             write.setBytes(name, value);
         }
         @Override
+        public byte[] get(KindResults read, String name) throws DataException {
+            return read.getBytes(name);
+        }
+        @Override
         public String _formatISO(byte[] value) throws DataException {          
             return Base64.getEncoder().encodeToString(value);
         }
@@ -287,6 +349,10 @@ public abstract class Kind<T> {
         @Override
         public void set(KindParameters write, String name, Object value) throws DataException {
             write.setObject(name, value);
+        }
+        @Override
+        public Object get(KindResults read, String name) throws DataException {
+            return read.getObject(name);
         }
         @Override
         public String _formatISO(Object value) throws DataException {          

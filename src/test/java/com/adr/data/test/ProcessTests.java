@@ -11,7 +11,7 @@ import com.adr.data.DataList;
 import com.adr.data.RecordMap;
 import com.adr.data.ValuesMap;
 import com.adr.data.ValuesEntry;
-import com.adr.data.sql.SQLLink;
+import com.adr.data.sql.SQLDataLink;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Assert;
@@ -47,7 +47,7 @@ public class ProcessTests {
      @Test
      public void hello() throws DataException {
          
-        DataLink link = new SQLLink(PGTestSuite.getDataSource());
+        DataLink link = new SQLDataLink(PGTestSuite.getDataSource());
 //
         link.execute(new DataList(
             new RecordMap(     
@@ -69,7 +69,7 @@ public class ProcessTests {
                         new ValuesEntry("_ENTITY", "c_country"),
                         new ValuesEntry("c_country_id", "005")),
                 new ValuesMap(
-                        new ValuesEntry("name", "Portugal"),
+                        new ValuesEntry("name", "Portugalete"),
                         new ValuesEntry("hasRegion", "N"),
                         new ValuesEntry("countrycode", "PT")))));
 //        link.execute(new RecordMap(     

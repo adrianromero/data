@@ -23,19 +23,12 @@ package com.adr.data.sql;
  */
 public class CommandSQL {
 
-    private String command;
-    private String[] paramnames;  
+    private final String command;
+    private final String[] paramnames;  
     
     public CommandSQL(String command, String... paramnames) {
-        init(command, paramnames);
-    }
-    
-    protected CommandSQL() {
-    }
-    
-    protected final void init(String command, String... paramnames) {
         this.command = command;
-        this.paramnames = paramnames == null ? new String[0] : paramnames;        
+        this.paramnames = paramnames;  
     }
     
     public final String getCommand() {
@@ -44,20 +37,5 @@ public class CommandSQL {
 
     public final String[] getParamNames() {
         return paramnames;
-    } 
-    
-    @Override
-    public String toString() {
-        StringBuilder s = new StringBuilder();
-        s.append(getCommand());
-        s.append('[');
-        for(int i = 0; i < getParamNames().length; i++) {
-            if (i > 0) {
-                s.append(", ");
-            }
-            s.append(getParamNames()[i]);
-        }
-        s.append(']');
-        return s.toString();
     }         
 }

@@ -20,16 +20,16 @@ import java.lang.reflect.Type;
  *
  * @author adrian
  */
-public class JSONBuilder {
+public class RecordMapSerializer {
     
-    public final static JSONBuilder INSTANCE = new JSONBuilder();
+    public final static RecordMapSerializer INSTANCE = new RecordMapSerializer();
     
     private final Gson gson;
     
-    private JSONBuilder() {
+    private RecordMapSerializer() {
         
         GsonBuilder gsonb = new GsonBuilder();
-        gsonb.serializeNulls();
+//        gsonb.serializeNulls();
 //        gsonb.setPrettyPrinting();
         gsonb.registerTypeAdapter(DataList.class, new DataListAdapter());
         gsonb.registerTypeAdapter(ValuesMap.class, new ValuesMapAdapter());

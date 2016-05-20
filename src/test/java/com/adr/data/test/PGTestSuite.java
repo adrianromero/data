@@ -34,7 +34,8 @@ import org.postgresql.ds.PGPoolingDataSource;
  */
 @RunWith(Suite.class)
 @Suite.SuiteClasses({
-    ProcessTests.class
+//    ProcessTests.class,
+    QueryTest.class
 })
 public class PGTestSuite {
     

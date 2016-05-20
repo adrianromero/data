@@ -17,8 +17,12 @@ public class DataList {
     
     private final List<Record> data = new ArrayList<>();
        
-    public DataList(Record ... keyval) {
-        data.addAll(Arrays.asList(keyval));
+    public DataList(List<? extends Record> records) {
+        data.addAll(records);
+    }
+       
+    public DataList(Record ... records) {
+        this(Arrays.asList(records));
     }
     
     public List<Record> getData() {
