@@ -11,8 +11,8 @@ import com.adr.data.DataList;
 import com.adr.data.RecordMap;
 import com.adr.data.ValuesMap;
 import com.adr.data.ValuesEntry;
-import com.adr.data.sqlstrategy.H2Strategy;
 import com.adr.data.sql.SQLDataLink;
+import com.adr.data.sqlstrategy.SentenceH2Put;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Assert;
@@ -50,7 +50,7 @@ public class ProcessTests {
      @Test
      public void hello() throws DataException {
          
-        DataLink link = new SQLDataLink(DataSourceH2.get(), new H2Strategy());
+        DataLink link = new SQLDataLink(DataSourceH2.get(), new SentenceH2Put());
 //
         link.execute(new DataList(
             new RecordMap(     

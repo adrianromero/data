@@ -30,6 +30,4 @@ public class DataSourceH2 {
     public static DataSource get() {
         return cpds; 
     }
-
-    
 }
