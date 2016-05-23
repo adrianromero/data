@@ -29,7 +29,7 @@ dependencies {
 
 
 flyway {
-    url = ''
+    url = 'jdbc:h2:~/h2testdb'
     user = 'sa'
     password = ''
 }
