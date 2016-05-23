@@ -37,5 +37,5 @@ public class CommandSQL {
 
     public final String[] getParamNames() {
         return paramnames;
-    }         
+    }    
 }

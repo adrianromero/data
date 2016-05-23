@@ -5,28 +5,25 @@
  */
 package com.adr.data.sqlstrategy;
 
-import com.adr.data.DataException;
 import com.adr.data.Record;
 import com.adr.data.sql.CommandSQL;
-import java.sql.Connection;
+import com.adr.data.sql.Sentence;
+import com.adr.data.sql.SentenceDML;
 import java.util.ArrayList;
 
 /**
  *
- * @author Eva
+ * @author adrian
  */
-public class H2Strategy extends SQLStrategy {
-    
-    // Strategy Upsert
+public class SentenceH2Merge extends SentenceDML {
+
     @Override
-    protected void executeUpsert(Connection c, Record keyval) throws DataException {
-        int rows = execute(c, buildCommandMerge(keyval), keyval);
-        if (rows != 1) {
-            throw new DataException("MERGE must return 1 row");
-        }
+    public String getName() {
+        return "H2-MERGE";
     }
     
-    protected final CommandSQL buildCommandMerge(Record keyval) {
+    @Override
+    protected final CommandSQL build(Record keyval) {
 
         StringBuilder sentence = new StringBuilder();
         StringBuilder keys = new StringBuilder();
@@ -34,7 +31,7 @@ public class H2Strategy extends SQLStrategy {
         ArrayList<String> fieldslist = new ArrayList<>();
 
         sentence.append("MERGE INTO ");
-        sentence.append(getTableName(keyval));
+        sentence.append(Sentence.getEntity(keyval));
         
         boolean filter = false;
         for (String f : keyval.getKey().getNames()) {
@@ -64,5 +61,5 @@ public class H2Strategy extends SQLStrategy {
         sentence.append(")");
         
         return new CommandSQL(sentence.toString(), fieldslist.stream().toArray(String[]::new));
-    }    
+    }  
 }

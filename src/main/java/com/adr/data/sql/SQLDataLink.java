@@ -5,13 +5,14 @@
  */
 package com.adr.data.sql;
 
-import com.adr.data.sqlstrategy.SQLStrategy;
 import com.adr.data.DataLink;
 import com.adr.data.DataException;
 import com.adr.data.DataList;
 import com.adr.data.Record;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.HashMap;
+import java.util.Map;
 import javax.sql.DataSource;
 
 /**
@@ -21,15 +22,20 @@ import javax.sql.DataSource;
 public class SQLDataLink implements DataLink {
 
     private final DataSource ds;
-    private final SQLStrategy strategy;
+    private final Sentence put;
+    private final Map<String, Sentence> sentences = new HashMap<>();
 
-    public SQLDataLink(DataSource ds, SQLStrategy strategy) {
+    
+    public SQLDataLink(DataSource ds, Sentence put, Sentence... sentences) {
         this.ds = ds;
-        this.strategy = strategy;
+        this.put = put;
+        for (Sentence s : sentences) {
+            this.sentences.put(s.getName(), s);
+        }
     }
 
     public SQLDataLink(DataSource ds) {
-        this(ds, new SQLStrategy());
+        this(ds, new SentencePut());
     }
 
     @Override
@@ -37,7 +43,12 @@ public class SQLDataLink implements DataLink {
         try (Connection c = ds.getConnection()) {
             c.setAutoCommit(false);
             for (Record keyval : l.getData()) {
-                strategy.execute(c, keyval);
+                Sentence s = sentences.get(Sentence.getEntity(keyval));
+                if (s == null) {     
+                    put.execute(c, keyval);
+                } else {
+                    s.execute(c, keyval);
+                }                
             }
             c.commit();
         } catch (SQLException ex) {
