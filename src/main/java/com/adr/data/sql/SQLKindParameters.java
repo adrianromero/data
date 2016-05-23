@@ -28,7 +28,7 @@ import java.sql.Types;
  *
  * @author adrian
  */
-class SQLKindParameters implements KindParameters {
+public final class SQLKindParameters implements KindParameters {
 
     private final String[] params;
     private final PreparedStatement stmt;

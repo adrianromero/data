@@ -5,6 +5,7 @@
  */
 package com.adr.data.sql;
 
+import com.adr.data.sqlstrategy.SQLStrategy;
 import com.adr.data.DataLink;
 import com.adr.data.DataException;
 import com.adr.data.DataList;
@@ -33,8 +34,6 @@ public class SQLDataLink implements DataLink {
 
     @Override
     public void execute(DataList l) throws DataException {
-        // TODO: check commit /rollback
-
         try (Connection c = ds.getConnection()) {
             c.setAutoCommit(false);
             for (Record keyval : l.getData()) {

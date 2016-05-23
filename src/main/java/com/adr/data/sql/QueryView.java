@@ -21,30 +21,26 @@ package com.adr.data.sql;
  *
  * @author adrian
  */
-public class SQLView {
+public class QueryView extends QuerySelect {
     private final String name;
     private final String sentence;
-    private final String table;
     
-    public SQLView(String name, String sentence, String table) {
+    public QueryView(String name, String sentence) {
         this.name = name;
         this.sentence = sentence;
-        this.table = table;
-    }
-    
-    public SQLView(String name, String sentence) {
-        this(name, sentence, "");
     }
 
+    @Override
     public String getName() {
         return name;
     }
-
+    
+    @Override
+    protected String getViewName() {
+        return  "(" + sentence + ")";
+    }
+    
     public String getSentence() {
         return sentence;
-    }
-
-    public String getTable() {
-        return table;
     }
 }

@@ -3,11 +3,14 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.adr.data.sql;
+package com.adr.data.sqlstrategy;
 
+import com.adr.data.sql.SQLKindParameters;
 import com.adr.data.DataException;
 import com.adr.data.Record;
 import com.adr.data.Values;
+import com.adr.data.sql.CommandSQL;
+
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -20,14 +23,23 @@ import java.util.ArrayList;
 public class SQLStrategy {
     
     // Strategy execute
-    protected void execute(Connection c, Record keyval) throws DataException {
+    public void execute(Connection c, Record keyval) throws DataException {
+        
+        
         if (keyval.getValue() == null) {
             executeDelete(c, keyval);
         } else {
             executeUpsert(c, keyval);
         }
     }
-
+    
+    // Strategy Command/Procedure
+    protected void executeProcedure(Connection c, Record keyval) throws DataException {
+//        if (execute(c, buildCommandInsert(keyval), keyval) != 1) {
+//            throw new DataException("PROCEDURE command must return 1 row");
+//        }
+    }
+    
     // Strategy Insert
     protected void executeInsert(Connection c, Record keyval) throws DataException {
         if (execute(c, buildCommandInsert(keyval), keyval) != 1) {

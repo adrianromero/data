@@ -3,10 +3,11 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.adr.data.sql;
+package com.adr.data.sqlstrategy;
 
 import com.adr.data.DataException;
 import com.adr.data.Record;
+import com.adr.data.sql.CommandSQL;
 import java.sql.Connection;
 import java.util.ArrayList;
 

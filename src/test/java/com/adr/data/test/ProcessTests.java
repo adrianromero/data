@@ -11,7 +11,7 @@ import com.adr.data.DataList;
 import com.adr.data.RecordMap;
 import com.adr.data.ValuesMap;
 import com.adr.data.ValuesEntry;
-import com.adr.data.sql.H2Strategy;
+import com.adr.data.sqlstrategy.H2Strategy;
 import com.adr.data.sql.SQLDataLink;
 import org.junit.After;
 import org.junit.AfterClass;

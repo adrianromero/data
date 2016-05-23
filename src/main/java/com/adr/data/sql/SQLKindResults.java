@@ -27,7 +27,7 @@ import java.sql.SQLException;
  *
  * @author adrian
  */
-final class SQLKindResults implements KindResults {
+public final class SQLKindResults implements KindResults {
     
     private final ResultSet resultset;
     
