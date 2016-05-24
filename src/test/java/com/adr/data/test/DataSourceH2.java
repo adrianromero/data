@@ -9,7 +9,7 @@ import com.adr.data.DataLink;
 import com.adr.data.QueryLink;
 import com.adr.data.sql.SQLDataLink;
 import com.adr.data.sql.SQLQueryLink;
-import com.adr.data.sqlstrategy.SentenceH2Put;
+import com.adr.data.sqlh2.SentenceH2Put;
 import javax.sql.DataSource;
 import org.h2.jdbcx.JdbcConnectionPool;
 

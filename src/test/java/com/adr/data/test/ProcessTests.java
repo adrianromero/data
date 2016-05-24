@@ -13,7 +13,7 @@ import com.adr.data.RecordMap;
 import com.adr.data.ValuesMap;
 import com.adr.data.ValuesEntry;
 import com.adr.data.sql.SQLDataLink;
-import com.adr.data.sqlstrategy.SentenceH2Put;
+import com.adr.data.sqlh2.SentenceH2Put;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Assert;

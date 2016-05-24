@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.adr.data.sqlstrategy;
+package com.adr.data.sqlh2;
 
 import com.adr.data.Record;
 import com.adr.data.sql.CommandSQL;
