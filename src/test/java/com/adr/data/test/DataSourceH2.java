@@ -5,6 +5,11 @@
  */
 package com.adr.data.test;
 
+import com.adr.data.DataLink;
+import com.adr.data.QueryLink;
+import com.adr.data.sql.SQLDataLink;
+import com.adr.data.sql.SQLQueryLink;
+import com.adr.data.sqlstrategy.SentenceH2Put;
 import javax.sql.DataSource;
 import org.h2.jdbcx.JdbcConnectionPool;
 
@@ -14,20 +19,24 @@ import org.h2.jdbcx.JdbcConnectionPool;
  */
 public class DataSourceH2 {
     
-    private static JdbcConnectionPool cpds;   
+    private JdbcConnectionPool cpds;   
     
-    public static void setUpDB() throws Exception {       
+    public void setUpDB() throws Exception {       
         cpds = JdbcConnectionPool.create("jdbc:h2:~/h2testdb", "sa", "");     
     }
 
-    public static void tearDownDB() throws Exception {
+    public void tearDownDB() throws Exception {
         if (cpds != null) {        
             cpds.dispose();
             cpds = null;
         }        
     }
     
-    public static DataSource get() {
-        return cpds; 
+    public DataLink getDataLink() {
+        return new SQLDataLink(cpds, new SentenceH2Put()); 
     }
+    
+    public QueryLink getQueryLink() {
+        return new SQLQueryLink(cpds);
+    }  
 }

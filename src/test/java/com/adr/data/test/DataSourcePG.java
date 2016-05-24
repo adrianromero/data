@@ -5,9 +5,13 @@
  */
 package com.adr.data.test;
 
+import com.adr.data.DataLink;
+import com.adr.data.QueryLink;
+import com.adr.data.sql.SQLDataLink;
+import com.adr.data.sql.SQLQueryLink;
+import com.adr.data.sqlstrategy.SentenceH2Put;
 import javax.sql.DataSource;
 import org.h2.jdbcx.JdbcConnectionPool;
-import org.junit.BeforeClass;
 import org.postgresql.ds.PGPoolingDataSource;
 
 /**
@@ -16,11 +20,9 @@ import org.postgresql.ds.PGPoolingDataSource;
  */
 public class DataSourcePG {
     
-     private static PGPoolingDataSource source;   
+    private PGPoolingDataSource source;    
     
-    public static void setUpDB() throws Exception {       
-   
-        
+    public void setUpDB() throws Exception {       
         source = new PGPoolingDataSource();
         source.setDataSourceName("localpostgresql");
         source.setServerName("localhost");
@@ -28,13 +30,17 @@ public class DataSourcePG {
         source.setDatabaseName("dbtests");
         source.setUser("tad");
         source.setPassword("tad");
-        source.setMaxConnections(10);   
+        source.setMaxConnections(10);    
     }
 
-    public static void tearDownDB() throws Exception {       
+    public void tearDownDB() throws Exception {        
     }
     
-    public static DataSource get() {
-        return source; 
+    public DataLink getDataLink() {
+        return new SQLDataLink(source); 
     }
+    
+    public QueryLink getQueryLink() {
+        return new SQLQueryLink(source);
+    }  
 }

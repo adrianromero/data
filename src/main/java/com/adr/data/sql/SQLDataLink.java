@@ -24,7 +24,6 @@ public class SQLDataLink implements DataLink {
     private final DataSource ds;
     private final Sentence put;
     private final Map<String, Sentence> sentences = new HashMap<>();
-
     
     public SQLDataLink(DataSource ds, Sentence put, Sentence... sentences) {
         this.ds = ds;

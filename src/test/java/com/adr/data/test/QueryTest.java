@@ -29,18 +29,18 @@ public class QueryTest {
     
     @BeforeClass
     public static void setUpClass() throws Exception {
-        DataSourceH2.setUpDB();
+        DataSourceLink.setUpDB();
     }
     
     @AfterClass
     public static void tearDownClass() throws Exception {
-         DataSourceH2.tearDownDB();
+        DataSourceLink.tearDownDB();
     }
     
     @Test
     public void hello() throws DataException {
 
-        QueryLink link = new SQLQueryLink(DataSourceH2.get());
+        QueryLink link = DataSourceLink.getQueryLink();
 
         System.out.println(
             RecordMapSerializer.INSTANCE.toJSON(
@@ -70,8 +70,8 @@ public class QueryTest {
                         new ValuesEntry("c_country_id", "004")),
                     new ValuesMap(
                         new ValuesEntry("name", Kind.STRING),
+                        new ValuesEntry("hasregion", Kind.BOOLEAN),
                         new ValuesEntry("countrycode", Kind.STRING))))));
-
 
         Assert.assertEquals("1 + 1 = 2", 2, 1 + 1);
     }
