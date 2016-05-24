@@ -13,7 +13,7 @@ import java.sql.Connection;
  *
  * @author adrian
  */
-public class SentenceUpdateInsert implements Sentence {
+public class SentenceUpdateInsert extends Sentence {
     
     private final SentenceInsert insert = new SentenceInsert();
     private final SentenceUpdate update = new SentenceUpdate();

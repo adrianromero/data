@@ -17,15 +17,17 @@
 
 package com.adr.data.sql;
 
+import com.adr.data.Record;
+
 /**
  *
  * @author adrian
  */
-public class QueryView extends QuerySelect {
+public class SentenceView extends SentenceSelect {
     private final String name;
     private final String sentence;
     
-    public QueryView(String name, String sentence) {
+    public SentenceView(String name, String sentence) {
         this.name = name;
         this.sentence = sentence;
     }
@@ -36,7 +38,7 @@ public class QueryView extends QuerySelect {
     }
     
     @Override
-    protected String getViewName() {
+    protected String getViewName(Record keyval) {
         return  "(" + sentence + ")";
     }
     

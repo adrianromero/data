@@ -13,7 +13,7 @@ import java.sql.Connection;
  *
  * @author adrian
  */
-public class SentencePut implements Sentence {
+public class SentencePut extends Sentence {
     
     private final SentenceDelete delete = new SentenceDelete();
     private final SentenceUpdateInsert updateinsert = new SentenceUpdateInsert();

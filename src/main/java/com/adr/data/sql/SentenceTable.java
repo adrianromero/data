@@ -5,25 +5,21 @@
  */
 package com.adr.data.sql;
 
+import com.adr.data.Record;
+
 /**
  *
  * @author adrian
  */
-public class QueryTable extends QuerySelect {
+public class SentenceTable extends SentenceSelect {
     
-    private final String name;
-    
-    public QueryTable(String name) {
-        this.name = name;
+    @Override
+    public String getName() {
+        return "TABLE";
     }
 
     @Override
-    public String getName() {
-        return name;
-    }
-    
-    @Override
-    protected String getViewName() {
-        return name;
+    protected String getViewName(Record keyval) {
+        return getEntity(keyval);
     }
 }

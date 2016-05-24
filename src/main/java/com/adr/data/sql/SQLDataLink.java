@@ -43,11 +43,10 @@ public class SQLDataLink implements DataLink {
             c.setAutoCommit(false);
             for (Record keyval : l.getData()) {
                 Sentence s = sentences.get(Sentence.getEntity(keyval));
-                if (s == null) {     
-                    put.execute(c, keyval);
-                } else {
-                    s.execute(c, keyval);
-                }                
+                if (s == null) {  
+                    s = put;
+                }   
+                s.execute(c, keyval);
             }
             c.commit();
         } catch (SQLException ex) {

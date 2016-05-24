@@ -15,7 +15,7 @@ import java.sql.Connection;
  *
  * @author adrian
  */
-public class SentenceH2Put implements Sentence {
+public class SentenceH2Put extends Sentence {
     
     private final SentenceDelete delete = new SentenceDelete();
     private final SentenceH2Merge h2merge = new SentenceH2Merge();

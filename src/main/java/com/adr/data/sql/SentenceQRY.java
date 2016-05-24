@@ -6,6 +6,7 @@
 package com.adr.data.sql;
 
 import com.adr.data.DataException;
+import com.adr.data.DataList;
 import com.adr.data.Record;
 import java.sql.Connection;
 
@@ -13,14 +14,16 @@ import java.sql.Connection;
  *
  * @author adrian
  */
-public abstract class SentenceDML extends Sentence {
+public abstract class SentenceQRY  extends Sentence {
 
     protected abstract CommandSQL build(Record keyval);
-
+    
     @Override
-    public final void execute(Connection c, Record keyval) throws DataException {
-        if (Sentence.execute(c, build(keyval), keyval) != 1) {
-            throw new DataException("Sentence \"" + getName() + "\" must return 1 row.");
-        }
-    }         
+    public DataList query(Connection c, Record keyval) throws DataException {
+        return Sentence.query(c, build(keyval), keyval);
+    }
+    @Override
+    public Record find(Connection c, Record keyval) throws DataException {
+        return Sentence.find(c, build(keyval), keyval);
+    }
 }

@@ -14,14 +14,14 @@ import java.util.List;
  *
  * @author adrian
  */
-public abstract class QuerySelect implements Query {
+public abstract class SentenceSelect extends SentenceQRY {
 
-    protected abstract String getViewName();
-    
+    protected abstract String getViewName(Record keyval);
+
     @Override
-    public CommandSQL buildSQLCommand(Record keyval) {
+    public CommandSQL build(Record keyval) {
 
-        QuerySelect.SentenceBuilder builder = new QuerySelect.SentenceBuilder();
+        SentenceSelect.SentenceBuilder builder = new SentenceSelect.SentenceBuilder();
         StringBuilder sqlsent = new StringBuilder();
 
         for (String f : keyval.getKey().getNames()) {
@@ -35,23 +35,12 @@ public abstract class QuerySelect implements Query {
         sqlsent.append("SELECT ");
         sqlsent.append(builder.getSqlsent());
         sqlsent.append(" FROM ");
-        sqlsent.append(getViewName());
+        sqlsent.append(getViewName(keyval));
         sqlsent.append(" TABLE_ALIAS");
         sqlsent.append(builder.getSqlfilter());
 
         // build statement
         return new CommandSQL(sqlsent.toString(), builder.getFieldsList());
-    }
-    
-    @Override
-    public boolean isField(String name) {
-        if (name.endsWith("_EQUAL")) {
-            return false;
-        }
-        if (name.endsWith("_LIKE")) {
-            return false;
-        }
-        return true;
     }
     
     private class SentenceBuilder {
@@ -66,18 +55,18 @@ public abstract class QuerySelect implements Query {
             // FILTERING THINGS
             String realname;
             String criteria;
-            if (n.endsWith("_EQUAL")) {
-                realname = n.substring(0, n.length() - 6);
+            if (n.endsWith("::EQUAL")) {
+                realname = n.substring(0, n.length() - 7);
                 criteria = " = ?";
-            } else if (n.endsWith("_LIKE")) {
-                realname = n.substring(0, n.length() - 5);
+            } else if (n.endsWith("::LIKE")) {
+                realname = n.substring(0, n.length() - 6);
                 criteria = " LIKE ? {escape '$'}";
             } else {
                 realname = n;
                 criteria = " = ?";
             }
             // PROJECTION
-            if (isField(n)) {
+            if (!n.contains("::")) {
                 if (comma) {
                     sqlsent.append(", ");
                 } else {

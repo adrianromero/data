@@ -7,7 +7,6 @@ package com.adr.data.sqlstrategy;
 
 import com.adr.data.Record;
 import com.adr.data.sql.CommandSQL;
-import com.adr.data.sql.Sentence;
 import com.adr.data.sql.SentenceDML;
 import java.util.ArrayList;
 
@@ -31,7 +30,7 @@ public class SentenceH2Merge extends SentenceDML {
         ArrayList<String> fieldslist = new ArrayList<>();
 
         sentence.append("MERGE INTO ");
-        sentence.append(Sentence.getEntity(keyval));
+        sentence.append(getEntity(keyval));
         
         boolean filter = false;
         for (String f : keyval.getKey().getNames()) {

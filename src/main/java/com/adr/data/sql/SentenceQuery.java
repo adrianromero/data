@@ -11,12 +11,12 @@ import com.adr.data.Record;
  *
  * @author adrian
  */
-public class QueryCommand implements Query {
+public class SentenceQuery extends SentenceQRY {
     
     private final String name;
     private final CommandSQL commandsql;
     
-    public QueryCommand(String name, String command, String... paramnames) {
+    public SentenceQuery(String name, String command, String... paramnames) {
         this.name = name;
         this.commandsql = new CommandSQL(command, paramnames);
     }
@@ -27,12 +27,7 @@ public class QueryCommand implements Query {
     }
     
     @Override
-    public CommandSQL buildSQLCommand(Record keyval) {
+    protected CommandSQL build(Record keyval) {
         return commandsql;
-    }
-
-    @Override
-    public boolean isField(String name) {
-        return true;
-    }  
+    }    
 }

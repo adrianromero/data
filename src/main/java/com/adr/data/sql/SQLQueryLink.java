@@ -31,11 +31,13 @@ import javax.sql.DataSource;
 public class SQLQueryLink implements QueryLink {
 
     private DataSource ds = null;
-    private final Map<String, Query> queries = new HashMap<>();
+    private final Sentence table;
+    private final Map<String, Sentence> queries = new HashMap<>();
 
-    public SQLQueryLink(DataSource ds, Query... queries) {
+    public SQLQueryLink(DataSource ds, Sentence... queries) {
         this.ds = ds;
-        for (Query v : queries) {
+        this.table = new SentenceTable();
+        for (Sentence v : queries) {
             this.queries.put(v.getName(), v);
         }
     }
@@ -43,31 +45,12 @@ public class SQLQueryLink implements QueryLink {
     @Override
     public Record find(Record filter) throws DataException {
         try (Connection c = ds.getConnection()) {
-            return find(c, filter);
-        } catch (SQLException ex) {
-            throw new DataException(ex);
-        }
-    }
-    
-    private Record find(Connection c, Record filter) throws DataException {
-        Query q = findQuery(filter);
-        CommandSQL command = q.buildSQLCommand(filter);
-        try (PreparedStatement stmt = c.prepareStatement(command.getCommand())) {
-            SQLKindParameters kindparams = new SQLKindParameters(stmt, command.getParamNames());
-            write(kindparams, filter.getKey());
-            write(kindparams, filter.getValue());
-
-            try (ResultSet resultset = stmt.executeQuery()) {
-                List<RecordMap> r = new ArrayList<>();
-                SQLKindResults kindresults = new SQLKindResults(resultset);
-                if (resultset.next()) {
-                    return new RecordMap(
-                        read(q, kindresults, filter.getKey()), 
-                        read(q, kindresults, filter.getValue()));
-                } else {
-                    return null;
-                }
+            String entity = Sentence.getEntity(filter);
+            Sentence s = queries.get(entity);
+            if (s == null) {
+                s = table;
             }
+            return s.find(c, filter);
         } catch (SQLException ex) {
             throw new DataException(ex);
         }
@@ -76,68 +59,14 @@ public class SQLQueryLink implements QueryLink {
     @Override
     public DataList query(Record filter) throws DataException {
         try (Connection c = ds.getConnection()) {
-            return query(c, filter);
+            String entity = Sentence.getEntity(filter);
+            Sentence s = queries.get(entity);
+            if (s == null) {
+                s = table;
+            }              
+            return s.query(c, filter);
         } catch (SQLException ex) {
             throw new DataException(ex);
         }
-    }
-
-    private DataList query(Connection c, Record filter) throws DataException {
-        Query q = findQuery(filter);
-        CommandSQL command = q.buildSQLCommand(filter);
-        try (PreparedStatement stmt = c.prepareStatement(command.getCommand())) {
-            SQLKindParameters kindparams = new SQLKindParameters(stmt, command.getParamNames());
-            write(kindparams, filter.getKey());
-            write(kindparams, filter.getValue());
-
-            try (ResultSet resultset = stmt.executeQuery()) {
-                List<RecordMap> r = new ArrayList<>();
-                SQLKindResults kindresults = new SQLKindResults(resultset);
-                while (resultset.next()) {
-                    r.add(new RecordMap(
-                        read(q, kindresults, filter.getKey()), 
-                        read(q, kindresults, filter.getValue())));
-                }
-                return new DataList(r);
-            }
-        } catch (SQLException ex) {
-            throw new DataException(ex);
-        }
-    }
-
-    private void write(SQLKindParameters kindparams, Values param) throws DataException {
-
-        if (param == null) {
-            return;
-        }
-        for (String name : param.getNames()) {
-            param.getKind(name).set(kindparams, name, param.getValue(name));
-        }
-    }
-
-    private ValuesMap read(Query q, SQLKindResults kindresults, Values param) throws DataException {
-
-        if (param == null) {
-            return new ValuesMap();
-        }
-        List<ValuesEntry> l = new ArrayList<>();
-        for (String name : param.getNames()) {
-            if ("_ENTITY".equals(name)) {
-                l.add(new ValuesEntry(name, param.getKind(name), param.getValue(name)));
-            } else if (q.isField(name)) { 
-                Kind k = param.getKind(name);
-                l.add(new ValuesEntry(name, k, k.get(kindresults, name)));
-            }
-        }
-        return new ValuesMap(l);
-    }
-
-    private Query findQuery(Record keyval) {
-        String entity = keyval.getKey().getValue("_ENTITY").toString();
-        Query q = queries.get(entity);
-        if (q == null) {
-            q = new QueryTable(entity);
-        }
-        return q;
     }
 }
