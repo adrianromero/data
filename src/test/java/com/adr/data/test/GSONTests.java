@@ -83,6 +83,9 @@ public class GSONTests {
 
         System.out.println(RecordMapSerializer.INSTANCE.toJSON(RecordMapSerializer.INSTANCE.fromJSON(RecordMapSerializer.INSTANCE.toJSON(keval), RecordMap.class)));
         
+        System.out.println(RecordMapSerializer.INSTANCE.toJSON(keval));
+        System.out.println(RecordMapSerializer.INSTANCE.toSimpleJSON(keval));
+        
         
     }
 

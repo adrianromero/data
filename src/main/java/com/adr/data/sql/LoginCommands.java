@@ -21,11 +21,18 @@ public class LoginCommands {
         "select id, name, displayname, image from user where visible = true and active = true order by name"),
         new SentenceQuery(
         "subject_byrole",
-        "select s.code, s.name from subject s join permission p on s.id = p.subject_id where p.role_id = ?", "role_id"),
+        "select s.code, s.name from subject s join permission p on s.id = p.subject_id where p.role_id = ?", "role_id::PARAM"),
         new SentenceQuery(
         "user_byname",
         "select u.id, u.name, u.displayname, u.password, u.codecard, u.role_id, r.name as role, u.visible, u.image "
         + "from user u join role r on u.role_id = r.id "
         + "where u.name = ? and u.active = true", "name")
+    };
+
+    public final static Sentence[] COMMANDS = new Sentence[]{
+        new SentenceCommand(
+        "user_save",
+        "update user set displayname = ?, password = ?, visible = ?, image = ? where id = ?",
+        "displayname", "password", "visible", "image", "id")
     };
 }

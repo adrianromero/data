@@ -7,6 +7,7 @@ package com.adr.data.test;
 
 import com.adr.data.DataLink;
 import com.adr.data.QueryLink;
+import com.adr.data.sql.LoginCommands;
 import com.adr.data.sql.SQLDataLink;
 import com.adr.data.sql.SQLQueryLink;
 import com.adr.data.sqlh2.SentenceH2Put;
@@ -33,10 +34,10 @@ public class DataSourceH2 {
     }
     
     public DataLink getDataLink() {
-        return new SQLDataLink(cpds, new SentenceH2Put()); 
+        return new SQLDataLink(cpds, new SentenceH2Put(), LoginCommands.COMMANDS); 
     }
     
     public QueryLink getQueryLink() {
-        return new SQLQueryLink(cpds);
+        return new SQLQueryLink(cpds, LoginCommands.QUERIES);
     }  
 }

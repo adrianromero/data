@@ -14,6 +14,10 @@ public class ValuesEntry {
     private Kind kind;
     private Object value;
     
+    public ValuesEntry(String name) {
+        this(name, Kind.STRING, null);
+    }
+    
     public ValuesEntry(String name, String value) {
         this(name, Kind.STRING, value);
     }

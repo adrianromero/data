@@ -7,20 +7,11 @@ package com.adr.data.sql;
 
 import com.adr.data.DataException;
 import com.adr.data.DataList;
-import com.adr.data.Kind;
 import com.adr.data.QueryLink;
 import com.adr.data.Record;
-import com.adr.data.RecordMap;
-import com.adr.data.Values;
-import com.adr.data.ValuesEntry;
-import com.adr.data.ValuesMap;
 import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import javax.sql.DataSource;
 

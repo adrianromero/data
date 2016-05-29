@@ -49,4 +49,8 @@ public class ValuesMap implements Values {
     public ValuesEntry[] getEntries() {
         return entries.values().stream().toArray(ValuesEntry[]::new);
     }
+
+    public Map<String, ValuesEntry> getMapEntries() {
+        return entries;
+    }
 }

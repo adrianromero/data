@@ -43,36 +43,65 @@ public class QueryTest {
         QueryLink link = DataSourceLink.getQueryLink();
 
         System.out.println(
-            RecordMapSerializer.INSTANCE.toJSON(
+            RecordMapSerializer.INSTANCE.toSimpleJSON(
                 link.query(new RecordMap(
                     new ValuesMap(
-                        new ValuesEntry("_ENTITY", "c_country"),
-                        new ValuesEntry("c_country_id", "003")),
+                        new ValuesEntry("_ENTITY", "user"),
+                        new ValuesEntry("id", "admin")),
                     new ValuesMap(
                         new ValuesEntry("name", Kind.STRING),
-                        new ValuesEntry("countrycode", Kind.STRING))))));
+                        new ValuesEntry("codecard", Kind.STRING))))));
         
         System.out.println(
-            RecordMapSerializer.INSTANCE.toJSON(
+            RecordMapSerializer.INSTANCE.toSimpleJSON(
                 link.query(new RecordMap(
                     new ValuesMap(
-                        new ValuesEntry("_ENTITY", "c_country"),
-                        new ValuesEntry("c_country_id", Kind.STRING)),
+                        new ValuesEntry("_ENTITY", "user"),
+                        new ValuesEntry("id", Kind.STRING)),
                     new ValuesMap(
                         new ValuesEntry("name", Kind.STRING),
-                        new ValuesEntry("countrycode", Kind.STRING))))));
+                        new ValuesEntry("codecard", Kind.STRING))))));
 
         System.out.println(
-            RecordMapSerializer.INSTANCE.toJSON(
+            RecordMapSerializer.INSTANCE.toSimpleJSON(
                 link.find(new RecordMap(
                     new ValuesMap(
-                        new ValuesEntry("_ENTITY", "c_country"),
-                        new ValuesEntry("c_country_id", "004")),
+                        new ValuesEntry("_ENTITY", "user"),
+                        new ValuesEntry("id", "manager")),
                     new ValuesMap(
                         new ValuesEntry("name", Kind.STRING),
-                        new ValuesEntry("hasregion", Kind.BOOLEAN),
-                        new ValuesEntry("countrycode", Kind.STRING))))));
-
+                        new ValuesEntry("visible", Kind.BOOLEAN),
+                        new ValuesEntry("codecard", Kind.STRING))))));
+        System.out.println(
+            RecordMapSerializer.INSTANCE.toSimpleJSON(
+                link.query(new RecordMap(
+                    new ValuesMap(
+                        new ValuesEntry("_ENTITY", "permission_subject"),
+                        new ValuesEntry("id", Kind.STRING)),
+                    new ValuesMap(
+                        new ValuesEntry("role_id", Kind.STRING),
+                        new ValuesEntry("subject_name", Kind.STRING),
+                        new ValuesEntry("subject_code", Kind.STRING))))));
+        System.out.println(
+            RecordMapSerializer.INSTANCE.toSimpleJSON(
+                link.query(new RecordMap(
+                    new ValuesMap(
+                        new ValuesEntry("_ENTITY", "subject_byrole"),
+                        new ValuesEntry("role_id::PARAM", "m")),
+                    new ValuesMap(
+                        new ValuesEntry("code", Kind.STRING),
+                        new ValuesEntry("name", Kind.STRING))))));
+        System.out.println(
+            RecordMapSerializer.INSTANCE.toSimpleJSON(
+                link.query(new RecordMap(
+                    new ValuesMap(
+                        new ValuesEntry("_ENTITY", "subject"),
+                        new ValuesEntry("id")),
+                    new ValuesMap(
+                        new ValuesEntry("name::LIKE", "%o%"),
+                        new ValuesEntry("name"))))));                    
+                    
+//                    also create a query ::LIKE because the write() will have to remove the :: 
         Assert.assertEquals("1 + 1 = 2", 2, 1 + 1);
     }
 }
