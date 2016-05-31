@@ -41,7 +41,7 @@ public class SQLDataLink implements DataLink {
     public void execute(DataList l) throws DataException {
         try (Connection c = ds.getConnection()) {
             c.setAutoCommit(false);
-            for (Record keyval : l.getData()) {
+            for (Record keyval : l.getList()) {
                 Sentence s = sentences.get(Sentence.getEntity(keyval));
                 if (s == null) {  
                     s = put;

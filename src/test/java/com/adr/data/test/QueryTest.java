@@ -9,7 +9,7 @@ import com.adr.data.DataException;
 import com.adr.data.Kind;
 import com.adr.data.QueryLink;
 import com.adr.data.RecordMap;
-import com.adr.data.RecordMapSerializer;
+import com.adr.data.utils.JSONSerializer;
 import com.adr.data.ValuesMap;
 import com.adr.data.ValuesEntry;
 import com.adr.data.sql.SQLQueryLink;
@@ -42,8 +42,7 @@ public class QueryTest {
 
         QueryLink link = DataSourceLink.getQueryLink();
 
-        System.out.println(
-            RecordMapSerializer.INSTANCE.toSimpleJSON(
+        System.out.println(JSONSerializer.INSTANCE.toSimpleJSON(
                 link.query(new RecordMap(
                     new ValuesMap(
                         new ValuesEntry("_ENTITY", "user"),
@@ -52,8 +51,7 @@ public class QueryTest {
                         new ValuesEntry("name", Kind.STRING),
                         new ValuesEntry("codecard", Kind.STRING))))));
         
-        System.out.println(
-            RecordMapSerializer.INSTANCE.toSimpleJSON(
+        System.out.println(JSONSerializer.INSTANCE.toSimpleJSON(
                 link.query(new RecordMap(
                     new ValuesMap(
                         new ValuesEntry("_ENTITY", "user"),
@@ -62,8 +60,7 @@ public class QueryTest {
                         new ValuesEntry("name", Kind.STRING),
                         new ValuesEntry("codecard", Kind.STRING))))));
 
-        System.out.println(
-            RecordMapSerializer.INSTANCE.toSimpleJSON(
+        System.out.println(JSONSerializer.INSTANCE.toSimpleJSON(
                 link.find(new RecordMap(
                     new ValuesMap(
                         new ValuesEntry("_ENTITY", "user"),
@@ -72,8 +69,7 @@ public class QueryTest {
                         new ValuesEntry("name", Kind.STRING),
                         new ValuesEntry("visible", Kind.BOOLEAN),
                         new ValuesEntry("codecard", Kind.STRING))))));
-        System.out.println(
-            RecordMapSerializer.INSTANCE.toSimpleJSON(
+        System.out.println(JSONSerializer.INSTANCE.toSimpleJSON(
                 link.query(new RecordMap(
                     new ValuesMap(
                         new ValuesEntry("_ENTITY", "permission_subject"),
@@ -82,8 +78,7 @@ public class QueryTest {
                         new ValuesEntry("role_id", Kind.STRING),
                         new ValuesEntry("subject_name", Kind.STRING),
                         new ValuesEntry("subject_code", Kind.STRING))))));
-        System.out.println(
-            RecordMapSerializer.INSTANCE.toSimpleJSON(
+        System.out.println(JSONSerializer.INSTANCE.toSimpleJSON(
                 link.query(new RecordMap(
                     new ValuesMap(
                         new ValuesEntry("_ENTITY", "subject_byrole"),
@@ -91,8 +86,7 @@ public class QueryTest {
                     new ValuesMap(
                         new ValuesEntry("code", Kind.STRING),
                         new ValuesEntry("name", Kind.STRING))))));
-        System.out.println(
-            RecordMapSerializer.INSTANCE.toSimpleJSON(
+        System.out.println(JSONSerializer.INSTANCE.toSimpleJSON(
                 link.query(new RecordMap(
                     new ValuesMap(
                         new ValuesEntry("_ENTITY", "subject"),

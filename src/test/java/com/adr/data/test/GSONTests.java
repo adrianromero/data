@@ -6,7 +6,7 @@
 package com.adr.data.test;
 
 import com.adr.data.DataList;
-import com.adr.data.RecordMapSerializer;
+import com.adr.data.utils.JSONSerializer;
 import com.adr.data.RecordMap;
 import com.adr.data.Kind;
 import com.adr.data.ValuesMap;
@@ -66,27 +66,17 @@ public class GSONTests {
                 new ValuesMap(
                         new ValuesEntry("field", Kind.STRING, "hilario"))));
         
-        System.out.println(RecordMapSerializer.INSTANCE.toJSON(keval));  
-        System.out.println(RecordMapSerializer.INSTANCE.toJSON(RecordMapSerializer.INSTANCE.fromJSON(RecordMapSerializer.INSTANCE.toJSON(keval), RecordMap.class)));
+        System.out.println(JSONSerializer.INSTANCE.toJSON(keval));  
+        System.out.println(JSONSerializer.INSTANCE.toJSON(JSONSerializer.INSTANCE.fromJSONRecord(JSONSerializer.INSTANCE.toJSON(keval))));
 
-        System.out.println(RecordMapSerializer.INSTANCE.toJSON(dl));
-        System.out.println(RecordMapSerializer.INSTANCE.toJSON(RecordMapSerializer.INSTANCE.fromJSON(RecordMapSerializer.INSTANCE.toJSON(dl), DataList.class)));
-        
-        ValuesEntry mve = new ValuesEntry("field", Kind.STRING, "pepeluis");
-        System.out.println(RecordMapSerializer.INSTANCE.toJSON(RecordMapSerializer.INSTANCE.fromJSON(RecordMapSerializer.INSTANCE.toJSON(mve), ValuesEntry.class)));
-        
-        ValuesMap mv = new ValuesMap(
-            new ValuesEntry("chopped", Kind.STRING, "2"),
-            new ValuesEntry("id", Kind.STRING, "2"));
-        System.out.println(RecordMapSerializer.INSTANCE.toJSON(RecordMapSerializer.INSTANCE.fromJSON(RecordMapSerializer.INSTANCE.toJSON(mv), ValuesMap.class)));
-        
+        System.out.println(JSONSerializer.INSTANCE.toJSON(dl));
+        System.out.println(JSONSerializer.INSTANCE.toJSON(JSONSerializer.INSTANCE.fromJSONDataList(JSONSerializer.INSTANCE.toJSON(dl))));      
 
-        System.out.println(RecordMapSerializer.INSTANCE.toJSON(RecordMapSerializer.INSTANCE.fromJSON(RecordMapSerializer.INSTANCE.toJSON(keval), RecordMap.class)));
+        System.out.println(JSONSerializer.INSTANCE.toJSON(JSONSerializer.INSTANCE.fromJSONRecord(JSONSerializer.INSTANCE.toJSON(keval))));
         
-        System.out.println(RecordMapSerializer.INSTANCE.toJSON(keval));
-        System.out.println(RecordMapSerializer.INSTANCE.toSimpleJSON(keval));
+        System.out.println(JSONSerializer.INSTANCE.toJSON(keval));
+        System.out.println(JSONSerializer.INSTANCE.toSimpleJSON(keval));
         
         
     }
-
 }

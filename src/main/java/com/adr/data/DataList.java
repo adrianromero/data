@@ -15,17 +15,17 @@ import java.util.List;
  */
 public class DataList {
     
-    private final List<Record> data = new ArrayList<>();
+    private final List<Record> list = new ArrayList<>();
        
     public DataList(List<? extends Record> records) {
-        data.addAll(records);
+        list.addAll(records);
     }
        
     public DataList(Record ... records) {
         this(Arrays.asList(records));
     }
     
-    public List<Record> getData() {
-        return data;
+    public List<Record> getList() {
+        return list;
     }
 }

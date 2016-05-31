@@ -22,7 +22,9 @@ package com.adr.data;
  * @author adrian
  */
 public class DataException extends Exception {
-
+    
+    private static final long serialVersionUID = 8719551478674716662L;
+    
     public DataException() {
     }
 
