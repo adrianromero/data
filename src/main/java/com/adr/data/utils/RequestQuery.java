@@ -6,6 +6,7 @@
 package com.adr.data.utils;
 
 import com.adr.data.Record;
+import com.google.gson.JsonElement;
 
 /**
  *
@@ -33,5 +34,10 @@ public class RequestQuery extends EnvelopeRequest {
     @Override
     public EnvelopeResponse process(ProcessRequest proc) {
         return proc.query(this);
+    }  
+
+    @Override
+    public JsonElement dataToJSON() {
+        return JSONSerializer.INSTANCE.toJsonElement(filter);
     }    
 }

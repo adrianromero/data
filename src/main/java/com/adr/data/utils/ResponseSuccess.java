@@ -6,25 +6,15 @@
 package com.adr.data.utils;
 
 import com.google.gson.JsonElement;
-import com.google.gson.JsonPrimitive;
+import com.google.gson.JsonNull;
 
 /**
  *
  * @author adrian
  */
-public class ResponseError extends EnvelopeResponse {
+public class ResponseSuccess extends EnvelopeResponse {
      
-    public static final String NAME = "ERROR";
-    
-    private final Throwable ex;
-    
-    public ResponseError(Throwable ex) {
-        this.ex = ex;
-    }
-    
-    public Throwable getException() {
-        return ex;
-    }
+    public static final String NAME = "SUCCESS";
 
     @Override
     public String getType() {
@@ -33,6 +23,6 @@ public class ResponseError extends EnvelopeResponse {
 
     @Override
     public JsonElement dataToJSON() {
-        return new JsonPrimitive(ex.toString());
+        return JsonNull.INSTANCE;
     }    
 }

@@ -50,9 +50,32 @@ public class JSONSerializer {
         gsonparser = new JsonParser();
     }
     
-    public EnvelopeRequest fromJSONEnvelope(String json) {
+    public EnvelopeRequest fromJSONRequest(String json) {
         JsonObject envelope = gsonparser.parse(json).getAsJsonObject();
-        return new EnvelopeRequest(envelope.get("type").getAsString(), fromJSONDdfsdfataList(envelope.get("data")));
+        String type = envelope.get("type").getAsString();
+        if (RequestFind.NAME.equals(type)) {
+            return new RequestFind(fromJSONRecord(envelope.get("data")));
+        } else if (RequestQuery.NAME.equals(type)) {
+            return new RequestQuery(fromJSONRecord(envelope.get("data")));
+        } else {
+            throw new IllegalStateException("Envelope type invalid: " + type);
+        }
+    }
+    
+    public EnvelopeResponse fromJSONResponse(String json) {
+        JsonObject envelope = gsonparser.parse(json).getAsJsonObject();
+        String type = envelope.get("type").getAsString();
+        if (ResponseRecord.NAME.equals(type)) {
+            return new ResponseRecord(fromJSONRecord(envelope.get("data")));
+        } else if (ResponseDataList.NAME.equals(type)) {
+            return new ResponseDataList(fromJSONDataList(envelope.get("data")));
+        } else if (ResponseError.NAME.equals(type)) {
+            return new ResponseError(new DataException(envelope.get("data").getAsString()));
+        } else if (ResponseSuccess.NAME.equals(type)) {
+            return new ResponseSuccess();
+        } else {
+            throw new IllegalStateException("Envelope type invalid: " + type);
+        }
     }
     
     public DataList fromJSONDataList(String json) {     
@@ -73,6 +96,9 @@ public class JSONSerializer {
     }
     
     private RecordMap fromJSONRecord(JsonElement element) {
+        if (JsonNull.INSTANCE.equals(element)) {
+            return null;
+        }
         JsonObject o = element.getAsJsonObject();
         return new RecordMap(fromJSONValues(o.get("key")), fromJSONValues(o.get("value")));
     }
@@ -98,6 +124,13 @@ public class JSONSerializer {
     }    
     
     public String toJSON(EnvelopeRequest obj) {
+        JsonObject json = new JsonObject();
+        json.addProperty("type", obj.getType());
+        json.add("data", obj.dataToJSON());
+        return gson.toJson(json);
+    }
+    
+    public String toJSON(EnvelopeResponse obj) {
         JsonObject json = new JsonObject();
         json.addProperty("type", obj.getType());
         json.add("data", obj.dataToJSON());
@@ -136,6 +169,9 @@ public class JSONSerializer {
     }
     
     public JsonElement toJsonElement(Record obj) {
+        if (obj == null) {
+            return JsonNull.INSTANCE;
+        }
         JsonObject r = new JsonObject();
         r.add("key", toJsonElement(obj.getKey()));
         r.add("value", toJsonElement(obj.getValue()));
