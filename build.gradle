@@ -11,9 +11,16 @@ plugins {
 }
 
 apply plugin: 'java'
+apply plugin: 'maven'
 
+
+group = 'com.github.adrianromero'
+version = '1.0.0'
+
+description = """"""
 
 sourceCompatibility = '1.8'
+targetCompatibility = '1.8'
 [compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
 // compileJava {
 //     options.compilerArgs << "-Xlint:unchecked" << "-Xlint:deprecation"
@@ -32,6 +39,28 @@ dependencies {
     testCompile group: 'com.h2database', name: 'h2', version: '1.4.187'
 }
 
+task sourcesJar(type: Jar, dependsOn: classes) {
+    classifier = 'sources'
+    from sourceSets.main.allSource
+}
+
+artifacts {
+    archives sourcesJar
+}
+
+install {
+  repositories.mavenInstaller {
+    pom.project {
+      licenses {
+        license {
+          name 'The Apache Software License, Version 2.0'
+          url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+          distribution 'repo'
+        }
+      }
+    }
+  }
+}
 
 flyway {
     url = 'jdbc:h2:~/h2testdb'
