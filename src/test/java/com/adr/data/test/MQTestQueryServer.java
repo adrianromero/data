@@ -65,6 +65,7 @@ public class MQTestQueryServer {
             
             server.mainloop();
             
+            server.close();
             
             DataSourceLink.tearDownDB();
             channel.close();

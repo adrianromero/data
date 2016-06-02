@@ -5,6 +5,9 @@
  */
 package com.adr.data.utils;
 
+import com.adr.data.DataException;
+import com.adr.data.DataList;
+import com.adr.data.Record;
 import com.google.gson.JsonElement;
 
 /**
@@ -14,4 +17,10 @@ import com.google.gson.JsonElement;
 public abstract class EnvelopeResponse {
     public abstract String getType();  
     public abstract JsonElement dataToJSON();
+    public Record getAsRecord() throws DataException {
+        throw new DataException("Record response not supported.");
+    }
+    public DataList getAsDataList() throws DataException {
+        throw new DataException("DataList response not supported.");
+    }
 }

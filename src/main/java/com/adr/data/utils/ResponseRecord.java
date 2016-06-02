@@ -5,6 +5,7 @@
  */
 package com.adr.data.utils;
 
+import com.adr.data.DataException;
 import com.adr.data.Record;
 import com.google.gson.JsonElement;
 
@@ -35,4 +36,9 @@ public class ResponseRecord extends EnvelopeResponse {
     public JsonElement dataToJSON() {
         return JSONSerializer.INSTANCE.toJsonElement(result);
     }
+
+    @Override
+    public Record getAsRecord() throws DataException {
+        return result;
+    }   
 }

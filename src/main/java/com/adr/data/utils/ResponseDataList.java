@@ -5,6 +5,7 @@
  */
 package com.adr.data.utils;
 
+import com.adr.data.DataException;
 import com.adr.data.DataList;
 import com.google.gson.JsonElement;
 
@@ -34,5 +35,10 @@ public class ResponseDataList extends EnvelopeResponse {
     @Override
     public JsonElement dataToJSON() {
         return JSONSerializer.INSTANCE.toJsonElement(result);
-    }    
+    } 
+
+    @Override
+    public DataList getAsDataList() throws DataException {
+        return result;
+    }   
 }

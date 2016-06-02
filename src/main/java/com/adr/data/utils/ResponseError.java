@@ -5,6 +5,9 @@
  */
 package com.adr.data.utils;
 
+import com.adr.data.DataException;
+import com.adr.data.DataList;
+import com.adr.data.Record;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonPrimitive;
 
@@ -34,5 +37,15 @@ public class ResponseError extends EnvelopeResponse {
     @Override
     public JsonElement dataToJSON() {
         return new JsonPrimitive(ex.toString());
-    }    
+    }
+    
+    @Override
+    public Record getAsRecord() throws DataException {
+        throw new DataException(ex);
+    }
+    
+    @Override
+    public DataList getAsDataList() throws DataException {
+        throw new DataException(ex);
+    }   
 }

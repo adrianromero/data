@@ -9,9 +9,10 @@ import com.adr.data.DataException;
 import com.adr.data.DataList;
 import com.adr.data.QueryLink;
 import com.adr.data.Record;
-import com.adr.data.RecordMap;
-import com.adr.data.utils.EnvelopeRequest;
+import com.adr.data.utils.EnvelopeResponse;
 import com.adr.data.utils.JSONSerializer;
+import com.adr.data.utils.RequestFind;
+import com.adr.data.utils.RequestQuery;
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.RpcClient;
 import com.rabbitmq.client.ShutdownSignalException;
@@ -42,40 +43,31 @@ public class MQQueryLink implements QueryLink {
 
     @Override
     public Record find(Record filter) throws DataException {
-//        
-//        try {
-//            byte[] request = JSONSerializer.INSTANCE.toJSON(EnvelopeRequest.requestFind(filter)).getBytes("UTF-8");
-//            byte[] response = client.primitiveCall(request);
-//            EnvelopeRequest envelope = JSONSerializer.INSTANCE.fromJSON(new String(response, "UTF-8"), EnvelopeRequest.class);
-//            return null;
-//        } catch (UnsupportedEncodingException ex) {
-//            throw new UnsupportedOperationException(ex); // Never happens
-//        } catch (IOException | ShutdownSignalException | TimeoutException ex) {
-//            throw new DataException(ex);
-//        }
-return null;
+        
+        try {
+            byte[] request = JSONSerializer.INSTANCE.toJSON(new RequestFind(filter)).getBytes("UTF-8");
+            byte[] response = client.primitiveCall(request);
+            EnvelopeResponse envelope = JSONSerializer.INSTANCE.fromJSONResponse(new String(response, "UTF-8"));
+            return envelope.getAsRecord();
+        } catch (UnsupportedEncodingException ex) {
+            throw new UnsupportedOperationException(ex); // Never happens
+        } catch (IOException | ShutdownSignalException | TimeoutException ex) {
+            throw new DataException(ex);
+        }
     }
 
     @Override
     public DataList query(Record filter) throws DataException {
         
-//        try {
-//            byte[] request = JSONSerializer.INSTANCE.toJSON(EnvelopeRequest.requestQuery(filter)).getBytes("UTF-8");
-//            byte[] response = client.primitiveCall(request);
-//            EnvelopeRequest envelope = JSONSerializer.INSTANCE.fromJSON(new String(response, "UTF-8"), EnvelopeRequest.class);
-//            if (envelope.success()) {
-//                return (DataList) envelope.getData();
-//            } else if (envelope.error()) {
-//                Throwable t = (Throwable) envelope.getData();
-////                if (t instance)
-//            }
-//            return null;
-//            
-//        } catch (UnsupportedEncodingException ex) {
-//            throw new UnsupportedOperationException(ex);
-//        } catch (IOException | ShutdownSignalException | TimeoutException ex) {
-//            throw new DataException(ex);
-//        }
-return null;
+        try {
+            byte[] request = JSONSerializer.INSTANCE.toJSON(new RequestQuery(filter)).getBytes("UTF-8");
+            byte[] response = client.primitiveCall(request);
+            EnvelopeResponse envelope = JSONSerializer.INSTANCE.fromJSONResponse(new String(response, "UTF-8"));
+            return envelope.getAsDataList();
+        } catch (UnsupportedEncodingException ex) {
+            throw new UnsupportedOperationException(ex); // Never happens
+        } catch (IOException | ShutdownSignalException | TimeoutException ex) {
+            throw new DataException(ex);
+        }
     }
 }

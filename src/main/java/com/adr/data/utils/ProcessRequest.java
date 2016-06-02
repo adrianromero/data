@@ -20,6 +20,6 @@ public abstract class ProcessRequest {
     }  
     
     public EnvelopeResponse other(EnvelopeRequest env) {
-        throw new UnsupportedOperationException("EnvelopeLink not supported: " + env.getType());    
+        throw new UnsupportedOperationException("Request type not supported: " + env.getType());    
     }
 }

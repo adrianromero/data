@@ -30,6 +30,8 @@ import java.util.logging.Logger;
  */
 public class MQQueryLinkServer extends RpcServer {
     
+    private static final Logger logger = Logger.getLogger(MQQueryLinkServer.class.getName());
+    
     private final QueryLink link;
 
     public MQQueryLinkServer(Channel channel, String queueName, QueryLink link) throws IOException {
@@ -41,8 +43,8 @@ public class MQQueryLinkServer extends RpcServer {
     public void handleCast(byte[] requestBody) {
         try {
             String message = new String(requestBody, "UTF-8");
-            EnvelopeRequest request = JSONSerializer.INSTANCE.fromJSONEnvelope(message);
-            Logger.getLogger(MQQueryLinkServer.class.getName()).log(Level.SEVERE, "There is no correlation or destination in the request {0} : {1}.", new Object[]{request.getType(), message});
+            EnvelopeRequest request = JSONSerializer.INSTANCE.fromJSONRequest(message);
+            logger.log(Level.SEVERE, "There is no correlation or destination in the request {0} : {1}.", new Object[]{request.getType(), message});
         } catch (UnsupportedEncodingException ex) {
             throw new UnsupportedOperationException(ex);            
         }            
@@ -52,16 +54,16 @@ public class MQQueryLinkServer extends RpcServer {
     public byte[] handleCall(byte[] requestBody, AMQP.BasicProperties replyProperties) {        
         try{
             String message = new String(requestBody, "UTF-8");
-            EnvelopeRequest request = JSONSerializer.INSTANCE.fromJSONEnvelope(message);
+            EnvelopeRequest request = JSONSerializer.INSTANCE.fromJSONRequest(message);
 
-            Logger.getLogger(MQQueryLinkServer.class.getName()).log(Level.INFO, "Processing {0} : {1}.", new Object[]{request.getType(), message});
+            logger.log(Level.CONFIG, "Processing {0} : {1}.", new Object[]{request.getType(), message});
 
             EnvelopeResponse response = request.process(new ProcessRequest() {
                 @Override public EnvelopeResponse find(RequestFind req) {
                     try {
                         return new ResponseRecord(link.find(req.getFilter()));
                     } catch (DataException ex) {
-                        Logger.getLogger(MQQueryLinkServer.class.getName()).log(Level.SEVERE, null, ex);
+                        logger.log(Level.SEVERE, "Cannot execute find request.", ex);
                         return new ResponseError(ex);
                     }
                 }
@@ -69,12 +71,12 @@ public class MQQueryLinkServer extends RpcServer {
                     try {
                         return new ResponseDataList(link.query(req.getFilter()));
                     } catch (DataException ex) {
-                        Logger.getLogger(MQQueryLinkServer.class.getName()).log(Level.SEVERE, null, ex);
+                        logger.log(Level.SEVERE, "Cannot execute query request.", ex);
                         return new ResponseError(ex);
                     }
                 }                   
                 @Override public EnvelopeResponse other(EnvelopeRequest req) {
-                    Logger.getLogger(MQQueryLinkServer.class.getName()).log(Level.SEVERE, "Request type not supported :", new Object[]{req.getType()});
+                    logger.log(Level.SEVERE, "Request type not supported :", new Object[]{req.getType()});
                     return new ResponseError(new UnsupportedOperationException("Request type not supported : " + req.getType()));
                 }                     
             });
