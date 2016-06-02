@@ -11,7 +11,6 @@ import com.adr.data.sql.LoginCommands;
 import com.adr.data.sql.SQLDataLink;
 import com.adr.data.sql.SQLQueryLink;
 import com.adr.data.sqlh2.SentenceH2Put;
-import javax.sql.DataSource;
 import org.h2.jdbcx.JdbcConnectionPool;
 
 /**
