@@ -104,6 +104,9 @@ public class JSONSerializer {
     }
     
     private ValuesMap fromJSONValues(JsonElement element) {
+        if (element == null) {
+            return null;
+        }
         List<ValuesEntry> l = new ArrayList<>();
         for (JsonElement r : element.getAsJsonArray()) {
            l.add(fromJSONValuesEntry(r));
@@ -115,10 +118,15 @@ public class JSONSerializer {
         JsonObject o = element.getAsJsonObject();
         Kind k = Kind.valueOf(o.get("kind").getAsString());
         Object v;
-        try {
-            v = k.parseISO(o.get("value").getAsString());
-        } catch (DataException ex) {
+        JsonElement jvalue = o.get("value");
+        if (jvalue == null) {
             v = null;
+        } else {
+            try {
+                v = k.parseISO(jvalue.getAsString());
+            } catch (DataException ex) {
+                v = null;
+            }
         }
         return new ValuesEntry(o.get("name").getAsString(), k, v);
     }    
@@ -165,7 +173,7 @@ public class JSONSerializer {
         }            
         JsonObject datalist = new JsonObject();
         datalist.add("list", array);
-        return array;
+        return datalist;
     }
     
     public JsonElement toJsonElement(Record obj) {
@@ -179,6 +187,9 @@ public class JSONSerializer {
     }
     
     public JsonElement toJsonElement(Values obj) {
+        if (obj == null) {
+            return JsonNull.INSTANCE;
+        }
         JsonArray array = new JsonArray();
         for (String name: obj.getNames()) {
             JsonObject entry = new JsonObject();
