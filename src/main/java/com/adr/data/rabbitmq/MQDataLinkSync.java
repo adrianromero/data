@@ -8,6 +8,7 @@ package com.adr.data.rabbitmq;
 import com.adr.data.DataException;
 import com.adr.data.DataLink;
 import com.adr.data.DataList;
+import com.adr.data.utils.EnvelopeResponse;
 import com.adr.data.utils.JSONSerializer;
 import com.adr.data.utils.RequestExecute;
 import com.rabbitmq.client.Channel;
@@ -15,25 +16,26 @@ import com.rabbitmq.client.RpcClient;
 import com.rabbitmq.client.ShutdownSignalException;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.util.concurrent.TimeoutException;
 
 /**
  *
  * @author adrian
  */
-public class MQDataLink implements DataLink {
+public class MQDataLinkSync implements DataLink {
     
     private final RpcClient client;
     
-    public MQDataLink(Channel channel, String exchange, String routingKey, int timeout) throws IOException {
+    public MQDataLinkSync(Channel channel, String exchange, String routingKey, int timeout) throws IOException {
         client = new RpcClient(channel, exchange, routingKey, timeout);
     }
-    public MQDataLink(Channel channel, String exchange, int timeout) throws IOException {
+    public MQDataLinkSync(Channel channel, String exchange, int timeout) throws IOException {
         this(channel, exchange, "", timeout);
     }
-    public MQDataLink(Channel channel, String exchange, String routingKey) throws IOException {
+    public MQDataLinkSync(Channel channel, String exchange, String routingKey) throws IOException {
         this(channel, exchange, routingKey, 2500);
     }
-    public MQDataLink(Channel channel, String exchange) throws IOException {
+    public MQDataLinkSync(Channel channel, String exchange) throws IOException {
         this(channel, exchange, "", 2500);
     }
 
@@ -42,15 +44,17 @@ public class MQDataLink implements DataLink {
         
         try {
             byte[] request = JSONSerializer.INSTANCE.toJSON(new RequestExecute(l)).getBytes("UTF-8");
-            client.publish(null, request);
+            byte[] response = client.primitiveCall(request);
+            EnvelopeResponse envelope = JSONSerializer.INSTANCE.fromJSONResponse(new String(response, "UTF-8"));
+            envelope.asSuccess();
         } catch (UnsupportedEncodingException ex) {
             throw new UnsupportedOperationException(ex); // Never happens
-        } catch (IOException | ShutdownSignalException ex) {
+        } catch (IOException | ShutdownSignalException | TimeoutException ex) {
             throw new DataException(ex);
         }
     }
     
     public void close() throws IOException {
         client.close();
-    }
+    }    
 }

@@ -5,6 +5,7 @@
  */
 package com.adr.data.utils;
 
+import com.adr.data.DataException;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonNull;
 
@@ -25,4 +26,9 @@ public class ResponseSuccess extends EnvelopeResponse {
     public JsonElement dataToJSON() {
         return JsonNull.INSTANCE;
     }    
+    
+    @Override
+    public void asSuccess() throws DataException {
+        // Success, do nothing
+    }     
 }

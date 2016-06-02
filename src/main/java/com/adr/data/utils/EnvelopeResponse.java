@@ -17,10 +17,14 @@ import com.google.gson.JsonElement;
 public abstract class EnvelopeResponse {
     public abstract String getType();  
     public abstract JsonElement dataToJSON();
+    
     public Record getAsRecord() throws DataException {
         throw new DataException("Record response not supported.");
     }
     public DataList getAsDataList() throws DataException {
         throw new DataException("DataList response not supported.");
     }
+    public void asSuccess() throws DataException {
+        throw new DataException("DataList response not supported.");
+    }    
 }

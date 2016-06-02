@@ -19,6 +19,10 @@ public abstract class ProcessRequest {
         return other(req);
     }  
     
+    public EnvelopeResponse execute(RequestExecute req) {
+        return other(req);
+    }  
+    
     public EnvelopeResponse other(EnvelopeRequest env) {
         throw new UnsupportedOperationException("Request type not supported: " + env.getType());    
     }

@@ -47,5 +47,10 @@ public class ResponseError extends EnvelopeResponse {
     @Override
     public DataList getAsDataList() throws DataException {
         throw new DataException(ex);
-    }   
+    }  
+    
+    @Override
+    public void asSuccess() throws DataException {
+        throw new DataException(ex);
+    }     
 }
