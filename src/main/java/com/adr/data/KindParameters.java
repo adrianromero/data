@@ -1,7 +1,7 @@
-//    Data Access is a Java library to store data
-//    Copyright (C) 2016 Adrián Romero Corchado.
+//     Data Access is a Java library to store data
+//     Copyright (C) 2016 Adrián Romero Corchado.
 //
-//    This file is part of Data Access
+//     This file is part of Data Access
 //
 //     Licensed under the Apache License, Version 2.0 (the "License");
 //     you may not use this file except in compliance with the License.
