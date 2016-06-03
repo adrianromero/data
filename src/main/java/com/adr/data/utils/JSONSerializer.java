@@ -69,6 +69,8 @@ public class JSONSerializer {
             return new RequestFind(fromJSONRecord(envelope.get("data")));
         } else if (RequestQuery.NAME.equals(type)) {
             return new RequestQuery(fromJSONRecord(envelope.get("data")));
+        } else if (RequestExecute.NAME.equals(type)) {
+            return new RequestExecute(fromJSONDataList(envelope.get("data")));
         } else {
             throw new IllegalStateException("Envelope type invalid: " + type);
         }
