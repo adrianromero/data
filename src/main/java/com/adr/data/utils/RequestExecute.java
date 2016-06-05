@@ -50,6 +50,6 @@ public class RequestExecute extends EnvelopeRequest {
 
     @Override
     public JsonElement dataToJSON() {
-        return JSONSerializer.INSTANCE.toJsonElement(datalist);
+        return JSONSerializer.INSTANCE.toJSONElement(datalist);
     }     
 }

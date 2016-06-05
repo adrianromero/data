@@ -27,8 +27,8 @@ import java.util.Date;
 public interface KindParameters {
 
     public void setString(String name, String value) throws DataException;
-    public void setInt(String name, Number value) throws DataException;
-    public void setDouble(String name, Number value) throws DataException;
+    public void setInt(String name, Integer value) throws DataException;
+    public void setDouble(String name, Double value) throws DataException;
     public void setBigDecimal(String name, BigDecimal value) throws DataException;
     public void setBoolean(String name, Boolean value) throws DataException;
     public void setTimestamp(String name, Date value) throws DataException;

@@ -52,7 +52,7 @@ public final class SQLKindParameters implements KindParameters {
     }     
 
     @Override
-    public void setInt(String paramName, Number value) throws DataException {
+    public void setInt(String paramName, Integer value) throws DataException {
         try {  
             set(paramName, i -> stmt.setObject(i, value, Types.INTEGER));
         } catch (SQLException ex) {
@@ -68,7 +68,7 @@ public final class SQLKindParameters implements KindParameters {
         }
     }
     @Override
-    public void setDouble(String paramName, Number value) throws DataException {
+    public void setDouble(String paramName, Double value) throws DataException {
         try {               
             set(paramName, i -> stmt.setObject(i, value, Types.DOUBLE));
         } catch (SQLException ex) {

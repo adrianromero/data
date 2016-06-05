@@ -111,7 +111,7 @@ public abstract class Kind {
     private static final class KindINT extends Kind {
         @Override
         public void set(KindParameters write, String name, Object value) throws DataException {
-            write.setInt(name, (Number)value);
+            write.setInt(name, (Integer)value);
         }
         @Override
         public Object get(KindResults read, String name) throws DataException {
@@ -161,7 +161,7 @@ public abstract class Kind {
     private static final class KindDOUBLE extends Kind {
          @Override
         public void set(KindParameters write, String name, Object value) throws DataException {
-            write.setDouble(name, (Number) value);
+            write.setDouble(name, (Double) value);
         }
         @Override
         public Object get(KindResults read, String name) throws DataException {

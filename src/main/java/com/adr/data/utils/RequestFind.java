@@ -50,6 +50,6 @@ public class RequestFind extends EnvelopeRequest {
 
     @Override
     public JsonElement dataToJSON() {
-        return JSONSerializer.INSTANCE.toJsonElement(filter);
+        return JSONSerializer.INSTANCE.toJSONElement(filter);
     }
 }

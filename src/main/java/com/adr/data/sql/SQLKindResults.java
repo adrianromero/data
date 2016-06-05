@@ -44,7 +44,7 @@ public final class SQLKindResults implements KindResults {
         }
     }
     @Override
-    public Number getInt(String columnName) throws DataException {
+    public Integer getInt(String columnName) throws DataException {
         try {
             int iValue = resultset.getInt(columnName);
             return resultset.wasNull() ? null : iValue;
@@ -53,7 +53,7 @@ public final class SQLKindResults implements KindResults {
         }
     }
     @Override
-    public Number getDouble(String columnName) throws DataException {
+    public Double getDouble(String columnName) throws DataException {
         try {
             double dValue = resultset.getDouble(columnName);
             return resultset.wasNull() ? null : dValue;
