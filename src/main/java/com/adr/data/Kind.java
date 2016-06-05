@@ -39,7 +39,7 @@ public abstract class Kind {
     public final static Kind TIMESTAMP = new KindTIMESTAMP();
     public final static Kind DATE = new KindDATE();
     public final static Kind TIME = new KindTIME();
-    public final static Kind BYTEA = new KindBYTEA();
+    public final static Kind BYTES = new KindBYTES();
     public final static Kind OBJECT = new KindOBJECT();
     
     public abstract void set(KindParameters write, String name, Object value) throws DataException;
@@ -75,8 +75,8 @@ public abstract class Kind {
             return Kind.DATE;
         } else if ("TIME".equals(kind)) {
             return Kind.TIME;
-        } else if ("BYTEA".equals(kind)) {
-            return Kind.BYTEA;
+        } else if ("BYTES".equals(kind)) {
+            return Kind.BYTES;
         } else if ("OBJECT".equals(kind)) {
             return Kind.OBJECT;            
         } else {
@@ -292,7 +292,7 @@ public abstract class Kind {
         }          
     }
 
-    private static final class KindBYTEA extends Kind {
+    private static final class KindBYTES extends Kind {
         @Override
         public void set(KindParameters write, String name, Object value) throws DataException {
             write.setBytes(name, (byte[]) value);
@@ -316,7 +316,7 @@ public abstract class Kind {
         }         
         @Override
         public String toString() {
-            return "BYTEA";
+            return "BYTES";
         }          
     }
 
