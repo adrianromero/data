@@ -30,7 +30,7 @@ import java.util.Date;
  */
 public abstract class Kind {
 
-    public final static Kind VOID = new KindVOID();
+//    public final static Kind VOID = new KindVOID();
     public final static Kind INT = new KindINT();
     public final static Kind STRING = new KindSTRING();
     public final static Kind DOUBLE = new KindDOUBLE();
@@ -59,9 +59,7 @@ public abstract class Kind {
     private static final DateFormat datetimeISO = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");     
     
     public static final Kind valueOf(String kind) {
-        if ("VOID".equals(kind)) {
-            return Kind.VOID;
-        } else if ("INT".equals(kind)) {
+        if ("INT".equals(kind)) {
             return Kind.INT;
         } else if ("STRING".equals(kind)) {
             return Kind.STRING;
@@ -84,28 +82,6 @@ public abstract class Kind {
         } else {
             throw new RuntimeException("Cannot get Kind for value " + kind);
         }
-    }
-
-    private static final class KindVOID extends Kind {
-        @Override
-        public void set(KindParameters write, String name, Object value) throws DataException {
-        }
-        @Override
-        public Object get(KindResults read, String name) throws DataException {
-            return null;
-        }
-        @Override
-        public String _formatISO(Object value) throws DataException {
-            return "";
-        }
-        @Override
-        public Object _parseISO(String value) throws DataException {          
-            return null;
-        }
-        @Override
-        public String toString() {
-            return "VOID";
-        }       
     }
 
     private static final class KindINT extends Kind {
