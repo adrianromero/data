@@ -22,6 +22,10 @@ import java.math.BigDecimal;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import com.adr.data.Results;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 
 /**
  *
@@ -79,28 +83,37 @@ public final class SQLResults implements Results {
         }
     }
     @Override
-    public java.util.Date getTimestamp(String columnName) throws DataException {
+    public Instant getInstant(String columnName) throws DataException {
         try {
             java.sql.Timestamp ts = resultset.getTimestamp(columnName);
-            return ts == null ? null : new java.util.Date(ts.getTime());
+            return ts == null ? null : ts.toInstant();
         } catch (SQLException ex) {
             throw new DataException(ex);
         }
     }
     @Override
-    public java.util.Date getDate(String columnName) throws DataException {
+    public LocalDateTime getLocalDateTime(String columnName) throws DataException {
+        try {
+            java.sql.Timestamp ts = resultset.getTimestamp(columnName);
+            return ts == null ? null : ts.toLocalDateTime();
+        } catch (SQLException ex) {
+            throw new DataException(ex);
+        }
+    }
+    @Override
+    public LocalDate getLocalDate(String columnName) throws DataException {
         try {
             java.sql.Date da = resultset.getDate(columnName);
-            return da == null ? null : new java.util.Date(da.getTime());
+            return da == null ? null : da.toLocalDate();
         } catch (SQLException ex) {
             throw new DataException(ex);
         }
     }
     @Override
-    public java.util.Date getTime(String columnName) throws DataException {
+    public LocalTime getLocalTime(String columnName) throws DataException {
         try {
             java.sql.Time da = resultset.getTime(columnName);
-            return da == null ? null : new java.util.Date(da.getTime());
+            return da == null ? null : da.toLocalTime();
         } catch (SQLException ex) {
             throw new DataException(ex);
         }

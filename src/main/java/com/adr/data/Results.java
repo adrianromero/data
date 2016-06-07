@@ -18,7 +18,10 @@
 package com.adr.data;
 
 import java.math.BigDecimal;
-import java.util.Date;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 
 /**
  *
@@ -31,9 +34,10 @@ public interface Results {
     public Double getDouble(String columnName) throws DataException;
     public BigDecimal getBigDecimal(String columnName) throws DataException;
     public Boolean getBoolean(String columnName) throws DataException;
-    public Date getTimestamp(String columnName) throws DataException;
-    public Date getDate(String columnName) throws DataException;
-    public Date getTime(String columnName) throws DataException;
+    public Instant getInstant(String columnName) throws DataException;
+    public LocalDateTime getLocalDateTime(String columnName) throws DataException;
+    public LocalDate getLocalDate(String columnName) throws DataException;
+    public LocalTime getLocalTime(String columnName) throws DataException;
     public byte[] getBytes(String columnName) throws DataException;
     public Object getObject(String columnName) throws DataException;
 }

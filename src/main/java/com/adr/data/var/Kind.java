@@ -31,9 +31,10 @@ public enum Kind {
     DOUBLE(VariantDouble::new), 
     DECIMAL(VariantDecimal::new), 
     BOOLEAN(VariantBoolean::new), 
-    TIMESTAMP(VariantTimestamp::new), 
-    DATE(VariantDate::new), 
-    TIME(VariantTime::new),  
+    INSTANT(VariantInstant::new), 
+    LOCALDATETIME(VariantLocalDateTime::new), 
+    LOCALDATE(VariantLocalDate::new), 
+    LOCALTIME(VariantLocalTime::new),  
     BYTES(VariantBytes::new), 
     OBJECT(VariantObject::new);
    

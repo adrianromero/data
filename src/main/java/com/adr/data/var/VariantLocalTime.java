@@ -15,66 +15,60 @@ import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.ZoneId;
 import java.time.ZoneOffset;
-import java.util.Date;
+import java.time.format.DateTimeParseException;
 import java.util.Objects;
 
 /**
  *
  * @author adrian
  */
-public class VariantTime extends Variant {
+public class VariantLocalTime extends Variant {
 
-    public final static LocalDate EPOCHLOCALDATE  = LocalDateTime.ofInstant(Instant.EPOCH, ZoneOffset.UTC).toLocalDate();
-    public final static VariantTime NULL = new VariantTime();
-    
-    private static final DateFormat TIMEISO = new SimpleDateFormat("HH:mm:ss.SSS");
+    public final static VariantLocalTime NULL = new VariantLocalTime();
 
-    private Date value;
+    private LocalTime value;
     
-    public VariantTime(Date value) {
+    public VariantLocalTime(LocalTime value) {
         this.value = value;
     }
     
-    public VariantTime(LocalTime value) {
-        this.value = value == null ? null : Date.from(value.atDate(EPOCHLOCALDATE).toInstant(ZoneOffset.UTC));
-    }
-    
-    protected VariantTime() {
-        this((Date) null);
+    protected VariantLocalTime() {
+        this(null);
     }
 
     @Override
     public Kind getKind() {
-        return Kind.TIME;
+        return Kind.LOCALTIME;
     }
 
     @Override
     public String asISO() throws DataException {
-        return value == null ? null : TIMEISO.format(value);
+        return value == null ? null : value.toString();
     }
     
     @Override
     protected void buildISO(String value) throws DataException {
         try {
-            this.value = value == null || value.equals("") ? null : TIMEISO.parse(value);       
-        } catch (ParseException ex) {
+            this.value = value == null || value.equals("") ? null : LocalTime.parse(value);       
+        } catch (DateTimeParseException ex) {
             throw new DataException(ex);
         }            
     }
     
     @Override
     public void write(Parameters write, String name) throws DataException {
-        write.setTime(name, value);
+        write.setLocalTime(name, value);
     }
 
     @Override
     protected void buildRead(Results read, String name) throws DataException {
-        this.value = read.getTime(name);
+        this.value = read.getLocalTime(name);
     }
     
     @Override
-    public Date asDate() {
+    public LocalTime asLocalTime() {
         return value;
     }
 
@@ -96,7 +90,7 @@ public class VariantTime extends Variant {
         if (getClass() != obj.getClass()) {
             return false;
         }
-        final VariantTime other = (VariantTime) obj;
+        final VariantLocalTime other = (VariantLocalTime) obj;
         return Objects.equals(this.value, other.value);
     }
 }

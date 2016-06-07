@@ -13,8 +13,6 @@ import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.time.ZoneOffset;
-import java.util.Date;
 
 /**
  *
@@ -59,40 +57,20 @@ public abstract class Variant {
         throw new UnsupportedOperationException("Variant cannot be converted to boolean.");
     }
     
-    public Date asDate() {
-        throw new UnsupportedOperationException("Variant cannot be converted to date.");
-    }
-    
     public LocalTime asLocalTime() {
-        Date date = asDate();
-        if (date == null) {
-            return null;
-        }
-        return LocalDateTime.ofInstant(Instant.ofEpochMilli(date.getTime()), ZoneOffset.UTC).toLocalTime();
+        throw new UnsupportedOperationException("Variant cannot be converted to local time.");
     }
     
     public LocalDate asLocalDate() {
-        Date date = asDate();
-        if (date == null) {
-            return null;
-        }
-        return LocalDateTime.ofInstant(Instant.ofEpochMilli(date.getTime()), ZoneOffset.UTC).toLocalDate();
+        throw new UnsupportedOperationException("Variant cannot be converted to local date.");
     }
     
     public LocalDateTime asLocalDateTime() {
-        Date date = asDate();
-        if (date == null) {
-            return null;
-        }
-        return LocalDateTime.ofInstant(Instant.ofEpochMilli(date.getTime()), ZoneOffset.UTC);
+        throw new UnsupportedOperationException("Variant cannot be converted to local date time.");
     }
     
     public Instant asInstant() {
-        Date date = asDate();
-        if (date == null) {
-            return null;
-        }
-        return Instant.ofEpochMilli(date.getTime());
+        throw new UnsupportedOperationException("Variant cannot be converted to instant.");
     }
     
     public byte[] asBytes() {

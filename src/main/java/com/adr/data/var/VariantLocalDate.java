@@ -8,69 +8,59 @@ package com.adr.data.var;
 import com.adr.data.DataException;
 import com.adr.data.Parameters;
 import com.adr.data.Results;
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.time.LocalDate;
-import java.time.ZoneOffset;
-import java.util.Date;
+import java.time.format.DateTimeParseException;
 import java.util.Objects;
 
 /**
  *
  * @author adrian
  */
-public class VariantDate extends Variant {
+public class VariantLocalDate extends Variant {
 
-    public final static VariantDate NULL = new VariantDate();    
-    
-    private static final DateFormat DATEISO = new SimpleDateFormat("yyyy-MM-dd");     
+    public final static VariantLocalDate NULL = new VariantLocalDate();        
 
-    private Date value;
+    private LocalDate value;
     
-    public VariantDate(Date value) {
+    public VariantLocalDate(LocalDate value) {
         this.value = value;
     }
     
-    public VariantDate(LocalDate value) {
-        this.value = value == null ? null : Date.from(value.atStartOfDay().toInstant(ZoneOffset.UTC));
-    }
-    
-    public VariantDate() {
-        this((Date) null);
+    public VariantLocalDate() {
+        this(null);
     }
 
     @Override
     public Kind getKind() {
-        return Kind.DATE;
+        return Kind.LOCALDATE;
     }
 
     @Override
     public String asISO() throws DataException {
-        return value == null ? null : DATEISO.format(value);
+        return value == null ? null : value.toString();
     }
     
     @Override
     protected void buildISO(String value) throws DataException {
         try {
-            this.value = value == null || value.equals("") ? null : DATEISO.parse(value);       
-        } catch (ParseException ex) {
+            this.value = value == null || value.equals("") ? null : LocalDate.parse(value);       
+        } catch (DateTimeParseException ex) {
             throw new DataException(ex);
         }            
     }
     
     @Override
     public void write(Parameters write, String name) throws DataException {
-        write.setDate(name, value);
+        write.setLocalDate(name, value);
     }
 
     @Override
     protected void buildRead(Results read, String name) throws DataException {
-        this.value = read.getDate(name);
+        this.value = read.getLocalDate(name);
     }
     
     @Override
-    public Date asDate() {
+    public LocalDate asLocalDate() {
         return value;
     }
 
@@ -92,7 +82,7 @@ public class VariantDate extends Variant {
         if (getClass() != obj.getClass()) {
             return false;
         }
-        final VariantDate other = (VariantDate) obj;
+        final VariantLocalDate other = (VariantLocalDate) obj;
         return Objects.equals(this.value, other.value);
     }
 }

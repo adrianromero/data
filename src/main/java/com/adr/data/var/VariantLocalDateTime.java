@@ -8,74 +8,59 @@ package com.adr.data.var;
 import com.adr.data.DataException;
 import com.adr.data.Parameters;
 import com.adr.data.Results;
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.time.Instant;
 import java.time.LocalDateTime;
-import java.time.ZoneOffset;
-import java.util.Date;
+import java.time.format.DateTimeParseException;
 import java.util.Objects;
 
 /**
  *
  * @author adrian
  */
-public class VariantTimestamp extends Variant {
+public class VariantLocalDateTime extends Variant {
 
-    public final static VariantTimestamp NULL = new VariantTimestamp();
-    
-    private static final DateFormat DATETIMEISO = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");     
+    public final static VariantLocalDateTime NULL = new VariantLocalDateTime();
 
-    private Date value;
+    private LocalDateTime value;
     
-    public VariantTimestamp(Date value) {
+    public VariantLocalDateTime(LocalDateTime value) {
         this.value = value;
     }
     
-    public VariantTimestamp(LocalDateTime value) {
-        this.value = value == null ? null : Date.from(value.toInstant(ZoneOffset.UTC));
-    }
-    
-    public VariantTimestamp(Instant value) {
-        this.value = value == null ? null : Date.from(value);
-    }
-    
-    protected VariantTimestamp() {
-        this((Date) null);
+    protected VariantLocalDateTime() {
+        this(null);
     }
 
     @Override
     public Kind getKind() {
-        return Kind.TIMESTAMP;
+        return Kind.LOCALDATETIME;
     }
 
     @Override
     public String asISO() throws DataException {
-        return value == null ? null : DATETIMEISO.format(value);
+        return value == null ? null : value.toString();
     }
     
     @Override
     protected void buildISO(String value) throws DataException {
         try {
-            this.value = value == null || value.equals("") ? null : DATETIMEISO.parse(value);       
-        } catch (ParseException ex) {
+            this.value = value == null || value.equals("") ? null : LocalDateTime.parse(value);       
+        } catch (DateTimeParseException ex) {
             throw new DataException(ex);
         }            
     }
     
     @Override
     public void write(Parameters write, String name) throws DataException {
-        write.setTimestamp(name, value);
+        write.setLocalDateTime(name, value);
     }
 
     @Override
     protected void buildRead(Results read, String name) throws DataException {
-        this.value = read.getTimestamp(name);
+        this.value = read.getLocalDateTime(name);
     }
     
     @Override
-    public Date asDate() {
+    public LocalDateTime asLocalDateTime() {
         return value;
     }
 
@@ -97,7 +82,7 @@ public class VariantTimestamp extends Variant {
         if (getClass() != obj.getClass()) {
             return false;
         }
-        final VariantTimestamp other = (VariantTimestamp) obj;
+        final VariantLocalDateTime other = (VariantLocalDateTime) obj;
         return Objects.equals(this.value, other.value);
     }
 }

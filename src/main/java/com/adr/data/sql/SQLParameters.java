@@ -23,6 +23,10 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Types;
 import com.adr.data.Parameters;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 
 /**
  *
@@ -94,27 +98,36 @@ public final class SQLParameters implements Parameters {
     }
 
     @Override
-    public void setTimestamp(String paramName, java.util.Date value) throws DataException {
+    public void setInstant(String paramName, Instant value) throws DataException {
         try {
-            set(paramName, i -> stmt.setObject(i, value == null ? null : new java.sql.Timestamp(value.getTime()), Types.TIMESTAMP));
+            set(paramName, i -> stmt.setObject(i, value == null ? null : java.sql.Timestamp.from(value), Types.TIMESTAMP_WITH_TIMEZONE));
         } catch (SQLException ex) {
             throw new DataException(ex);
         }
     }
 
     @Override
-    public void setDate(String paramName, java.util.Date value) throws DataException {
+    public void setLocalDateTime(String paramName, LocalDateTime value) throws DataException {
+        try {
+            set(paramName, i -> stmt.setObject(i, value == null ? null : java.sql.Timestamp.valueOf(value), Types.TIMESTAMP));
+        } catch (SQLException ex) {
+            throw new DataException(ex);
+        }
+    }
+
+    @Override
+    public void setLocalDate(String paramName, LocalDate value) throws DataException {
         try {     
-            set(paramName, i -> stmt.setObject(i, value == null ? null : new java.sql.Date(value.getTime()), Types.DATE));
+            set(paramName, i -> stmt.setObject(i, value == null ? null : java.sql.Date.valueOf(value), Types.DATE));
         } catch (SQLException ex) {
             throw new DataException(ex);
         }
     }
     
     @Override
-    public void setTime(String paramName, java.util.Date value) throws DataException {
+    public void setLocalTime(String paramName, LocalTime value) throws DataException {
         try {     
-            set(paramName, i -> stmt.setObject(i, value == null ? null : new java.sql.Time(value.getTime()), Types.TIME));
+            set(paramName, i -> stmt.setObject(i, value == null ? null : java.sql.Time.valueOf(value), Types.TIME));
         } catch (SQLException ex) {
             throw new DataException(ex);
         }
