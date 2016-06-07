@@ -11,6 +11,8 @@ import com.adr.data.Results;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.ZoneOffset;
 import java.util.Date;
 import java.util.Objects;
 
@@ -20,7 +22,7 @@ import java.util.Objects;
  */
 public class VariantDate extends Variant {
 
-    public final static VariantDate NULL = new VariantDate(null);    
+    public final static VariantDate NULL = new VariantDate();    
     
     private static final DateFormat DATEISO = new SimpleDateFormat("yyyy-MM-dd");     
 
@@ -30,8 +32,12 @@ public class VariantDate extends Variant {
         this.value = value;
     }
     
+    public VariantDate(LocalDate value) {
+        this.value = value == null ? null : Date.from(value.atStartOfDay().toInstant(ZoneOffset.UTC));
+    }
+    
     public VariantDate() {
-        this(null);
+        this((Date) null);
     }
 
     @Override

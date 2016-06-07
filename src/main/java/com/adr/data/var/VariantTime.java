@@ -11,6 +11,11 @@ import com.adr.data.Results;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.ZoneOffset;
 import java.util.Date;
 import java.util.Objects;
 
@@ -20,7 +25,8 @@ import java.util.Objects;
  */
 public class VariantTime extends Variant {
 
-    public final static VariantTime NULL = new VariantTime(null);
+    public final static LocalDate EPOCHLOCALDATE  = LocalDateTime.ofInstant(Instant.EPOCH, ZoneOffset.UTC).toLocalDate();
+    public final static VariantTime NULL = new VariantTime();
     
     private static final DateFormat TIMEISO = new SimpleDateFormat("HH:mm:ss.SSS");
 
@@ -30,8 +36,12 @@ public class VariantTime extends Variant {
         this.value = value;
     }
     
+    public VariantTime(LocalTime value) {
+        this.value = value == null ? null : Date.from(value.atDate(EPOCHLOCALDATE).toInstant(ZoneOffset.UTC));
+    }
+    
     protected VariantTime() {
-        this(null);
+        this((Date) null);
     }
 
     @Override

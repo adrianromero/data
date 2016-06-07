@@ -9,6 +9,11 @@ import com.adr.data.DataException;
 import com.adr.data.Parameters;
 import com.adr.data.Results;
 import java.math.BigDecimal;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.ZoneOffset;
 import java.util.Date;
 
 /**
@@ -56,6 +61,38 @@ public abstract class Variant {
     
     public Date asDate() {
         throw new UnsupportedOperationException("Variant cannot be converted to date.");
+    }
+    
+    public LocalTime asLocalTime() {
+        Date date = asDate();
+        if (date == null) {
+            return null;
+        }
+        return LocalDateTime.ofInstant(Instant.ofEpochMilli(date.getTime()), ZoneOffset.UTC).toLocalTime();
+    }
+    
+    public LocalDate asLocalDate() {
+        Date date = asDate();
+        if (date == null) {
+            return null;
+        }
+        return LocalDateTime.ofInstant(Instant.ofEpochMilli(date.getTime()), ZoneOffset.UTC).toLocalDate();
+    }
+    
+    public LocalDateTime asLocalDateTime() {
+        Date date = asDate();
+        if (date == null) {
+            return null;
+        }
+        return LocalDateTime.ofInstant(Instant.ofEpochMilli(date.getTime()), ZoneOffset.UTC);
+    }
+    
+    public Instant asInstant() {
+        Date date = asDate();
+        if (date == null) {
+            return null;
+        }
+        return Instant.ofEpochMilli(date.getTime());
     }
     
     public byte[] asBytes() {

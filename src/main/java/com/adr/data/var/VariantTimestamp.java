@@ -11,6 +11,9 @@ import com.adr.data.Results;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.util.Date;
 import java.util.Objects;
 
@@ -20,7 +23,7 @@ import java.util.Objects;
  */
 public class VariantTimestamp extends Variant {
 
-    public final static VariantTimestamp NULL = new VariantTimestamp(null);
+    public final static VariantTimestamp NULL = new VariantTimestamp();
     
     private static final DateFormat DATETIMEISO = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");     
 
@@ -30,8 +33,16 @@ public class VariantTimestamp extends Variant {
         this.value = value;
     }
     
+    public VariantTimestamp(LocalDateTime value) {
+        this.value = value == null ? null : Date.from(value.toInstant(ZoneOffset.UTC));
+    }
+    
+    public VariantTimestamp(Instant value) {
+        this.value = value == null ? null : Date.from(value);
+    }
+    
     protected VariantTimestamp() {
-        this(null);
+        this((Date) null);
     }
 
     @Override
