@@ -18,20 +18,20 @@
 package com.adr.data.sql;
 
 import com.adr.data.DataException;
-import com.adr.data.KindResults;
 import java.math.BigDecimal;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import com.adr.data.Results;
 
 /**
  *
  * @author adrian
  */
-public final class SQLKindResults implements KindResults {
+public final class SQLResults implements Results {
     
     private final ResultSet resultset;
     
-    public SQLKindResults(ResultSet resultset) {
+    public SQLResults(ResultSet resultset) {
         this.resultset = resultset;
     }
     

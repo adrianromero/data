@@ -19,12 +19,13 @@ package com.adr.data.sql;
 
 import com.adr.data.DataException;
 import com.adr.data.DataList;
-import com.adr.data.Kind;
+import com.adr.data.var.Kind;
 import com.adr.data.Record;
 import com.adr.data.RecordMap;
 import com.adr.data.Values;
 import com.adr.data.ValuesEntry;
 import com.adr.data.ValuesMap;
+import com.adr.data.var.Variant;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -57,7 +58,7 @@ public abstract class Sentence {
     
     public static int execute(Connection c, CommandSQL command, Record keyval) throws DataException {
         try (PreparedStatement stmt = c.prepareStatement(command.getCommand())) {
-            SQLKindParameters kindparams = new SQLKindParameters(stmt, command.getParamNames());
+            SQLParameters kindparams = new SQLParameters(stmt, command.getParamNames());
             write(kindparams, keyval.getKey());
             write(kindparams, keyval.getValue());
             return stmt.executeUpdate();
@@ -68,13 +69,13 @@ public abstract class Sentence {
     
     public static DataList query(Connection c, CommandSQL command, Record filter) throws DataException {
         try (PreparedStatement stmt = c.prepareStatement(command.getCommand())) {
-            SQLKindParameters kindparams = new SQLKindParameters(stmt, command.getParamNames());
+            SQLParameters kindparams = new SQLParameters(stmt, command.getParamNames());
             write(kindparams, filter.getKey());
             write(kindparams, filter.getValue());
 
             try (ResultSet resultset = stmt.executeQuery()) {
                 List<RecordMap> r = new ArrayList<>();
-                SQLKindResults kindresults = new SQLKindResults(resultset);
+                SQLResults kindresults = new SQLResults(resultset);
                 while (resultset.next()) {
                     r.add(new RecordMap(
                         read(kindresults, filter.getKey()), 
@@ -89,13 +90,13 @@ public abstract class Sentence {
     
     public static Record find(Connection c, CommandSQL command, Record filter) throws DataException {
         try (PreparedStatement stmt = c.prepareStatement(command.getCommand())) {
-            SQLKindParameters kindparams = new SQLKindParameters(stmt, command.getParamNames());
+            SQLParameters kindparams = new SQLParameters(stmt, command.getParamNames());
             write(kindparams, filter.getKey());
             write(kindparams, filter.getValue());
 
             try (ResultSet resultset = stmt.executeQuery()) {
                 List<RecordMap> r = new ArrayList<>();
-                SQLKindResults kindresults = new SQLKindResults(resultset);
+                SQLResults kindresults = new SQLResults(resultset);
                 if (resultset.next()) {
                     return new RecordMap(
                         read(kindresults, filter.getKey()), 
@@ -109,27 +110,27 @@ public abstract class Sentence {
         }
     }
     
-    private static void write(SQLKindParameters kindparams, Values param) throws DataException {
+    private static void write(SQLParameters kindparams, Values param) throws DataException {
         if (param == null) {
             return;
         }
         for (String name : param.getNames()) {
-            param.getKind(name).set(kindparams, name, param.getValue(name));
+            param.getValue(name).write(kindparams, name);
         }
     } 
     
-    private static ValuesMap read(SQLKindResults kindresults, Values param) throws DataException {
-
+    private static ValuesMap read(SQLResults kindresults, Values param) throws DataException {
         if (param == null) {
             return new ValuesMap();
         }
         List<ValuesEntry> l = new ArrayList<>();
         for (String name : param.getNames()) {
+            Variant p = param.getValue(name);
             if ("_ENTITY".equals(name)) {
-                l.add(new ValuesEntry(name, param.getKind(name), param.getValue(name)));
+                l.add(new ValuesEntry(name, p));
             } else if (!name.contains("::")) { // Is a field
-                Kind k = param.getKind(name);
-                l.add(new ValuesEntry(name, k, k.get(kindresults, name)));
+                Variant  newv = p.getKind().buildRead(kindresults, name);
+                l.add(new ValuesEntry(name, newv));
             }
         }
         return new ValuesMap(l);

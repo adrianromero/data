@@ -17,12 +17,13 @@
 
 package com.adr.data;
 
+import com.adr.data.var.Variant;
+
 /**
  *
  * @author adrian
  */
 public interface Values {
     public String [] getNames();   
-    public Object getValue(String name);   
-    public Kind getKind(String name);
+    public Variant getValue(String name);   
 }

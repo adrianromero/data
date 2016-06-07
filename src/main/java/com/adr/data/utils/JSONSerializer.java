@@ -19,12 +19,13 @@ package com.adr.data.utils;
 
 import com.adr.data.DataException;
 import com.adr.data.DataList;
-import com.adr.data.Kind;
+import com.adr.data.var.Kind;
 import com.adr.data.Record;
 import com.adr.data.RecordMap;
 import com.adr.data.Values;
 import com.adr.data.ValuesEntry;
 import com.adr.data.ValuesMap;
+import com.adr.data.var.Variant;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
@@ -131,18 +132,18 @@ public class JSONSerializer {
     private ValuesEntry fromJSONValuesEntry(JsonElement element) {
         JsonObject o = element.getAsJsonObject();
         Kind k = Kind.valueOf(o.get("kind").getAsString());
-        Object v;
+        String iso;
         JsonElement jvalue = o.get("value");
         if (jvalue == null || jvalue.equals(JsonNull.INSTANCE)) {
-            v = null;
+            iso = null;
         } else {
-            try {
-                v = k.parseISO(jvalue.getAsString());
-            } catch (DataException ex) {
-                v = null;
-            }
+            iso = jvalue.getAsString();
         }
-        return new ValuesEntry(o.get("name").getAsString(), k, v);
+        try {
+            return new ValuesEntry(o.get("name").getAsString(), k.buildISO(iso));
+        } catch (DataException ex) {
+            throw new IllegalArgumentException(ex);
+        }
     }
 
     public String toJSON(EnvelopeRequest obj) {
@@ -194,12 +195,13 @@ public class JSONSerializer {
         JsonArray array = new JsonArray();
         for (String name : obj.getNames()) {
             JsonObject entry = new JsonObject();
+            Variant v = obj.getValue(name);
             entry.addProperty("name", name);
-            entry.addProperty("kind", obj.getKind(name).toString());
+            entry.addProperty("kind", v.toString());
             try {
-                entry.addProperty("value", obj.getKind(name).formatISO(obj.getValue(name)));
+                entry.addProperty("value", v.asISO());
             } catch (DataException ex) {
-                entry.add("value", JsonNull.INSTANCE);
+                throw new IllegalArgumentException(ex);
             }
             array.add(entry);
         }
@@ -232,15 +234,16 @@ public class JSONSerializer {
         return r;
     }
 
-    private void populateValues(JsonObject r, Values v) {
-        if (v == null) {
+    private void populateValues(JsonObject r, Values obj) {
+        if (obj == null) {
             return;
         }
-        for (String name : v.getNames()) {
+        for (String name : obj.getNames()) {
+            Variant v = obj.getValue(name);
             try {
-                r.addProperty(name, v.getKind(name).formatISO(v.getValue(name)));
+                r.addProperty(name, v.asISO());
             } catch (DataException ex) {
-                r.add(name, JsonNull.INSTANCE);
+                throw new IllegalArgumentException(ex);
             }
         }
     }

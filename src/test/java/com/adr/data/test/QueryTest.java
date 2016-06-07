@@ -18,12 +18,14 @@
 package com.adr.data.test;
 
 import com.adr.data.DataException;
-import com.adr.data.Kind;
+import com.adr.data.var.Kind;
 import com.adr.data.QueryLink;
 import com.adr.data.RecordMap;
 import com.adr.data.utils.JSONSerializer;
 import com.adr.data.ValuesMap;
 import com.adr.data.ValuesEntry;
+import com.adr.data.var.VariantBoolean;
+import com.adr.data.var.VariantString;
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
@@ -57,19 +59,19 @@ public class QueryTest {
                 link.query(new RecordMap(
                     new ValuesMap(
                         new ValuesEntry("_ENTITY", "user"),
-                        new ValuesEntry("id", "admin")),
+                        new ValuesEntry("id", new VariantString("admin"))),
                     new ValuesMap(
-                        new ValuesEntry("name", Kind.STRING),
-                        new ValuesEntry("codecard", Kind.STRING))))));
+                        new ValuesEntry("name", VariantString.NULL),
+                        new ValuesEntry("codecard", VariantString.NULL))))));
         
         System.out.println(JSONSerializer.INSTANCE.toSimpleJSON(
                 link.query(new RecordMap(
                     new ValuesMap(
                         new ValuesEntry("_ENTITY", "user"),
-                        new ValuesEntry("id", Kind.STRING)),
+                        new ValuesEntry("id", VariantString.NULL)),
                     new ValuesMap(
-                        new ValuesEntry("name", Kind.STRING),
-                        new ValuesEntry("codecard", Kind.STRING))))));
+                        new ValuesEntry("name", VariantString.NULL),
+                        new ValuesEntry("codecard", VariantString.NULL))))));
 
         System.out.println(JSONSerializer.INSTANCE.toSimpleJSON(
                 link.find(new RecordMap(
@@ -77,26 +79,26 @@ public class QueryTest {
                         new ValuesEntry("_ENTITY", "user"),
                         new ValuesEntry("id", "manager")),
                     new ValuesMap(
-                        new ValuesEntry("name", Kind.STRING),
-                        new ValuesEntry("visible", Kind.BOOLEAN),
-                        new ValuesEntry("codecard", Kind.STRING))))));
+                        new ValuesEntry("name", VariantString.NULL),
+                        new ValuesEntry("visible", VariantBoolean.NULL),
+                        new ValuesEntry("codecard", VariantString.NULL))))));
         System.out.println(JSONSerializer.INSTANCE.toSimpleJSON(
                 link.query(new RecordMap(
                     new ValuesMap(
                         new ValuesEntry("_ENTITY", "permission_subject"),
-                        new ValuesEntry("id", Kind.STRING)),
+                        new ValuesEntry("id")),
                     new ValuesMap(
-                        new ValuesEntry("role_id", Kind.STRING),
-                        new ValuesEntry("subject_name", Kind.STRING),
-                        new ValuesEntry("subject_code", Kind.STRING))))));
+                        new ValuesEntry("role_id"),
+                        new ValuesEntry("subject_name"),
+                        new ValuesEntry("subject_code"))))));
         System.out.println(JSONSerializer.INSTANCE.toSimpleJSON(
                 link.query(new RecordMap(
                     new ValuesMap(
                         new ValuesEntry("_ENTITY", "subject_byrole"),
                         new ValuesEntry("role_id::PARAM", "m")),
                     new ValuesMap(
-                        new ValuesEntry("code", Kind.STRING),
-                        new ValuesEntry("name", Kind.STRING))))));
+                        new ValuesEntry("code"),
+                        new ValuesEntry("name"))))));
         System.out.println(JSONSerializer.INSTANCE.toSimpleJSON(
                 link.query(new RecordMap(
                     new ValuesMap(

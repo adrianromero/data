@@ -17,6 +17,7 @@
 
 package com.adr.data;
 
+import com.adr.data.var.Variant;
 import java.util.Collection;
 import java.util.Map;
 import java.util.function.Function;
@@ -49,12 +50,7 @@ public class ValuesMap implements Values {
     }
 
     @Override
-    public Object getValue(String name) {
+    public Variant getValue(String name) {
         return entries.get(name).getValue();
-    }
-
-    @Override
-    public Kind getKind(String name) {
-        return entries.get(name).getKind();
     }
 }

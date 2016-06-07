@@ -18,22 +18,22 @@
 package com.adr.data.sql;
 
 import com.adr.data.DataException;
-import com.adr.data.KindParameters;
 import java.math.BigDecimal;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Types;
+import com.adr.data.Parameters;
 
 /**
  *
  * @author adrian
  */
-public final class SQLKindParameters implements KindParameters {
+public final class SQLParameters implements Parameters {
 
     private final String[] params;
     private final PreparedStatement stmt;
 
-    public SQLKindParameters(PreparedStatement stmt, String[] params) {
+    public SQLParameters(PreparedStatement stmt, String[] params) {
         this.stmt = stmt;
         this.params = params;
     }

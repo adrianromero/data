@@ -20,9 +20,10 @@ package com.adr.data.test;
 import com.adr.data.DataList;
 import com.adr.data.utils.JSONSerializer;
 import com.adr.data.RecordMap;
-import com.adr.data.Kind;
+import com.adr.data.var.Kind;
 import com.adr.data.ValuesMap;
 import com.adr.data.ValuesEntry;
+import com.adr.data.var.VariantString;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -61,22 +62,22 @@ public class GSONTests {
  
         RecordMap keval = new RecordMap(     
             new ValuesMap(
-                    new ValuesEntry("id", Kind.STRING, "1")),
+                    new ValuesEntry("id", new VariantString("1"))),
             new ValuesMap(
-                    new ValuesEntry("field", Kind.STRING, "pepeluis"),
-                    new ValuesEntry("value", Kind.STRING)));
+                    new ValuesEntry("field", new VariantString("pepeluis")),
+                    new ValuesEntry("value", VariantString.NULL)));
 
         DataList dl = new DataList(
             new RecordMap(     
                 new ValuesMap(
-                        new ValuesEntry("id", Kind.STRING, "1")),
+                        new ValuesEntry("id", "1")),
                 new ValuesMap(
-                        new ValuesEntry("field", Kind.STRING, "pepeluis"))),                
+                        new ValuesEntry("field", "pepeluis"))),                
             new RecordMap(     
                 new ValuesMap(
-                        new ValuesEntry("id", Kind.STRING, "2")),
+                        new ValuesEntry("id", "2")),
                 new ValuesMap(
-                        new ValuesEntry("field", Kind.STRING, "hilario"))));
+                        new ValuesEntry("field", "hilario"))));
         
         System.out.println(JSONSerializer.INSTANCE.toJSON(keval));  
         System.out.println(JSONSerializer.INSTANCE.toJSON(JSONSerializer.INSTANCE.fromJSONRecord(JSONSerializer.INSTANCE.toJSON(keval))));

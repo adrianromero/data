@@ -24,16 +24,16 @@ import java.util.Date;
  *
  * @author  adrian
  */
-public interface KindResults {
+public interface Parameters {
 
-    public String getString(String columnName) throws DataException;
-    public Integer getInt(String columnName) throws DataException;
-    public Double getDouble(String columnName) throws DataException;
-    public BigDecimal getBigDecimal(String columnName) throws DataException;
-    public Boolean getBoolean(String columnName) throws DataException;
-    public Date getTimestamp(String columnName) throws DataException;
-    public Date getDate(String columnName) throws DataException;
-    public Date getTime(String columnName) throws DataException;
-    public byte[] getBytes(String columnName) throws DataException;
-    public Object getObject(String columnName) throws DataException;
+    public void setString(String name, String value) throws DataException;
+    public void setInt(String name, Integer value) throws DataException;
+    public void setDouble(String name, Double value) throws DataException;
+    public void setBigDecimal(String name, BigDecimal value) throws DataException;
+    public void setBoolean(String name, Boolean value) throws DataException;
+    public void setTimestamp(String name, Date value) throws DataException;
+    public void setDate(String name, Date value) throws DataException;
+    public void setTime(String name, Date value) throws DataException;
+    public void setBytes(String name, byte[] value) throws DataException;
+    public void setObject(String name, Object value) throws DataException;
 }

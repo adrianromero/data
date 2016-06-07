@@ -17,46 +17,54 @@
 
 package com.adr.data;
 
+import com.adr.data.var.VariantString;
+import com.adr.data.var.Variant;
+import com.adr.data.var.VariantBoolean;
+import com.adr.data.var.VariantDouble;
+import com.adr.data.var.VariantInt;
+
 /**
  *
  * @author adrian
  */
 public class ValuesEntry {
     private String name;
-    private Kind kind;
-    private Object value;
+    private Variant value;
     
     public ValuesEntry(String name) {
-        this(name, Kind.STRING, null);
+        this(name, VariantString.NULL);
     }
     
     public ValuesEntry(String name, String value) {
-        this(name, Kind.STRING, value);
+        this(name, new VariantString(value));
     }
     
-    public ValuesEntry(String name, Kind kind) {
-        this(name, kind, null);
+    public ValuesEntry(String name, Integer value) {
+        this(name, new VariantInt(value));
     }
     
-    public ValuesEntry(String name, Kind kind, Object value) {
+    public ValuesEntry(String name, Boolean value) {
+        this(name, new VariantBoolean(value));
+    }
+    
+    public ValuesEntry(String name, Double value) {
+        this(name, new VariantDouble(value));
+    }
+    
+    public ValuesEntry(String name, Variant value) {
         this.name = name;
         this.value = value;
-        this.kind = kind;
     }
 
     public String getName() {
         return name;
     }
 
-    public Kind getKind() {
-        return kind;
-    }
-
-    public Object getValue() {
+    public Variant getValue() {
         return value;
     }
 
-    public void setValue(Object value) {
+    public void setValue(Variant value) {
         this.value = value;
     } 
 }
