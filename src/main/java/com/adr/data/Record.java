@@ -17,12 +17,6 @@
 
 package com.adr.data;
 
-import java.math.BigDecimal;
-import java.time.Instant;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
-
 /**
  *
  * @author adrian
@@ -49,6 +43,5 @@ public interface Record {
     
     public default byte[] getBytes(String name) {
         return getValue().get(name).asBytes();
-    }
-        
+    }        
 }

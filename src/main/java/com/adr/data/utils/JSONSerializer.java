@@ -110,7 +110,7 @@ public class JSONSerializer {
         return fromJSONRecord(gsonparser.parse(json));
     }
 
-    private RecordMap fromJSONRecord(JsonElement element) {
+    public RecordMap fromJSONRecord(JsonElement element) {
         if (element == null || element.equals(JsonNull.INSTANCE)) {
             return null;
         }
