@@ -59,6 +59,11 @@ public class VariantBytes extends Variant {
     }
     
     @Override
+    public boolean isNull() {
+        return value == null;
+    }
+    
+    @Override
     public byte[] asBytes() {
         return value;
     }

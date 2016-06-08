@@ -30,7 +30,7 @@ import java.util.stream.Stream;
  */
 public class ValuesMap implements Values {
 
-    private final Map<String, ValuesEntry> entries;
+    private final Map<String, Variant> entries;
 
     public ValuesMap(ValuesEntry... entries) {
         this(Stream.of(entries));
@@ -41,7 +41,7 @@ public class ValuesMap implements Values {
     }
 
     public ValuesMap(Stream<ValuesEntry> entries) {
-        this.entries = entries.collect(Collectors.toMap(ValuesEntry::getName, Function.identity()));
+        this.entries = entries.collect(Collectors.toMap(ValuesEntry::getName, ValuesEntry::getValue));
     }
 
     @Override
@@ -51,6 +51,6 @@ public class ValuesMap implements Values {
 
     @Override
     public Variant getValue(String name) {
-        return entries.get(name).getValue();
+        return entries.get(name);
     }
 }

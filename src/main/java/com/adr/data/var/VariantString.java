@@ -54,6 +54,11 @@ public class VariantString extends Variant {
     }
     
     @Override
+    public boolean isNull() {
+        return value == null;
+    }
+    
+    @Override
     public String asString() {
         return value;
     }

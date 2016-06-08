@@ -58,8 +58,13 @@ public class VariantInstant extends Variant {
     @Override
     protected void buildRead(Results read, String name) throws DataException {
         this.value = read.getInstant(name);
-    }
     
+    }
+    @Override
+    public boolean isNull() {
+        return value == null;
+    }
+      
     @Override
     public Instant asInstant() {
         return value;

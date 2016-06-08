@@ -60,6 +60,11 @@ public class VariantLocalDate extends Variant {
     }
     
     @Override
+    public boolean isNull() {
+        return value == null;
+    }
+    
+    @Override
     public LocalDate asLocalDate() {
         return value;
     }

@@ -29,6 +29,8 @@ public abstract class Variant {
 
     public abstract void write(Parameters write, String name) throws DataException;
 
+    public abstract boolean isNull();
+    
     public String asString() {
         throw new UnsupportedOperationException("Variant cannot be converted to string.");
     }

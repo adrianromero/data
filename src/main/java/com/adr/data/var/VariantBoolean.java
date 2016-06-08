@@ -56,6 +56,11 @@ public class VariantBoolean extends Variant {
     }
     
     @Override
+    public boolean isNull() {
+        return value == null;
+    }
+    
+    @Override
     public Boolean asBoolean() {
         return value;
     }

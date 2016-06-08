@@ -59,6 +59,11 @@ public class VariantDouble extends Variant {
     }
     
     @Override
+    public boolean isNull() {
+        return value == null;
+    }
+    
+    @Override
     public Number asNumber() {
         return value;
     }

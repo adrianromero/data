@@ -58,10 +58,14 @@ public class VariantInt extends Variant {
     }
     
     @Override
+    public boolean isNull() {
+        return value == null;
+    }
+    
+    @Override
     public Number asNumber() {
         return value;
     }
-
 
     @Override
     public int hashCode() {

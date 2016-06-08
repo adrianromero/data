@@ -18,13 +18,14 @@
 package com.adr.data.test;
 
 import com.adr.data.DataException;
-import com.adr.data.var.Kind;
 import com.adr.data.QueryLink;
+import com.adr.data.Record;
 import com.adr.data.RecordMap;
 import com.adr.data.utils.JSONSerializer;
 import com.adr.data.ValuesMap;
 import com.adr.data.ValuesEntry;
 import com.adr.data.var.VariantBoolean;
+import com.adr.data.var.VariantBytes;
 import com.adr.data.var.VariantString;
 import org.junit.AfterClass;
 import org.junit.Assert;
@@ -58,7 +59,7 @@ public class QueryTest {
         System.out.println(JSONSerializer.INSTANCE.toSimpleJSON(
                 link.query(new RecordMap(
                     new ValuesMap(
-                        new ValuesEntry("_ENTITY", "user"),
+                        new ValuesEntry("_ENTITY", "username"),
                         new ValuesEntry("id", new VariantString("admin"))),
                     new ValuesMap(
                         new ValuesEntry("name", VariantString.NULL),
@@ -67,7 +68,7 @@ public class QueryTest {
         System.out.println(JSONSerializer.INSTANCE.toSimpleJSON(
                 link.query(new RecordMap(
                     new ValuesMap(
-                        new ValuesEntry("_ENTITY", "user"),
+                        new ValuesEntry("_ENTITY", "username"),
                         new ValuesEntry("id", VariantString.NULL)),
                     new ValuesMap(
                         new ValuesEntry("name", VariantString.NULL),
@@ -76,7 +77,7 @@ public class QueryTest {
         System.out.println(JSONSerializer.INSTANCE.toSimpleJSON(
                 link.find(new RecordMap(
                     new ValuesMap(
-                        new ValuesEntry("_ENTITY", "user"),
+                        new ValuesEntry("_ENTITY", "username"),
                         new ValuesEntry("id", "manager")),
                     new ValuesMap(
                         new ValuesEntry("name", VariantString.NULL),
@@ -106,7 +107,17 @@ public class QueryTest {
                         new ValuesEntry("id")),
                     new ValuesMap(
                         new ValuesEntry("name::LIKE", "%o%"),
-                        new ValuesEntry("name"))))));                    
+                        new ValuesEntry("name"))))));   
+              
+        System.out.println(JSONSerializer.INSTANCE.toSimpleJSON(
+                link.query(new RecordMap(
+                    new ValuesMap(
+                        new ValuesEntry("_ENTITY", "username_visible"),
+                        new ValuesEntry("id")),
+                    new ValuesMap(
+                        new ValuesEntry("name"),
+                        new ValuesEntry("displayname"),
+                        new ValuesEntry("image", VariantBytes.NULL))))));
                     
 //                    also create a query ::LIKE because the write() will have to remove the :: 
         Assert.assertEquals("1 + 1 = 2", 2, 1 + 1);

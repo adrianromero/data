@@ -64,6 +64,11 @@ public class VariantObject extends Variant {
     }
     
     @Override
+    public boolean isNull() {
+        return value == null;
+    }
+    
+    @Override
     public Object asObject() {
         return value;
     }

@@ -19,7 +19,6 @@ package com.adr.data.sql;
 
 import com.adr.data.DataException;
 import com.adr.data.DataList;
-import com.adr.data.var.Kind;
 import com.adr.data.Record;
 import com.adr.data.RecordMap;
 import com.adr.data.Values;
@@ -53,7 +52,7 @@ public abstract class Sentence {
     }
     
     public static String getEntity(Record keyval) {
-        return keyval.getKey().getValue("_ENTITY").toString();
+        return keyval.getKey().getValue("_ENTITY").asString();
     }  
     
     public static int execute(Connection c, CommandSQL command, Record keyval) throws DataException {

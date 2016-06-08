@@ -68,6 +68,11 @@ public class VariantLocalTime extends Variant {
     }
     
     @Override
+    public boolean isNull() {
+        return value == null;
+    }
+    
+    @Override
     public LocalTime asLocalTime() {
         return value;
     }
