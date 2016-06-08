@@ -52,7 +52,7 @@ public abstract class Sentence {
     }
     
     public static String getEntity(Record keyval) {
-        return keyval.getKey().getValue("_ENTITY").asString();
+        return keyval.getKey().get("_ENTITY").asString();
     }  
     
     public static int execute(Connection c, CommandSQL command, Record keyval) throws DataException {
@@ -114,7 +114,7 @@ public abstract class Sentence {
             return;
         }
         for (String name : param.getNames()) {
-            param.getValue(name).write(kindparams, name);
+            param.get(name).write(kindparams, name);
         }
     } 
     
@@ -124,7 +124,7 @@ public abstract class Sentence {
         }
         List<ValuesEntry> l = new ArrayList<>();
         for (String name : param.getNames()) {
-            Variant p = param.getValue(name);
+            Variant p = param.get(name);
             if ("_ENTITY".equals(name)) {
                 l.add(new ValuesEntry(name, p));
             } else if (!name.contains("::")) { // Is a field

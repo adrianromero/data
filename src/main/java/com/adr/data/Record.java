@@ -17,6 +17,12 @@
 
 package com.adr.data;
 
+import java.math.BigDecimal;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+
 /**
  *
  * @author adrian
@@ -24,4 +30,25 @@ package com.adr.data;
 public interface Record {
     public Values getKey();
     public Values getValue();
+    
+    public default String getString(String name) {
+        return getValue().get(name).asString();    
+    }
+    
+    public default int getInteger(String name) {
+        return getValue().get(name).asInteger(); 
+    }
+    
+    public default double getDouble(String name) {
+        return getValue().get(name).asDouble();
+    }    
+    
+    public default Boolean getBoolean(String name) {
+        return getValue().get(name).asBoolean();
+    }
+    
+    public default byte[] getBytes(String name) {
+        return getValue().get(name).asBytes();
+    }
+        
 }

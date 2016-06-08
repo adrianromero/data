@@ -195,7 +195,7 @@ public class JSONSerializer {
         JsonArray array = new JsonArray();
         for (String name : obj.getNames()) {
             JsonObject entry = new JsonObject();
-            Variant v = obj.getValue(name);
+            Variant v = obj.get(name);
             entry.addProperty("name", name);
             entry.addProperty("kind", v.toString());
             try {
@@ -239,7 +239,7 @@ public class JSONSerializer {
             return;
         }
         for (String name : obj.getNames()) {
-            Variant v = obj.getValue(name);
+            Variant v = obj.get(name);
             try {
                 r.addProperty(name, v.asISO());
             } catch (DataException ex) {

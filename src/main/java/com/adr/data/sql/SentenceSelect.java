@@ -87,7 +87,7 @@ public abstract class SentenceSelect extends SentenceQRY {
                 sqlsent.append(realname);
             }
             // FILTER
-            if (!v.getValue(n).isNull()) {
+            if (!v.get(n).isNull()) {
                 if (commafilter) {
                     sqlfilter.append(" AND ");
                 } else {

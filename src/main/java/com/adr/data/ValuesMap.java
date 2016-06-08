@@ -50,7 +50,7 @@ public class ValuesMap implements Values {
     }
 
     @Override
-    public Variant getValue(String name) {
+    public Variant get(String name) {
         return entries.get(name);
     }
 }

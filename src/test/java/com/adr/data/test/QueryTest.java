@@ -19,7 +19,6 @@ package com.adr.data.test;
 
 import com.adr.data.DataException;
 import com.adr.data.QueryLink;
-import com.adr.data.Record;
 import com.adr.data.RecordMap;
 import com.adr.data.utils.JSONSerializer;
 import com.adr.data.ValuesMap;

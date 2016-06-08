@@ -25,5 +25,5 @@ import com.adr.data.var.Variant;
  */
 public interface Values {
     public String [] getNames();   
-    public Variant getValue(String name);   
+    public Variant get(String name);   
 }
