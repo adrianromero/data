@@ -20,7 +20,6 @@ package com.adr.data;
 import com.adr.data.var.Variant;
 import java.util.Collection;
 import java.util.Map;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
