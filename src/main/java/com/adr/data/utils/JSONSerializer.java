@@ -197,7 +197,7 @@ public class JSONSerializer {
             JsonObject entry = new JsonObject();
             Variant v = obj.get(name);
             entry.addProperty("name", name);
-            entry.addProperty("kind", v.toString());
+            entry.addProperty("kind", v.getKind().toString());
             try {
                 entry.addProperty("value", v.asISO());
             } catch (DataException ex) {

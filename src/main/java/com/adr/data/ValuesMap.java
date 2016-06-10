@@ -52,4 +52,8 @@ public class ValuesMap implements Values {
     public Variant get(String name) {
         return entries.get(name);
     }
+    @Override
+    public void set(String name, Variant v) {
+        entries.put(name, v);
+    }
 }

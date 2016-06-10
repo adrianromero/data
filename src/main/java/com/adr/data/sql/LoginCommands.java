@@ -43,7 +43,7 @@ public class LoginCommands {
 
     public final static Sentence[] COMMANDS = new Sentence[]{
         new SentenceCommand(
-        "username_save",
+        "username_byname",
         "update username set displayname = ?, password = ?, visible = ?, image = ? where id = ?",
         "displayname", "password", "visible", "image", "id")
     };

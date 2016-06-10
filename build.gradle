@@ -30,7 +30,7 @@ apply plugin: 'maven'
 
 
 group = 'com.github.adrianromero'
-version = '1.0.7'
+version = '1.0.10'
 
 description = """"""
 
