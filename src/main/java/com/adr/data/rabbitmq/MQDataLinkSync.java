@@ -19,7 +19,7 @@ package com.adr.data.rabbitmq;
 
 import com.adr.data.DataException;
 import com.adr.data.DataLink;
-import com.adr.data.DataList;
+import com.adr.data.Record;
 import com.adr.data.utils.EnvelopeResponse;
 import com.adr.data.utils.JSONSerializer;
 import com.adr.data.utils.RequestExecute;
@@ -28,6 +28,7 @@ import com.rabbitmq.client.RpcClient;
 import com.rabbitmq.client.ShutdownSignalException;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.util.List;
 import java.util.concurrent.TimeoutException;
 
 /**
@@ -52,7 +53,7 @@ public class MQDataLinkSync implements DataLink {
     }
 
     @Override
-    public void execute(DataList l) throws DataException {
+    public void execute(List<Record> l) throws DataException {
         
         try {
             byte[] request = JSONSerializer.INSTANCE.toJSON(new RequestExecute(l)).getBytes("UTF-8");

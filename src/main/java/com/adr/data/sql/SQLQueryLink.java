@@ -18,12 +18,12 @@
 package com.adr.data.sql;
 
 import com.adr.data.DataException;
-import com.adr.data.DataList;
 import com.adr.data.QueryLink;
 import com.adr.data.Record;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import javax.sql.DataSource;
 
@@ -60,7 +60,7 @@ public class SQLQueryLink implements QueryLink {
     }
     
     @Override
-    public DataList query(Record filter) throws DataException {
+    public List<Record> query(Record filter) throws DataException {
         try (Connection c = ds.getConnection()) {
             String entity = Sentence.getEntity(filter);
             Sentence s = queries.get(entity);

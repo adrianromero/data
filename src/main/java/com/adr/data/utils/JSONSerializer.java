@@ -18,7 +18,6 @@
 package com.adr.data.utils;
 
 import com.adr.data.DataException;
-import com.adr.data.DataList;
 import com.adr.data.var.Kind;
 import com.adr.data.Record;
 import com.adr.data.RecordMap;
@@ -71,7 +70,7 @@ public class JSONSerializer {
         } else if (RequestQuery.NAME.equals(type)) {
             return new RequestQuery(fromJSONRecord(envelope.get("data")));
         } else if (RequestExecute.NAME.equals(type)) {
-            return new RequestExecute(fromJSONDataList(envelope.get("data")));
+            return new RequestExecute(JSONSerializer.this.fromJSONListRecord(envelope.get("data")));
         } else {
             throw new IllegalStateException("Envelope type invalid: " + type);
         }
@@ -82,8 +81,8 @@ public class JSONSerializer {
         String type = envelope.get("type").getAsString();
         if (ResponseRecord.NAME.equals(type)) {
             return new ResponseRecord(fromJSONRecord(envelope.get("data")));
-        } else if (ResponseDataList.NAME.equals(type)) {
-            return new ResponseDataList(fromJSONDataList(envelope.get("data")));
+        } else if (ResponseListRecord.NAME.equals(type)) {
+            return new ResponseListRecord(JSONSerializer.this.fromJSONListRecord(envelope.get("data")));
         } else if (ResponseError.NAME.equals(type)) {
             return new ResponseError(new DataException(envelope.get("data").getAsString()));
         } else if (ResponseSuccess.NAME.equals(type)) {
@@ -92,18 +91,25 @@ public class JSONSerializer {
             throw new IllegalStateException("Envelope type invalid: " + type);
         }
     }
-
-    public DataList fromJSONDataList(String json) {
-        return fromJSONDataList(gsonparser.parse(json));
+    
+    public List<Record> clone(List<Record> list) {
+        return JSONSerializer.this.fromJSONListRecord(toJSONElement(list));    
     }
 
-    public DataList fromJSONDataList(JsonElement element) {
-        JsonObject list = element.getAsJsonObject();
-        List<RecordMap> l = new ArrayList<>();
-        for (JsonElement r : list.get("list").getAsJsonArray()) {
+    public List<Record> fromJSONListRecord(String json) {
+        return JSONSerializer.this.fromJSONListRecord(gsonparser.parse(json));
+    }
+
+    public List<Record> fromJSONListRecord(JsonElement element) {
+        List<Record> l = new ArrayList<>();
+        for (JsonElement r : element.getAsJsonArray()) {
             l.add(fromJSONRecord(r));
         }
-        return new DataList(l);
+        return l;
+    }
+    
+    public Record clone(Record record) {
+        return fromJSONRecord(toJSONElement(record));    
     }
 
     public Record fromJSONRecord(String json) {
@@ -160,18 +166,16 @@ public class JSONSerializer {
         return gson.toJson(json);
     }
 
-    public String toJSON(DataList obj) {
-        return gson.toJson(JSONSerializer.this.toJSONElement(obj));
+    public String toJSON(List<Record> obj) {
+        return gson.toJson(toJSONElement(obj));
     }
 
-    public JsonElement toJSONElement(DataList obj) {
+    public JsonElement toJSONElement(List<Record> obj) {
         JsonArray array = new JsonArray();
-        for (Record r : obj.getList()) {
+        for (Record r : obj) {
             array.add(toJSONElement(r));
         }
-        JsonObject datalist = new JsonObject();
-        datalist.add("list", array);
-        return datalist;
+        return array;
     }
 
     public String toJSON(Record obj) {
@@ -208,13 +212,13 @@ public class JSONSerializer {
         return array;
     }
 
-    public String toSimpleJSON(DataList obj) {
+    public String toSimpleJSON(List<Record> obj) {
         return gsonsimple.toJson(toSimpleJSONElement(obj));
     }
 
-    public JsonElement toSimpleJSONElement(DataList obj) {
+    public JsonElement toSimpleJSONElement(List<Record> obj) {
         JsonArray array = new JsonArray();
-        for (Record r : obj.getList()) {
+        for (Record r : obj) {
             array.add(toSimpleJSONElement(r));
         }
         return array;

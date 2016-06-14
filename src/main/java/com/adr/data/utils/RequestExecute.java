@@ -17,8 +17,9 @@
 
 package com.adr.data.utils;
 
-import com.adr.data.DataList;
+import com.adr.data.Record;
 import com.google.gson.JsonElement;
+import java.util.List;
 
 /**
  *
@@ -28,14 +29,14 @@ public class RequestExecute extends EnvelopeRequest {
     
     public static final String NAME = "EXECUTE";
     
-    private final DataList datalist;
+    private final List<Record> list;
     
-    public RequestExecute(DataList datalist) {
-        this.datalist = datalist;
+    public RequestExecute(List<Record> list) {
+        this.list = list;
     }
     
-    public DataList getDataList() {
-        return datalist;
+    public List<Record> getListRecord() {
+        return list;
     }
 
     @Override
@@ -50,6 +51,6 @@ public class RequestExecute extends EnvelopeRequest {
 
     @Override
     public JsonElement dataToJSON() {
-        return JSONSerializer.INSTANCE.toJSONElement(datalist);
+        return JSONSerializer.INSTANCE.toJSONElement(list);
     }     
 }

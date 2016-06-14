@@ -17,11 +17,13 @@
 
 package com.adr.data;
 
+import java.util.List;
+
 /**
  *
  * @author adrian
  */
 public interface QueryLink {
     public Record find(Record filter) throws DataException;
-    public DataList query(Record filter) throws DataException;       
+    public List<Record> query(Record filter) throws DataException;       
 }

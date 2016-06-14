@@ -68,7 +68,7 @@ public class MQDataLinkServer extends RpcServer {
            EnvelopeResponse response = request.process(new ProcessRequest() {
                 @Override public EnvelopeResponse execute(RequestExecute req) {
                     try {
-                        link.execute(req.getDataList());
+                        link.execute(req.getListRecord());
                         return new ResponseSuccess();
                     } catch (DataException ex) {
                         logger.log(Level.SEVERE, "Cannot execute request.", ex);

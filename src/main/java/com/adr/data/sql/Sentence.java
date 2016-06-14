@@ -18,7 +18,6 @@
 package com.adr.data.sql;
 
 import com.adr.data.DataException;
-import com.adr.data.DataList;
 import com.adr.data.Record;
 import com.adr.data.RecordMap;
 import com.adr.data.Values;
@@ -44,7 +43,7 @@ public abstract class Sentence {
     public void execute(Connection c, Record keyval) throws DataException {
         throw new UnsupportedOperationException();
     }    
-    public DataList query(Connection c, Record keyval) throws DataException {
+    public List<Record> query(Connection c, Record keyval) throws DataException {
         throw new UnsupportedOperationException();    
     }
     public Record find(Connection c, Record keyval) throws DataException {
@@ -66,21 +65,21 @@ public abstract class Sentence {
         }
     } 
     
-    public static DataList query(Connection c, CommandSQL command, Record filter) throws DataException {
+    public static List<Record> query(Connection c, CommandSQL command, Record filter) throws DataException {
         try (PreparedStatement stmt = c.prepareStatement(command.getCommand())) {
             SQLParameters kindparams = new SQLParameters(stmt, command.getParamNames());
             write(kindparams, filter.getKey());
             write(kindparams, filter.getValue());
 
             try (ResultSet resultset = stmt.executeQuery()) {
-                List<RecordMap> r = new ArrayList<>();
+                List<Record> r = new ArrayList<>();
                 SQLResults kindresults = new SQLResults(resultset);
                 while (resultset.next()) {
                     r.add(new RecordMap(
                         read(kindresults, filter.getKey()), 
                         read(kindresults, filter.getValue())));
                 }
-                return new DataList(r);
+                return r;
             }
         } catch (SQLException ex) {
             throw new DataException(ex);

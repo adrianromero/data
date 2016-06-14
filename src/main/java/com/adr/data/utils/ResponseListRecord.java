@@ -18,24 +18,25 @@
 package com.adr.data.utils;
 
 import com.adr.data.DataException;
-import com.adr.data.DataList;
+import com.adr.data.Record;
 import com.google.gson.JsonElement;
+import java.util.List;
 
 /**
  *
  * @author adrian
  */
-public class ResponseDataList extends EnvelopeResponse {
+public class ResponseListRecord extends EnvelopeResponse {
     
-    public static final String NAME = "DATALIST";
+    public static final String NAME = "LISTRECORD";
     
-    private final DataList result;
+    private final List<Record> result;
     
-    public ResponseDataList(DataList result) {
+    public ResponseListRecord(List<Record> result) {
         this.result = result;
     }
     
-    public DataList getResult() {
+    public List<Record> getResult() {
         return result;
     }
 
@@ -50,7 +51,7 @@ public class ResponseDataList extends EnvelopeResponse {
     } 
 
     @Override
-    public DataList getAsDataList() throws DataException {
+    public List<Record> getAsListRecord() throws DataException {
         return result;
     }   
 }

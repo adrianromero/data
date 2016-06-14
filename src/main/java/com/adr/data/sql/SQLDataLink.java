@@ -19,11 +19,11 @@ package com.adr.data.sql;
 
 import com.adr.data.DataLink;
 import com.adr.data.DataException;
-import com.adr.data.DataList;
 import com.adr.data.Record;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import javax.sql.DataSource;
 
@@ -50,10 +50,10 @@ public class SQLDataLink implements DataLink {
     }
 
     @Override
-    public void execute(DataList l) throws DataException {
+    public void execute(List<Record> l) throws DataException {
         try (Connection c = ds.getConnection()) {
             c.setAutoCommit(false);
-            for (Record keyval : l.getList()) {
+            for (Record keyval : l) {
                 Sentence s = sentences.get(Sentence.getEntity(keyval));
                 if (s == null) {  
                     s = put;

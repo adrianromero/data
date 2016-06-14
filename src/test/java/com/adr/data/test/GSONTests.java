@@ -17,13 +17,14 @@
 
 package com.adr.data.test;
 
-import com.adr.data.DataList;
+import com.adr.data.Record;
 import com.adr.data.utils.JSONSerializer;
 import com.adr.data.RecordMap;
-import com.adr.data.var.Kind;
 import com.adr.data.ValuesMap;
 import com.adr.data.ValuesEntry;
 import com.adr.data.var.VariantString;
+import java.util.Arrays;
+import java.util.List;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -67,7 +68,7 @@ public class GSONTests {
                     new ValuesEntry("field", new VariantString("pepeluis")),
                     new ValuesEntry("value", VariantString.NULL)));
 
-        DataList dl = new DataList(
+        List<Record> dl = Arrays.asList(
             new RecordMap(     
                 new ValuesMap(
                         new ValuesEntry("id", "1")),
@@ -83,7 +84,7 @@ public class GSONTests {
         System.out.println(JSONSerializer.INSTANCE.toJSON(JSONSerializer.INSTANCE.fromJSONRecord(JSONSerializer.INSTANCE.toJSON(keval))));
 
         System.out.println(JSONSerializer.INSTANCE.toJSON(dl));
-        System.out.println(JSONSerializer.INSTANCE.toJSON(JSONSerializer.INSTANCE.fromJSONDataList(JSONSerializer.INSTANCE.toJSON(dl))));      
+        System.out.println(JSONSerializer.INSTANCE.toJSON(JSONSerializer.INSTANCE.fromJSONListRecord(JSONSerializer.INSTANCE.toJSON(dl))));      
 
         System.out.println(JSONSerializer.INSTANCE.toJSON(JSONSerializer.INSTANCE.fromJSONRecord(JSONSerializer.INSTANCE.toJSON(keval))));
         

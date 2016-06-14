@@ -25,7 +25,7 @@ import com.adr.data.utils.JSONSerializer;
 import com.adr.data.utils.ProcessRequest;
 import com.adr.data.utils.RequestFind;
 import com.adr.data.utils.RequestQuery;
-import com.adr.data.utils.ResponseDataList;
+import com.adr.data.utils.ResponseListRecord;
 import com.adr.data.utils.ResponseError;
 import com.adr.data.utils.ResponseRecord;
 import com.rabbitmq.client.AMQP;
@@ -81,7 +81,7 @@ public class MQQueryLinkServer extends RpcServer {
                 }
                 @Override public EnvelopeResponse query(RequestQuery req) {
                     try {
-                        return new ResponseDataList(link.query(req.getFilter()));
+                        return new ResponseListRecord(link.query(req.getFilter()));
                     } catch (DataException ex) {
                         logger.log(Level.SEVERE, "Cannot execute query request.", ex);
                         return new ResponseError(ex);

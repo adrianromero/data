@@ -19,12 +19,12 @@ package com.adr.data.test;
 
 import com.adr.data.DataException;
 import com.adr.data.DataLink;
-import com.adr.data.DataList;
 import com.adr.data.RecordMap;
 import com.adr.data.ValuesMap;
 import com.adr.data.ValuesEntry;
 import com.adr.data.var.VariantBoolean;
 import com.adr.data.var.VariantString;
+import java.util.Arrays;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Assert;
@@ -64,7 +64,7 @@ public class ProcessTests {
          
         DataLink link = DataSourceLink.getDataLink();
 
-        link.execute(new DataList(
+        link.execute(Arrays.asList(
             new RecordMap(     
                 new ValuesMap(
                         new ValuesEntry("_ENTITY", "c_country"),

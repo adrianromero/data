@@ -15,29 +15,28 @@
 //     See the License for the specific language governing permissions and
 //     limitations under the License.
 
-package com.adr.data;
+package com.adr.data.security;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import com.adr.data.DataException;
 
 /**
  *
  * @author adrian
  */
-public class DataList {
+public class SecurityDataException extends DataException {
     
-    private final List<Record> list = new ArrayList<>();
-       
-    public DataList(List<? extends Record> records) {
-        list.addAll(records);
-    }
-       
-    public DataList(Record ... records) {
-        this(Arrays.asList(records));
-    }
+    private static final long serialVersionUID = 8719551478674716663L;
     
-    public List<Record> getList() {
-        return list;
+    public SecurityDataException() {
     }
+
+    public SecurityDataException(String msg) {
+        super(msg);
+    }
+    public SecurityDataException(Throwable t) {
+        super(t);
+    }
+    public SecurityDataException(String msg, Throwable t) {
+        super(msg, t);
+    }  
 }

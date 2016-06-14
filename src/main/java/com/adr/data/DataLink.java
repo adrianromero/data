@@ -17,14 +17,17 @@
 
 package com.adr.data;
 
+import java.util.Arrays;
+import java.util.List;
+
 /**
  *
  * @author adrian
  */
 public interface DataLink {
-    public void execute(DataList l) throws DataException;
+    public void execute(List<Record> l) throws DataException;
     
     public default void execute(Record keyval) throws DataException {
-        execute(new DataList(keyval));
+        execute(Arrays.asList(keyval));
     }
 }
