@@ -119,6 +119,5 @@ public class QueryTest {
                         new ValuesEntry("image", VariantBytes.NULL))))));
                     
 //                    also create a query ::LIKE because the write() will have to remove the :: 
-        Assert.assertEquals("1 + 1 = 2", 2, 1 + 1);
     }
 }

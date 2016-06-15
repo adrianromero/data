@@ -26,7 +26,7 @@ import com.adr.data.QueryLink;
  */
 public class DataSourceLink {
     
-    private static final DataSourceH2 datasource = new DataSourceH2();
+    private static final DataSourcePG datasource = new DataSourcePG();
     
     public static void setUpDB() throws Exception {       
         datasource.setUpDB();

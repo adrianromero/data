@@ -193,7 +193,7 @@ public class SecureLink implements QueryLink, DataLink {
         String entity = filter.getKey().get("_ENTITY").asString();
         if (AUTHORIZATIONS_QUERY.equals(entity)) {
             if (currentuser == null) {
-                return Collections.EMPTY_LIST;
+                return Collections.emptyList();
             } else {
                 loadCurrentSession();
                 return JSONSerializer.INSTANCE.clone(currentsession);

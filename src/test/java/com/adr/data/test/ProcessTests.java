@@ -14,7 +14,6 @@
 //     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //     See the License for the specific language governing permissions and
 //     limitations under the License.
-
 package com.adr.data.test;
 
 import com.adr.data.DataException;
@@ -32,72 +31,71 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-
 /**
  *
  * @author adrian
  */
 public class ProcessTests {
-    
+
     public ProcessTests() {
     }
-    
+
     @BeforeClass
     public static void setUpClass() throws Exception {
         DataSourceLink.setUpDB();
     }
-    
+
     @AfterClass
     public static void tearDownClass() throws Exception {
         DataSourceLink.tearDownDB();
     }
-    
+
     @Before
     public void setUp() {
     }
-    
+
     @After
     public void tearDown() {
     }
-     @Test
-     public void hello() throws DataException {
-         
+
+    @Test
+    public void hello() throws DataException {
+
         DataLink link = DataSourceLink.getDataLink();
 
         link.execute(Arrays.asList(
-            new RecordMap(     
+            new RecordMap(
                 new ValuesMap(
-                        new ValuesEntry("_ENTITY", "c_country"),
-                        new ValuesEntry("c_country_id", new VariantString("001"))),
+                    new ValuesEntry("_ENTITY", "c_country"),
+                    new ValuesEntry("c_country_id", new VariantString("001"))),
                 new ValuesMap(
-                        new ValuesEntry("name", "Spain"),
-                        new ValuesEntry("hasRegion", VariantBoolean.TRUE),                    
-                        new ValuesEntry("countrycode", "ES"))),
-            new RecordMap(     
+                    new ValuesEntry("name", "Spain"),
+                    new ValuesEntry("hasRegion", VariantBoolean.TRUE),
+                    new ValuesEntry("countrycode", "ES"))),
+            new RecordMap(
                 new ValuesMap(
-                        new ValuesEntry("_ENTITY", "c_country"),
-                        new ValuesEntry("c_country_id", "003")),
+                    new ValuesEntry("_ENTITY", "c_country"),
+                    new ValuesEntry("c_country_id", "003")),
                 new ValuesMap(
-                        new ValuesEntry("name", "Germany"),
-                        new ValuesEntry("hasRegion", VariantBoolean.TRUE),                    
-                        new ValuesEntry("countrycode", "DE"))),
-            new RecordMap(     
+                    new ValuesEntry("name", "Germany"),
+                    new ValuesEntry("hasRegion", VariantBoolean.TRUE),
+                    new ValuesEntry("countrycode", "DE"))),
+            new RecordMap(
                 new ValuesMap(
-                        new ValuesEntry("_ENTITY", "c_country"),
-                        new ValuesEntry("c_country_id", "004")),
+                    new ValuesEntry("_ENTITY", "c_country"),
+                    new ValuesEntry("c_country_id", "004")),
                 new ValuesMap(
-                        new ValuesEntry("name", "Italy"),
-                        new ValuesEntry("hasRegion", VariantBoolean.TRUE),                    
-                        new ValuesEntry("countrycode", "IT"))),
-            new RecordMap(     
+                    new ValuesEntry("name", "Italy"),
+                    new ValuesEntry("hasRegion", VariantBoolean.TRUE),
+                    new ValuesEntry("countrycode", "IT"))),
+            new RecordMap(
                 new ValuesMap(
-                        new ValuesEntry("_ENTITY", "c_country"),
-                        new ValuesEntry("c_country_id", "005")),
+                    new ValuesEntry("_ENTITY", "c_country"),
+                    new ValuesEntry("c_country_id", "005")),
                 new ValuesMap(
-                        new ValuesEntry("name", "Portugal"),
-                        new ValuesEntry("hasRegion", true),
-                        new ValuesEntry("countrycode", "PT")))));     
-   
-         Assert.assertEquals("1 + 1 = 2", 2, 1 + 1);
-     }
+                    new ValuesEntry("name", "Portugal"),
+                    new ValuesEntry("hasRegion", true),
+                    new ValuesEntry("countrycode", "PT")))));
+
+    }
 }

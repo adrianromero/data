@@ -35,8 +35,6 @@ public class SentencePGMerge extends SentenceDML {
         sentence.append("INSERT INTO ");
         sentence.append(Sentence.getEntity(keyval));
         sentence.append("(");
-        
-        conflict.append(" ON CONFLICT ");
 
         boolean filter = false;
         for (String f : keyval.getKey().getNames()) {
@@ -53,33 +51,29 @@ public class SentencePGMerge extends SentenceDML {
                 filter = true;
             }
         }
+             
+        boolean filterconflict =false;
         for (String f : keyval.getValue().getNames()) {
             sentence.append(filter ? ", " : "");
             sentence.append(f);
 
             values.append(filter ? ", ?" : "?");
             fieldslist.add(f);
+            
+            conflict.append(filterconflict ? ", " : ") DO UPDATE SET ");
+            conflict.append(f);
+            conflict.append(" = excluded.");
+            conflict.append(f);
 
             filter = true;
+            filterconflict = true;
         }
+        
         sentence.append(") VALUES (");
         sentence.append(values);
-        sentence.append(")");
+        sentence.append(")  ON CONFLICT ");
+        sentence.append(conflict);
 
         return new CommandSQL(sentence.toString(), fieldslist.toArray(new String[fieldslist.size()]));   
-//  INSERT INTO products (
-//    upc, 
-//    title, 
-//    description, 
-//    link) 
-//VALUES (
-//    123456789, 
-//    ‘Figment #1 of 5’, 
-//    ‘THE NEXT DISNEY ADVENTURE IS HERE - STARRING ONE OF DISNEY'S MOST POPULAR CHARACTERS! ’, 
-//    ‘http://www.amazon.com/dp/B00KGJVRNE?tag=mypred-20’
-//    )
-//ON CONFLICT (upc) DO UPDATE SET description=excluded.description;
-    } 
-
-  
+    }
 }
