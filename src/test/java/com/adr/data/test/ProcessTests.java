@@ -40,16 +40,6 @@ public class ProcessTests {
     public ProcessTests() {
     }
 
-    @BeforeClass
-    public static void setUpClass() throws Exception {
-        DataSourceLink.setUpDB();
-    }
-
-    @AfterClass
-    public static void tearDownClass() throws Exception {
-        DataSourceLink.tearDownDB();
-    }
-
     @Before
     public void setUp() {
     }

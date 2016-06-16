@@ -19,28 +19,45 @@ package com.adr.data.test;
 
 import com.adr.data.DataLink;
 import com.adr.data.QueryLink;
+import com.adr.data.sql.SQLDataLink;
+import com.adr.data.sql.SQLQueryLink;
+import com.adr.data.sql.SecureCommands;
+import com.adr.data.sqlpg.SentencePGMerge;
+import com.mchange.v2.c3p0.ComboPooledDataSource;
+import java.beans.PropertyVetoException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.sql.DataSource;
 
 /**
  *
- * @author adrian
+ * @author Eva
  */
 public class DataSourceLink {
+     
+    private static ComboPooledDataSource cpds = null;
     
-    private static final DataSourcePG datasource = new DataSourcePG();
-    
-    public static void setUpDB() throws Exception {       
-        datasource.setUpDB();
-    }
-
-    public static void tearDownDB() throws Exception {
-        datasource.tearDownDB();       
+    public static DataSource getDataSource() {
+        if (cpds == null) {
+            try {
+                cpds = new ComboPooledDataSource();
+                cpds.setDriverClass(System.getProperty("databasedriver"));
+                cpds.setJdbcUrl(System.getProperty("databaseurl"));
+                cpds.setUser(System.getProperty("databaseuser"));  
+                cpds.setPassword(System.getProperty("databasepassword"));
+            } catch (PropertyVetoException ex) {
+                Logger.getLogger(DataSourceLink.class.getName()).log(Level.SEVERE, null, ex);
+                throw new RuntimeException(ex);
+            }
+        }
+        return cpds; 
     }
     
     public static DataLink getDataLink() {
-        return datasource.getDataLink(); 
+        return new SQLDataLink(getDataSource(), new SentencePGMerge(), SecureCommands.COMMANDS); 
     }
     
     public static QueryLink getQueryLink() {
-        return datasource.getQueryLink(); 
-    }    
+        return new SQLQueryLink(getDataSource(), SecureCommands.QUERIES);
+    }  
 }

@@ -21,7 +21,7 @@ package com.adr.data.sql;
  *
  * @author adrian
  */
-public class LoginCommands {
+public class SecureCommands {
 
     public final static Sentence[] QUERIES = new Sentence[]{
         new SentenceView(

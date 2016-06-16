@@ -35,21 +35,11 @@ import org.junit.Test;
  *
  * @author adrian
  */
-public class QueryTest {
+public class QueryTests {
 
-    public QueryTest() {
+    public QueryTests() {
     }
-    
-    @BeforeClass
-    public static void setUpClass() throws Exception {
-        DataSourceLink.setUpDB();
-    }
-    
-    @AfterClass
-    public static void tearDownClass() throws Exception {
-        DataSourceLink.tearDownDB();
-    }
-    
+       
     @Test
     public void hello() throws DataException {
 
@@ -82,41 +72,6 @@ public class QueryTest {
                         new ValuesEntry("name", VariantString.NULL),
                         new ValuesEntry("visible", VariantBoolean.NULL),
                         new ValuesEntry("codecard", VariantString.NULL))))));
-        System.out.println(JSONSerializer.INSTANCE.toSimpleJSON(
-                link.query(new RecordMap(
-                    new ValuesMap(
-                        new ValuesEntry("_ENTITY", "permission_subject"),
-                        new ValuesEntry("id")),
-                    new ValuesMap(
-                        new ValuesEntry("role_id"),
-                        new ValuesEntry("subject_name"),
-                        new ValuesEntry("subject_code"))))));
-        System.out.println(JSONSerializer.INSTANCE.toSimpleJSON(
-                link.query(new RecordMap(
-                    new ValuesMap(
-                        new ValuesEntry("_ENTITY", "subject_byrole"),
-                        new ValuesEntry("role_id::PARAM", "m")),
-                    new ValuesMap(
-                        new ValuesEntry("code"),
-                        new ValuesEntry("name"))))));
-        System.out.println(JSONSerializer.INSTANCE.toSimpleJSON(
-                link.query(new RecordMap(
-                    new ValuesMap(
-                        new ValuesEntry("_ENTITY", "subject"),
-                        new ValuesEntry("id")),
-                    new ValuesMap(
-                        new ValuesEntry("name::LIKE", "%o%"),
-                        new ValuesEntry("name"))))));   
-              
-        System.out.println(JSONSerializer.INSTANCE.toSimpleJSON(
-                link.query(new RecordMap(
-                    new ValuesMap(
-                        new ValuesEntry("_ENTITY", "username_visible"),
-                        new ValuesEntry("id")),
-                    new ValuesMap(
-                        new ValuesEntry("name"),
-                        new ValuesEntry("displayname"),
-                        new ValuesEntry("image", VariantBytes.NULL))))));
                     
 //                    also create a query ::LIKE because the write() will have to remove the :: 
     }

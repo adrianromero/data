@@ -25,10 +25,6 @@ import com.adr.data.ValuesEntry;
 import com.adr.data.var.VariantString;
 import java.util.Arrays;
 import java.util.List;
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 
 /**
@@ -38,28 +34,10 @@ import org.junit.Test;
 public class GSONTests {
     
     public GSONTests() {
-
     }
     
-    @BeforeClass
-    public static void setUpClass() {
-    }
-    
-    @AfterClass
-    public static void tearDownClass() {
-    }
-    
-    @Before
-    public void setUp() {
-    }
-    
-    @After
-    public void tearDown() {
-    }
-
-
      @Test
-     public void hello() {
+     public void testJSONSerialization() {
  
         RecordMap keval = new RecordMap(     
             new ValuesMap(
@@ -91,6 +69,7 @@ public class GSONTests {
         System.out.println(JSONSerializer.INSTANCE.toJSON(keval));
         System.out.println(JSONSerializer.INSTANCE.toSimpleJSON(keval));
         
-        
+
+        System.out.println("-->" + System.getProperty("databaseurl"));
     }
 }

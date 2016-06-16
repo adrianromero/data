@@ -31,6 +31,10 @@ public class RecordMap implements Record {
         this.value = value;
     }
     
+    public RecordMap(ValuesMap key) {
+        this(key, null);
+    }
+    
     @Override
     public Values getKey() {
         return key;
