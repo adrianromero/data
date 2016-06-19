@@ -24,11 +24,7 @@ import com.adr.data.utils.JSONSerializer;
 import com.adr.data.ValuesMap;
 import com.adr.data.ValuesEntry;
 import com.adr.data.var.VariantBoolean;
-import com.adr.data.var.VariantBytes;
 import com.adr.data.var.VariantString;
-import org.junit.AfterClass;
-import org.junit.Assert;
-import org.junit.BeforeClass;
 import org.junit.Test;
 
 /**

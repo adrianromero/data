@@ -24,10 +24,15 @@ import com.adr.data.Record;
 import com.adr.data.RecordMap;
 import com.adr.data.ValuesEntry;
 import com.adr.data.ValuesMap;
+import com.adr.data.http.AssignableSession;
 import com.adr.data.utils.CryptUtils;
 import com.adr.data.utils.JSONSerializer;
 import com.adr.data.var.VariantBoolean;
 import com.adr.data.var.VariantBytes;
+import java.io.DataInput;
+import java.io.DataOutput;
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
@@ -37,7 +42,7 @@ import java.util.stream.Collectors;
  *
  * @author adrian
  */
-public class SecureLink implements QueryLink, DataLink {
+public class SecureLink implements QueryLink, DataLink, AssignableSession {
     
     public final static String ADMIN = "admin";
     public final static String AUTHENTICATION_REQUEST = "AUTHENTICATION_REQUEST";
@@ -64,6 +69,37 @@ public class SecureLink implements QueryLink, DataLink {
         this.datalink = datalink;
         this.anonymousresources = Collections.unmodifiableSet(anonymousresources);
         this.authenticatedresources = Collections.unmodifiableSet(authenticatedresources);
+    }
+    
+    @Override
+    public void readSerializedSession(DataInput session) throws IOException {
+        currentuser = JSONSerializer.INSTANCE.fromJSONRecord(session.readUTF());
+        boolean hascurrentsession = session.readBoolean();
+        if (hascurrentsession) {
+            int size = session.readInt();
+            currentsession = new ArrayList<>();
+            for(int i = 0; i < size; i++) {
+                currentsession.add(JSONSerializer.INSTANCE.fromJSONRecord(session.readUTF()));
+            }
+            currentsessionset = currentsession.stream().map(r -> r.getString("code")).collect(Collectors.toSet());
+        } else {
+            currentsession = null;
+            currentsessionset = null;
+        }
+    }
+    
+    @Override
+    public void writeSerializedSession(DataOutput session) throws IOException {
+        session.writeUTF(JSONSerializer.INSTANCE.toJSON(currentuser));
+        if (currentsession == null) {
+            session.writeBoolean(false);
+        } else {
+            session.writeBoolean(true);
+            session.writeInt(currentsession.size());
+            for (Record r : currentsession) {
+                session.writeUTF(JSONSerializer.INSTANCE.toJSON(currentuser));
+            }
+        }       
     }
             
     private boolean hasAuthorization(String resource, String action) throws DataException {
