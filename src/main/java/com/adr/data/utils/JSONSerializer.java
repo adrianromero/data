@@ -33,7 +33,10 @@ import com.google.gson.JsonNull;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
 /**
  *
@@ -65,10 +68,9 @@ public class JSONSerializer {
     public EnvelopeRequest fromJSONRequest(String json) {
         JsonObject envelope = gsonparser.parse(json).getAsJsonObject();
         String type = envelope.get("type").getAsString();
-        if (RequestFind.NAME.equals(type)) {
-            return new RequestFind(fromJSONRecord(envelope.get("data")));
-        } else if (RequestQuery.NAME.equals(type)) {
-            return new RequestQuery(fromJSONRecord(envelope.get("data")));
+        if (RequestQuery.NAME.equals(type)) {
+            JsonObject data = envelope.get("data").getAsJsonObject();
+            return new RequestQuery(fromJSONRecord(data.get("filter")), fromJSONOptions(data.get("options")));
         } else if (RequestExecute.NAME.equals(type)) {
             return new RequestExecute(JSONSerializer.this.fromJSONListRecord(envelope.get("data")));
         } else {
@@ -93,11 +95,11 @@ public class JSONSerializer {
     }
     
     public List<Record> clone(List<Record> list) {
-        return JSONSerializer.this.fromJSONListRecord(toJSONElement(list));    
+        return fromJSONListRecord(toJSONElement(list));    
     }
 
     public List<Record> fromJSONListRecord(String json) {
-        return JSONSerializer.this.fromJSONListRecord(gsonparser.parse(json));
+        return fromJSONListRecord(gsonparser.parse(json));
     }
 
     public List<Record> fromJSONListRecord(JsonElement element) {
@@ -123,7 +125,19 @@ public class JSONSerializer {
         JsonObject o = element.getAsJsonObject();
         return new RecordMap(fromJSONValues(o.get("key")), fromJSONValues(o.get("value")));
     }
-
+    
+    public Map<String, String> fromJSONOptions(String json) {
+        return fromJSONOptions(gsonparser.parse(json));
+    }
+    
+    public Map<String, String> fromJSONOptions(JsonElement element) {
+        Map<String, String> options = new HashMap<>();
+        for (Entry<String, JsonElement> entry: element.getAsJsonObject().entrySet()) {
+            options.put(entry.getKey(), entry.getValue().getAsString());
+        }
+        return options;
+    }
+    
     private ValuesMap fromJSONValues(JsonElement element) {
         if (element == null || element.equals(JsonNull.INSTANCE)) {
             return null;
@@ -192,6 +206,14 @@ public class JSONSerializer {
         return r;
     }
 
+    public JsonElement toJSONElement(Map<String, String> obj) {
+        JsonObject r = new JsonObject();
+        for (Entry<String, String> entry: obj.entrySet()) {
+            r.addProperty(entry.getKey(), entry.getValue());
+        }
+        return r;
+    }
+    
     public JsonElement toJSONElement(Values obj) {
         if (obj == null) {
             return JsonNull.INSTANCE;

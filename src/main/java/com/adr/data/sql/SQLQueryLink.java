@@ -46,28 +46,14 @@ public class SQLQueryLink implements QueryLink {
     }
 
     @Override
-    public Record find(Record filter) throws DataException {
-        try (Connection c = ds.getConnection()) {
-            String entity = Sentence.getEntity(filter);
-            Sentence s = queries.get(entity);
-            if (s == null) {
-                s = table;
-            }
-            return s.find(c, filter);
-        } catch (SQLException ex) {
-            throw new DataException(ex);
-        }
-    }
-    
-    @Override
-    public List<Record> query(Record filter) throws DataException {
+    public List<Record> query(Record filter, Map<String, String> options) throws DataException {
         try (Connection c = ds.getConnection()) {
             String entity = Sentence.getEntity(filter);
             Sentence s = queries.get(entity);
             if (s == null) {
                 s = table;
             }              
-            return s.query(c, filter);
+            return s.query(c, filter, options);
         } catch (SQLException ex) {
             throw new DataException(ex);
         }

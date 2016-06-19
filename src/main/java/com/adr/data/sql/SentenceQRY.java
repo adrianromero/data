@@ -21,6 +21,7 @@ import com.adr.data.DataException;
 import com.adr.data.Record;
 import java.sql.Connection;
 import java.util.List;
+import java.util.Map;
 
 /**
  *
@@ -31,11 +32,7 @@ public abstract class SentenceQRY  extends Sentence {
     protected abstract CommandSQL build(Record keyval);
     
     @Override
-    public List<Record> query(Connection c, Record keyval) throws DataException {
-        return Sentence.query(c, build(keyval), keyval);
-    }
-    @Override
-    public Record find(Connection c, Record keyval) throws DataException {
-        return Sentence.find(c, build(keyval), keyval);
+    public List<Record> query(Connection c, Record keyval, Map<String, String> options) throws DataException {
+        return Sentence.query(c, build(keyval), keyval, options);
     }
 }

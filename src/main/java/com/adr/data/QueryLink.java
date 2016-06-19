@@ -17,13 +17,20 @@
 
 package com.adr.data;
 
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 /**
  *
  * @author adrian
  */
 public interface QueryLink {
-    public Record find(Record filter) throws DataException;
-    public List<Record> query(Record filter) throws DataException;       
+    
+    public static final String LIMIT = "LIMIT";
+    
+    public List<Record> query(Record filter, Map<String, String> options) throws DataException;       
+    public default List<Record> query(Record filter) throws DataException {
+        return query(filter, Collections.emptyMap());
+    }      
 }

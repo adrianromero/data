@@ -19,6 +19,8 @@ package com.adr.data.utils;
 
 import com.adr.data.Record;
 import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import java.util.Map;
 
 /**
  *
@@ -29,13 +31,19 @@ public class RequestQuery extends EnvelopeRequest {
     public static final String NAME = "QUERY";
     
     private final Record filter;
+    private final Map<String, String> options;
     
-    public RequestQuery(Record filter) {
+    public RequestQuery(Record filter, Map<String, String> options) {
         this.filter = filter;
+        this.options = options;
     }
     
     public Record getFilter() {
         return filter;
+    }
+    
+    public Map<String, String> getOptions() {
+        return options;
     }
 
     @Override
@@ -50,6 +58,9 @@ public class RequestQuery extends EnvelopeRequest {
 
     @Override
     public JsonElement dataToJSON() {
-        return JSONSerializer.INSTANCE.toJSONElement(filter);
+        JsonObject obj = new JsonObject();
+        obj.add("filter", JSONSerializer.INSTANCE.toJSONElement(filter));
+        obj.add("options", JSONSerializer.INSTANCE.toJSONElement(options));
+        return obj;
     }    
 }

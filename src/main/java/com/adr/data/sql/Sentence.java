@@ -18,6 +18,7 @@
 package com.adr.data.sql;
 
 import com.adr.data.DataException;
+import com.adr.data.QueryLink;
 import com.adr.data.Record;
 import com.adr.data.RecordMap;
 import com.adr.data.Values;
@@ -30,6 +31,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  *
@@ -43,10 +45,7 @@ public abstract class Sentence {
     public void execute(Connection c, Record keyval) throws DataException {
         throw new UnsupportedOperationException();
     }    
-    public List<Record> query(Connection c, Record keyval) throws DataException {
-        throw new UnsupportedOperationException();    
-    }
-    public Record find(Connection c, Record keyval) throws DataException {
+    public List<Record> query(Connection c, Record keyval, Map<String, String> options) throws DataException {
         throw new UnsupportedOperationException();    
     }
     
@@ -65,19 +64,24 @@ public abstract class Sentence {
         }
     } 
     
-    public static List<Record> query(Connection c, CommandSQL command, Record filter) throws DataException {
+    public static List<Record> query(Connection c, CommandSQL command, Record filter, Map<String, String> options) throws DataException {
         try (PreparedStatement stmt = c.prepareStatement(command.getCommand())) {
             SQLParameters kindparams = new SQLParameters(stmt, command.getParamNames());
             write(kindparams, filter.getKey());
             write(kindparams, filter.getValue());
+            
+            int limit = Integer.parseInt(options.getOrDefault(QueryLink.LIMIT, "-1"));
 
             try (ResultSet resultset = stmt.executeQuery()) {
                 List<Record> r = new ArrayList<>();
                 SQLResults kindresults = new SQLResults(resultset);
-                while (resultset.next()) {
+                
+                int i = 0;
+                while ((limit < 0 || i < limit) && resultset.next()) {
                     r.add(new RecordMap(
                         read(kindresults, filter.getKey()), 
                         read(kindresults, filter.getValue())));
+                    i++;
                 }
                 return r;
             }
@@ -85,28 +89,6 @@ public abstract class Sentence {
             throw new DataException(ex);
         }
     }   
-    
-    public static Record find(Connection c, CommandSQL command, Record filter) throws DataException {
-        try (PreparedStatement stmt = c.prepareStatement(command.getCommand())) {
-            SQLParameters kindparams = new SQLParameters(stmt, command.getParamNames());
-            write(kindparams, filter.getKey());
-            write(kindparams, filter.getValue());
-
-            try (ResultSet resultset = stmt.executeQuery()) {
-                List<RecordMap> r = new ArrayList<>();
-                SQLResults kindresults = new SQLResults(resultset);
-                if (resultset.next()) {
-                    return new RecordMap(
-                        read(kindresults, filter.getKey()), 
-                        read(kindresults, filter.getValue()));
-                } else {
-                    return null;
-                }
-            }
-        } catch (SQLException ex) {
-            throw new DataException(ex);
-        }
-    }
     
     private static void write(SQLParameters kindparams, Values param) throws DataException {
         if (param == null) {

@@ -20,7 +20,7 @@ import java.util.List;
  */
 public class SecureFacade {
     
-    private QueryLink securelink;
+    private final QueryLink securelink;
     
     public SecureFacade(QueryLink securelink) {
         this.securelink = securelink;
@@ -28,41 +28,43 @@ public class SecureFacade {
     
     public Record login(String username, String password) throws DataException {
         // Convenience login method
-        return securelink.find(new RecordMap(
+        List<Record> l = securelink.query(new RecordMap(
             new ValuesMap(
                 new ValuesEntry("_ENTITY", SecureLink.AUTHENTICATION_REQUEST)),
             new ValuesMap(
                 new ValuesEntry("name", new VariantString(username)),
                 new ValuesEntry("password", new VariantString(password)))));
+        return l.isEmpty() ? null : l.get(0);
     }
     
     public void logout() throws DataException {
         // Convenience logout method
-        securelink.find(new RecordMap(
+        securelink.query(new RecordMap(
             new ValuesMap(
                 new ValuesEntry("_ENTITY", SecureLink.AUTHENTICATION_REQUEST))));        
     }
     
     public Record current() throws DataException {
         // Convenience logout method
-        return securelink.find(new RecordMap(
+        List<Record> l = securelink.query(new RecordMap(
             new ValuesMap(
-                new ValuesEntry("_ENTITY", SecureLink.AUTHENTICATION_CURRENT))));                
+                new ValuesEntry("_ENTITY", SecureLink.AUTHENTICATION_CURRENT))));  
+        return l.isEmpty() ? null : l.get(0);
     }
     
     public Record saveCurrent(Record login) throws DataException {
-        return securelink.find(login);
+        return securelink.query(login).get(0);
     } 
     
     public boolean hasAuthorization(String resource, String action) throws DataException {
-        Record result = securelink.find(new RecordMap(
+        List<Record> result = securelink.query(new RecordMap(
             new ValuesMap(
                 new ValuesEntry("_ENTITY", SecureLink.AUTHORIZATION_REQUEST)),
             new ValuesMap(
                 new ValuesEntry("resource", new VariantString(resource)),
                 new ValuesEntry("action", new VariantString(action)))));
         
-        return result.getBoolean("result");            
+        return result.get(0).getBoolean("result");            
     } 
     
     public boolean hasAuthorization(String resource) throws DataException {

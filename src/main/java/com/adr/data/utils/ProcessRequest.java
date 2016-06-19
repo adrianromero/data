@@ -28,10 +28,6 @@ import java.util.logging.Logger;
  */
 public abstract class ProcessRequest {
 
-    public EnvelopeResponse find(RequestFind req) {
-        return other(req);
-    }
-
     public EnvelopeResponse query(RequestQuery req) {
         return other(req);
     }
@@ -51,20 +47,11 @@ public abstract class ProcessRequest {
         logger.log(Level.CONFIG, "Processing {0} : {1}.", new Object[]{envrequest.getType(), message});
 
         EnvelopeResponse envresponse = envrequest.process(new ProcessRequest() {
-            @Override
-            public EnvelopeResponse find(RequestFind req) {
-                try {
-                    return new ResponseRecord(link.find(req.getFilter()));
-                } catch (DataException ex) {
-                    logger.log(Level.SEVERE, "Cannot execute find request.", ex);
-                    return new ResponseError(ex);
-                }
-            }
 
             @Override
             public EnvelopeResponse query(RequestQuery req) {
                 try {
-                    return new ResponseListRecord(link.query(req.getFilter()));
+                    return new ResponseListRecord(link.query(req.getFilter(), req.getOptions()));
                 } catch (DataException ex) {
                     logger.log(Level.SEVERE, "Cannot execute query request.", ex);
                     return new ResponseError(ex);

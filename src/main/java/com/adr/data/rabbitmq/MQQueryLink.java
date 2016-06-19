@@ -22,7 +22,6 @@ import com.adr.data.QueryLink;
 import com.adr.data.Record;
 import com.adr.data.utils.EnvelopeResponse;
 import com.adr.data.utils.JSONSerializer;
-import com.adr.data.utils.RequestFind;
 import com.adr.data.utils.RequestQuery;
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.RpcClient;
@@ -30,6 +29,7 @@ import com.rabbitmq.client.ShutdownSignalException;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.TimeoutException;
 
 /**
@@ -54,25 +54,10 @@ public class MQQueryLink implements QueryLink {
     }
 
     @Override
-    public Record find(Record filter) throws DataException {
+    public List<Record> query(Record filter, Map<String, String> options) throws DataException {
         
         try {
-            byte[] request = JSONSerializer.INSTANCE.toJSON(new RequestFind(filter)).getBytes("UTF-8");
-            byte[] response = client.primitiveCall(request);
-            EnvelopeResponse envelope = JSONSerializer.INSTANCE.fromJSONResponse(new String(response, "UTF-8"));
-            return envelope.getAsRecord();
-        } catch (UnsupportedEncodingException ex) {
-            throw new UnsupportedOperationException(ex); // Never happens
-        } catch (IOException | ShutdownSignalException | TimeoutException ex) {
-            throw new DataException(ex);
-        }
-    }
-
-    @Override
-    public List<Record> query(Record filter) throws DataException {
-        
-        try {
-            byte[] request = JSONSerializer.INSTANCE.toJSON(new RequestQuery(filter)).getBytes("UTF-8");
+            byte[] request = JSONSerializer.INSTANCE.toJSON(new RequestQuery(filter, options)).getBytes("UTF-8");
             byte[] response = client.primitiveCall(request);
             EnvelopeResponse envelope = JSONSerializer.INSTANCE.fromJSONResponse(new String(response, "UTF-8"));
             return envelope.getAsListRecord();

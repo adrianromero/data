@@ -60,7 +60,7 @@ public class QueryTests {
                         new ValuesEntry("codecard", VariantString.NULL))))));
 
         System.out.println(JSONSerializer.INSTANCE.toSimpleJSON(
-                link.find(new RecordMap(
+                link.query(new RecordMap(
                     new ValuesMap(
                         new ValuesEntry("_ENTITY", "username"),
                         new ValuesEntry("id", "manager")),

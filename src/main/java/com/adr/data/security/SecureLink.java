@@ -35,6 +35,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -51,7 +52,6 @@ public class SecureLink implements QueryLink, DataLink, AssignableSession {
     public final static String AUTHORIZATION_REQUEST = "AUTHORIZATION_REQUEST";
     public final static String AUTHORIZATIONS_QUERY = "AUTHORIZATIONS_QUERY";
     
-    public final static String ACTION_FIND = "_FIND";
     public final static String ACTION_QUERY = "_QUERY";
     public final static String ACTION_EXECUTE = "_EXECUTE";
 
@@ -150,7 +150,7 @@ public class SecureLink implements QueryLink, DataLink, AssignableSession {
     }
 
     @Override
-    public Record find(Record filter) throws DataException {
+    public List<Record> query(Record filter, Map<String, String> options) throws DataException {
         
         String entity = filter.getKey().get("_ENTITY").asString();
         if (AUTHENTICATION_REQUEST.equals(entity)) {
@@ -160,7 +160,6 @@ public class SecureLink implements QueryLink, DataLink, AssignableSession {
                 currentuser = null;
                 currentsession = null;
                 currentsessionset = null;
-                return null;
             } else {
                 // login
                 String username = filter.getString("name");
@@ -180,20 +179,29 @@ public class SecureLink implements QueryLink, DataLink, AssignableSession {
                         new ValuesEntry("visible", VariantBoolean.NULL),
                         new ValuesEntry("image", VariantBytes.NULL)));
 
-                Record userrecord = querylink.find(usernamequery);
+                List<Record> userrecord = querylink.query(usernamequery);
 
-                if (userrecord != null && CryptUtils.validatePassword(password, userrecord.getString("password"))) {
-                    currentuser = userrecord;
-                } else {
+                if (userrecord.isEmpty() || !CryptUtils.validatePassword(password, userrecord.get(0).getString("password"))) {
                     currentuser = null;
+                } else {
+                    currentuser = userrecord.get(0);
                 }
                 currentsession = null;
                 currentsessionset = null;
-                return JSONSerializer.INSTANCE.clone(currentuser); 
             }
+            // Return current user
+            if (currentuser == null) {
+                return Collections.emptyList();
+            } else {
+                return Collections.singletonList(JSONSerializer.INSTANCE.clone(currentuser));
+            }             
         } else if (AUTHENTICATION_CURRENT.equals(entity)) {
             // Return current user
-            return JSONSerializer.INSTANCE.clone(currentuser); 
+            if (currentuser == null) {
+                return Collections.emptyList();
+            } else {
+                return Collections.singletonList(JSONSerializer.INSTANCE.clone(currentuser));
+            } 
         } else if ("username_byname".equals(entity)) {
             // Saves current user
             if (currentuser == null) {
@@ -212,42 +220,27 @@ public class SecureLink implements QueryLink, DataLink, AssignableSession {
             datalink.execute(saveduser);
             
             currentuser = saveduser;
-            return JSONSerializer.INSTANCE.clone(currentuser);            
+            return Collections.singletonList(JSONSerializer.INSTANCE.clone(currentuser));            
         } else if (AUTHORIZATION_REQUEST.equals(entity)) {
             String resource = filter.getString("resource"); 
             String action = filter.getString("action"); 
             Record response = JSONSerializer.INSTANCE.clone(filter);
             response.getValue().set("result", new VariantBoolean(hasAuthorization(resource, action)));
-            return response;
-        } else {   
-            // Normal find
-            if (hasAuthorization(entity, ACTION_FIND)) {
-                return querylink.find(filter);
-            } else {
-                throw new SecurityDataException("No authorization to find resource: " + entity);
-            }
-        }
-    }
-    
-
-    @Override
-    public List<Record> query(Record filter) throws DataException {
-        
-        String entity = filter.getKey().get("_ENTITY").asString();
-        if (AUTHORIZATIONS_QUERY.equals(entity)) {
+            return Collections.singletonList(response);
+        } else if (AUTHORIZATIONS_QUERY.equals(entity)) {
             if (currentuser == null) {
                 return Collections.emptyList();
             } else {
                 loadCurrentSession();
                 return JSONSerializer.INSTANCE.clone(currentsession);
             }
-        } else {
+        } else {   
             // Normal query
             if (hasAuthorization(entity, ACTION_QUERY)) {
                 return querylink.query(filter);
             } else {
                 throw new SecurityDataException("No authorization to query resource: " + entity);
-            }            
+            }  
         }
     }
 
