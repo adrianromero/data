@@ -14,7 +14,6 @@
 //     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //     See the License for the specific language governing permissions and
 //     limitations under the License.
-
 package com.adr.data.cache;
 
 import com.adr.data.DataException;
@@ -34,27 +33,26 @@ import java.util.List;
 public class CachedQueryLink implements QueryLink {
 
     private final QueryLink link;
-    
+
     private final CacheProvider provider;
     private final CacheSelector selector;
 
-    
     public CachedQueryLink(QueryLink link, CacheProvider provider, CacheSelector selector) {
         this.link = link;
         this.provider = provider;
         this.selector = selector;
     }
-    
+
     public CachedQueryLink(QueryLink link, String... entities) {
         this(link, new CacheProviderMem(), new CacheSelectorList(entities));
     }
 
     @Override
     public List<Record> query(Record filter, QueryOptions options) throws DataException {
-        String entity = filter.getKey().get("_ENTITY").asString();
-        if (selector.cache(entity)) {           
-            String key = JSONSerializer.INSTANCE.toJSON(new RequestQuery(filter, options));            
-            String cachedresult = provider.get(key); {
+        
+        if (selector.cache(filter)) {
+            String key = JSONSerializer.INSTANCE.toJSON(new RequestQuery(filter, options));
+            String cachedresult = provider.getIfPresent(key);
             if (cachedresult == null) {
                 List<Record> l = link.query(filter, options);
                 provider.put(key, JSONSerializer.INSTANCE.toJSON(new ResponseListRecord(l)));
@@ -63,8 +61,6 @@ public class CachedQueryLink implements QueryLink {
                 EnvelopeResponse response = JSONSerializer.INSTANCE.fromJSONResponse(cachedresult);
                 return response.getAsListRecord();
             }
-        }
-            
         } else {
             return link.query(filter, options);
         }

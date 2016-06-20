@@ -16,8 +16,8 @@
 //     limitations under the License.
 package com.adr.data.cache;
 
-import java.util.HashMap;
-import java.util.Map;
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
 
 /**
  *
@@ -25,16 +25,21 @@ import java.util.Map;
  */
 public class CacheProviderMem implements CacheProvider {
     
-    private final Map<String, String> cache = new HashMap<>();
+    private final Cache<String, String> cache;
 
+    public CacheProviderMem() {
+        cache = CacheBuilder.newBuilder()
+            .maximumSize(1000)
+            .build();
+    }
+    
     @Override
     public void put(String key, String value) {
         cache.put(key, value);
     }
 
     @Override
-    public String get(String key) {
-        return cache.get(key);
-    }
-    
+    public String getIfPresent(String key) {
+        return cache.getIfPresent(key);
+    } 
 }

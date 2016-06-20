@@ -16,6 +16,7 @@
 //     limitations under the License.
 package com.adr.data.cache;
 
+import com.adr.data.Record;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
@@ -33,7 +34,8 @@ public class CacheSelectorList implements CacheSelector {
     }
 
     @Override
-    public boolean cache(String key) {
-        return entities.contains(key);
+    public boolean cache(Record filter) {
+        String entity = filter.getKey().get("_ENTITY").asString();
+        return entities.contains(entity);
     }  
 }

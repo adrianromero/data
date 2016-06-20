@@ -22,5 +22,5 @@ package com.adr.data.cache;
  */
 public interface CacheProvider {
     public void put(String key, String value);
-    public String get(String key);
+    public String getIfPresent(String key);
 }

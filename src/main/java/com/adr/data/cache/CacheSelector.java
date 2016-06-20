@@ -16,10 +16,12 @@
 //     limitations under the License.
 package com.adr.data.cache;
 
+import com.adr.data.Record;
+
 /**
  *
  * @author adrian
  */
 public interface CacheSelector {
-    public boolean cache(String key);
+    public boolean cache(Record filter);
 }
