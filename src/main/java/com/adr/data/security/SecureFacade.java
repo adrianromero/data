@@ -7,6 +7,7 @@ package com.adr.data.security;
 
 import com.adr.data.DataException;
 import com.adr.data.QueryLink;
+import com.adr.data.QueryOptions;
 import com.adr.data.Record;
 import com.adr.data.RecordMap;
 import com.adr.data.ValuesEntry;
@@ -28,43 +29,41 @@ public class SecureFacade {
     
     public Record login(String username, String password) throws DataException {
         // Convenience login method
-        List<Record> l = securelink.query(new RecordMap(
+        return securelink.find(new RecordMap(
             new ValuesMap(
                 new ValuesEntry("_ENTITY", SecureLink.AUTHENTICATION_REQUEST)),
             new ValuesMap(
                 new ValuesEntry("name", new VariantString(username)),
                 new ValuesEntry("password", new VariantString(password)))));
-        return l.isEmpty() ? null : l.get(0);
     }
     
     public void logout() throws DataException {
         // Convenience logout method
-        securelink.query(new RecordMap(
+        securelink.find(new RecordMap(
             new ValuesMap(
                 new ValuesEntry("_ENTITY", SecureLink.AUTHENTICATION_REQUEST))));        
     }
     
     public Record current() throws DataException {
         // Convenience logout method
-        List<Record> l = securelink.query(new RecordMap(
+        return securelink.find(new RecordMap(
             new ValuesMap(
                 new ValuesEntry("_ENTITY", SecureLink.AUTHENTICATION_CURRENT))));  
-        return l.isEmpty() ? null : l.get(0);
     }
     
     public Record saveCurrent(Record login) throws DataException {
-        return securelink.query(login).get(0);
+        return securelink.find(login);
     } 
     
     public boolean hasAuthorization(String resource, String action) throws DataException {
-        List<Record> result = securelink.query(new RecordMap(
+        Record result = securelink.find(new RecordMap(
             new ValuesMap(
                 new ValuesEntry("_ENTITY", SecureLink.AUTHORIZATION_REQUEST)),
             new ValuesMap(
                 new ValuesEntry("resource", new VariantString(resource)),
                 new ValuesEntry("action", new VariantString(action)))));
         
-        return result.get(0).getBoolean("result");            
+        return result.getBoolean("result");            
     } 
     
     public boolean hasAuthorization(String resource) throws DataException {

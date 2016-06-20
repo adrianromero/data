@@ -20,6 +20,7 @@ package com.adr.data.security;
 import com.adr.data.DataException;
 import com.adr.data.DataLink;
 import com.adr.data.QueryLink;
+import com.adr.data.QueryOptions;
 import com.adr.data.Record;
 import com.adr.data.RecordMap;
 import com.adr.data.ValuesEntry;
@@ -35,7 +36,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -150,7 +150,7 @@ public class SecureLink implements QueryLink, DataLink, AssignableSession {
     }
 
     @Override
-    public List<Record> query(Record filter, Map<String, String> options) throws DataException {
+    public List<Record> query(Record filter, QueryOptions options) throws DataException {
         
         String entity = filter.getKey().get("_ENTITY").asString();
         if (AUTHENTICATION_REQUEST.equals(entity)) {
@@ -179,12 +179,12 @@ public class SecureLink implements QueryLink, DataLink, AssignableSession {
                         new ValuesEntry("visible", VariantBoolean.NULL),
                         new ValuesEntry("image", VariantBytes.NULL)));
 
-                List<Record> userrecord = querylink.query(usernamequery);
+                Record userrecord = querylink.find(usernamequery);
 
-                if (userrecord.isEmpty() || !CryptUtils.validatePassword(password, userrecord.get(0).getString("password"))) {
+                if (userrecord == null || !CryptUtils.validatePassword(password, userrecord.getString("password"))) {
                     currentuser = null;
                 } else {
-                    currentuser = userrecord.get(0);
+                    currentuser = userrecord;
                 }
                 currentsession = null;
                 currentsessionset = null;
@@ -237,7 +237,7 @@ public class SecureLink implements QueryLink, DataLink, AssignableSession {
         } else {   
             // Normal query
             if (hasAuthorization(entity, ACTION_QUERY)) {
-                return querylink.query(filter);
+                return querylink.query(filter, options);
             } else {
                 throw new SecurityDataException("No authorization to query resource: " + entity);
             }  

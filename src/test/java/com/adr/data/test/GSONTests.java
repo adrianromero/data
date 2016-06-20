@@ -17,6 +17,7 @@
 
 package com.adr.data.test;
 
+import com.adr.data.QueryOptions;
 import com.adr.data.Record;
 import com.adr.data.utils.JSONSerializer;
 import com.adr.data.RecordMap;
@@ -68,6 +69,11 @@ public class GSONTests {
         
         System.out.println(JSONSerializer.INSTANCE.toJSON(keval));
         System.out.println(JSONSerializer.INSTANCE.toSimpleJSON(keval));
+        
+        System.out.println(JSONSerializer.INSTANCE.toJSONElement(QueryOptions.FIND).toString());
+        System.out.println(JSONSerializer.INSTANCE.toJSONElement(QueryOptions.DEFAULT).toString());
+        System.out.println(JSONSerializer.INSTANCE.toJSONElement(new QueryOptions(100)).toString());
+        System.out.println(JSONSerializer.INSTANCE.toJSONElement(new QueryOptions(Integer.MAX_VALUE)).toString());
         
 
         System.out.println("-->" + System.getProperty("databaseurl"));

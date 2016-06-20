@@ -19,6 +19,7 @@ package com.adr.data.sql;
 
 import com.adr.data.DataException;
 import com.adr.data.QueryLink;
+import com.adr.data.QueryOptions;
 import com.adr.data.Record;
 import com.adr.data.RecordMap;
 import com.adr.data.Values;
@@ -45,7 +46,7 @@ public abstract class Sentence {
     public void execute(Connection c, Record keyval) throws DataException {
         throw new UnsupportedOperationException();
     }    
-    public List<Record> query(Connection c, Record keyval, Map<String, String> options) throws DataException {
+    public List<Record> query(Connection c, Record keyval, QueryOptions options) throws DataException {
         throw new UnsupportedOperationException();    
     }
     
@@ -64,20 +65,20 @@ public abstract class Sentence {
         }
     } 
     
-    public static List<Record> query(Connection c, CommandSQL command, Record filter, Map<String, String> options) throws DataException {
+    public static List<Record> query(Connection c, CommandSQL command, Record filter, QueryOptions options) throws DataException {
         try (PreparedStatement stmt = c.prepareStatement(command.getCommand())) {
             SQLParameters kindparams = new SQLParameters(stmt, command.getParamNames());
             write(kindparams, filter.getKey());
             write(kindparams, filter.getValue());
             
-            int limit = Integer.parseInt(options.getOrDefault(QueryLink.LIMIT, "-1"));
+            int limit = options.getLimit();
 
             try (ResultSet resultset = stmt.executeQuery()) {
                 List<Record> r = new ArrayList<>();
                 SQLResults kindresults = new SQLResults(resultset);
                 
                 int i = 0;
-                while ((limit < 0 || i < limit) && resultset.next()) {
+                while (i < limit && resultset.next()) {
                     r.add(new RecordMap(
                         read(kindresults, filter.getKey()), 
                         read(kindresults, filter.getValue())));

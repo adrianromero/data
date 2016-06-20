@@ -18,6 +18,7 @@
 package com.adr.data.utils;
 
 import com.adr.data.DataException;
+import com.adr.data.QueryOptions;
 import com.adr.data.var.Kind;
 import com.adr.data.Record;
 import com.adr.data.RecordMap;
@@ -33,10 +34,7 @@ import com.google.gson.JsonNull;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
 
 /**
  *
@@ -126,16 +124,16 @@ public class JSONSerializer {
         return new RecordMap(fromJSONValues(o.get("key")), fromJSONValues(o.get("value")));
     }
     
-    public Map<String, String> fromJSONOptions(String json) {
+    public QueryOptions fromJSONOptions(String json) {
         return fromJSONOptions(gsonparser.parse(json));
     }
     
-    public Map<String, String> fromJSONOptions(JsonElement element) {
-        Map<String, String> options = new HashMap<>();
-        for (Entry<String, JsonElement> entry: element.getAsJsonObject().entrySet()) {
-            options.put(entry.getKey(), entry.getValue().getAsString());
+    public QueryOptions fromJSONOptions(JsonElement element) {
+        if (element == null || element.equals(JsonNull.INSTANCE)) {
+            return QueryOptions.DEFAULT;
+        } else {
+            return new QueryOptions(element.getAsJsonObject().get("limit").getAsInt());
         }
-        return options;
     }
     
     private ValuesMap fromJSONValues(JsonElement element) {
@@ -206,12 +204,14 @@ public class JSONSerializer {
         return r;
     }
 
-    public JsonElement toJSONElement(Map<String, String> obj) {
-        JsonObject r = new JsonObject();
-        for (Entry<String, String> entry: obj.entrySet()) {
-            r.addProperty(entry.getKey(), entry.getValue());
+    public JsonElement toJSONElement(QueryOptions obj) {
+        if (QueryOptions.DEFAULT.equals(obj)) {
+            return JsonNull.INSTANCE;
+        } else {
+            JsonObject r = new JsonObject();
+            r.addProperty("limit", obj.getLimit());
+            return r;
         }
-        return r;
     }
     
     public JsonElement toJSONElement(Values obj) {

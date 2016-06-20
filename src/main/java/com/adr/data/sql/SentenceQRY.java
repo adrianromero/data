@@ -18,10 +18,10 @@
 package com.adr.data.sql;
 
 import com.adr.data.DataException;
+import com.adr.data.QueryOptions;
 import com.adr.data.Record;
 import java.sql.Connection;
 import java.util.List;
-import java.util.Map;
 
 /**
  *
@@ -32,7 +32,7 @@ public abstract class SentenceQRY  extends Sentence {
     protected abstract CommandSQL build(Record keyval);
     
     @Override
-    public List<Record> query(Connection c, Record keyval, Map<String, String> options) throws DataException {
+    public List<Record> query(Connection c, Record keyval, QueryOptions options) throws DataException {
         return Sentence.query(c, build(keyval), keyval, options);
     }
 }

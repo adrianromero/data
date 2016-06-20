@@ -17,9 +17,7 @@
 
 package com.adr.data;
 
-import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 
 /**
  *
@@ -29,8 +27,12 @@ public interface QueryLink {
     
     public static final String LIMIT = "LIMIT";
     
-    public List<Record> query(Record filter, Map<String, String> options) throws DataException;       
+    public List<Record> query(Record filter, QueryOptions options) throws DataException;       
     public default List<Record> query(Record filter) throws DataException {
-        return query(filter, Collections.emptyMap());
-    }      
+        return query(filter, QueryOptions.DEFAULT);
+    }
+    public default Record find(Record filter) throws DataException {
+        List<Record> l = query(filter, QueryOptions.FIND);
+        return l.isEmpty() ? null : l.get(0);
+    } 
 }

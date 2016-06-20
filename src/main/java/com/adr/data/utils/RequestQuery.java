@@ -17,10 +17,10 @@
 
 package com.adr.data.utils;
 
+import com.adr.data.QueryOptions;
 import com.adr.data.Record;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import java.util.Map;
 
 /**
  *
@@ -31,9 +31,9 @@ public class RequestQuery extends EnvelopeRequest {
     public static final String NAME = "QUERY";
     
     private final Record filter;
-    private final Map<String, String> options;
+    private final QueryOptions options;
     
-    public RequestQuery(Record filter, Map<String, String> options) {
+    public RequestQuery(Record filter, QueryOptions options) {
         this.filter = filter;
         this.options = options;
     }
@@ -42,7 +42,7 @@ public class RequestQuery extends EnvelopeRequest {
         return filter;
     }
     
-    public Map<String, String> getOptions() {
+    public QueryOptions getOptions() {
         return options;
     }
 
