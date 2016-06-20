@@ -30,9 +30,6 @@ public abstract class EnvelopeResponse {
     public abstract String getType();  
     public abstract JsonElement dataToJSON();
     
-    public Record getAsRecord() throws DataException {
-        throw new DataException("Record response not supported.");
-    }
     public List<Record> getAsListRecord() throws DataException {
         throw new DataException("List of records response not supported.");
     }

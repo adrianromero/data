@@ -52,11 +52,6 @@ public class ResponseError extends EnvelopeResponse {
     }
     
     @Override
-    public Record getAsRecord() throws DataException {
-        throw new DataException(ex);
-    }
-    
-    @Override
     public List<Record> getAsListRecord() throws DataException {
         throw new DataException(ex);
     }  

@@ -79,9 +79,7 @@ public class JSONSerializer {
     public EnvelopeResponse fromJSONResponse(String json) {
         JsonObject envelope = gsonparser.parse(json).getAsJsonObject();
         String type = envelope.get("type").getAsString();
-        if (ResponseRecord.NAME.equals(type)) {
-            return new ResponseRecord(fromJSONRecord(envelope.get("data")));
-        } else if (ResponseListRecord.NAME.equals(type)) {
+        if (ResponseListRecord.NAME.equals(type)) {
             return new ResponseListRecord(JSONSerializer.this.fromJSONListRecord(envelope.get("data")));
         } else if (ResponseError.NAME.equals(type)) {
             return new ResponseError(new DataException(envelope.get("data").getAsString()));
