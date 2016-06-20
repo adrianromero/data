@@ -25,8 +25,6 @@ import java.util.List;
  */
 public interface QueryLink {
     
-    public static final String LIMIT = "LIMIT";
-    
     public List<Record> query(Record filter, QueryOptions options) throws DataException;       
     public default List<Record> query(Record filter) throws DataException {
         return query(filter, QueryOptions.DEFAULT);
