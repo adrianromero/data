@@ -25,7 +25,7 @@ import com.adr.data.Record;
 import com.adr.data.RecordMap;
 import com.adr.data.ValuesEntry;
 import com.adr.data.ValuesMap;
-import com.adr.data.http.AssignableSession;
+import com.adr.data.AssignableSession;
 import com.adr.data.utils.CryptUtils;
 import com.adr.data.utils.JSONSerializer;
 import com.adr.data.var.VariantBoolean;
@@ -60,46 +60,30 @@ public class SecureLink implements QueryLink, DataLink, AssignableSession {
     private final Set<String> anonymousresources; // resources everybody logged or not has access
     private final Set<String> authenticatedresources; // resources everybody logged has access
     
-    private Record currentuser = null;
-    private List<Record> currentsession = null;
-    private Set<String> currentsessionset = null;
+    private final ThreadLocal<Current> current;   
     
     public SecureLink(QueryLink querylink, DataLink datalink, Set<String> anonymousresources, Set<String> authenticatedresources) {
         this.querylink = querylink;
         this.datalink = datalink;
         this.anonymousresources = Collections.unmodifiableSet(anonymousresources);
         this.authenticatedresources = Collections.unmodifiableSet(authenticatedresources);
+        
+        this.current = new ThreadLocal<Current>() {
+            @Override 
+            protected Current initialValue() {
+                 return new Current();
+            }
+        };
     }
     
     @Override
-    public void readSerializedSession(DataInput session) throws IOException {
-        currentuser = JSONSerializer.INSTANCE.fromJSONRecord(session.readUTF());
-        boolean hascurrentsession = session.readBoolean();
-        if (hascurrentsession) {
-            int size = session.readInt();
-            currentsession = new ArrayList<>();
-            for(int i = 0; i < size; i++) {
-                currentsession.add(JSONSerializer.INSTANCE.fromJSONRecord(session.readUTF()));
-            }
-            currentsessionset = currentsession.stream().map(r -> r.getString("code")).collect(Collectors.toSet());
-        } else {
-            currentsession = null;
-            currentsessionset = null;
-        }
+    public void readSerializedSession(DataInput data) throws IOException {       
+        getCurrent().read(data);
     }
     
     @Override
-    public void writeSerializedSession(DataOutput session) throws IOException {
-        session.writeUTF(JSONSerializer.INSTANCE.toJSON(currentuser));
-        if (currentsession == null) {
-            session.writeBoolean(false);
-        } else {
-            session.writeBoolean(true);
-            session.writeInt(currentsession.size());
-            for (Record r : currentsession) {
-                session.writeUTF(JSONSerializer.INSTANCE.toJSON(currentuser));
-            }
-        }       
+    public void writeSerializedSession(DataOutput data) throws IOException {
+        getCurrent().write(data);
     }
             
     private boolean hasAuthorization(String resource, String action) throws DataException {
@@ -115,7 +99,7 @@ public class SecureLink implements QueryLink, DataLink, AssignableSession {
         }
 
         // if not logged it does not have permissions to anything else
-        if (currentuser == null) {
+        if (getCurrent().getUser() == null) {
             return false;
         }
 
@@ -125,30 +109,13 @@ public class SecureLink implements QueryLink, DataLink, AssignableSession {
         }
         
         // Admin has permissions to everything
-        if (ADMIN.equals(currentuser.getString("name"))) {
+        if (ADMIN.equals(getCurrent().getUser().getString("name"))) {
             return true;
         }
-        
-        loadCurrentSession();
-        return currentsessionset.contains(resource);
+
+        return getCurrent().containsResource(resource);
     }
     
-    private void loadCurrentSession() throws DataException {
-        // precondition currentuser != null
-        
-        if (currentsession == null) {
-            Record subjectsquery = new RecordMap(
-                new ValuesMap(
-                    new ValuesEntry("_ENTITY", "subject_byrole"),
-                    new ValuesEntry("role_id::PARAM", currentuser.getString("role_id"))),
-                new ValuesMap(
-                    new ValuesEntry("code"),
-                    new ValuesEntry("name")));
-            currentsession = querylink.query(subjectsquery);
-            currentsessionset = currentsession.stream().map(r -> r.getString("code")).collect(Collectors.toSet());           
-        }
-    }
-
     @Override
     public List<Record> query(Record filter, QueryOptions options) throws DataException {
         
@@ -157,9 +124,7 @@ public class SecureLink implements QueryLink, DataLink, AssignableSession {
             
             if (filter.getValue() == null) {
                 // logout
-                currentuser = null;
-                currentsession = null;
-                currentsessionset = null;
+                getCurrent().newUser(null);
             } else {
                 // login
                 String username = filter.getString("name");
@@ -182,36 +147,34 @@ public class SecureLink implements QueryLink, DataLink, AssignableSession {
                 Record userrecord = querylink.find(usernamequery);
 
                 if (userrecord == null || !CryptUtils.validatePassword(password, userrecord.getString("password"))) {
-                    currentuser = null;
+                    getCurrent().newUser(null);
                 } else {
-                    currentuser = userrecord;
+                    getCurrent().newUser(userrecord);
                 }
-                currentsession = null;
-                currentsessionset = null;
             }
             // Return current user
-            if (currentuser == null) {
+            if (getCurrent().getUser() == null) {
                 return Collections.emptyList();
             } else {
-                return Collections.singletonList(JSONSerializer.INSTANCE.clone(currentuser));
+                return Collections.singletonList(JSONSerializer.INSTANCE.clone(getCurrent().getUser()));
             }             
         } else if (AUTHENTICATION_CURRENT.equals(entity)) {
             // Return current user
-            if (currentuser == null) {
+            if (getCurrent().getUser() == null) {
                 return Collections.emptyList();
             } else {
-                return Collections.singletonList(JSONSerializer.INSTANCE.clone(currentuser));
+                return Collections.singletonList(JSONSerializer.INSTANCE.clone(getCurrent().getUser()));
             } 
         } else if ("username_byname".equals(entity)) {
             // Saves current user
-            if (currentuser == null) {
+            if (getCurrent().getUser() == null) {
                 throw new SecurityDataException("No authenticated user to save.");
             }
-            if (!filter.getKey().get("id").asString().equals(currentuser.getKey().get("id").asString())) {
+            if (!filter.getKey().get("id").asString().equals(getCurrent().getUser().getKey().get("id").asString())) {
                 throw new SecurityDataException("Trying to save a user different than authenticated user.");
             }
             
-            Record saveduser = JSONSerializer.INSTANCE.clone(currentuser); 
+            Record saveduser = JSONSerializer.INSTANCE.clone(getCurrent().getUser()); 
             saveduser.getValue().set("displayname", filter.getValue().get("displayname"));
             saveduser.getValue().set("password", filter.getValue().get("password"));
             saveduser.getValue().set("visible", filter.getValue().get("visible"));
@@ -219,8 +182,8 @@ public class SecureLink implements QueryLink, DataLink, AssignableSession {
             
             datalink.execute(saveduser);
             
-            currentuser = saveduser;
-            return Collections.singletonList(JSONSerializer.INSTANCE.clone(currentuser));            
+            getCurrent().updateUser(saveduser);
+            return Collections.singletonList(JSONSerializer.INSTANCE.clone(getCurrent().getUser()));            
         } else if (AUTHORIZATION_REQUEST.equals(entity)) {
             String resource = filter.getString("resource"); 
             String action = filter.getString("action"); 
@@ -228,11 +191,10 @@ public class SecureLink implements QueryLink, DataLink, AssignableSession {
             response.getValue().set("result", new VariantBoolean(hasAuthorization(resource, action)));
             return Collections.singletonList(response);
         } else if (AUTHORIZATIONS_QUERY.equals(entity)) {
-            if (currentuser == null) {
+            if (getCurrent().getUser() == null) {
                 return Collections.emptyList();
             } else {
-                loadCurrentSession();
-                return JSONSerializer.INSTANCE.clone(currentsession);
+                return JSONSerializer.INSTANCE.clone(getCurrent().getSession());
             }
         } else {   
             // Normal query
@@ -256,4 +218,88 @@ public class SecureLink implements QueryLink, DataLink, AssignableSession {
         
         datalink.execute(l);
     }
+    
+    private Current getCurrent() {
+        return current.get();
+    }
+    
+    private class Current {
+        private Record user = null;
+        private List<Record> session = null;
+        private Set<String> sessionset = null; 
+        
+
+        
+        public void newUser(Record user) {
+            this.user = user;
+            this.session = null;
+            this.sessionset = null;
+        }
+        
+        public void updateUser(Record user) {
+            this.user = user;
+        }
+        
+        public Record getUser() {
+            return user;
+        }
+        
+        public List<Record> getSession() throws DataException {
+            loadCurrentSession();
+            return session;
+        }
+        
+        public boolean containsResource(String resource) throws DataException {
+            loadCurrentSession();
+            return sessionset == null 
+                ? false 
+                : sessionset.contains(resource);
+        }
+        
+        public void read(DataInput data) throws IOException {
+            user = JSONSerializer.INSTANCE.fromJSONRecord(data.readUTF());
+            boolean hascurrentsession = data.readBoolean();
+            if (hascurrentsession) {
+                int size = data.readInt();
+                List<Record> l = new ArrayList<>();
+                for(int i = 0; i < size; i++) {
+                    l.add(JSONSerializer.INSTANCE.fromJSONRecord(data.readUTF()));
+                }
+                session = l;
+                sessionset = session.stream().map(r -> r.getString("code")).collect(Collectors.toSet());
+            } else {
+                session = null;
+                sessionset = null;
+            }
+        }
+        
+        public void write(DataOutput data) throws IOException {
+            data.writeUTF(JSONSerializer.INSTANCE.toJSON(user));
+            if (session == null) {
+                data.writeBoolean(false);
+            } else {
+                data.writeBoolean(true);
+                data.writeInt(session.size());
+                for (Record r : session) {
+                    data.writeUTF(JSONSerializer.INSTANCE.toJSON(r));
+                }
+            }
+        }
+        
+        private void loadCurrentSession() throws DataException {
+            // precondition currentuser != null
+
+            if (user != null && session == null) {
+                Record subjectsquery = new RecordMap(
+                    new ValuesMap(
+                        new ValuesEntry("_ENTITY", "subject_byrole"),
+                        new ValuesEntry("role_id::PARAM", user.getString("role_id"))),
+                    new ValuesMap(
+                        new ValuesEntry("code"),
+                        new ValuesEntry("name")));
+                session = querylink.query(subjectsquery);    
+                sessionset = session.stream().map(r -> r.getString("code")).collect(Collectors.toSet());
+            }
+        }
+    }    
 }
