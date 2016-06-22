@@ -27,7 +27,7 @@ import java.util.List;
 public interface DataLink {
     public void execute(List<Record> l) throws DataException;
     
-    public default void execute(Record keyval) throws DataException {
+    public default void execute(Record... keyval) throws DataException {
         execute(Arrays.asList(keyval));
     }
 }
