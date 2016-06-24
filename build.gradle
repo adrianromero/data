@@ -29,7 +29,7 @@ apply plugin: 'java'
 apply plugin: 'maven'
 
 group = 'com.github.adrianromero'
-version = '1.0.10'
+version = '1.0.11'
 
 description = """"""
 
@@ -86,11 +86,13 @@ flyway {
     locations = ['filesystem:./src/test/resources/com/adr/data/migration']
 }
 
+//tasks.withType(JavaExec) {
+//}
+
 test {
-    systemProperties = [
-        databasedriver: System.getProperty('database.driver'),
-        databaseurl: System.getProperty('database.url'),
-        databaseuser: System.getProperty('database.user'),
-        databasepassword: System.getProperty('database.password')
-    ]
+    System.properties.each { k, v ->
+        if (k.startsWith('app.')) {
+            systemProperty k - 'app.', v
+        }
+    }    
 }

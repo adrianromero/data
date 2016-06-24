@@ -24,11 +24,10 @@ import com.adr.data.sql.SentenceDML;
 import java.util.ArrayList;
 
 /**
- *
+ * Merge supported since PosgreSQL 9.5
  * @author adrian
  */
 public class SentencePGMerge extends SentenceDML {
-    
     
      @Override
     public String getName() {
@@ -37,7 +36,6 @@ public class SentencePGMerge extends SentenceDML {
 
     @Override
     protected CommandSQL build(Record keyval) {
-//        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
 
         StringBuilder sentence = new StringBuilder();
         StringBuilder values = new StringBuilder();

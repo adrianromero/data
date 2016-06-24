@@ -17,6 +17,7 @@
 
 package com.adr.data.http;
 
+import com.adr.data.AssignableSession;
 import com.adr.data.QueryLink;
 import com.adr.data.utils.ProcessRequest;
 import java.util.logging.Logger;
@@ -45,14 +46,23 @@ public class WebQueryLinkServer implements Route {
     public Object handle(Request request, Response response) throws Exception {
         String message;
         if ("GET".equals(request.protocol())) {
-            message = request.queryParams("filter");
-        } else {
+            message = request.params(":message");
+        } else if ("POST".equals(request.protocol())) {
             message = request.body();
-        }   
+        } else {
+            throw new java.lang.IllegalArgumentException("Protocol not supported: " + request.protocol());
+        }
 
-        assignsession.setSerializableSession(request.session().attribute(SESSIONNAME));       
-        String result = ProcessRequest.serverQueryProcess(link, message, LOG);           
+        // loads the session
+        assignsession.setSerializableSession(request.session().attribute(SESSIONNAME));    
+        
+        // Execute the process
+        String result = ProcessRequest.serverQueryProcess(link, message, LOG); 
+        
+        // saves the session
         request.session().attribute(SESSIONNAME, assignsession.getSerializableSession());
+        
+        response.type("application/json");
         return result;
     }
 }

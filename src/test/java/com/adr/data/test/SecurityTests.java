@@ -62,8 +62,8 @@ public class SecurityTests {
 
     private SecureLink getSecureLink() {
         return new SecureLink(
-            DataSourceLink.getQueryLink(),
-            DataSourceLink.getDataLink(),
+            SourceLink.getQueryLink(),
+            SourceLink.getDataLink(),
             new HashSet<>(Arrays.asList("username_visible")), // anonymous res
             new HashSet<>(Arrays.asList("authenticatedres"))); // authenticated res
     }

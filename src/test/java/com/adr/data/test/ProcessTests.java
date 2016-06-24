@@ -51,7 +51,7 @@ public class ProcessTests {
     @Test
     public void hello() throws DataException {
 
-        DataLink link = DataSourceLink.getDataLink();
+        DataLink link = SourceLink.getDataLink();
 
         link.execute(Arrays.asList(
             new RecordMap(

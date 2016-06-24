@@ -24,8 +24,10 @@ import com.adr.data.utils.EnvelopeResponse;
 import com.adr.data.utils.JSONSerializer;
 import com.adr.data.utils.RequestExecute;
 import com.rabbitmq.client.Channel;
+import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.RpcClient;
 import com.rabbitmq.client.ShutdownSignalException;
+import java.io.Closeable;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.List;
@@ -35,21 +37,23 @@ import java.util.concurrent.TimeoutException;
  *
  * @author adrian
  */
-public class MQDataLinkSync implements DataLink {
+public class MQDataLinkSync implements DataLink, Closeable {
     
-    private final RpcClient client;
+    private Channel channel = null;
+    private RpcClient client = null;
     
-    public MQDataLinkSync(Channel channel, String exchange, String routingKey, int timeout) throws IOException {
+    public MQDataLinkSync(Connection connection, String exchange, String routingKey, int timeout) throws IOException {
+        channel = connection.createChannel();        
         client = new RpcClient(channel, exchange, routingKey, timeout);
     }
-    public MQDataLinkSync(Channel channel, String exchange, int timeout) throws IOException {
-        this(channel, exchange, "", timeout);
+    public MQDataLinkSync(Connection connection, String exchange, int timeout) throws IOException {
+        this(connection, exchange, "", timeout);
     }
-    public MQDataLinkSync(Channel channel, String exchange, String routingKey) throws IOException {
-        this(channel, exchange, routingKey, 2500);
+    public MQDataLinkSync(Connection connection, String exchange, String routingKey) throws IOException {
+        this(connection, exchange, routingKey, 2500);
     }
-    public MQDataLinkSync(Channel channel, String exchange) throws IOException {
-        this(channel, exchange, "", 2500);
+    public MQDataLinkSync(Connection connection, String exchange) throws IOException {
+        this(connection, exchange, "", 2500);
     }
 
     @Override
@@ -67,7 +71,20 @@ public class MQDataLinkSync implements DataLink {
         }
     }
     
+    @Override
     public void close() throws IOException {
-        client.close();
-    }    
+        try {
+            if (client != null) {
+                client.close();
+            }
+        } finally {
+            if (channel != null) {
+                try {
+                    channel.close();
+                } catch (TimeoutException ex) {
+                    throw new IOException(ex);
+                }
+            }
+        }
+    }   
 }
