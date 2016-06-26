@@ -47,7 +47,7 @@ public class ResponseListRecord extends EnvelopeResponse {
 
     @Override
     public JsonElement dataToJSON() {
-        return JSONSerializer.INSTANCE.toJSONElement(result);
+        return JSON.INSTANCE.toJSONElement(result);
     } 
 
     @Override

@@ -19,7 +19,7 @@ package com.adr.data.test;
 
 import com.adr.data.QueryOptions;
 import com.adr.data.Record;
-import com.adr.data.utils.JSONSerializer;
+import com.adr.data.utils.JSON;
 import com.adr.data.RecordMap;
 import com.adr.data.ValuesMap;
 import com.adr.data.ValuesEntry;
@@ -59,21 +59,21 @@ public class GSONTests {
                 new ValuesMap(
                         new ValuesEntry("field", "hilario"))));
         
-        System.out.println(JSONSerializer.INSTANCE.toJSON(keval));  
-        System.out.println(JSONSerializer.INSTANCE.toJSON(JSONSerializer.INSTANCE.fromJSONRecord(JSONSerializer.INSTANCE.toJSON(keval))));
+        System.out.println(JSON.INSTANCE.toJSON(keval));  
+        System.out.println(JSON.INSTANCE.toJSON(JSON.INSTANCE.fromJSONRecord(JSON.INSTANCE.toJSON(keval))));
 
-        System.out.println(JSONSerializer.INSTANCE.toJSON(dl));
-        System.out.println(JSONSerializer.INSTANCE.toJSON(JSONSerializer.INSTANCE.fromJSONListRecord(JSONSerializer.INSTANCE.toJSON(dl))));      
+        System.out.println(JSON.INSTANCE.toJSON(dl));
+        System.out.println(JSON.INSTANCE.toJSON(JSON.INSTANCE.fromJSONListRecord(JSON.INSTANCE.toJSON(dl))));      
 
-        System.out.println(JSONSerializer.INSTANCE.toJSON(JSONSerializer.INSTANCE.fromJSONRecord(JSONSerializer.INSTANCE.toJSON(keval))));
+        System.out.println(JSON.INSTANCE.toJSON(JSON.INSTANCE.fromJSONRecord(JSON.INSTANCE.toJSON(keval))));
         
-        System.out.println(JSONSerializer.INSTANCE.toJSON(keval));
-        System.out.println(JSONSerializer.INSTANCE.toSimpleJSON(keval));
+        System.out.println(JSON.INSTANCE.toJSON(keval));
+        System.out.println(JSON.INSTANCE.toSimpleJSON(keval));
         
-        System.out.println(JSONSerializer.INSTANCE.toJSONElement(QueryOptions.FIND).toString());
-        System.out.println(JSONSerializer.INSTANCE.toJSONElement(QueryOptions.DEFAULT).toString());
-        System.out.println(JSONSerializer.INSTANCE.toJSONElement(new QueryOptions(100)).toString());
-        System.out.println(JSONSerializer.INSTANCE.toJSONElement(new QueryOptions(Integer.MAX_VALUE)).toString());
+        System.out.println(JSON.INSTANCE.toJSONElement(QueryOptions.FIND).toString());
+        System.out.println(JSON.INSTANCE.toJSONElement(QueryOptions.DEFAULT).toString());
+        System.out.println(JSON.INSTANCE.toJSONElement(new QueryOptions(100)).toString());
+        System.out.println(JSON.INSTANCE.toJSONElement(new QueryOptions(Integer.MAX_VALUE)).toString());
         
 
         System.out.println("-->" + System.getProperty("databaseurl"));

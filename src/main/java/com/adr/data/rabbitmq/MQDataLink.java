@@ -20,13 +20,12 @@ package com.adr.data.rabbitmq;
 import com.adr.data.DataException;
 import com.adr.data.DataLink;
 import com.adr.data.Record;
-import com.adr.data.utils.JSONSerializer;
+import com.adr.data.utils.JSON;
 import com.adr.data.utils.RequestExecute;
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.RpcClient;
 import com.rabbitmq.client.ShutdownSignalException;
-import java.io.Closeable;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.List;
@@ -36,7 +35,7 @@ import java.util.concurrent.TimeoutException;
  *
  * @author adrian
  */
-public class MQDataLink implements DataLink, Closeable {
+public class MQDataLink implements DataLink {
     
     private Channel channel = null;
     private RpcClient client = null;
@@ -59,7 +58,7 @@ public class MQDataLink implements DataLink, Closeable {
     public void execute(List<Record> l) throws DataException {
         
         try {
-            byte[] request = JSONSerializer.INSTANCE.toJSON(new RequestExecute(l)).getBytes("UTF-8");
+            byte[] request = JSON.INSTANCE.toJSON(new RequestExecute(l)).getBytes("UTF-8");
             client.publish(null, request);
         } catch (UnsupportedEncodingException ex) {
             throw new UnsupportedOperationException(ex); // Never happens
@@ -69,17 +68,19 @@ public class MQDataLink implements DataLink, Closeable {
     }
     
     @Override
-    public void close() throws IOException {
+    public void close() throws DataException {
         try {
             if (client != null) {
                 client.close();
             }
+        } catch (IOException ex) {
+            throw new DataException(ex);
         } finally {
             if (channel != null) {
                 try {
                     channel.close();
-                } catch (TimeoutException ex) {
-                    throw new IOException(ex);
+                } catch (IOException | TimeoutException ex) {
+                    throw new DataException(ex);
                 }
             }
         }

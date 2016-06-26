@@ -20,7 +20,7 @@ package com.adr.data.utils;
 import com.adr.data.DataException;
 import com.adr.data.Record;
 import com.google.gson.JsonElement;
-import com.google.gson.JsonPrimitive;
+import com.google.gson.JsonObject;
 import java.util.List;
 
 /**
@@ -48,12 +48,21 @@ public class ResponseError extends EnvelopeResponse {
 
     @Override
     public JsonElement dataToJSON() {
-        return new JsonPrimitive(ex.toString());
+        JsonObject jsonex = new JsonObject();
+        jsonex.addProperty("exception", ex.getClass().getName());
+        jsonex.addProperty("message", ex.getMessage());
+        return jsonex;
     }
     
     @Override
     public List<Record> getAsListRecord() throws DataException {
-        throw new DataException(ex);
+        if (ex instanceof DataException) {
+            throw (DataException) ex;
+        } else if (ex instanceof RuntimeException) {
+            throw (RuntimeException) ex;
+        } else {
+            throw new DataException(ex.toString());
+        } 
     }  
     
     @Override

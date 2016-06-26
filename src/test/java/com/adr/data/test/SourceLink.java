@@ -17,10 +17,13 @@
 
 package com.adr.data.test;
 
+import com.adr.data.BasicDataQueryLink;
 import com.adr.data.DataLink;
+import com.adr.data.DataQueryLink;
 import com.adr.data.QueryLink;
 import com.adr.data.rabbitmq.MQDataLinkSync;
 import com.adr.data.rabbitmq.MQQueryLink;
+import com.adr.data.security.SecureLink;
 import com.adr.data.sql.SQLDataLink;
 import com.adr.data.sql.SQLQueryLink;
 import com.adr.data.sql.SecureCommands;
@@ -30,6 +33,8 @@ import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.ConnectionFactory;
 import java.beans.PropertyVetoException;
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.concurrent.TimeoutException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -74,66 +79,31 @@ public class SourceLink {
         }
         return connection;
     }
-    
-    public static MQDataLinkSync getMQDataLink() {
-        
-        try {
-            MQDataLinkSync link = new MQDataLinkSync(getConnection(), System.getProperty("rabbitmq.dataexchange"));
-            
-            Runtime.getRuntime().addShutdownHook(new Thread() {
-                @Override
-                public void run() {
-                    try {
-                        link.close();
-                    } catch (IOException ex) {
-                        Logger.getLogger(SourceLink.class.getName()).log(Level.SEVERE, null, ex);
-                    }
-                }
-            });
-            
-            return link;
-        } catch (IOException ex) {
-            Logger.getLogger(SourceLink.class.getName()).log(Level.SEVERE, null, ex);
-            throw new RuntimeException(ex);
-        }
-    }
-    
-    public static MQQueryLink getMQQueryLink() {
-        
-        try {
-            MQQueryLink link = new MQQueryLink(getConnection(), System.getProperty("rabbitmq.queryexchange"));
-            
-            Runtime.getRuntime().addShutdownHook(new Thread() {
-                @Override
-                public void run() {
-                    try {
-                        link.close();
-                    } catch (IOException ex) {
-                        Logger.getLogger(SourceLink.class.getName()).log(Level.SEVERE, null, ex);
-                    }
-                }
-            });
-            
-            return link;
-        } catch (IOException ex) {
-            Logger.getLogger(SourceLink.class.getName()).log(Level.SEVERE, null, ex);
-            throw new RuntimeException(ex);
-        }
-    }
-    
-    public static DataLink getDataLink() {
-        if ("rabbitmq".equals(System.getProperty("datalink.type"))) {
-            return getMQDataLink();
-        } else {
-            return new SQLDataLink(getDataSource(), new SentencePut(), SecureCommands.COMMANDS);
-        }
-    }
-    
-    public static QueryLink getQueryLink() {
-        if ("rabbitmq".equals(System.getProperty("querylink.type"))) {
-            return getMQQueryLink();
+     
+    public static DataQueryLink createDataQueryLink() {
+        if ("rabbitmq".equals(System.getProperty("link.type"))) {
+            return createMQLink();
         } else {        
-            return new SQLQueryLink(getDataSource(), SecureCommands.QUERIES);
+            return createLocalSecureLink();
         }
-    }  
+    }
+    
+    private static DataQueryLink createLocalSecureLink() {
+        return new SecureLink(
+            new SQLQueryLink(getDataSource(), SecureCommands.QUERIES),
+            new SQLDataLink(getDataSource(), new SentencePut(), SecureCommands.COMMANDS),
+            new HashSet<>(Arrays.asList("username_visible")), // anonymous res
+            new HashSet<>(Arrays.asList("authenticatedres"))); // authenticated res
+    }
+
+    private static DataQueryLink createMQLink() {
+        try {
+            return new BasicDataQueryLink(
+                new MQQueryLink(getConnection(), System.getProperty("rabbitmq.queryexchange")),
+                new MQDataLinkSync(getConnection(), System.getProperty("rabbitmq.dataexchange")));
+        } catch (IOException ex) {
+            Logger.getLogger(SourceLink.class.getName()).log(Level.SEVERE, null, ex);
+            throw new RuntimeException(ex);
+        }
+    }
 }

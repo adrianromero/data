@@ -33,22 +33,25 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonNull;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
  * @author adrian
  */
-public class JSONSerializer {
+public class JSON {
 
-    public final static JSONSerializer INSTANCE = new JSONSerializer();
+    public final static JSON INSTANCE = new JSON();
 
     private final Gson gson;
     private final Gson gsonsimple;
     private final JsonParser gsonparser;
 
-    private JSONSerializer() {
+    private JSON() {
 
         GsonBuilder gsonb = new GsonBuilder();
 //        gsonb.serializeNulls();
@@ -70,7 +73,7 @@ public class JSONSerializer {
             JsonObject data = envelope.get("data").getAsJsonObject();
             return new RequestQuery(fromJSONRecord(data.get("filter")), fromJSONOptions(data.get("options")));
         } else if (RequestExecute.NAME.equals(type)) {
-            return new RequestExecute(JSONSerializer.this.fromJSONListRecord(envelope.get("data")));
+            return new RequestExecute(JSON.this.fromJSONListRecord(envelope.get("data")));
         } else {
             throw new IllegalStateException("Envelope type invalid: " + type);
         }
@@ -80,9 +83,18 @@ public class JSONSerializer {
         JsonObject envelope = gsonparser.parse(json).getAsJsonObject();
         String type = envelope.get("type").getAsString();
         if (ResponseListRecord.NAME.equals(type)) {
-            return new ResponseListRecord(JSONSerializer.this.fromJSONListRecord(envelope.get("data")));
+            return new ResponseListRecord(JSON.this.fromJSONListRecord(envelope.get("data")));
         } else if (ResponseError.NAME.equals(type)) {
-            return new ResponseError(new DataException(envelope.get("data").getAsString()));
+            JsonObject jsonex = envelope.get("data").getAsJsonObject();
+            String name = jsonex.get("exception").getAsString();
+            String message = jsonex.get("message").getAsString();
+            Throwable t;
+            try {
+                t = (Throwable) Class.forName(name).getConstructor(String.class).newInstance(message);
+            } catch (ClassCastException | ClassNotFoundException | NoSuchMethodException | SecurityException | InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException ex) {
+                t = new DataException("Exception name: " + name + ", with message: " + message);
+            }
+            return new ResponseError(t);
         } else if (ResponseSuccess.NAME.equals(type)) {
             return new ResponseSuccess();
         } else {

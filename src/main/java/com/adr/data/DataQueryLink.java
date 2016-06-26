@@ -17,23 +17,9 @@
 
 package com.adr.data;
 
-import java.util.List;
-
 /**
  *
  * @author adrian
  */
-public interface QueryLink extends AutoCloseable {
-    
-    public List<Record> query(Record filter, QueryOptions options) throws DataException;       
-    public default List<Record> query(Record filter) throws DataException {
-        return query(filter, QueryOptions.DEFAULT);
-    }
-    public default Record find(Record filter) throws DataException {
-        List<Record> l = query(filter, QueryOptions.FIND);
-        return l.isEmpty() ? null : l.get(0);
-    } 
-    
-    @Override
-    public void close() throws DataException;
+public interface DataQueryLink extends DataLink, QueryLink {   
 }

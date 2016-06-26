@@ -21,7 +21,7 @@ import com.adr.data.QueryLink;
 import com.adr.data.QueryOptions;
 import com.adr.data.Record;
 import com.adr.data.utils.EnvelopeResponse;
-import com.adr.data.utils.JSONSerializer;
+import com.adr.data.utils.JSON;
 import com.adr.data.utils.RequestQuery;
 import com.adr.data.utils.ResponseListRecord;
 import java.util.List;
@@ -51,18 +51,23 @@ public class CachedQueryLink implements QueryLink {
     public List<Record> query(Record filter, QueryOptions options) throws DataException {
         
         if (selector.cache(filter)) {
-            String key = JSONSerializer.INSTANCE.toJSON(new RequestQuery(filter, options));
+            String key = JSON.INSTANCE.toJSON(new RequestQuery(filter, options));
             String cachedresult = provider.getIfPresent(key);
             if (cachedresult == null) {
                 List<Record> l = link.query(filter, options);
-                provider.put(key, JSONSerializer.INSTANCE.toJSON(new ResponseListRecord(l)));
+                provider.put(key, JSON.INSTANCE.toJSON(new ResponseListRecord(l)));
                 return l;
             } else {
-                EnvelopeResponse response = JSONSerializer.INSTANCE.fromJSONResponse(cachedresult);
+                EnvelopeResponse response = JSON.INSTANCE.fromJSONResponse(cachedresult);
                 return response.getAsListRecord();
             }
         } else {
             return link.query(filter, options);
         }
+    }
+
+    @Override
+    public void close() throws DataException {
+        link.close();
     }
 }

@@ -23,17 +23,32 @@ import java.util.List;
  *
  * @author adrian
  */
-public interface QueryLink extends AutoCloseable {
+public class BasicDataQueryLink implements DataQueryLink {
     
-    public List<Record> query(Record filter, QueryOptions options) throws DataException;       
-    public default List<Record> query(Record filter) throws DataException {
-        return query(filter, QueryOptions.DEFAULT);
+    private final QueryLink querylink;
+    private final DataLink datalink;  
+    
+    public BasicDataQueryLink(QueryLink querylink, DataLink datalink) {
+        this.querylink = querylink;
+        this.datalink = datalink;
     }
-    public default Record find(Record filter) throws DataException {
-        List<Record> l = query(filter, QueryOptions.FIND);
-        return l.isEmpty() ? null : l.get(0);
-    } 
     
     @Override
-    public void close() throws DataException;
+    public List<Record> query(Record filter, QueryOptions options) throws DataException {
+        return querylink.query(filter, options);
+    }
+
+    @Override
+    public void execute(List<Record> l) throws DataException {
+        datalink.execute(l);
+    }
+
+    @Override
+    public void close() throws DataException {
+        try {
+            querylink.close();
+        } finally {
+            datalink.close();
+        }
+    }
 }

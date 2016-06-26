@@ -19,7 +19,7 @@ package com.adr.data.rabbitmq;
 
 import com.adr.data.QueryLink;
 import com.adr.data.utils.EnvelopeRequest;
-import com.adr.data.utils.JSONSerializer;
+import com.adr.data.utils.JSON;
 import com.adr.data.utils.ProcessRequest;
 import com.rabbitmq.client.AMQP;
 import com.rabbitmq.client.Channel;
@@ -48,7 +48,7 @@ public class MQQueryLinkServer extends RpcServer {
     public void handleCast(byte[] requestBody) {
         try {
             String message = new String(requestBody, "UTF-8");
-            EnvelopeRequest request = JSONSerializer.INSTANCE.fromJSONRequest(message);
+            EnvelopeRequest request = JSON.INSTANCE.fromJSONRequest(message);
             LOG.log(Level.SEVERE, "There is no correlation or destination in the request {0} : {1}.", new Object[]{request.getType(), message});
         } catch (UnsupportedEncodingException ex) {
             throw new UnsupportedOperationException(ex);            

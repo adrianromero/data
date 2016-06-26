@@ -18,9 +18,11 @@ package com.adr.data.test;
 
 import com.adr.data.DataException;
 import com.adr.data.DataLink;
+import com.adr.data.DataQueryLink;
 import com.adr.data.RecordMap;
 import com.adr.data.ValuesMap;
 import com.adr.data.ValuesEntry;
+import com.adr.data.security.SecureFacade;
 import com.adr.data.var.VariantBoolean;
 import com.adr.data.var.VariantString;
 import java.util.Arrays;
@@ -51,41 +53,45 @@ public class ProcessTests {
     @Test
     public void hello() throws DataException {
 
-        DataLink link = SourceLink.getDataLink();
+        try (DataQueryLink link = SourceLink.createDataQueryLink()) {
+            SecureFacade secfac = new SecureFacade(link);
+            secfac.login("admin", "admin");
 
-        link.execute(Arrays.asList(
-            new RecordMap(
-                new ValuesMap(
-                    new ValuesEntry("_ENTITY", "c_country"),
-                    new ValuesEntry("c_country_id", new VariantString("001"))),
-                new ValuesMap(
-                    new ValuesEntry("name", "Spain"),
-                    new ValuesEntry("hasRegion", VariantBoolean.TRUE),
-                    new ValuesEntry("countrycode", "ES"))),
-            new RecordMap(
-                new ValuesMap(
-                    new ValuesEntry("_ENTITY", "c_country"),
-                    new ValuesEntry("c_country_id", "003")),
-                new ValuesMap(
-                    new ValuesEntry("name", "Germany"),
-                    new ValuesEntry("hasRegion", VariantBoolean.TRUE),
-                    new ValuesEntry("countrycode", "DE"))),
-            new RecordMap(
-                new ValuesMap(
-                    new ValuesEntry("_ENTITY", "c_country"),
-                    new ValuesEntry("c_country_id", "004")),
-                new ValuesMap(
-                    new ValuesEntry("name", "Italy"),
-                    new ValuesEntry("hasRegion", VariantBoolean.TRUE),
-                    new ValuesEntry("countrycode", "IT"))),
-            new RecordMap(
-                new ValuesMap(
-                    new ValuesEntry("_ENTITY", "c_country"),
-                    new ValuesEntry("c_country_id", "005")),
-                new ValuesMap(
-                    new ValuesEntry("name", "Portugal"),
-                    new ValuesEntry("hasRegion", true),
-                    new ValuesEntry("countrycode", "PT")))));
-
+            link.execute(
+                new RecordMap(
+                    new ValuesMap(
+                        new ValuesEntry("_ENTITY", "c_country"),
+                        new ValuesEntry("c_country_id", new VariantString("001"))),
+                    new ValuesMap(
+                        new ValuesEntry("name", "Spain"),
+                        new ValuesEntry("hasRegion", VariantBoolean.TRUE),
+                        new ValuesEntry("countrycode", "ES"))),
+                new RecordMap(
+                    new ValuesMap(
+                        new ValuesEntry("_ENTITY", "c_country"),
+                        new ValuesEntry("c_country_id", "003")),
+                    new ValuesMap(
+                        new ValuesEntry("name", "Germany"),
+                        new ValuesEntry("hasRegion", VariantBoolean.TRUE),
+                        new ValuesEntry("countrycode", "DE"))),
+                new RecordMap(
+                    new ValuesMap(
+                        new ValuesEntry("_ENTITY", "c_country"),
+                        new ValuesEntry("c_country_id", "004")),
+                    new ValuesMap(
+                        new ValuesEntry("name", "Italy"),
+                        new ValuesEntry("hasRegion", VariantBoolean.TRUE),
+                        new ValuesEntry("countrycode", "IT"))),
+                new RecordMap(
+                    new ValuesMap(
+                        new ValuesEntry("_ENTITY", "c_country"),
+                        new ValuesEntry("c_country_id", "005")),
+                    new ValuesMap(
+                        new ValuesEntry("name", "Portugal"),
+                        new ValuesEntry("hasRegion", true),
+                        new ValuesEntry("countrycode", "PT"))));
+            
+            secfac.logout();
+        }
     }
 }

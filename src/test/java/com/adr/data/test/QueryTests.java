@@ -18,12 +18,14 @@ package com.adr.data.test;
 
 import com.adr.data.DataException;
 import com.adr.data.DataLink;
+import com.adr.data.DataQueryLink;
 import com.adr.data.QueryLink;
 import com.adr.data.Record;
 import com.adr.data.RecordMap;
-import com.adr.data.utils.JSONSerializer;
+import com.adr.data.utils.JSON;
 import com.adr.data.ValuesMap;
 import com.adr.data.ValuesEntry;
+import com.adr.data.security.SecureFacade;
 import com.adr.data.var.VariantBoolean;
 import com.adr.data.var.VariantString;
 import junit.framework.Assert;
@@ -41,97 +43,107 @@ public class QueryTests {
     @Test
     public void testSomeQueries() throws DataException {
 
-        QueryLink link = SourceLink.getQueryLink();
+        try (DataQueryLink link = SourceLink.createDataQueryLink()) {
+            SecureFacade secfac = new SecureFacade(link);
+            secfac.login("admin", "admin");
+            
+            System.out.println(JSON.INSTANCE.toSimpleJSON(
+                link.query(new RecordMap(
+                    new ValuesMap(
+                        new ValuesEntry("_ENTITY", "username"),
+                        new ValuesEntry("id", new VariantString("admin"))),
+                    new ValuesMap(
+                        new ValuesEntry("name", VariantString.NULL),
+                        new ValuesEntry("codecard", VariantString.NULL))))));
 
-        System.out.println(JSONSerializer.INSTANCE.toSimpleJSON(
-            link.query(new RecordMap(
-                new ValuesMap(
-                    new ValuesEntry("_ENTITY", "username"),
-                    new ValuesEntry("id", new VariantString("admin"))),
-                new ValuesMap(
-                    new ValuesEntry("name", VariantString.NULL),
-                    new ValuesEntry("codecard", VariantString.NULL))))));
+            System.out.println(JSON.INSTANCE.toSimpleJSON(
+                link.query(new RecordMap(
+                    new ValuesMap(
+                        new ValuesEntry("_ENTITY", "username"),
+                        new ValuesEntry("id", VariantString.NULL)),
+                    new ValuesMap(
+                        new ValuesEntry("name", VariantString.NULL),
+                        new ValuesEntry("codecard", VariantString.NULL))))));
 
-        System.out.println(JSONSerializer.INSTANCE.toSimpleJSON(
-            link.query(new RecordMap(
-                new ValuesMap(
-                    new ValuesEntry("_ENTITY", "username"),
-                    new ValuesEntry("id", VariantString.NULL)),
-                new ValuesMap(
-                    new ValuesEntry("name", VariantString.NULL),
-                    new ValuesEntry("codecard", VariantString.NULL))))));
+            System.out.println(JSON.INSTANCE.toSimpleJSON(
+                link.query(new RecordMap(
+                    new ValuesMap(
+                        new ValuesEntry("_ENTITY", "username"),
+                        new ValuesEntry("id", "manager")),
+                    new ValuesMap(
+                        new ValuesEntry("name", VariantString.NULL),
+                        new ValuesEntry("visible", VariantBoolean.NULL),
+                        new ValuesEntry("codecard", VariantString.NULL))))));
 
-        System.out.println(JSONSerializer.INSTANCE.toSimpleJSON(
-            link.query(new RecordMap(
-                new ValuesMap(
-                    new ValuesEntry("_ENTITY", "username"),
-                    new ValuesEntry("id", "manager")),
-                new ValuesMap(
-                    new ValuesEntry("name", VariantString.NULL),
-                    new ValuesEntry("visible", VariantBoolean.NULL),
-                    new ValuesEntry("codecard", VariantString.NULL))))));
-        
-        System.out.println(JSONSerializer.INSTANCE.toSimpleJSON(
-            link.query(new RecordMap(
-                new ValuesMap(
-                    new ValuesEntry("_ENTITY", "username"),
-                    new ValuesEntry("id", VariantString.NULL)),
-                new ValuesMap(
-                    new ValuesEntry("name::LIKE", "%a%"),
-                    new ValuesEntry("visible", VariantBoolean.NULL),
-                    new ValuesEntry("codecard", VariantString.NULL))))));
+            System.out.println(JSON.INSTANCE.toSimpleJSON(
+                link.query(new RecordMap(
+                    new ValuesMap(
+                        new ValuesEntry("_ENTITY", "username"),
+                        new ValuesEntry("id", VariantString.NULL)),
+                    new ValuesMap(
+                        new ValuesEntry("name::LIKE", "%a%"),
+                        new ValuesEntry("visible", VariantBoolean.NULL),
+                        new ValuesEntry("codecard", VariantString.NULL))))));
 //                    also create a query ::LIKE because the write() will have to remove the :: 
+
+            secfac.logout();
+        }
     }
 
     @Test
     public void testSomeUpdates() throws DataException {
-        DataLink datalink = SourceLink.getDataLink();
-        QueryLink link = SourceLink.getQueryLink();
-
-        // Insert
-        datalink.execute(new RecordMap(
-            new ValuesMap(
-                new ValuesEntry("_ENTITY", "username"),
-                new ValuesEntry("id", "newid1")),
-            new ValuesMap(
-                new ValuesEntry("name", "newuser"),
-                new ValuesEntry("displayname", "New User"),
-                new ValuesEntry("codecard", "12345"),
-                new ValuesEntry("role_id", "u"),
-                new ValuesEntry("visible", true),
-                new ValuesEntry("active", true))));
-
-        Record r = getUser(link, "newid1");
-        Assert.assertEquals("newuser", r.getString("name"));
-        Assert.assertEquals("New User", r.getString("displayname"));
-        Assert.assertEquals(Boolean.TRUE, r.getBoolean("visible"));
-
-        // Insert
-        datalink.execute(new RecordMap(
-            new ValuesMap(
-                new ValuesEntry("_ENTITY", "username"),
-                new ValuesEntry("id", "newid1")),
-            new ValuesMap(
-                new ValuesEntry("name", "newuser"),
-                new ValuesEntry("displayname", "New User Changed"),
-                new ValuesEntry("codecard", "12345"),
-                new ValuesEntry("role_id", "u"),
-                new ValuesEntry("visible", true),
-                new ValuesEntry("active", true))));
-
-        r = getUser(link, "newid1");
-        Assert.assertEquals("newuser", r.getString("name"));
-        Assert.assertEquals("New User Changed", r.getString("displayname"));
-        Assert.assertEquals(Boolean.TRUE, r.getBoolean("visible"));
-
-        // Delete
-        datalink.execute(new RecordMap(
-            new ValuesMap(
-                new ValuesEntry("_ENTITY", "username"),
-                new ValuesEntry("id", "newid1"))));
         
-        r = getUser(link, "newid1");
-        Assert.assertNull(r);
+        try (DataQueryLink link = SourceLink.createDataQueryLink()) {
+            SecureFacade secfac = new SecureFacade(link);
+            secfac.login("admin", "admin");
+
+            // Insert
+            link.execute(new RecordMap(
+                new ValuesMap(
+                    new ValuesEntry("_ENTITY", "username"),
+                    new ValuesEntry("id", "newid1")),
+                new ValuesMap(
+                    new ValuesEntry("name", "newuser"),
+                    new ValuesEntry("displayname", "New User"),
+                    new ValuesEntry("codecard", "12345"),
+                    new ValuesEntry("role_id", "u"),
+                    new ValuesEntry("visible", true),
+                    new ValuesEntry("active", true))));
+
+            Record r = getUser(link, "newid1");
+            Assert.assertEquals("newuser", r.getString("name"));
+            Assert.assertEquals("New User", r.getString("displayname"));
+            Assert.assertEquals(Boolean.TRUE, r.getBoolean("visible"));
+
+            // Insert
+            link.execute(new RecordMap(
+                new ValuesMap(
+                    new ValuesEntry("_ENTITY", "username"),
+                    new ValuesEntry("id", "newid1")),
+                new ValuesMap(
+                    new ValuesEntry("name", "newuser"),
+                    new ValuesEntry("displayname", "New User Changed"),
+                    new ValuesEntry("codecard", "12345"),
+                    new ValuesEntry("role_id", "u"),
+                    new ValuesEntry("visible", true),
+                    new ValuesEntry("active", true))));
+
+            r = getUser(link, "newid1");
+            Assert.assertEquals("newuser", r.getString("name"));
+            Assert.assertEquals("New User Changed", r.getString("displayname"));
+            Assert.assertEquals(Boolean.TRUE, r.getBoolean("visible"));
+
+            // Delete
+            link.execute(new RecordMap(
+                new ValuesMap(
+                    new ValuesEntry("_ENTITY", "username"),
+                    new ValuesEntry("id", "newid1"))));
+
+            r = getUser(link, "newid1");
+            Assert.assertNull(r);
+            
+            secfac.logout();
+        }
     }
 
     private Record getUser(QueryLink link, String id) throws DataException {
@@ -147,18 +159,4 @@ public class QueryTests {
                 new ValuesEntry("visible", VariantBoolean.NULL),
                 new ValuesEntry("active", VariantBoolean.NULL))));
     }
-//-- DROP TABLE USERNAME;
-//CREATE TABLE USERNAME (
-//    ID VARCHAR(32) NOT NULL,
-//    NAME VARCHAR(1024) NOT NULL,
-//    DISPLAYNAME VARCHAR(2024) NOT NULL,
-//    PASSWORD VARCHAR(1024),
-//    CODECARD VARCHAR(1024),
-//    ROLE_ID VARCHAR(32) NOT NULL,
-//    VISIBLE BOOLEAN NOT NULL DEFAULT TRUE,
-//    ACTIVE BOOLEAN,
-//    IMAGE BYTEA,
-//    PRIMARY KEY (ID),
-//    FOREIGN KEY (ROLE_ID) REFERENCES ROLE(ID)
-//);
 }

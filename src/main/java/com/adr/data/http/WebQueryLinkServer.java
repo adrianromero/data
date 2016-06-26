@@ -17,8 +17,8 @@
 
 package com.adr.data.http;
 
-import com.adr.data.AssignableSession;
 import com.adr.data.QueryLink;
+import com.adr.data.security.SecureLink;
 import com.adr.data.utils.ProcessRequest;
 import java.util.logging.Logger;
 import spark.Request;
@@ -35,11 +35,10 @@ public class WebQueryLinkServer implements Route {
     private static final Logger LOG = Logger.getLogger(WebQueryLinkServer.class.getName());
     
     private final QueryLink link;
-    private final AssignableSession assignsession;
+    private SecureLink securelink;
 
-    public WebQueryLinkServer(QueryLink link, AssignableSession assignsession) {
+    public WebQueryLinkServer(QueryLink link) {
         this.link = link;
-        this.assignsession = assignsession;
     }
     
     @Override
@@ -54,13 +53,13 @@ public class WebQueryLinkServer implements Route {
         }
 
         // loads the session
-        assignsession.setSerializableSession(request.session().attribute(SESSIONNAME));    
+//        assignsession.setSerializableSession(request.session().attribute(SESSIONNAME));    
         
         // Execute the process
         String result = ProcessRequest.serverQueryProcess(link, message, LOG); 
         
         // saves the session
-        request.session().attribute(SESSIONNAME, assignsession.getSerializableSession());
+//        request.session().attribute(SESSIONNAME, assignsession.getSerializableSession());
         
         response.type("application/json");
         return result;

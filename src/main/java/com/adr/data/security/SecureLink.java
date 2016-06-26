@@ -25,13 +25,17 @@ import com.adr.data.Record;
 import com.adr.data.RecordMap;
 import com.adr.data.ValuesEntry;
 import com.adr.data.ValuesMap;
-import com.adr.data.AssignableSession;
+import com.adr.data.DataQueryLink;
 import com.adr.data.utils.CryptUtils;
-import com.adr.data.utils.JSONSerializer;
+import com.adr.data.utils.JSON;
 import com.adr.data.var.VariantBoolean;
 import com.adr.data.var.VariantBytes;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.DataInput;
+import java.io.DataInputStream;
 import java.io.DataOutput;
+import java.io.DataOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -43,7 +47,7 @@ import java.util.stream.Collectors;
  *
  * @author adrian
  */
-public class SecureLink implements QueryLink, DataLink, AssignableSession {
+public class SecureLink implements DataQueryLink {
     
     public final static String ADMIN = "admin";
     public final static String AUTHENTICATION_REQUEST = "AUTHENTICATION_REQUEST";
@@ -60,30 +64,18 @@ public class SecureLink implements QueryLink, DataLink, AssignableSession {
     private final Set<String> anonymousresources; // resources everybody logged or not has access
     private final Set<String> authenticatedresources; // resources everybody logged has access
     
-    private final ThreadLocal<Current> current;   
+    private final UserSession usersession;   
     
-    public SecureLink(QueryLink querylink, DataLink datalink, Set<String> anonymousresources, Set<String> authenticatedresources) {
+    public SecureLink(QueryLink querylink, DataLink datalink, Set<String> anonymousresources, Set<String> authenticatedresources, UserSession usersession) {
         this.querylink = querylink;
         this.datalink = datalink;
         this.anonymousresources = Collections.unmodifiableSet(anonymousresources);
         this.authenticatedresources = Collections.unmodifiableSet(authenticatedresources);
         
-        this.current = new ThreadLocal<Current>() {
-            @Override 
-            protected Current initialValue() {
-                 return new Current();
-            }
-        };
+        this.usersession = usersession;
     }
-    
-    @Override
-    public void readSerializedSession(DataInput data) throws IOException {       
-        getCurrent().read(data);
-    }
-    
-    @Override
-    public void writeSerializedSession(DataOutput data) throws IOException {
-        getCurrent().write(data);
+    public SecureLink(QueryLink querylink, DataLink datalink, Set<String> anonymousresources, Set<String> authenticatedresources) {
+        this(querylink, datalink, anonymousresources, authenticatedresources, new UserSession());
     }
             
     private boolean hasAuthorization(String resource, String action) throws DataException {
@@ -99,7 +91,7 @@ public class SecureLink implements QueryLink, DataLink, AssignableSession {
         }
 
         // if not logged it does not have permissions to anything else
-        if (getCurrent().getUser() == null) {
+        if (usersession.getUser() == null) {
             return false;
         }
 
@@ -109,11 +101,11 @@ public class SecureLink implements QueryLink, DataLink, AssignableSession {
         }
         
         // Admin has permissions to everything
-        if (ADMIN.equals(getCurrent().getUser().getString("name"))) {
+        if (ADMIN.equals(usersession.getUser().getString("name"))) {
             return true;
         }
 
-        return getCurrent().containsResource(resource);
+        return usersession.containsResource(resource, querylink);
     }
     
     @Override
@@ -124,7 +116,7 @@ public class SecureLink implements QueryLink, DataLink, AssignableSession {
             
             if (filter.getValue() == null) {
                 // logout
-                getCurrent().newUser(null);
+                usersession.newUser(null);
             } else {
                 // login
                 String username = filter.getString("name");
@@ -147,34 +139,34 @@ public class SecureLink implements QueryLink, DataLink, AssignableSession {
                 Record userrecord = querylink.find(usernamequery);
 
                 if (userrecord == null || !CryptUtils.validatePassword(password, userrecord.getString("password"))) {
-                    getCurrent().newUser(null);
+                    usersession.newUser(null);
                 } else {
-                    getCurrent().newUser(userrecord);
+                    usersession.newUser(userrecord);
                 }
             }
-            // Return current user
-            if (getCurrent().getUser() == null) {
+            // Return usersession user
+            if (usersession.getUser() == null) {
                 return Collections.emptyList();
             } else {
-                return Collections.singletonList(JSONSerializer.INSTANCE.clone(getCurrent().getUser()));
+                return Collections.singletonList(JSON.INSTANCE.clone(usersession.getUser()));
             }             
         } else if (AUTHENTICATION_CURRENT.equals(entity)) {
-            // Return current user
-            if (getCurrent().getUser() == null) {
+            // Return usersession user
+            if (usersession.getUser() == null) {
                 return Collections.emptyList();
             } else {
-                return Collections.singletonList(JSONSerializer.INSTANCE.clone(getCurrent().getUser()));
+                return Collections.singletonList(JSON.INSTANCE.clone(usersession.getUser()));
             } 
         } else if ("username_byname".equals(entity)) {
-            // Saves current user
-            if (getCurrent().getUser() == null) {
+            // Saves usersession user
+            if (usersession.getUser() == null) {
                 throw new SecurityDataException("No authenticated user to save.");
             }
-            if (!filter.getKey().get("id").asString().equals(getCurrent().getUser().getKey().get("id").asString())) {
+            if (!filter.getKey().get("id").asString().equals(usersession.getUser().getKey().get("id").asString())) {
                 throw new SecurityDataException("Trying to save a user different than authenticated user.");
             }
             
-            Record saveduser = JSONSerializer.INSTANCE.clone(getCurrent().getUser()); 
+            Record saveduser = JSON.INSTANCE.clone(usersession.getUser()); 
             saveduser.getValue().set("displayname", filter.getValue().get("displayname"));
             saveduser.getValue().set("password", filter.getValue().get("password"));
             saveduser.getValue().set("visible", filter.getValue().get("visible"));
@@ -182,19 +174,19 @@ public class SecureLink implements QueryLink, DataLink, AssignableSession {
             
             datalink.execute(saveduser);
             
-            getCurrent().updateUser(saveduser);
-            return Collections.singletonList(JSONSerializer.INSTANCE.clone(getCurrent().getUser()));            
+            usersession.updateUser(saveduser);
+            return Collections.singletonList(JSON.INSTANCE.clone(usersession.getUser()));            
         } else if (AUTHORIZATION_REQUEST.equals(entity)) {
             String resource = filter.getString("resource"); 
             String action = filter.getString("action"); 
-            Record response = JSONSerializer.INSTANCE.clone(filter);
+            Record response = JSON.INSTANCE.clone(filter);
             response.getValue().set("result", new VariantBoolean(hasAuthorization(resource, action)));
             return Collections.singletonList(response);
         } else if (AUTHORIZATIONS_QUERY.equals(entity)) {
-            if (getCurrent().getUser() == null) {
+            if (usersession.getUser() == null) {
                 return Collections.emptyList();
             } else {
-                return JSONSerializer.INSTANCE.clone(getCurrent().getSession());
+                return JSON.INSTANCE.clone(usersession.getSession(querylink));
             }
         } else {   
             // Normal query
@@ -218,52 +210,32 @@ public class SecureLink implements QueryLink, DataLink, AssignableSession {
         
         datalink.execute(l);
     }
-    
-    private Current getCurrent() {
-        return current.get();
+
+    @Override
+    public void close() throws DataException {
+        try {
+            querylink.close();
+        } finally {
+            datalink.close();
+        }
     }
     
-    private class Current {
+    public static class UserSession {
         private Record user = null;
         private List<Record> session = null;
         private Set<String> sessionset = null; 
         
-
-        
-        public void newUser(Record user) {
-            this.user = user;
-            this.session = null;
-            this.sessionset = null;
-        }
-        
-        public void updateUser(Record user) {
-            this.user = user;
-        }
-        
-        public Record getUser() {
-            return user;
-        }
-        
-        public List<Record> getSession() throws DataException {
-            loadCurrentSession();
-            return session;
-        }
-        
-        public boolean containsResource(String resource) throws DataException {
-            loadCurrentSession();
-            return sessionset == null 
-                ? false 
-                : sessionset.contains(resource);
+        public UserSession() {
         }
         
         public void read(DataInput data) throws IOException {
-            user = JSONSerializer.INSTANCE.fromJSONRecord(data.readUTF());
+            user = JSON.INSTANCE.fromJSONRecord(data.readUTF());
             boolean hascurrentsession = data.readBoolean();
             if (hascurrentsession) {
                 int size = data.readInt();
                 List<Record> l = new ArrayList<>();
                 for(int i = 0; i < size; i++) {
-                    l.add(JSONSerializer.INSTANCE.fromJSONRecord(data.readUTF()));
+                    l.add(JSON.INSTANCE.fromJSONRecord(data.readUTF()));
                 }
                 session = l;
                 sessionset = session.stream().map(r -> r.getString("code")).collect(Collectors.toSet());
@@ -274,19 +246,59 @@ public class SecureLink implements QueryLink, DataLink, AssignableSession {
         }
         
         public void write(DataOutput data) throws IOException {
-            data.writeUTF(JSONSerializer.INSTANCE.toJSON(user));
+            data.writeUTF(JSON.INSTANCE.toJSON(user));
             if (session == null) {
                 data.writeBoolean(false);
             } else {
                 data.writeBoolean(true);
                 data.writeInt(session.size());
                 for (Record r : session) {
-                    data.writeUTF(JSONSerializer.INSTANCE.toJSON(r));
+                    data.writeUTF(JSON.INSTANCE.toJSON(r));
                 }
             }
         }
         
-        private void loadCurrentSession() throws DataException {
+        public void setSerializableSession(byte[] session) throws IOException {
+            try (DataInputStream in = new DataInputStream(new ByteArrayInputStream(session))) {
+                read(in);
+            }       
+        }
+        
+        public byte[] getSerializableSession() throws IOException {
+            ByteArrayOutputStream bytearray = new ByteArrayOutputStream();
+            try (DataOutputStream out = new DataOutputStream(bytearray)) {
+                write(out);
+            }  
+            return bytearray.toByteArray();
+        }        
+        
+        private void newUser(Record user) {
+            this.user = user;
+            this.session = null;
+            this.sessionset = null;
+        }
+        
+        private void updateUser(Record user) {
+            this.user = user;
+        }
+        
+        private Record getUser() {
+            return user;
+        }
+        
+        private List<Record> getSession(QueryLink link) throws DataException {
+            loadCurrentSession(link);
+            return session;
+        }
+        
+        private boolean containsResource(String resource, QueryLink link) throws DataException {
+            loadCurrentSession(link);
+            return sessionset == null 
+                ? false 
+                : sessionset.contains(resource);
+        }
+        
+        private void loadCurrentSession(QueryLink link) throws DataException {
             // precondition currentuser != null
 
             if (user != null && session == null) {
@@ -297,7 +309,7 @@ public class SecureLink implements QueryLink, DataLink, AssignableSession {
                     new ValuesMap(
                         new ValuesEntry("code"),
                         new ValuesEntry("name")));
-                session = querylink.query(subjectsquery);    
+                session = link.query(subjectsquery);    
                 sessionset = session.stream().map(r -> r.getString("code")).collect(Collectors.toSet());
             }
         }

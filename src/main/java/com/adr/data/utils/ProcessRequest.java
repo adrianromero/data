@@ -42,7 +42,7 @@ public abstract class ProcessRequest {
 
     public static String serverQueryProcess(QueryLink link, String message, Logger logger) {
 
-        EnvelopeRequest envrequest = JSONSerializer.INSTANCE.fromJSONRequest(message);
+        EnvelopeRequest envrequest = JSON.INSTANCE.fromJSONRequest(message);
 
         logger.log(Level.CONFIG, "Processing {0} : {1}.", new Object[]{envrequest.getType(), message});
 
@@ -65,12 +65,12 @@ public abstract class ProcessRequest {
             }
         });
 
-        return JSONSerializer.INSTANCE.toJSON(envresponse);
+        return JSON.INSTANCE.toJSON(envresponse);
     }
 
     public static String serverDataProcess(DataLink link, String message, Logger logger) {
         
-        EnvelopeRequest request = JSONSerializer.INSTANCE.fromJSONRequest(message);
+        EnvelopeRequest request = JSON.INSTANCE.fromJSONRequest(message);
 
         logger.log(Level.CONFIG, "Processing {0} : {1}.", new Object[]{request.getType(), message});
 
@@ -93,6 +93,6 @@ public abstract class ProcessRequest {
             }
         });
 
-        return JSONSerializer.INSTANCE.toJSON(response);
+        return JSON.INSTANCE.toJSON(response);
     }
 }

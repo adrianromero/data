@@ -24,10 +24,13 @@ import java.util.List;
  *
  * @author adrian
  */
-public interface DataLink {
-    public void execute(List<Record> l) throws DataException;
+public interface DataLink extends AutoCloseable {
     
+    public void execute(List<Record> l) throws DataException;    
     public default void execute(Record... keyval) throws DataException {
         execute(Arrays.asList(keyval));
     }
+    
+    @Override
+    public void close() throws DataException;    
 }

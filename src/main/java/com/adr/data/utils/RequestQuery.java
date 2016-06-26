@@ -59,8 +59,8 @@ public class RequestQuery extends EnvelopeRequest {
     @Override
     public JsonElement dataToJSON() {
         JsonObject obj = new JsonObject();
-        obj.add("filter", JSONSerializer.INSTANCE.toJSONElement(filter));
-        obj.add("options", JSONSerializer.INSTANCE.toJSONElement(options));
+        obj.add("filter", JSON.INSTANCE.toJSONElement(filter));
+        obj.add("options", JSON.INSTANCE.toJSONElement(options));
         return obj;
     }    
 }
