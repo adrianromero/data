@@ -18,9 +18,8 @@
 package com.adr.data.test;
 
 import com.adr.data.BasicDataQueryLink;
-import com.adr.data.DataLink;
 import com.adr.data.DataQueryLink;
-import com.adr.data.QueryLink;
+import com.adr.data.http.WebDataQueryLink;
 import com.adr.data.rabbitmq.MQDataLinkSync;
 import com.adr.data.rabbitmq.MQQueryLink;
 import com.adr.data.security.SecureLink;
@@ -83,6 +82,8 @@ public class SourceLink {
     public static DataQueryLink createDataQueryLink() {
         if ("rabbitmq".equals(System.getProperty("link.type"))) {
             return createMQLink();
+        } else if ("http".equals(System.getProperty("link.type"))) {
+            return createHttpLink();
         } else {        
             return createLocalSecureLink();
         }
@@ -105,5 +106,9 @@ public class SourceLink {
             Logger.getLogger(SourceLink.class.getName()).log(Level.SEVERE, null, ex);
             throw new RuntimeException(ex);
         }
+    }
+
+    private static DataQueryLink createHttpLink() {
+        return new WebDataQueryLink(System.getProperty("http.url"));
     }
 }

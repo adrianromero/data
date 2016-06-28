@@ -229,13 +229,13 @@ public class SecureLink implements DataQueryLink {
         }
         
         public void read(DataInput data) throws IOException {
-            user = JSON.INSTANCE.fromJSONRecord(data.readUTF());
+            user = JSON.INSTANCE.fromJSONRecord(readString(data));
             boolean hascurrentsession = data.readBoolean();
             if (hascurrentsession) {
                 int size = data.readInt();
                 List<Record> l = new ArrayList<>();
                 for(int i = 0; i < size; i++) {
-                    l.add(JSON.INSTANCE.fromJSONRecord(data.readUTF()));
+                    l.add(JSON.INSTANCE.fromJSONRecord(readString(data)));
                 }
                 session = l;
                 sessionset = session.stream().map(r -> r.getString("code")).collect(Collectors.toSet());
@@ -246,32 +246,46 @@ public class SecureLink implements DataQueryLink {
         }
         
         public void write(DataOutput data) throws IOException {
-            data.writeUTF(JSON.INSTANCE.toJSON(user));
+            writeString(data, JSON.INSTANCE.toJSON(user));
             if (session == null) {
                 data.writeBoolean(false);
             } else {
                 data.writeBoolean(true);
                 data.writeInt(session.size());
                 for (Record r : session) {
-                    data.writeUTF(JSON.INSTANCE.toJSON(r));
+                    writeString(data, JSON.INSTANCE.toJSON(r));
                 }
             }
         }
+
+        private static void writeString(DataOutput out, String str) throws IOException {
+            byte[] data=str.getBytes("UTF-8");
+            out.writeInt(data.length);
+            out.write(data);            
+        }
         
-        public void setSerializableSession(byte[] session) throws IOException {
+        private static String readString(DataInput in) throws IOException {
+            int length = in.readInt();
+            byte[] data = new byte[length];
+            in.readFully(data);
+            return new String(data,"UTF-8");            
+        }
+        
+        public void setData(byte[] session) throws IOException {
             try (DataInputStream in = new DataInputStream(new ByteArrayInputStream(session))) {
                 read(in);
             }       
         }
         
-        public byte[] getSerializableSession() throws IOException {
+        public byte[] getData() throws IOException {
             ByteArrayOutputStream bytearray = new ByteArrayOutputStream();
             try (DataOutputStream out = new DataOutputStream(bytearray)) {
                 write(out);
             }  
             return bytearray.toByteArray();
-        }        
-        
+        }
+
+
         private void newUser(Record user) {
             this.user = user;
             this.session = null;
