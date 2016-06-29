@@ -17,7 +17,6 @@
 package com.adr.data.test;
 
 import com.adr.data.DataException;
-import com.adr.data.DataLink;
 import com.adr.data.DataQueryLink;
 import com.adr.data.QueryLink;
 import com.adr.data.Record;
@@ -84,8 +83,6 @@ public class QueryTests {
                         new ValuesEntry("name::LIKE", "%a%"),
                         new ValuesEntry("visible", VariantBoolean.NULL),
                         new ValuesEntry("codecard", VariantString.NULL))))));
-//                    also create a query ::LIKE because the write() will have to remove the :: 
-
             secfac.logout();
         }
     }

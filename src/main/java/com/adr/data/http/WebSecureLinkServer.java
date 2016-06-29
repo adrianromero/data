@@ -21,19 +21,16 @@ import com.adr.data.DataLink;
 import com.adr.data.QueryLink;
 import com.adr.data.security.SecureLink;
 import com.adr.data.utils.ProcessRequest;
+import java.io.IOException;
 import java.util.Set;
 import java.util.logging.Logger;
-import spark.Request;
-import spark.Response;
-import spark.Route;
 
 /**
  *
  * @author adrian
  */
-public class WebSecureLinkServer implements Route {
-    
-    private static final String SESSIONNAME = "DATA_SESSION";
+public class WebSecureLinkServer {
+
     private static final Logger LOG = Logger.getLogger(WebSecureLinkServer.class.getName());
     
     private final QueryLink querylink;
@@ -47,32 +44,16 @@ public class WebSecureLinkServer implements Route {
         this.anonymousresources = anonymousresources;
         this.authenticatedresources = authenticatedresources;
     }
+       
+    public String handleQuery(String message, SecureLink.UserSession usersession) throws IOException {
+        return ProcessRequest.serverQueryProcess(createSecureLink(usersession), message, LOG);                   
+    }
     
-    @Override
-    public Object handle(Request request, Response response) throws Exception {
-        
-        byte[] session = request.session().attribute(SESSIONNAME);
-        SecureLink.UserSession usersession = new SecureLink.UserSession();
-        if (session != null) {
-            usersession.setData(session);
-        }
-        
-        // loads the session
-        SecureLink link = new SecureLink(querylink, datalink, anonymousresources, authenticatedresources, usersession);
-
-        String result;       
-        if ("query".equals(request.params(":process"))) {
-            result = ProcessRequest.serverQueryProcess(link, request.body(), LOG);     
-        } else if ("execute".equals(request.params(":process"))) {
-            result = ProcessRequest.serverDataProcess(link, request.body(), LOG);
-        } else {
-            throw new IllegalArgumentException("Process not supported: " + request.params(":process"));
-        }
-        
-        // saves the session
-        request.session().attribute(SESSIONNAME, usersession.getData());
-
-        response.type("application/json; charset=utf-8");
-        return result;
+    public String handleExecute(String message, SecureLink.UserSession usersession) throws IOException {
+        return ProcessRequest.serverDataProcess(createSecureLink(usersession), message, LOG);         
+    }  
+    
+    private SecureLink createSecureLink(SecureLink.UserSession usersession) {
+        return new SecureLink(querylink, datalink, anonymousresources, authenticatedresources, usersession);
     }
 }
