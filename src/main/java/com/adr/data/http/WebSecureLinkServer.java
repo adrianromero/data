@@ -51,7 +51,17 @@ public class WebSecureLinkServer {
     
     public String handleExecute(String message, SecureLink.UserSession usersession) throws IOException {
         return ProcessRequest.serverDataProcess(createSecureLink(usersession), message, LOG);         
-    }  
+    } 
+    
+    public String handle(String process, String message, SecureLink.UserSession usersession) throws IOException {
+        if ("query".equals(process)) {
+            return handleQuery(message, usersession);
+        } else if ("execute".equals(process)) {
+            return handleExecute(message, usersession);
+        } else {
+            throw new IllegalArgumentException("Process not supported: " + process);
+        }  
+    }
     
     private SecureLink createSecureLink(SecureLink.UserSession usersession) {
         return new SecureLink(querylink, datalink, anonymousresources, authenticatedresources, usersession);
