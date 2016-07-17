@@ -36,15 +36,24 @@ public class SecureCommands {
         "select s.code, s.name from subject s join permission p on s.id = p.subject_id where p.role_id = ?", "role_id::PARAM"),
         new SentenceQuery(
         "username_byname",
-        "select u.id, u.name, u.displayname, u.password, u.codecard, u.role_id, r.name as role, u.visible, u.image "
+        "select u.id, u.name, u.displayname, u.password, u.codecard "
+        + "from username u "
+        + "where u.name = ? and u.active = true", "name"),
+        new SentenceQuery(
+        "username_byid",
+        "select u.id, u.name, u.displayname, u.codecard, u.role_id, r.name as role, u.visible, u.image "
         + "from username u join role r on u.role_id = r.id "
-        + "where u.name = ? and u.active = true", "name")
+        + "where u.id = ? and u.active = true", "id")
     };
 
     public final static Sentence[] COMMANDS = new Sentence[]{
         new SentenceCommand(
-        "username_byname",
-        "update username set displayname = ?, password = ?, visible = ?, image = ? where id = ?",
-        "displayname", "password", "visible", "image", "id")
+        "username_byid",
+        "update username set displayname = ?, visible = ?, image = ? where id = ?",
+        "displayname", "visible", "image", "id"),
+        new SentenceCommand(
+        "username_password",
+        "update username set password = ? where id = ?",
+        "password", "id")        
     };
 }

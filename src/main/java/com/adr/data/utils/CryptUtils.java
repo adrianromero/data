@@ -52,8 +52,8 @@ public class CryptUtils {
     
     public static boolean validatePassword(String password, String hashsalt) {
         
-        if ((password == null || password.isEmpty()) && (hashsalt == null || hashsalt.isEmpty())) {
-            return true; // empty password. 
+        if ((password == null || password.isEmpty())) {
+            return hashsalt == null || hashsalt.isEmpty(); // empty password. 
         } else {
             String [] splitted = hashsalt.split(":");
             

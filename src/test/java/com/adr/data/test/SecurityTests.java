@@ -248,4 +248,39 @@ public class SecurityTests {
             Assert.assertEquals(0, auth1.size());
         }
     }
+    
+    
+    @Test
+    public void testChangePasswords() throws DataException {
+        try (DataQueryLink link = SourceLink.createDataQueryLink()) {
+            SecureFacade secfac = new SecureFacade(link);       
+
+            Record loginuser = secfac.login("user", null);  
+            Assert.assertEquals("User", loginuser.getString("displayname"));
+            
+            secfac.savePassword("user", null, "pepeluis");
+            
+            try {
+                secfac.savePassword("manager", "nope", "foo");
+                Assert.fail(); // Cannot save a differentuser
+            } catch (SecurityDataException ex) {
+                Assert.assertEquals("Trying to save a user different than authenticated user.", ex.getMessage());    
+            }           
+            
+            try {
+                secfac.savePassword("user", "idontremember", "other");
+                Assert.fail();
+            } catch (SecurityDataException ex) {
+                Assert.assertEquals("Invalid password.", ex.getMessage());    
+            }           
+            
+            
+            secfac.savePassword("user", "pepeluis", "joselito");
+
+            secfac.savePassword("user", "joselito", null);
+
+            secfac.logout();  
+        }        
+    }
+    
 }

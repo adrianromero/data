@@ -23,7 +23,6 @@ import com.adr.data.Record;
 import com.adr.data.RecordMap;
 import com.adr.data.ValuesEntry;
 import com.adr.data.ValuesMap;
-import com.adr.data.var.VariantString;
 import java.util.List;
 
 /**
@@ -44,8 +43,8 @@ public class SecureFacade {
             new ValuesMap(
                 new ValuesEntry("_ENTITY", SecureLink.AUTHENTICATION_REQUEST)),
             new ValuesMap(
-                new ValuesEntry("name", new VariantString(username)),
-                new ValuesEntry("password", new VariantString(password)))));
+                new ValuesEntry("name", username),
+                new ValuesEntry("password", password))));
     }
     
     public void logout() throws DataException {
@@ -66,13 +65,23 @@ public class SecureFacade {
         return securelink.find(login);
     } 
     
+    public void savePassword(String name, String oldpassword, String password) throws DataException {
+        securelink.find(new RecordMap(
+            new ValuesMap(
+                new ValuesEntry("_ENTITY", SecureLink.AUTHENTICATION_PASSWORD)),
+            new ValuesMap(
+                new ValuesEntry("name", name),
+                new ValuesEntry("oldpassword", oldpassword),
+                new ValuesEntry("password", password))));
+    }    
+    
     public boolean hasAuthorization(String resource, String action) throws DataException {
         Record result = securelink.find(new RecordMap(
             new ValuesMap(
                 new ValuesEntry("_ENTITY", SecureLink.AUTHORIZATION_REQUEST)),
             new ValuesMap(
-                new ValuesEntry("resource", new VariantString(resource)),
-                new ValuesEntry("action", new VariantString(action)))));
+                new ValuesEntry("resource", resource),
+                new ValuesEntry("action", action))));
         
         return result.getBoolean("result");            
     } 
