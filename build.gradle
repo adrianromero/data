@@ -86,9 +86,6 @@ flyway {
     locations = ['filesystem:./src/test/resources/com/adr/data/migration']
 }
 
-//tasks.withType(JavaExec) {
-//}
-
 test {
     System.properties.each { k, v ->
         if (k.startsWith('app.')) {
