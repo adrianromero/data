@@ -80,18 +80,18 @@ public class VariantInt extends Variant {
     }
     
     @Override
-    public int asInteger() {
+    public Integer asInteger() {
         return value;
     }
     
     @Override
-    public long asLong() {
-        return value.longValue();
+    public Long asLong() {
+        return value == null ? null : value.longValue();
     }
     
     @Override
-    public double asDouble() {
-        return value.doubleValue();
+    public Double asDouble() {
+        return value == null ? null : value.doubleValue();
     }    
     
     @Override

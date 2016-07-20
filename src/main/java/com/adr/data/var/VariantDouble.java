@@ -80,17 +80,17 @@ public class VariantDouble extends Variant {
         return value;
     }
     @Override
-    public int asInteger() {
-        return value.intValue();
+    public Integer asInteger() {
+        return value == null ? null : value.intValue();
     }
     
     @Override
-    public long asLong() {
-        return value.longValue();
+    public Long asLong() {
+        return value == null ? null : value.longValue();
     }
     
     @Override
-    public double asDouble() {
+    public Double asDouble() {
         return value;
     }    
     

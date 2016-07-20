@@ -51,15 +51,15 @@ public abstract class Variant {
         throw new UnsupportedOperationException("Variant cannot be converted to number.");
     }
     
-    public int asInteger() {
+    public Integer asInteger() {
         throw new UnsupportedOperationException("Variant cannot be converted to integer.");
     }
     
-    public long asLong() {
+    public Long asLong() {
         throw new UnsupportedOperationException("Variant cannot be converted to long.");
     }
     
-    public double asDouble() {
+    public Double asDouble() {
         throw new UnsupportedOperationException("Variant cannot be converted to double.");
     }    
     
