@@ -30,14 +30,13 @@ public class Records {
         return JSON.INSTANCE.fromJSONRecord(JSON.INSTANCE.toJSONElement(record));    
     }
     
-    public static Record extend(Record base, Record record) {
-        Record r = clone(base);
-        Values rv = r.getValue();
+    public static void merge(Record base, Record record) {
+
+        Values rv = base.getValue();
         Values recordv = record.getValue();
         
         for (String n: recordv.getNames()) {
             rv.set(n, recordv.get(n));
         }
-        return r;
     }
 }
