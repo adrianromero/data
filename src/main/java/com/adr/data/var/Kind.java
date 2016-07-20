@@ -27,6 +27,7 @@ import java.util.function.Supplier;
  */
 public enum Kind {
     INT(VariantInt::new), 
+    LONG(VariantLong::new),
     STRING(VariantString::new), 
     DOUBLE(VariantDouble::new), 
     DECIMAL(VariantDecimal::new), 

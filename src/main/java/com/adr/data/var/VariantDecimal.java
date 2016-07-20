@@ -78,6 +78,20 @@ public class VariantDecimal extends Variant {
     public Number asNumber() {
         return value;
     }
+    @Override
+    public int asInteger() {
+        return value.intValue();
+    }
+    
+    @Override
+    public long asLong() {
+        return value.longValue();
+    }
+    
+    @Override
+    public double asDouble() {
+        return value.doubleValue();
+    }    
     
     @Override
     public BigDecimal asBigDecimal() {

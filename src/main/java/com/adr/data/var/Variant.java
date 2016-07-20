@@ -52,19 +52,19 @@ public abstract class Variant {
     }
     
     public int asInteger() {
-        return asNumber().intValue();
+        throw new UnsupportedOperationException("Variant cannot be converted to integer.");
     }
     
     public long asLong() {
-        return asNumber().longValue();
+        throw new UnsupportedOperationException("Variant cannot be converted to long.");
     }
     
     public double asDouble() {
-        return asNumber().doubleValue();
+        throw new UnsupportedOperationException("Variant cannot be converted to double.");
     }    
     
     public BigDecimal asBigDecimal() {
-        return new BigDecimal(asNumber().toString());
+        throw new UnsupportedOperationException("Variant cannot be converted to decimal.");
     }
     
     public Boolean asBoolean() {

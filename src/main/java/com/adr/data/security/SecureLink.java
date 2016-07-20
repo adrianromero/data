@@ -28,6 +28,7 @@ import com.adr.data.ValuesMap;
 import com.adr.data.DataQueryLink;
 import com.adr.data.utils.CryptUtils;
 import com.adr.data.utils.JSON;
+import com.adr.data.utils.Records;
 import com.adr.data.var.VariantBoolean;
 import com.adr.data.var.VariantBytes;
 import java.io.ByteArrayInputStream;
@@ -159,14 +160,14 @@ public class SecureLink implements DataQueryLink {
             if (usersession.getUser() == null) {
                 return Collections.emptyList();
             } else {
-                return Collections.singletonList(JSON.INSTANCE.clone(usersession.getUser()));
+                return Collections.singletonList(Records.clone(usersession.getUser()));
             }
         } else if (AUTHENTICATION_CURRENT.equals(entity)) {
             // Return usersession user
             if (usersession.getUser() == null) {
                 return Collections.emptyList();
             } else {
-                return Collections.singletonList(JSON.INSTANCE.clone(usersession.getUser()));
+                return Collections.singletonList(Records.clone(usersession.getUser()));
             } 
         } else if (AUTHENTICATION_PASSWORD.equals(entity)) {
             // Saves usersession password
@@ -207,7 +208,7 @@ public class SecureLink implements DataQueryLink {
                 throw new SecurityDataException("Trying to save a user different than authenticated user.");
             }
             
-            Record saveduser = JSON.INSTANCE.clone(usersession.getUser()); 
+            Record saveduser = Records.clone(usersession.getUser()); 
             saveduser.getValue().set("displayname", filter.getValue().get("displayname"));
             saveduser.getValue().set("visible", filter.getValue().get("visible"));
             saveduser.getValue().set("image", filter.getValue().get("image"));
@@ -215,11 +216,11 @@ public class SecureLink implements DataQueryLink {
             datalink.execute(saveduser);
             
             usersession.updateUser(saveduser);
-            return Collections.singletonList(JSON.INSTANCE.clone(usersession.getUser()));            
+            return Collections.singletonList(Records.clone(usersession.getUser()));            
         } else if (AUTHORIZATION_REQUEST.equals(entity)) {
             String resource = filter.getString("resource"); 
             String action = filter.getString("action"); 
-            Record response = JSON.INSTANCE.clone(filter);
+            Record response = Records.clone(filter);
             response.getValue().set("result", new VariantBoolean(hasAuthorization(resource, action)));
             return Collections.singletonList(response);
         } else if (AUTHORIZATIONS_QUERY.equals(entity)) {

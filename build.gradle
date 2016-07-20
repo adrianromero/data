@@ -80,9 +80,9 @@ install {
 }
 
 flyway {
-    url = System.getProperty('database.url')
-    user = System.getProperty('database.user')
-    password = System.getProperty('database.password')
+    url = System.getProperty('app.database.url')
+    user = System.getProperty('app.database.user')
+    password = System.getProperty('app.database.password')
     locations = ['filesystem:./src/test/resources/com/adr/data/migration']
 }
 

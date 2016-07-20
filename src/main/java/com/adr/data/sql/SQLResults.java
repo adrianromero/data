@@ -50,8 +50,17 @@ public final class SQLResults implements Results {
     @Override
     public Integer getInt(String columnName) throws DataException {
         try {
-            int iValue = resultset.getInt(columnName);
-            return resultset.wasNull() ? null : iValue;
+            int value = resultset.getInt(columnName);
+            return resultset.wasNull() ? null : value;
+        } catch (SQLException ex) {
+            throw new DataException(ex);
+        }
+    }
+    @Override
+    public Long getLong(String columnName) throws DataException {
+        try {
+            long value = resultset.getLong(columnName);
+            return resultset.wasNull() ? null : value;
         } catch (SQLException ex) {
             throw new DataException(ex);
         }
@@ -59,8 +68,8 @@ public final class SQLResults implements Results {
     @Override
     public Double getDouble(String columnName) throws DataException {
         try {
-            double dValue = resultset.getDouble(columnName);
-            return resultset.wasNull() ? null : dValue;
+            double value = resultset.getDouble(columnName);
+            return resultset.wasNull() ? null : value;
         } catch (SQLException ex) {
             throw new DataException(ex);
         }
@@ -76,8 +85,8 @@ public final class SQLResults implements Results {
     @Override
     public Boolean getBoolean(String columnName) throws DataException {
         try {
-            boolean bValue = resultset.getBoolean(columnName);
-            return resultset.wasNull() ? null : bValue;
+            boolean value = resultset.getBoolean(columnName);
+            return resultset.wasNull() ? null : value;
         } catch (SQLException ex) {
             throw new DataException(ex);
         }

@@ -36,8 +36,6 @@ import com.google.gson.JsonParser;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  *
@@ -117,12 +115,7 @@ public class JSON {
         }
         return l;
     }
-    
-    public Record clone(Record record) {
-        return fromJSONRecord(toJSONElement(record));    
-    }
-
-    public Record fromJSONRecord(String json) {
+        public Record fromJSONRecord(String json) {
         return fromJSONRecord(gsonparser.parse(json));
     }
 

@@ -64,6 +64,14 @@ public final class SQLParameters implements Parameters {
         }
     }
     @Override
+    public void setLong(String paramName, Long value) throws DataException {
+        try {  
+            set(paramName, i -> stmt.setObject(i, value, Types.BIGINT));
+        } catch (SQLException ex) {
+            throw new DataException(ex);
+        }
+    }
+    @Override
     public void setString(String paramName, String value) throws DataException {
         try {              
             set(paramName, i -> stmt.setString(i, value));

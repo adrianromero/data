@@ -31,6 +31,7 @@ public interface Parameters {
 
     public void setString(String name, String value) throws DataException;
     public void setInt(String name, Integer value) throws DataException;
+    public void setLong(String name, Long value) throws DataException;
     public void setDouble(String name, Double value) throws DataException;
     public void setBigDecimal(String name, BigDecimal value) throws DataException;
     public void setBoolean(String name, Boolean value) throws DataException;

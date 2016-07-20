@@ -19,6 +19,7 @@ package com.adr.data.var;
 import com.adr.data.DataException;
 import com.adr.data.Parameters;
 import com.adr.data.Results;
+import java.math.BigDecimal;
 import java.util.Objects;
 
 /**
@@ -77,7 +78,27 @@ public class VariantInt extends Variant {
     public Number asNumber() {
         return value;
     }
-
+    
+    @Override
+    public int asInteger() {
+        return value;
+    }
+    
+    @Override
+    public long asLong() {
+        return value.longValue();
+    }
+    
+    @Override
+    public double asDouble() {
+        return value.doubleValue();
+    }    
+    
+    @Override
+    public BigDecimal asBigDecimal() {
+        return value == null ? null : new BigDecimal(value);
+    }
+    
     @Override
     public int hashCode() {
         int hash = 7;

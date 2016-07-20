@@ -31,6 +31,7 @@ public interface Results {
 
     public String getString(String columnName) throws DataException;
     public Integer getInt(String columnName) throws DataException;
+    public Long getLong(String columnName) throws DataException;
     public Double getDouble(String columnName) throws DataException;
     public BigDecimal getBigDecimal(String columnName) throws DataException;
     public Boolean getBoolean(String columnName) throws DataException;

@@ -14,6 +14,7 @@
 //     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //     See the License for the specific language governing permissions and
 //     limitations under the License.
+
 package com.adr.data.var;
 
 import com.adr.data.DataException;
@@ -26,24 +27,23 @@ import java.util.Objects;
  *
  * @author adrian
  */
-public class VariantDouble extends Variant {
+public class VariantLong extends Variant {
     
-    public final static VariantDouble NULL = new VariantDouble(null);
+    public final static VariantLong NULL = new VariantLong(null);
     
-    private Double value;
+    private Long value;
     
-    public VariantDouble(Double value) {
+    public VariantLong(Long value) {
         this.value = value;
     }
     
-    protected VariantDouble() {
+    protected VariantLong() {
         this(null);
     }
     
-    
     @Override
     public Kind getKind() {
-        return Kind.DOUBLE;
+        return Kind.LONG;
     }
 
     @Override
@@ -54,7 +54,7 @@ public class VariantDouble extends Variant {
     @Override
     protected void buildISO(String value) throws DataException {
         try {
-            this.value = value == null || value.equals("") ? null : Double.parseDouble(value);       
+            this.value = value == null || value.equals("") ? null : Long.parseLong(value);       
         } catch (NumberFormatException ex) {
             throw new DataException(ex);
         }            
@@ -62,12 +62,12 @@ public class VariantDouble extends Variant {
     
     @Override
     public void write(Parameters write, String name) throws DataException {
-        write.setDouble(name, value);
+        write.setLong(name, value);
     }
 
     @Override
     protected void buildRead(Results read, String name) throws DataException {
-        this.value = read.getDouble(name);
+        this.value = read.getLong(name);
     }
     
     @Override
@@ -79,6 +79,7 @@ public class VariantDouble extends Variant {
     public Number asNumber() {
         return value;
     }
+    
     @Override
     public int asInteger() {
         return value.intValue();
@@ -86,12 +87,12 @@ public class VariantDouble extends Variant {
     
     @Override
     public long asLong() {
-        return value.longValue();
+        return value;
     }
     
     @Override
     public double asDouble() {
-        return value;
+        return value.doubleValue();
     }    
     
     @Override
@@ -117,7 +118,7 @@ public class VariantDouble extends Variant {
         if (getClass() != obj.getClass()) {
             return false;
         }
-        final VariantDouble other = (VariantDouble) obj;
+        final VariantLong other = (VariantLong) obj;
         return Objects.equals(this.value, other.value);
-    } 
+    }
 }
