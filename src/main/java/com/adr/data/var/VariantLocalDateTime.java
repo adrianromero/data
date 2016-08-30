@@ -31,7 +31,7 @@ public class VariantLocalDateTime extends Variant {
 
     public final static VariantLocalDateTime NULL = new VariantLocalDateTime();
 
-    private LocalDateTime value;
+    private final LocalDateTime value;
     
     public VariantLocalDateTime(LocalDateTime value) {
         this.value = value;
@@ -52,22 +52,8 @@ public class VariantLocalDateTime extends Variant {
     }
     
     @Override
-    protected void buildISO(String value) throws DataException {
-        try {
-            this.value = value == null || value.equals("") ? null : LocalDateTime.parse(value);       
-        } catch (DateTimeParseException ex) {
-            throw new DataException(ex);
-        }            
-    }
-    
-    @Override
     public void write(Parameters write, String name) throws DataException {
         write.setLocalDateTime(name, value);
-    }
-
-    @Override
-    protected void buildRead(Results read, String name) throws DataException {
-        this.value = read.getLocalDateTime(name);
     }
     
     @Override

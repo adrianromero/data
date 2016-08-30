@@ -14,11 +14,11 @@
 //     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //     See the License for the specific language governing permissions and
 //     limitations under the License.
+
 package com.adr.data.var;
 
 import com.adr.data.DataException;
 import com.adr.data.Parameters;
-import com.adr.data.Results;
 import java.util.Objects;
 
 /**
@@ -31,7 +31,7 @@ public class VariantBoolean extends Variant {
     public final static VariantBoolean TRUE = new VariantBoolean(Boolean.TRUE);
     public final static VariantBoolean FALSE = new VariantBoolean(Boolean.FALSE);    
     
-    private Boolean value;
+    private final Boolean value;
     
     public VariantBoolean(Boolean value) {
         this.value = value;
@@ -52,18 +52,8 @@ public class VariantBoolean extends Variant {
     }
     
     @Override
-    protected void buildISO(String value) throws DataException {
-        this.value = value == null || value.equals("") ? null : Boolean.valueOf(value);                
-    }
-    
-    @Override
     public void write(Parameters write, String name) throws DataException {
         write.setBoolean(name, value);
-    }
-
-    @Override
-    protected void buildRead(Results read, String name) throws DataException {
-        this.value = read.getBoolean(name);
     }
     
     @Override

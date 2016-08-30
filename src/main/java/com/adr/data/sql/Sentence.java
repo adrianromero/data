@@ -18,7 +18,6 @@
 package com.adr.data.sql;
 
 import com.adr.data.DataException;
-import com.adr.data.QueryLink;
 import com.adr.data.QueryOptions;
 import com.adr.data.Record;
 import com.adr.data.RecordMap;
@@ -32,7 +31,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 /**
  *
@@ -110,7 +108,7 @@ public abstract class Sentence {
             if ("_ENTITY".equals(name)) {
                 l.add(new ValuesEntry(name, p));
             } else if (!name.contains("::")) { // Is a field
-                Variant  newv = p.getKind().buildRead(kindresults, name);
+                Variant  newv = p.getKind().read(kindresults, name);
                 l.add(new ValuesEntry(name, newv));
             }
         }

@@ -24,29 +24,15 @@ import com.adr.data.Results;
  *
  * @author adrian
  */
-public enum Kind {
-    INT(new KindBuilderInt()), 
-    LONG(new KindBuilderLong()),
-    STRING(new KindBuilderString()), 
-    DOUBLE(new KindBuilderDouble()), 
-    DECIMAL(new KindBuilderDecimal()), 
-    BOOLEAN(new KindBuilderBoolean()), 
-    INSTANT(new KindBuilderInstant()), 
-    LOCALDATETIME(new KindBuilderLocalDateTime()), 
-    LOCALDATE(new KindBuilderLocalDate()), 
-    LOCALTIME(new KindBuilderLocalTime()),  
-    BYTES(new KindBuilderBytes()), 
-    OBJECT(new KindBuilderObject());
-   
-    private final KindBuilder builder;
+class KindBuilderBoolean implements KindBuilder {
     
-    private Kind(KindBuilder builder) {
-        this.builder = builder;
-    }
+    @Override
     public Variant fromISO(String value) throws DataException {
-        return builder.fromISO(value);
+        return value == null || value.equals("") ? VariantBoolean.NULL : new VariantBoolean(Boolean.valueOf(value));                
     }
+    
+    @Override
     public Variant read(Results read, String name) throws DataException {
-        return builder.read(read, name);
-    }
+        return new VariantBoolean(read.getBoolean(name));
+    }    
 }

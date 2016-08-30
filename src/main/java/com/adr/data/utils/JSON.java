@@ -161,7 +161,7 @@ public class JSON {
             iso = jvalue.getAsString();
         }
         try {
-            return new ValuesEntry(o.get("name").getAsString(), k.buildISO(iso));
+            return new ValuesEntry(o.get("name").getAsString(), k.fromISO(iso));
         } catch (DataException ex) {
             throw new IllegalArgumentException(ex);
         }

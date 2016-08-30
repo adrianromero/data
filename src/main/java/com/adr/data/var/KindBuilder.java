@@ -24,29 +24,7 @@ import com.adr.data.Results;
  *
  * @author adrian
  */
-public enum Kind {
-    INT(new KindBuilderInt()), 
-    LONG(new KindBuilderLong()),
-    STRING(new KindBuilderString()), 
-    DOUBLE(new KindBuilderDouble()), 
-    DECIMAL(new KindBuilderDecimal()), 
-    BOOLEAN(new KindBuilderBoolean()), 
-    INSTANT(new KindBuilderInstant()), 
-    LOCALDATETIME(new KindBuilderLocalDateTime()), 
-    LOCALDATE(new KindBuilderLocalDate()), 
-    LOCALTIME(new KindBuilderLocalTime()),  
-    BYTES(new KindBuilderBytes()), 
-    OBJECT(new KindBuilderObject());
-   
-    private final KindBuilder builder;
-    
-    private Kind(KindBuilder builder) {
-        this.builder = builder;
-    }
-    public Variant fromISO(String value) throws DataException {
-        return builder.fromISO(value);
-    }
-    public Variant read(Results read, String name) throws DataException {
-        return builder.read(read, name);
-    }
+interface KindBuilder {
+    public Variant fromISO(String value) throws DataException;
+    public Variant read(Results read, String name) throws DataException;
 }

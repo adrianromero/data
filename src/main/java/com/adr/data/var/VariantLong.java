@@ -19,7 +19,6 @@ package com.adr.data.var;
 
 import com.adr.data.DataException;
 import com.adr.data.Parameters;
-import com.adr.data.Results;
 import java.math.BigDecimal;
 import java.util.Objects;
 
@@ -31,7 +30,7 @@ public class VariantLong extends Variant {
     
     public final static VariantLong NULL = new VariantLong(null);
     
-    private Long value;
+    private final Long value;
     
     public VariantLong(Long value) {
         this.value = value;
@@ -52,22 +51,8 @@ public class VariantLong extends Variant {
     }
     
     @Override
-    protected void buildISO(String value) throws DataException {
-        try {
-            this.value = value == null || value.equals("") ? null : Long.parseLong(value);       
-        } catch (NumberFormatException ex) {
-            throw new DataException(ex);
-        }            
-    }
-    
-    @Override
     public void write(Parameters write, String name) throws DataException {
         write.setLong(name, value);
-    }
-
-    @Override
-    protected void buildRead(Results read, String name) throws DataException {
-        this.value = read.getLong(name);
     }
     
     @Override

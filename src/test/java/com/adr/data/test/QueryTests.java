@@ -27,7 +27,7 @@ import com.adr.data.ValuesEntry;
 import com.adr.data.security.SecureFacade;
 import com.adr.data.var.VariantBoolean;
 import com.adr.data.var.VariantString;
-import junit.framework.Assert;
+import org.junit.Assert;
 import org.junit.Test;
 
 /**

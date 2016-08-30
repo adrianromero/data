@@ -18,7 +18,6 @@ package com.adr.data.var;
 
 import com.adr.data.DataException;
 import com.adr.data.Parameters;
-import com.adr.data.Results;
 import java.util.Arrays;
 import java.util.Base64;
 
@@ -30,7 +29,7 @@ public class VariantBytes extends Variant {
 
     public final static VariantBytes NULL = new VariantBytes(null); 
     
-    private byte[] value;
+    private final byte[] value;
     
     public VariantBytes(byte[] value) {
         this.value = value;
@@ -51,22 +50,8 @@ public class VariantBytes extends Variant {
     }
     
     @Override
-    protected void buildISO(String value) throws DataException {
-        try {
-            this.value = value == null || value.equals("") ? null : Base64.getDecoder().decode(value);                
-        } catch(IllegalArgumentException e) {
-            throw new DataException(e);
-        }            
-    }
-    
-    @Override
     public void write(Parameters write, String name) throws DataException {
         write.setBytes(name, value);
-    }
-
-    @Override
-    protected void buildRead(Results read, String name) throws DataException {
-        this.value = read.getBytes(name);
     }
     
     @Override

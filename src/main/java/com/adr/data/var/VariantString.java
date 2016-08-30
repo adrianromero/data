@@ -18,7 +18,6 @@ package com.adr.data.var;
 
 import com.adr.data.DataException;
 import com.adr.data.Parameters;
-import com.adr.data.Results;
 import java.util.Objects;
 
 /**
@@ -29,7 +28,7 @@ public class VariantString extends Variant {
     
     public final static VariantString NULL = new VariantString(null);
     
-    private String value;
+    private final String value;
  
     public VariantString(String value) {
         this.value = value;
@@ -50,20 +49,10 @@ public class VariantString extends Variant {
     }
     
     @Override
-    protected void buildISO(String value) throws DataException {
-        this.value = value == null || value.equals("") ? null : value;
-    }
-    
-    @Override
     public void write(Parameters write, String name) throws DataException {
         write.setString(name, value);
     }
 
-    @Override
-    protected void buildRead(Results read, String name) throws DataException {
-        this.value = read.getString(name);
-    }
-    
     @Override
     public boolean isNull() {
         return value == null;

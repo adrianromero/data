@@ -19,7 +19,6 @@ package com.adr.data.var;
 
 import com.adr.data.DataException;
 import com.adr.data.Parameters;
-import com.adr.data.Results;
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.time.LocalDate;
@@ -31,9 +30,6 @@ import java.time.LocalTime;
  * @author adrian
  */
 public abstract class Variant {
-    
-    protected abstract void buildISO(String value) throws DataException;  
-    protected abstract void buildRead(Results read, String name) throws DataException;
     
     public abstract Kind getKind();
     

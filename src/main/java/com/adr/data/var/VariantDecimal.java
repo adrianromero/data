@@ -30,7 +30,7 @@ public class VariantDecimal extends Variant {
     
     public final static VariantDecimal NULL = new VariantDecimal(null);
      
-    private BigDecimal value;
+    private final BigDecimal value;
     
     public VariantDecimal(BigDecimal value) {
         this.value = value;
@@ -51,22 +51,8 @@ public class VariantDecimal extends Variant {
     }
     
     @Override
-    protected void buildISO(String value) throws DataException {
-        try {
-            this.value = value == null || value.equals("") ? null : new BigDecimal(value);       
-        } catch (NumberFormatException ex) {
-            throw new DataException(ex);
-        }            
-    }
-    
-    @Override
     public void write(Parameters write, String name) throws DataException {
         write.setBigDecimal(name, value);
-    }
-
-    @Override
-    protected void buildRead(Results read, String name) throws DataException {
-        this.value = read.getBigDecimal(name);
     }
     
     @Override

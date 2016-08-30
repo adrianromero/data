@@ -18,7 +18,6 @@ package com.adr.data.var;
 
 import com.adr.data.DataException;
 import com.adr.data.Parameters;
-import com.adr.data.Results;
 import com.adr.data.utils.Serializer;
 import java.io.IOException;
 import java.util.Objects;
@@ -31,7 +30,7 @@ public class VariantObject extends Variant {
 
     public final static VariantObject NULL = new VariantObject(null); 
     
-    private Object value;
+    private final Object value;
     
     public VariantObject(Object value) {
         this.value = value;
@@ -56,22 +55,8 @@ public class VariantObject extends Variant {
     }
     
     @Override
-    protected void buildISO(String value) throws DataException {
-        try {
-            this.value = value == null || value.equals("") ? null : Serializer.deserialize(value);       
-        } catch (IOException | ClassNotFoundException ex) {
-            throw new DataException(ex);
-        }            
-    }
-    
-    @Override
     public void write(Parameters write, String name) throws DataException {
         write.setObject(name, value);
-    }
-
-    @Override
-    protected void buildRead(Results read, String name) throws DataException {
-        this.value = read.getObject(name);
     }
     
     @Override

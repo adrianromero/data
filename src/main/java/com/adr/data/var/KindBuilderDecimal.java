@@ -19,34 +19,23 @@ package com.adr.data.var;
 
 import com.adr.data.DataException;
 import com.adr.data.Results;
+import java.math.BigDecimal;
 
 /**
  *
  * @author adrian
  */
-public enum Kind {
-    INT(new KindBuilderInt()), 
-    LONG(new KindBuilderLong()),
-    STRING(new KindBuilderString()), 
-    DOUBLE(new KindBuilderDouble()), 
-    DECIMAL(new KindBuilderDecimal()), 
-    BOOLEAN(new KindBuilderBoolean()), 
-    INSTANT(new KindBuilderInstant()), 
-    LOCALDATETIME(new KindBuilderLocalDateTime()), 
-    LOCALDATE(new KindBuilderLocalDate()), 
-    LOCALTIME(new KindBuilderLocalTime()),  
-    BYTES(new KindBuilderBytes()), 
-    OBJECT(new KindBuilderObject());
-   
-    private final KindBuilder builder;
-    
-    private Kind(KindBuilder builder) {
-        this.builder = builder;
-    }
+class KindBuilderDecimal implements KindBuilder {
+    @Override
     public Variant fromISO(String value) throws DataException {
-        return builder.fromISO(value);
+        try {
+            return value == null || value.equals("") ? VariantDecimal.NULL : new VariantDecimal(new BigDecimal(value));  
+        } catch(IllegalArgumentException e) {
+            throw new DataException(e);
+        }            
     }
+    @Override
     public Variant read(Results read, String name) throws DataException {
-        return builder.read(read, name);
-    }
+        return new VariantDecimal(read.getBigDecimal(name));
+    }      
 }

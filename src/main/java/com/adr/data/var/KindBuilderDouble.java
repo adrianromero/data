@@ -24,29 +24,17 @@ import com.adr.data.Results;
  *
  * @author adrian
  */
-public enum Kind {
-    INT(new KindBuilderInt()), 
-    LONG(new KindBuilderLong()),
-    STRING(new KindBuilderString()), 
-    DOUBLE(new KindBuilderDouble()), 
-    DECIMAL(new KindBuilderDecimal()), 
-    BOOLEAN(new KindBuilderBoolean()), 
-    INSTANT(new KindBuilderInstant()), 
-    LOCALDATETIME(new KindBuilderLocalDateTime()), 
-    LOCALDATE(new KindBuilderLocalDate()), 
-    LOCALTIME(new KindBuilderLocalTime()),  
-    BYTES(new KindBuilderBytes()), 
-    OBJECT(new KindBuilderObject());
-   
-    private final KindBuilder builder;
-    
-    private Kind(KindBuilder builder) {
-        this.builder = builder;
-    }
+class KindBuilderDouble implements KindBuilder {
+    @Override
     public Variant fromISO(String value) throws DataException {
-        return builder.fromISO(value);
+        try {
+            return value == null || value.equals("") ? VariantDouble.NULL : new VariantDouble(Double.parseDouble(value));  
+        } catch (NumberFormatException e) {
+            throw new DataException(e);
+        }            
     }
+    @Override
     public Variant read(Results read, String name) throws DataException {
-        return builder.read(read, name);
-    }
+        return new VariantDouble(read.getDouble(name));
+    }   
 }
