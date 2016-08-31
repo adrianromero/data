@@ -35,11 +35,6 @@ public class VariantDouble extends Variant {
         this.value = value;
     }
     
-    protected VariantDouble() {
-        this(null);
-    }
-    
-    
     @Override
     public Kind getKind() {
         return Kind.DOUBLE;

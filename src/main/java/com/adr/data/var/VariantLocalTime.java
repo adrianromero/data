@@ -27,16 +27,12 @@ import java.util.Objects;
  */
 public class VariantLocalTime extends Variant {
 
-    public final static VariantLocalTime NULL = new VariantLocalTime();
+    public final static VariantLocalTime NULL = new VariantLocalTime(null);
 
     private final LocalTime value;
     
     public VariantLocalTime(LocalTime value) {
         this.value = value;
-    }
-    
-    protected VariantLocalTime() {
-        this(null);
     }
 
     @Override

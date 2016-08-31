@@ -36,10 +36,6 @@ public class VariantBoolean extends Variant {
     public VariantBoolean(Boolean value) {
         this.value = value;
     }
-    
-    protected VariantBoolean() {
-        this(null);
-    }
 
     @Override
     public Kind getKind() {

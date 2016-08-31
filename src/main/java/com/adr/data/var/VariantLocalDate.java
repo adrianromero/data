@@ -27,16 +27,12 @@ import java.util.Objects;
  */
 public class VariantLocalDate extends Variant {
 
-    public final static VariantLocalDate NULL = new VariantLocalDate();        
+    public final static VariantLocalDate NULL = new VariantLocalDate(null);        
 
     private final LocalDate value;
     
     public VariantLocalDate(LocalDate value) {
         this.value = value;
-    }
-    
-    public VariantLocalDate() {
-        this(null);
     }
 
     @Override

@@ -36,10 +36,6 @@ public class VariantLong extends Variant {
         this.value = value;
     }
     
-    protected VariantLong() {
-        this(null);
-    }
-    
     @Override
     public Kind getKind() {
         return Kind.LONG;

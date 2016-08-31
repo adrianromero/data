@@ -18,9 +18,7 @@ package com.adr.data.var;
 
 import com.adr.data.DataException;
 import com.adr.data.Parameters;
-import com.adr.data.Results;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeParseException;
 import java.util.Objects;
 
 /**
@@ -29,16 +27,12 @@ import java.util.Objects;
  */
 public class VariantLocalDateTime extends Variant {
 
-    public final static VariantLocalDateTime NULL = new VariantLocalDateTime();
+    public final static VariantLocalDateTime NULL = new VariantLocalDateTime(null);
 
     private final LocalDateTime value;
     
     public VariantLocalDateTime(LocalDateTime value) {
         this.value = value;
-    }
-    
-    protected VariantLocalDateTime() {
-        this(null);
     }
 
     @Override

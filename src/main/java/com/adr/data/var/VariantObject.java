@@ -35,10 +35,6 @@ public class VariantObject extends Variant {
     public VariantObject(Object value) {
         this.value = value;
     }
-    
-    public VariantObject() {
-        this(null);
-    }
 
     @Override
     public Kind getKind() {

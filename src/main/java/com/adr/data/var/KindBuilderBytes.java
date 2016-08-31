@@ -29,7 +29,7 @@ class KindBuilderBytes implements KindBuilder {
     @Override
     public Variant fromISO(String value) throws DataException {
         try {
-            return value == null || value.equals("") ? VariantBytes.NULL : new VariantBytes(Base64.getDecoder().decode(value));
+            return value == null ? VariantBytes.NULL : new VariantBytes(Base64.getDecoder().decode(value));
         } catch(IllegalArgumentException e) {
             throw new DataException(e);
         }            

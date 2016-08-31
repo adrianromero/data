@@ -34,10 +34,6 @@ public class VariantString extends Variant {
         this.value = value;
     }
     
-    protected VariantString() {
-        this(null);
-    }
-    
     @Override
     public Kind getKind() {
         return Kind.STRING;

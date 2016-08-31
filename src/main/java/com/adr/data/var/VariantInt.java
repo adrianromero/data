@@ -35,10 +35,6 @@ public class VariantInt extends Variant {
         this.value = value;
     }
     
-    protected VariantInt() {
-        this(null);
-    }
-    
     @Override
     public Kind getKind() {
         return Kind.INT;

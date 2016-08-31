@@ -18,7 +18,6 @@ package com.adr.data.var;
 
 import com.adr.data.DataException;
 import com.adr.data.Parameters;
-import com.adr.data.Results;
 import java.math.BigDecimal;
 import java.util.Objects;
 
@@ -34,10 +33,6 @@ public class VariantDecimal extends Variant {
     
     public VariantDecimal(BigDecimal value) {
         this.value = value;
-    }
-    
-    protected VariantDecimal() {
-        this(null);
     }
 
     @Override

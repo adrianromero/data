@@ -27,7 +27,7 @@ import com.adr.data.Results;
 class KindBuilderString implements KindBuilder {
     @Override
     public Variant fromISO(String value) throws DataException {
-        return value == null || value.equals("") ? VariantString.NULL : new VariantString(value);             
+        return value == null ? VariantString.NULL : new VariantString(value);             
     }
     @Override
     public Variant read(Results read, String name) throws DataException {

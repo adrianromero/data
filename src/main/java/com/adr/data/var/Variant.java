@@ -90,5 +90,4 @@ public abstract class Variant {
     public Object asObject() {
         throw new UnsupportedOperationException("Variant cannot be converted to serialized object.");
     }
-    
 }

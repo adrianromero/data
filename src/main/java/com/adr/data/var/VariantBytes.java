@@ -34,10 +34,6 @@ public class VariantBytes extends Variant {
     public VariantBytes(byte[] value) {
         this.value = value;
     }
-    
-    public VariantBytes() {
-        this(null);
-    }
 
     @Override
     public Kind getKind() {

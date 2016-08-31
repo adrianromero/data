@@ -27,16 +27,12 @@ import java.util.Objects;
  */
 public class VariantInstant extends Variant {
 
-    public final static VariantInstant NULL = new VariantInstant();
+    public final static VariantInstant NULL = new VariantInstant(null);
 
     private final Instant value;
     
     public VariantInstant(Instant value) {
         this.value = value;
-    }
-    
-    protected VariantInstant() {
-        this(null);
     }
 
     @Override
