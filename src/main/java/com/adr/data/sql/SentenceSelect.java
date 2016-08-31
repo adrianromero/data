@@ -17,6 +17,7 @@
 
 package com.adr.data.sql;
 
+import com.adr.data.QueryOptions;
 import com.adr.data.Record;
 import com.adr.data.Values;
 import java.util.ArrayList;
@@ -31,7 +32,7 @@ public abstract class SentenceSelect extends SentenceQRY {
     protected abstract String getViewName(Record keyval);
 
     @Override
-    public CommandSQL build(Record keyval) {
+    public CommandSQL build(Record keyval, QueryOptions options) {
 
         SentenceSelect.SentenceBuilder builder = new SentenceSelect.SentenceBuilder();
         StringBuilder sqlsent = new StringBuilder();
@@ -50,6 +51,16 @@ public abstract class SentenceSelect extends SentenceQRY {
         sqlsent.append(getViewName(keyval));
         sqlsent.append(" TABLE_ALIAS");
         sqlsent.append(builder.getSqlfilter());
+        
+        // Append order and limit
+        if (options.getLimit() < Integer.MAX_VALUE) {
+            sqlsent.append(" LIMIT ");
+            sqlsent.append(options.getLimit());
+        }
+        if (options.getOffset() > 0) {
+            sqlsent.append(" OFFSET ");
+            sqlsent.append(options.getOffset());
+        }   
 
         // build statement
         return new CommandSQL(sqlsent.toString(), builder.getFieldsList());

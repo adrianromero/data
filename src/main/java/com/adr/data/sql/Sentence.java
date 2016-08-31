@@ -70,6 +70,7 @@ public abstract class Sentence {
             write(kindparams, filter.getValue());
             
             int limit = options.getLimit();
+            // int offset = options.getOffset(); // offset is applied in the CommandSQL
 
             try (ResultSet resultset = stmt.executeQuery()) {
                 List<Record> r = new ArrayList<>();

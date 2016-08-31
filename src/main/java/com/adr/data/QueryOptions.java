@@ -27,19 +27,30 @@ public class QueryOptions {
     public final static QueryOptions FIND = new QueryOptions(1);
     
     private final int limit;
+    private final int offset;
+    
+    public QueryOptions(int limit, int offset) {
+        this.limit = limit;
+        this.offset = offset;
+    }
     
     public QueryOptions(int limit) {
-        this.limit = limit;
+        this(limit, 0);
     }
     
     public int getLimit() {
         return limit;
     }
+    
+    public int getOffset() {
+        return offset;
+    }
 
     @Override
     public int hashCode() {
         int hash = 3;
-        hash = 31 * hash + this.limit;
+        hash = 17 * hash + this.limit;
+        hash = 17 * hash + this.offset;
         return hash;
     }
 
@@ -55,6 +66,12 @@ public class QueryOptions {
             return false;
         }
         final QueryOptions other = (QueryOptions) obj;
-        return this.limit == other.limit;
-    } 
+        if (this.limit != other.limit) {
+            return false;
+        }
+        if (this.offset != other.offset) {
+            return false;
+        }
+        return true;
+    }
 }

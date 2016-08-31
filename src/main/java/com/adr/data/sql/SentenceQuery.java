@@ -17,6 +17,7 @@
 
 package com.adr.data.sql;
 
+import com.adr.data.QueryOptions;
 import com.adr.data.Record;
 
 /**
@@ -26,11 +27,13 @@ import com.adr.data.Record;
 public class SentenceQuery extends SentenceQRY {
     
     private final String name;
-    private final CommandSQL commandsql;
+    private final String command;
+    private final String[] paramnames;
     
     public SentenceQuery(String name, String command, String... paramnames) {
         this.name = name;
-        this.commandsql = new CommandSQL(command, paramnames);
+        this.command = command;
+        this.paramnames = paramnames;
     }
 
     @Override
@@ -39,7 +42,19 @@ public class SentenceQuery extends SentenceQRY {
     }
     
     @Override
-    protected CommandSQL build(Record keyval) {
-        return commandsql;
+    protected CommandSQL build(Record keyval, QueryOptions options) {
+        
+        StringBuilder sqlsent = new StringBuilder(command);
+        // Append order and limit
+        if (options.getLimit() < Integer.MAX_VALUE) {
+            sqlsent.append(" LIMIT ");
+            sqlsent.append(options.getLimit());
+        }
+        if (options.getOffset() > 0) {
+            sqlsent.append(" OFFSET ");
+            sqlsent.append(options.getOffset());
+        }   
+        
+        return new CommandSQL(sqlsent.toString(), paramnames);
     }    
 }
