@@ -32,9 +32,9 @@ public abstract class SentenceSelect extends SentenceQRY {
     protected abstract String getViewName(Record keyval);
 
     @Override
-    public CommandSQL build(Record keyval, QueryOptions options) {
+    public CommandSQL build(SQLEngine engine, Record keyval, QueryOptions options) {
 
-        SentenceSelect.SentenceBuilder builder = new SentenceSelect.SentenceBuilder();
+        SentenceSelect.SentenceBuilder builder = new SentenceSelect.SentenceBuilder(engine);
         StringBuilder sqlsent = new StringBuilder();
 
         for (String f : keyval.getKey().getNames()) {
@@ -66,13 +66,19 @@ public abstract class SentenceSelect extends SentenceQRY {
         return new CommandSQL(sqlsent.toString(), builder.getFieldsList());
     }
     
-    private class SentenceBuilder {
+    private static class SentenceBuilder {
+        
+        private final SQLEngine engine;
 
         private final StringBuilder sqlsent = new StringBuilder();
         private final StringBuilder sqlfilter = new StringBuilder();
         private final List<String> fieldslist = new ArrayList<>();
         private boolean comma = false;
         private boolean commafilter = false;
+        
+        public SentenceBuilder(SQLEngine engine) {
+            this.engine = engine;
+        }
 
         public void add(Values v, String n) {
             // FILTERING THINGS
@@ -83,7 +89,7 @@ public abstract class SentenceSelect extends SentenceQRY {
                 criteria = " = ?";
             } else if (n.endsWith("::LIKE")) {
                 realname = n.substring(0, n.length() - 6);
-                criteria = " LIKE ? {escape '$'}";
+                criteria = engine.getLikeExpression();
             } else {
                 realname = n;
                 criteria = " = ?";

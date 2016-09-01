@@ -29,10 +29,10 @@ import java.util.List;
  */
 public abstract class SentenceQRY  extends Sentence {
 
-    protected abstract CommandSQL build(Record keyval, QueryOptions options);
+    protected abstract CommandSQL build(SQLEngine engine, Record keyval, QueryOptions options);
     
     @Override
-    public List<Record> query(Connection c, Record keyval, QueryOptions options) throws DataException {
-        return Sentence.query(c, build(keyval, options), keyval, options);
+    public List<Record> query(Connection c, SQLEngine engine, Record keyval, QueryOptions options) throws DataException {
+        return Sentence.query(c, build(engine, keyval, options), keyval, options);
     }
 }

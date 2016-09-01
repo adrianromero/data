@@ -42,7 +42,7 @@ public class SentenceQuery extends SentenceQRY {
     }
     
     @Override
-    protected CommandSQL build(Record keyval, QueryOptions options) {
+    protected CommandSQL build(SQLEngine engine, Record keyval, QueryOptions options) {
         
         StringBuilder sqlsent = new StringBuilder(command);
         // Append order and limit

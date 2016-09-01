@@ -17,22 +17,40 @@
 
 package com.adr.data.sql;
 
-import com.adr.data.DataException;
-import com.adr.data.Record;
-import java.sql.Connection;
+import com.adr.data.sqlh2.SentenceH2Put;
 
 /**
  *
  * @author adrian
  */
-public abstract class SentenceDML extends Sentence {
-
-    protected abstract CommandSQL build(SQLEngine engine, Record keyval);
-
-    @Override
-    public final void execute(Connection c, SQLEngine engine, Record keyval) throws DataException {
-        if (Sentence.execute(c, build(engine, keyval), keyval) != 1) {
-            throw new DataException("Sentence \"" + getName() + "\" must return 1 row.");
-        }
-    }         
+public enum SQLEngine {
+    
+    GENERIC(
+            new SentencePut(),
+            " LIKE ? {escape '$'}"),
+    POSTGRESQL(
+            new SentencePut(), 
+            " LIKE ? {escape '$'}"),
+    MYSQL(
+            new SentencePut(), 
+            " LIKE ? escape '$'"),
+    H2(
+            new SentenceH2Put(), 
+            " LIKE ? {escape '$'}");
+    
+    private final Sentence putsent;
+    private final String likeexpression;
+    
+    private SQLEngine(Sentence putsent, String likeexpression) {
+        this.putsent = putsent;
+        this.likeexpression = likeexpression;
+    }
+    
+    public Sentence getPutSentence() {
+        return putsent;
+    }
+    
+    public String getLikeExpression() {
+        return likeexpression;
+    }
 }

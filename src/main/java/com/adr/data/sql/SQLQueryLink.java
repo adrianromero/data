@@ -35,17 +35,23 @@ import javax.sql.DataSource;
 public class SQLQueryLink implements QueryLink {
 
     private DataSource ds = null;
+    private final SQLEngine engine;
     private final Sentence table;
     private final Map<String, Sentence> queries = new HashMap<>();
 
-    public SQLQueryLink(DataSource ds, Sentence... queries) {
+    public SQLQueryLink(DataSource ds, SQLEngine engine, Sentence... queries) {
         this.ds = ds;
+        this.engine = engine;
         this.table = new SentenceTable();
         for (Sentence v : queries) {
             this.queries.put(v.getName(), v);
         }
     }
-
+    
+    public SQLQueryLink(DataSource ds, Sentence... queries) {
+        this(ds, SQLEngine.GENERIC, queries);
+    }
+    
     @Override
     public List<Record> query(Record filter, QueryOptions options) throws DataException {
         try (Connection c = ds.getConnection()) {
@@ -54,7 +60,7 @@ public class SQLQueryLink implements QueryLink {
             if (s == null) {
                 s = table;
             }              
-            return s.query(c, filter, options);
+            return s.query(c, engine, filter, options);
         } catch (SQLException ex) {
             throw new DataException(ex);
         }

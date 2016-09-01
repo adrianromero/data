@@ -102,7 +102,7 @@ public class SecureLink implements DataQueryLink {
         }
         
         // Admin has permissions to everything
-        if (ADMIN.equals(usersession.getUser().getString("name"))) {
+        if (ADMIN.equals(usersession.getUser().getString("NAME"))) {
             return true;
         }
 
@@ -120,40 +120,40 @@ public class SecureLink implements DataQueryLink {
                 usersession.newUser(null, null);
             } else {
                 // login
-                String username = filter.getString("name");
-                String password = filter.getString("password");
+                String username = filter.getString("NAME");
+                String password = filter.getString("PASSWORD");
                 
                 Record userauthenticationquery = new RecordMap(
                     new ValuesMap(
-                        new ValuesEntry("_ENTITY", "username_byname"),
-                        new ValuesEntry("id")),
+                        new ValuesEntry("_ENTITY", "USERNAME_BYNAME"),
+                        new ValuesEntry("ID")),
                     new ValuesMap(
-                        new ValuesEntry("name", username),
-                        new ValuesEntry("displayname"),
-                        new ValuesEntry("password"),
-                        new ValuesEntry("codecard"))); 
+                        new ValuesEntry("NAME", username),
+                        new ValuesEntry("DISPLAYNAME"),
+                        new ValuesEntry("PASSWORD"),
+                        new ValuesEntry("CODECARD"))); 
                 
                 Record userauthentication = querylink.find(userauthenticationquery);  
                 
-                if (userauthentication == null || !CryptUtils.validatePassword(password, userauthentication.getString("password"))) {
+                if (userauthentication == null || !CryptUtils.validatePassword(password, userauthentication.getString("PASSWORD"))) {
                     // Invalid login
                     usersession.newUser(null, null);
                 } else {
                     // Valid login, load user details.
                     Record usernamequery = new RecordMap(
                         new ValuesMap(
-                            new ValuesEntry("_ENTITY", "username_byid"),
-                            new ValuesEntry("id", userauthentication.getKey().get("id"))),
+                            new ValuesEntry("_ENTITY", "USERNAME_BYID"),
+                            new ValuesEntry("ID", userauthentication.getKey().get("ID"))),
                         new ValuesMap(
-                            new ValuesEntry("name"),
-                            new ValuesEntry("displayname"),
-                            new ValuesEntry("codecard"),
-                            new ValuesEntry("role_id"),
-                            new ValuesEntry("role"),
-                            new ValuesEntry("visible", VariantBoolean.NULL),
-                            new ValuesEntry("image", VariantBytes.NULL)));
+                            new ValuesEntry("NAME"),
+                            new ValuesEntry("DISPLAYNAME"),
+                            new ValuesEntry("CODECARD"),
+                            new ValuesEntry("ROLE_ID"),
+                            new ValuesEntry("ROLE"),
+                            new ValuesEntry("VISIBLE", VariantBoolean.NULL),
+                            new ValuesEntry("IMAGE", VariantBytes.NULL)));
                     Record userrecord = querylink.find(usernamequery);                    
-                    usersession.newUser(userrecord, userauthentication.getString("password"));
+                    usersession.newUser(userrecord, userauthentication.getString("PASSWORD"));
                 }                
             }
             // Return usersession user
@@ -174,11 +174,11 @@ public class SecureLink implements DataQueryLink {
             if (usersession.getUser() == null) {
                 throw new SecurityDataException("No authenticated user to save.");
             }
-            if (!filter.getString("name").equals(usersession.getUser().getString("name"))) {
+            if (!filter.getString("NAME").equals(usersession.getUser().getString("NAME"))) {
                 throw new SecurityDataException("Trying to save a user different than authenticated user.");
             }            
-            String oldpassword = filter.getString("oldpassword");
-            String password = filter.getString("password");   
+            String oldpassword = filter.getString("OLDPASSWORD");
+            String password = filter.getString("PASSWORD");   
 
             if (CryptUtils.validatePassword(oldpassword, usersession.getPassword())) {
                 String saltedpassword = password == null || password.isEmpty() 
@@ -186,42 +186,42 @@ public class SecureLink implements DataQueryLink {
                     : CryptUtils.hashsaltPassword(password, CryptUtils.generateSalt());
                 Record usernamepassword = new RecordMap(
                     new ValuesMap(
-                        new ValuesEntry("_ENTITY", "username_password"),
-                        new ValuesEntry("id", usersession.getUser().getKey().get("id"))),
+                        new ValuesEntry("_ENTITY", "USERNAME_PASSWORD"),
+                        new ValuesEntry("ID", usersession.getUser().getKey().get("ID"))),
                     new ValuesMap(
-                        new ValuesEntry("password", saltedpassword)));    
+                        new ValuesEntry("PASSWORD", saltedpassword)));    
                 datalink.execute(usernamepassword);                
                 usersession.updatePassword(saltedpassword);
                 return Collections.emptyList();
             } else {
                 throw new SecurityDataException("Invalid password.");    
             }
-        } else if ("username_byid".equals(entity)) {
+        } else if ("USERNAME_BYID".equals(entity)) {
             // Saves usersession user
             if (usersession.getUser() == null) {
                 throw new SecurityDataException("No authenticated user to save.");
             }
-            if (!filter.getKey().get("id").asString().equals(usersession.getUser().getKey().get("id").asString())) {
+            if (!filter.getKey().get("ID").asString().equals(usersession.getUser().getKey().get("ID").asString())) {
                 throw new SecurityDataException("Trying to save a user different than authenticated user.");
             }
-            if (!filter.getString("name").equals(usersession.getUser().getString("name"))) {
+            if (!filter.getString("NAME").equals(usersession.getUser().getString("NAME"))) {
                 throw new SecurityDataException("Trying to save a user different than authenticated user.");
             }
             
             Record saveduser = Records.clone(usersession.getUser()); 
-            saveduser.getValue().set("displayname", filter.getValue().get("displayname"));
-            saveduser.getValue().set("visible", filter.getValue().get("visible"));
-            saveduser.getValue().set("image", filter.getValue().get("image"));
+            saveduser.getValue().set("DISPLAYNAME", filter.getValue().get("DISPLAYNAME"));
+            saveduser.getValue().set("VISIBLE", filter.getValue().get("VISIBLE"));
+            saveduser.getValue().set("IMAGE", filter.getValue().get("IMAGE"));
             
             datalink.execute(saveduser);
             
             usersession.updateUser(saveduser);
             return Collections.singletonList(Records.clone(usersession.getUser()));            
         } else if (AUTHORIZATION_REQUEST.equals(entity)) {
-            String resource = filter.getString("resource"); 
-            String action = filter.getString("action"); 
+            String resource = filter.getString("RESOURCE"); 
+            String action = filter.getString("ACTION"); 
             Record response = Records.clone(filter);
-            response.getValue().set("result", new VariantBoolean(hasAuthorization(resource, action)));
+            response.getValue().set("RESULT", new VariantBoolean(hasAuthorization(resource, action)));
             return Collections.singletonList(response);
         } else if (AUTHORIZATIONS_QUERY.equals(entity)) {
             if (usersession.getUser() == null) {
@@ -281,7 +281,7 @@ public class SecureLink implements DataQueryLink {
                     l.add(JSON.INSTANCE.fromJSONRecord(readString(data)));
                 }
                 session = l;
-                sessionset = session.stream().map(r -> r.getString("code")).collect(Collectors.toSet());
+                sessionset = session.stream().map(r -> r.getString("CODE")).collect(Collectors.toSet());
             } else {
                 session = null;
                 sessionset = null;
@@ -370,13 +370,13 @@ public class SecureLink implements DataQueryLink {
             if (user != null && session == null) {
                 Record subjectsquery = new RecordMap(
                     new ValuesMap(
-                        new ValuesEntry("_ENTITY", "subject_byrole"),
-                        new ValuesEntry("role_id::PARAM", user.getString("role_id"))),
+                        new ValuesEntry("_ENTITY", "SUBJECT_BYROLE"),
+                        new ValuesEntry("ROLE_ID::PARAM", user.getString("ROLE_ID"))),
                     new ValuesMap(
-                        new ValuesEntry("code"),
-                        new ValuesEntry("name")));
+                        new ValuesEntry("CODE"),
+                        new ValuesEntry("NAME")));
                 session = link.query(subjectsquery);    
-                sessionset = session.stream().map(r -> r.getString("code")).collect(Collectors.toSet());
+                sessionset = session.stream().map(r -> r.getString("CODE")).collect(Collectors.toSet());
             }
         }
     }    

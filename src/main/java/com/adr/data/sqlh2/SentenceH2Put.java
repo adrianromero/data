@@ -19,6 +19,7 @@ package com.adr.data.sqlh2;
 
 import com.adr.data.DataException;
 import com.adr.data.Record;
+import com.adr.data.sql.SQLEngine;
 import com.adr.data.sql.Sentence;
 import com.adr.data.sql.SentenceDelete;
 import java.sql.Connection;
@@ -38,11 +39,11 @@ public class SentenceH2Put extends Sentence {
     }
 
     @Override
-    public void execute(Connection c, Record keyval) throws DataException {        
+    public void execute(Connection c, SQLEngine engine, Record keyval) throws DataException {        
         if (keyval.getValue() == null) {
-            delete.execute(c, keyval);
+            delete.execute(c, engine, keyval);
         } else {
-            h2merge.execute(c, keyval);
+            h2merge.execute(c, engine, keyval);
         }
     }
 }

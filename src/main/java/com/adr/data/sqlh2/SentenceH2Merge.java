@@ -19,6 +19,7 @@ package com.adr.data.sqlh2;
 
 import com.adr.data.Record;
 import com.adr.data.sql.CommandSQL;
+import com.adr.data.sql.SQLEngine;
 import com.adr.data.sql.SentenceDML;
 import java.util.ArrayList;
 
@@ -34,7 +35,7 @@ public class SentenceH2Merge extends SentenceDML {
     }
     
     @Override
-    protected final CommandSQL build(Record keyval) {
+    protected final CommandSQL build(SQLEngine engine, Record keyval) {
 
         StringBuilder sentence = new StringBuilder();
         StringBuilder keys = new StringBuilder();

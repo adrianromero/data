@@ -36,11 +36,11 @@ public class SentencePut extends Sentence {
     }
 
     @Override
-    public void execute(Connection c, Record keyval) throws DataException {        
+    public void execute(Connection c, SQLEngine engine, Record keyval) throws DataException {        
         if (keyval.getValue() == null) {
-            delete.execute(c, keyval);
+            delete.execute(c, engine, keyval);
         } else {
-            updateinsert.execute(c, keyval);
+            updateinsert.execute(c, engine, keyval);
         }
     }
 }

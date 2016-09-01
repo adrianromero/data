@@ -43,8 +43,8 @@ public class SecureFacade {
             new ValuesMap(
                 new ValuesEntry("_ENTITY", SecureLink.AUTHENTICATION_REQUEST)),
             new ValuesMap(
-                new ValuesEntry("name", username),
-                new ValuesEntry("password", password))));
+                new ValuesEntry("NAME", username),
+                new ValuesEntry("PASSWORD", password))));
     }
     
     public void logout() throws DataException {
@@ -70,9 +70,9 @@ public class SecureFacade {
             new ValuesMap(
                 new ValuesEntry("_ENTITY", SecureLink.AUTHENTICATION_PASSWORD)),
             new ValuesMap(
-                new ValuesEntry("name", name),
-                new ValuesEntry("oldpassword", oldpassword),
-                new ValuesEntry("password", password))));
+                new ValuesEntry("NAME", name),
+                new ValuesEntry("OLDPASSWORD", oldpassword),
+                new ValuesEntry("PASSWORD", password))));
     }    
     
     public boolean hasAuthorization(String resource, String action) throws DataException {
@@ -80,10 +80,10 @@ public class SecureFacade {
             new ValuesMap(
                 new ValuesEntry("_ENTITY", SecureLink.AUTHORIZATION_REQUEST)),
             new ValuesMap(
-                new ValuesEntry("resource", resource),
-                new ValuesEntry("action", action))));
+                new ValuesEntry("RESOURCE", resource),
+                new ValuesEntry("ACTION", action))));
         
-        return result.getBoolean("result");            
+        return result.getBoolean("RESULT");            
     } 
     
     public boolean hasAuthorization(String resource) throws DataException {

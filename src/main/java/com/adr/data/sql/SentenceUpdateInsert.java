@@ -36,11 +36,11 @@ public class SentenceUpdateInsert extends Sentence {
     }
 
     @Override
-    public void execute(Connection c, Record keyval) throws DataException {
+    public void execute(Connection c, SQLEngine engine, Record keyval) throws DataException {
         
-        int rows = Sentence.execute(c, update.build(keyval), keyval);
+        int rows = Sentence.execute(c, update.build(engine, keyval), keyval);
         if (rows == 0) {
-            if (Sentence.execute(c, insert.build(keyval), keyval) != 1) {
+            if (Sentence.execute(c, insert.build(engine, keyval), keyval) != 1) {
                 throw new DataException("Sentence \"" + insert.getName() + "\" in \"" + getName() + "\" must return 1 row.");
             }
         } else if (rows != 1) {

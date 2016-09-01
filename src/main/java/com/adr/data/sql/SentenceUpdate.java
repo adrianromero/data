@@ -32,7 +32,7 @@ public class SentenceUpdate extends SentenceDML {
     }
     
     @Override
-    protected final CommandSQL build(Record keyval) {
+    protected final CommandSQL build(SQLEngine engine, Record keyval) {
 
         StringBuilder sentence = new StringBuilder();
         ArrayList<String> keyfields = new ArrayList<>();

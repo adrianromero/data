@@ -19,6 +19,7 @@ package com.adr.data.sqlpg;
 
 import com.adr.data.Record;
 import com.adr.data.sql.CommandSQL;
+import com.adr.data.sql.SQLEngine;
 import com.adr.data.sql.Sentence;
 import com.adr.data.sql.SentenceDML;
 import java.util.ArrayList;
@@ -35,7 +36,7 @@ public class SentencePGMerge extends SentenceDML {
     }
 
     @Override
-    protected CommandSQL build(Record keyval) {
+    protected CommandSQL build(SQLEngine engine, Record keyval) {
 
         StringBuilder sentence = new StringBuilder();
         StringBuilder values = new StringBuilder();

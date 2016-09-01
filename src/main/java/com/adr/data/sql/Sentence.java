@@ -41,10 +41,10 @@ public abstract class Sentence {
     
     public abstract String getName(); 
     
-    public void execute(Connection c, Record keyval) throws DataException {
+    public void execute(Connection c, SQLEngine engine, Record keyval) throws DataException {
         throw new UnsupportedOperationException();
     }    
-    public List<Record> query(Connection c, Record keyval, QueryOptions options) throws DataException {
+    public List<Record> query(Connection c, SQLEngine engine, Record keyval, QueryOptions options) throws DataException {
         throw new UnsupportedOperationException();    
     }
     

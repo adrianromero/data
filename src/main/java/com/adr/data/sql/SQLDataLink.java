@@ -34,19 +34,19 @@ import javax.sql.DataSource;
 public class SQLDataLink implements DataLink {
 
     private final DataSource ds;
-    private final Sentence put;
+    private final SQLEngine engine;
     private final Map<String, Sentence> sentences = new HashMap<>();
     
-    public SQLDataLink(DataSource ds, Sentence put, Sentence... sentences) {
+    public SQLDataLink(DataSource ds, SQLEngine engine, Sentence... sentences) {
         this.ds = ds;
-        this.put = put;
+        this.engine = engine;
         for (Sentence s : sentences) {
             this.sentences.put(s.getName(), s);
         }
     }
 
-    public SQLDataLink(DataSource ds) {
-        this(ds, new SentencePut());
+    public SQLDataLink(DataSource ds, Sentence... sentences) {
+        this(ds, SQLEngine.GENERIC, sentences);
     }
 
     @Override
@@ -56,9 +56,9 @@ public class SQLDataLink implements DataLink {
             for (Record keyval : l) {
                 Sentence s = sentences.get(Sentence.getEntity(keyval));
                 if (s == null) {  
-                    s = put;
+                    s = engine.getPutSentence();
                 }   
-                s.execute(c, keyval);
+                s.execute(c, engine, keyval);
             }
             c.commit();
         } catch (SQLException ex) {
