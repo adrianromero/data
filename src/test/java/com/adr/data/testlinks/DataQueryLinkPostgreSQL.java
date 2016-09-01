@@ -36,8 +36,10 @@ public class DataQueryLinkPostgreSQL implements DataQueryLinkBuilder {
             cpds.setUser(System.getProperty("database.user"));  
             cpds.setPassword(System.getProperty("database.password"));
             engine = SQLEngine.valueOf(System.getProperty("database.engine", SQLEngine.GENERIC.name()));
+            
+            Logger.getLogger(DataQueryLinkPostgreSQL.class.getName()).log(Level.INFO, "Database engine = {0}", engine.toString());
         } catch (PropertyVetoException ex) {
-            Logger.getLogger(SourceLink_OLD.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(DataQueryLinkPostgreSQL.class.getName()).log(Level.SEVERE, null, ex);
             throw new RuntimeException(ex);
         }
     }        
