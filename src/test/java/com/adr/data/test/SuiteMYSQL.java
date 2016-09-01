@@ -17,15 +17,15 @@ import org.junit.runners.Suite;
  */
 @RunWith(Suite.class)
 @Suite.SuiteClasses({QueryTests.class, SecurityTests.class})
-public class SuitePostgreSQL {
+public class SuiteMYSQL {
 
     @BeforeClass
-    public static void setUpClass() throws Exception {
-        SourceLink.setBuilder(new DataQueryLinkSQL("postgresql"));
+    public static void setUpClass() throws Exception {      
+        SourceLink.setBuilder(new DataQueryLinkSQL("mysql"));
     }
 
     @AfterClass
     public static void tearDownClass() throws Exception {
-        SourceLink.setBuilder(null);
-    }   
+        SourceLink.setBuilder(null);    
+    }    
 }

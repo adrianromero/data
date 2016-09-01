@@ -46,7 +46,7 @@ public class QueryTests {
             SecureFacade secfac = new SecureFacade(link);
             secfac.login("admin", "admin");
             
-            System.out.println(JSON.INSTANCE.toSimpleJSON(
+            System.out.println("1.- " + JSON.INSTANCE.toSimpleJSON(
                 link.query(new RecordMap(
                     new ValuesMap(
                         new ValuesEntry("_ENTITY", "USERNAME"),
@@ -55,7 +55,7 @@ public class QueryTests {
                         new ValuesEntry("NAME", VariantString.NULL),
                         new ValuesEntry("CODECARD", VariantString.NULL))))));
 
-            System.out.println(JSON.INSTANCE.toSimpleJSON(
+            System.out.println("2.- " + JSON.INSTANCE.toSimpleJSON(
                 link.query(new RecordMap(
                     new ValuesMap(
                         new ValuesEntry("_ENTITY", "USERNAME"),
@@ -64,7 +64,7 @@ public class QueryTests {
                         new ValuesEntry("NAME", VariantString.NULL),
                         new ValuesEntry("CODECARD", VariantString.NULL))))));
 
-            System.out.println(JSON.INSTANCE.toSimpleJSON(
+            System.out.println("3.- " + JSON.INSTANCE.toSimpleJSON(
                 link.query(new RecordMap(
                     new ValuesMap(
                         new ValuesEntry("_ENTITY", "USERNAME"),
@@ -74,7 +74,7 @@ public class QueryTests {
                         new ValuesEntry("VISIBLE", VariantBoolean.NULL),
                         new ValuesEntry("CODECARD", VariantString.NULL))))));
 
-            System.out.println(JSON.INSTANCE.toSimpleJSON(
+            System.out.println("4.- " + JSON.INSTANCE.toSimpleJSON(
                 link.query(new RecordMap(
                     new ValuesMap(
                         new ValuesEntry("_ENTITY", "USERNAME"),

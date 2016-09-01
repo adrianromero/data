@@ -23,23 +23,23 @@ import java.util.logging.Logger;
  *
  * @author adrian
  */
-public class DataQueryLinkPostgreSQL implements DataQueryLinkBuilder {
+public class DataQueryLinkSQL implements DataQueryLinkBuilder {
     
     private final ComboPooledDataSource cpds;
     private final SQLEngine engine;
     
-    public DataQueryLinkPostgreSQL() {
+    public DataQueryLinkSQL(String enginename) {
         try {
             cpds = new ComboPooledDataSource();
-            cpds.setDriverClass(System.getProperty("database.driver"));
-            cpds.setJdbcUrl(System.getProperty("database.url"));
-            cpds.setUser(System.getProperty("database.user"));  
-            cpds.setPassword(System.getProperty("database.password"));
-            engine = SQLEngine.valueOf(System.getProperty("database.engine", SQLEngine.GENERIC.name()));
+            cpds.setDriverClass(System.getProperty(enginename + ".database.driver"));
+            cpds.setJdbcUrl(System.getProperty(enginename + ".database.url"));
+            cpds.setUser(System.getProperty(enginename + ".database.user"));  
+            cpds.setPassword(System.getProperty(enginename + ".database.password"));
+            engine = SQLEngine.valueOf(System.getProperty(enginename + ".database.engine", SQLEngine.GENERIC.name()));
             
-            Logger.getLogger(DataQueryLinkPostgreSQL.class.getName()).log(Level.INFO, "Database engine = {0}", engine.toString());
+            Logger.getLogger(DataQueryLinkSQL.class.getName()).log(Level.INFO, "Database engine = {0}", engine.toString());
         } catch (PropertyVetoException ex) {
-            Logger.getLogger(DataQueryLinkPostgreSQL.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(DataQueryLinkSQL.class.getName()).log(Level.SEVERE, null, ex);
             throw new RuntimeException(ex);
         }
     }        

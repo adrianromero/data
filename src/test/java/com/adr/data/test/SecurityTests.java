@@ -188,6 +188,7 @@ public class SecurityTests {
 
             secfac.logout();  
         }
+               System.out.println("2");
     }      
     
     @Test
@@ -224,10 +225,12 @@ public class SecurityTests {
 
             secfac.logout();
         }
+               System.out.println("2");
     }
     
     @Test
     public void testQueryAuthorizations() throws DataException {
+       System.out.println("2");
         
         try (DataQueryLink link = SourceLink.createDataQueryLink()) {
             SecureFacade secfac = new SecureFacade(link);       
