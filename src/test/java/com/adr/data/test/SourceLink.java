@@ -17,27 +17,8 @@
 
 package com.adr.data.test;
 
-import com.adr.data.BasicDataQueryLink;
 import com.adr.data.DataQueryLink;
-import com.adr.data.http.WebDataQueryLink;
-import com.adr.data.rabbitmq.MQDataLinkSync;
-import com.adr.data.rabbitmq.MQQueryLink;
-import com.adr.data.security.SecureLink;
-import com.adr.data.sql.SQLDataLink;
-import com.adr.data.sql.SQLQueryLink;
-import com.adr.data.sql.SecureCommands;
-import com.adr.data.sql.SentencePut;
-import com.mchange.v2.c3p0.ComboPooledDataSource;
-import com.rabbitmq.client.Connection;
-import com.rabbitmq.client.ConnectionFactory;
-import java.beans.PropertyVetoException;
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.concurrent.TimeoutException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import javax.sql.DataSource;
+import com.adr.data.testlinks.DataQueryLinkBuilder;
 
 /**
  *
@@ -45,70 +26,13 @@ import javax.sql.DataSource;
  */
 public class SourceLink {
      
-    private static ComboPooledDataSource cpds = null;
-    private static Connection connection = null;
-       
-    public static DataSource getDataSource() {
-        if (cpds == null) {
-            try {
-                cpds = new ComboPooledDataSource();
-                cpds.setDriverClass(System.getProperty("database.driver"));
-                cpds.setJdbcUrl(System.getProperty("database.url"));
-                cpds.setUser(System.getProperty("database.user"));  
-                cpds.setPassword(System.getProperty("database.password"));
-            } catch (PropertyVetoException ex) {
-                Logger.getLogger(SourceLink.class.getName()).log(Level.SEVERE, null, ex);
-                throw new RuntimeException(ex);
-            }
-        }
-        return cpds; 
+    private static DataQueryLinkBuilder builder;
+
+    public static void setBuilder(DataQueryLinkBuilder b) {
+        builder = b;
     }
     
-    public static Connection getConnection() {
-        if (connection == null) {
-            try {
-                String host = System.getProperty("rabbitmq.host");
-                ConnectionFactory factory = new ConnectionFactory();
-                factory.setHost(host);            
-                connection = factory.newConnection();
-            } catch (IOException | TimeoutException ex) {
-                Logger.getLogger(SourceLink.class.getName()).log(Level.SEVERE, null, ex);
-                throw new RuntimeException(ex);
-            }
-        }
-        return connection;
-    }
-     
     public static DataQueryLink createDataQueryLink() {
-        if ("rabbitmq".equals(System.getProperty("link.type"))) {
-            return createMQLink();
-        } else if ("http".equals(System.getProperty("link.type"))) {
-            return createHttpLink();
-        } else {        
-            return createLocalSecureLink();
-        }
-    }
-    
-    private static DataQueryLink createLocalSecureLink() {
-        return new SecureLink(
-            new SQLQueryLink(getDataSource(), SecureCommands.QUERIES),
-            new SQLDataLink(getDataSource(), new SentencePut(), SecureCommands.COMMANDS),
-            new HashSet<>(Arrays.asList("username_visible")), // anonymous res
-            new HashSet<>(Arrays.asList("authenticatedres"))); // authenticated res
-    }
-
-    private static DataQueryLink createMQLink() {
-        try {
-            return new BasicDataQueryLink(
-                new MQQueryLink(getConnection(), System.getProperty("rabbitmq.queryexchange")),
-                new MQDataLinkSync(getConnection(), System.getProperty("rabbitmq.dataexchange")));
-        } catch (IOException ex) {
-            Logger.getLogger(SourceLink.class.getName()).log(Level.SEVERE, null, ex);
-            throw new RuntimeException(ex);
-        }
-    }
-
-    private static DataQueryLink createHttpLink() {
-        return new WebDataQueryLink(System.getProperty("http.url"));
+        return builder.createDataQueryLink();
     }
 }

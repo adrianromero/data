@@ -67,17 +67,17 @@ public class SecurityTests {
             Record login = secfac.login("admin", "admin");
 
             // Assert loging success
-            Assert.assertEquals("Administrator", login.getString("displayname"));
-            Assert.assertEquals("System", login.getString("role"));
+            Assert.assertEquals("Administrator", login.getString("DISPLAYNAME"));
+            Assert.assertEquals("System", login.getString("ROLE"));
 
             // this query succeds because admin has permissions to all resources
             List<Record> result1 = link.query(new RecordMap(
                 new ValuesMap(
-                    new ValuesEntry("_ENTITY", "username"),
-                    new ValuesEntry("id", new VariantString("admin"))),
+                    new ValuesEntry("_ENTITY", "USERNAME"),
+                    new ValuesEntry("ID", new VariantString("admin"))),
                 new ValuesMap(
-                    new ValuesEntry("name", VariantString.NULL),
-                    new ValuesEntry("codecard", VariantString.NULL))));
+                    new ValuesEntry("NAME", VariantString.NULL),
+                    new ValuesEntry("CODECARD", VariantString.NULL))));
             Assert.assertEquals(1, result1.size());
 
             secfac.logout();
@@ -86,14 +86,14 @@ public class SecurityTests {
                 // This query fails because not logged users 
                 link.query(new RecordMap(
                     new ValuesMap(
-                        new ValuesEntry("_ENTITY", "username"),
-                        new ValuesEntry("id", new VariantString("admin"))),
+                        new ValuesEntry("_ENTITY", "USERNAME"),
+                        new ValuesEntry("ID", new VariantString("admin"))),
                     new ValuesMap(
-                        new ValuesEntry("name", VariantString.NULL),
-                        new ValuesEntry("codecard", VariantString.NULL))));
+                        new ValuesEntry("NAME", VariantString.NULL),
+                        new ValuesEntry("CODECARD", VariantString.NULL))));
                 Assert.fail();
             } catch (SecurityDataException ex) {
-                Assert.assertEquals("No authorization to query resource: username", ex.getMessage());
+                Assert.assertEquals("No authorization to query resource: USERNAME", ex.getMessage());
             }
         }
     }
@@ -105,10 +105,10 @@ public class SecurityTests {
             SecureFacade secfac = new SecureFacade(link);
 
             Record login = secfac.login("manager", null);       
-            Assert.assertEquals("Manager", login.getString("displayname"));
+            Assert.assertEquals("Manager", login.getString("DISPLAYNAME"));
 
             login = secfac.current();        
-            Assert.assertEquals("Manager", login.getString("displayname"));
+            Assert.assertEquals("Manager", login.getString("DISPLAYNAME"));
 
             secfac.logout();
             login = secfac.current();
@@ -128,11 +128,11 @@ public class SecurityTests {
             // this query succeds because anonymous has permissions to all resources
             List<Record> result1 = link.query(new RecordMap(
                 new ValuesMap(
-                    new ValuesEntry("_ENTITY", "username_visible"),
-                    new ValuesEntry("id", VariantString.NULL)),
+                    new ValuesEntry("_ENTITY", "USERNAME_VISIBLE"),
+                    new ValuesEntry("ID", VariantString.NULL)),
                 new ValuesMap(
-                    new ValuesEntry("name", VariantString.NULL),
-                    new ValuesEntry("displayname", VariantString.NULL))));
+                    new ValuesEntry("NAME", VariantString.NULL),
+                    new ValuesEntry("DISPLAYNAME", VariantString.NULL))));
             Assert.assertEquals(3, result1.size());
         }
     }
@@ -144,22 +144,22 @@ public class SecurityTests {
             SecureFacade secfac = new SecureFacade(link);
 
             Record login = secfac.login("manager", null);       
-            Assert.assertEquals("Manager", login.getString("displayname"));
+            Assert.assertEquals("Manager", login.getString("DISPLAYNAME"));
 
-            login.getValue().set("displayname", new VariantString("ManagerUpdated"));
+            login.getValue().set("DISPLAYNAME", new VariantString("ManagerUpdated"));
 
             Record login2 = secfac.saveCurrent(login);
-            Assert.assertEquals("ManagerUpdated", login2.getString("displayname"));
+            Assert.assertEquals("ManagerUpdated", login2.getString("DISPLAYNAME"));
 
             secfac.logout();
 
             login = secfac.login("manager", null);       
-            Assert.assertEquals("ManagerUpdated", login.getString("displayname"));    
+            Assert.assertEquals("ManagerUpdated", login.getString("DISPLAYNAME"));    
 
-            login.getValue().set("displayname", new VariantString("Manager")); // restore value
+            login.getValue().set("DISPLAYNAME", new VariantString("Manager")); // restore value
 
             login2 = secfac.saveCurrent(login);
-            Assert.assertEquals("Manager", login2.getString("displayname"));        
+            Assert.assertEquals("Manager", login2.getString("DISPLAYNAME"));        
 
             secfac.logout();
         }
@@ -173,11 +173,11 @@ public class SecurityTests {
             SecureFacade secfac = new SecureFacade(link);
 
             Record loginmanager = secfac.login("manager", null);       
-            Assert.assertEquals("Manager", loginmanager.getString("displayname"));
+            Assert.assertEquals("Manager", loginmanager.getString("DISPLAYNAME"));
             secfac.logout();
 
             Record loginuser = secfac.login("user", null);       
-            Assert.assertEquals("User", loginuser.getString("displayname"));
+            Assert.assertEquals("User", loginuser.getString("DISPLAYNAME"));
 
             try {
                 Record loginsaved = secfac.saveCurrent(loginmanager);
@@ -196,28 +196,28 @@ public class SecurityTests {
         try (DataQueryLink link = SourceLink.createDataQueryLink()) {
             SecureFacade secfac = new SecureFacade(link);
 
-            Assert.assertTrue(secfac.hasAuthorization("username_visible"));
+            Assert.assertTrue(secfac.hasAuthorization("USERNAME_VISIBLE"));
             Assert.assertFalse(secfac.hasAuthorization("authenticatedres"));
             Assert.assertFalse(secfac.hasAuthorization("com/adr/hellocore/fxml/datalist?datatable=com/adr/hellocore/security/role"));        
             Assert.assertFalse(secfac.hasAuthorization("anyotherresource"));
 
             secfac.login("manager", null);  
 
-            Assert.assertTrue(secfac.hasAuthorization("username_visible"));
+            Assert.assertTrue(secfac.hasAuthorization("USERNAME_VISIBLE"));
             Assert.assertTrue(secfac.hasAuthorization("authenticatedres"));
             Assert.assertTrue(secfac.hasAuthorization("com/adr/hellocore/fxml/datalist?datatable=com/adr/hellocore/security/role"));
             Assert.assertFalse(secfac.hasAuthorization("anyotherresource"));
 
             secfac.login("user", null);  
 
-            Assert.assertTrue(secfac.hasAuthorization("username_visible"));
+            Assert.assertTrue(secfac.hasAuthorization("USERNAME_VISIBLE"));
             Assert.assertTrue(secfac.hasAuthorization("authenticatedres"));
             Assert.assertFalse(secfac.hasAuthorization("com/adr/hellocore/fxml/datalist?datatable=com/adr/hellocore/security/role"));
             Assert.assertFalse(secfac.hasAuthorization("anyotherresource"));
 
             secfac.login("admin", "admin");  
 
-            Assert.assertTrue(secfac.hasAuthorization("username_visible"));
+            Assert.assertTrue(secfac.hasAuthorization("USERNAME_VISIBLE"));
             Assert.assertTrue(secfac.hasAuthorization("authenticatedres"));
             Assert.assertTrue(secfac.hasAuthorization("com/adr/hellocore/fxml/datalist?datatable=com/adr/hellocore/security/role"));
             Assert.assertTrue(secfac.hasAuthorization("anyotherresource"));
@@ -256,7 +256,7 @@ public class SecurityTests {
             SecureFacade secfac = new SecureFacade(link);       
 
             Record loginuser = secfac.login("user", null);  
-            Assert.assertEquals("User", loginuser.getString("displayname"));
+            Assert.assertEquals("User", loginuser.getString("DISPLAYNAME"));
             
             secfac.savePassword("user", null, "pepeluis");
             

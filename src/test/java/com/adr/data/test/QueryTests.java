@@ -49,40 +49,40 @@ public class QueryTests {
             System.out.println(JSON.INSTANCE.toSimpleJSON(
                 link.query(new RecordMap(
                     new ValuesMap(
-                        new ValuesEntry("_ENTITY", "username"),
-                        new ValuesEntry("id", new VariantString("admin"))),
+                        new ValuesEntry("_ENTITY", "USERNAME"),
+                        new ValuesEntry("ID", new VariantString("admin"))),
                     new ValuesMap(
-                        new ValuesEntry("name", VariantString.NULL),
-                        new ValuesEntry("codecard", VariantString.NULL))))));
+                        new ValuesEntry("NAME", VariantString.NULL),
+                        new ValuesEntry("CODECARD", VariantString.NULL))))));
 
             System.out.println(JSON.INSTANCE.toSimpleJSON(
                 link.query(new RecordMap(
                     new ValuesMap(
-                        new ValuesEntry("_ENTITY", "username"),
-                        new ValuesEntry("id", VariantString.NULL)),
+                        new ValuesEntry("_ENTITY", "USERNAME"),
+                        new ValuesEntry("ID", VariantString.NULL)),
                     new ValuesMap(
-                        new ValuesEntry("name", VariantString.NULL),
-                        new ValuesEntry("codecard", VariantString.NULL))))));
+                        new ValuesEntry("NAME", VariantString.NULL),
+                        new ValuesEntry("CODECARD", VariantString.NULL))))));
 
             System.out.println(JSON.INSTANCE.toSimpleJSON(
                 link.query(new RecordMap(
                     new ValuesMap(
-                        new ValuesEntry("_ENTITY", "username"),
-                        new ValuesEntry("id", "manager")),
+                        new ValuesEntry("_ENTITY", "USERNAME"),
+                        new ValuesEntry("ID", "manager")),
                     new ValuesMap(
-                        new ValuesEntry("name", VariantString.NULL),
-                        new ValuesEntry("visible", VariantBoolean.NULL),
-                        new ValuesEntry("codecard", VariantString.NULL))))));
+                        new ValuesEntry("NAME", VariantString.NULL),
+                        new ValuesEntry("VISIBLE", VariantBoolean.NULL),
+                        new ValuesEntry("CODECARD", VariantString.NULL))))));
 
             System.out.println(JSON.INSTANCE.toSimpleJSON(
                 link.query(new RecordMap(
                     new ValuesMap(
-                        new ValuesEntry("_ENTITY", "username"),
-                        new ValuesEntry("id", VariantString.NULL)),
+                        new ValuesEntry("_ENTITY", "USERNAME"),
+                        new ValuesEntry("ID", VariantString.NULL)),
                     new ValuesMap(
-                        new ValuesEntry("name::LIKE", "%a%"),
-                        new ValuesEntry("visible", VariantBoolean.NULL),
-                        new ValuesEntry("codecard", VariantString.NULL))))));
+                        new ValuesEntry("NAME::LIKE", "%a%"),
+                        new ValuesEntry("VISIBLE", VariantBoolean.NULL),
+                        new ValuesEntry("CODECARD", VariantString.NULL))))));
             secfac.logout();
         }
     }
@@ -97,44 +97,44 @@ public class QueryTests {
             // Insert
             link.execute(new RecordMap(
                 new ValuesMap(
-                    new ValuesEntry("_ENTITY", "username"),
-                    new ValuesEntry("id", "newid1")),
+                    new ValuesEntry("_ENTITY", "USERNAME"),
+                    new ValuesEntry("ID", "newid1")),
                 new ValuesMap(
-                    new ValuesEntry("name", "newuser"),
-                    new ValuesEntry("displayname", "New User"),
-                    new ValuesEntry("codecard", "12345"),
-                    new ValuesEntry("role_id", "u"),
-                    new ValuesEntry("visible", true),
-                    new ValuesEntry("active", true))));
+                    new ValuesEntry("NAME", "newuser"),
+                    new ValuesEntry("DISPLAYNAME", "New User"),
+                    new ValuesEntry("CODECARD", "12345"),
+                    new ValuesEntry("ROLE_ID", "u"),
+                    new ValuesEntry("VISIBLE", true),
+                    new ValuesEntry("ACTIVE", true))));
 
             Record r = getUser(link, "newid1");
-            Assert.assertEquals("newuser", r.getString("name"));
-            Assert.assertEquals("New User", r.getString("displayname"));
-            Assert.assertEquals(Boolean.TRUE, r.getBoolean("visible"));
+            Assert.assertEquals("newuser", r.getString("NAME"));
+            Assert.assertEquals("New User", r.getString("DISPLAYNAME"));
+            Assert.assertEquals(Boolean.TRUE, r.getBoolean("VISIBLE"));
 
             // Insert
             link.execute(new RecordMap(
                 new ValuesMap(
-                    new ValuesEntry("_ENTITY", "username"),
-                    new ValuesEntry("id", "newid1")),
+                    new ValuesEntry("_ENTITY", "USERNAME"),
+                    new ValuesEntry("ID", "newid1")),
                 new ValuesMap(
-                    new ValuesEntry("name", "newuser"),
-                    new ValuesEntry("displayname", "New User Changed"),
-                    new ValuesEntry("codecard", "12345"),
-                    new ValuesEntry("role_id", "u"),
-                    new ValuesEntry("visible", true),
-                    new ValuesEntry("active", true))));
+                    new ValuesEntry("NAME", "newuser"),
+                    new ValuesEntry("DISPLAYNAME", "New User Changed"),
+                    new ValuesEntry("CODECARD", "12345"),
+                    new ValuesEntry("ROLE_ID", "u"),
+                    new ValuesEntry("VISIBLE", true),
+                    new ValuesEntry("ACTIVE", true))));
 
             r = getUser(link, "newid1");
-            Assert.assertEquals("newuser", r.getString("name"));
-            Assert.assertEquals("New User Changed", r.getString("displayname"));
-            Assert.assertEquals(Boolean.TRUE, r.getBoolean("visible"));
+            Assert.assertEquals("newuser", r.getString("NAME"));
+            Assert.assertEquals("New User Changed", r.getString("DISPLAYNAME"));
+            Assert.assertEquals(Boolean.TRUE, r.getBoolean("VISIBLE"));
 
             // Delete
             link.execute(new RecordMap(
                 new ValuesMap(
-                    new ValuesEntry("_ENTITY", "username"),
-                    new ValuesEntry("id", "newid1"))));
+                    new ValuesEntry("_ENTITY", "USERNAME"),
+                    new ValuesEntry("ID", "newid1"))));
 
             r = getUser(link, "newid1");
             Assert.assertNull(r);
@@ -146,14 +146,14 @@ public class QueryTests {
     private Record getUser(QueryLink link, String id) throws DataException {
         return link.find(new RecordMap(
             new ValuesMap(
-                new ValuesEntry("_ENTITY", "username"),
-                new ValuesEntry("id", id)),
+                new ValuesEntry("_ENTITY", "USERNAME"),
+                new ValuesEntry("ID", id)),
             new ValuesMap(
-                new ValuesEntry("name", VariantString.NULL),
-                new ValuesEntry("displayname", VariantString.NULL),
-                new ValuesEntry("codecard", VariantString.NULL),
-                new ValuesEntry("role_id", VariantString.NULL),
-                new ValuesEntry("visible", VariantBoolean.NULL),
-                new ValuesEntry("active", VariantBoolean.NULL))));
+                new ValuesEntry("NAME", VariantString.NULL),
+                new ValuesEntry("DISPLAYNAME", VariantString.NULL),
+                new ValuesEntry("CODECARD", VariantString.NULL),
+                new ValuesEntry("ROLE_ID", VariantString.NULL),
+                new ValuesEntry("VISIBLE", VariantBoolean.NULL),
+                new ValuesEntry("ACTIVE", VariantBoolean.NULL))));
     }
 }
