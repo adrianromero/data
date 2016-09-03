@@ -17,25 +17,38 @@
 
 package com.adr.data;
 
+import java.util.Arrays;
+
 /**
  *
  * @author adrian
  */
 public class QueryOptions {
     
-    public final static QueryOptions DEFAULT = new QueryOptions(Integer.MAX_VALUE);
-    public final static QueryOptions FIND = new QueryOptions(1);
+    public final static QueryOptions DEFAULT = new QueryOptions(Integer.MAX_VALUE, 0, new String[0]);
+    public final static QueryOptions FIND = new QueryOptions(1, 0, new String[0]);
     
     private final int limit;
     private final int offset;
     
-    public QueryOptions(int limit, int offset) {
+    private final String[] orderby;
+    
+    public QueryOptions(int limit, int offset, String[] orderby) {
         this.limit = limit;
         this.offset = offset;
+        this.orderby = orderby; // Assyme not null array
     }
     
-    public QueryOptions(int limit) {
-        this(limit, 0);
+    public static QueryOptions limit(int limit) {
+        return new QueryOptions(limit, 0, new String[0]);
+    }
+    
+    public static QueryOptions limit(int limit, int offset) {
+        return new QueryOptions(limit, offset, new String[0]);
+    }
+
+    public static QueryOptions orderBy(String ... orderby) {
+        return new QueryOptions(Integer.MAX_VALUE, 0, orderby);
     }
     
     public int getLimit() {
@@ -45,12 +58,17 @@ public class QueryOptions {
     public int getOffset() {
         return offset;
     }
+    
+    public String[] getOrderBy() {
+        return orderby;
+    }
 
     @Override
     public int hashCode() {
-        int hash = 3;
-        hash = 17 * hash + this.limit;
-        hash = 17 * hash + this.offset;
+        int hash = 5;
+        hash = 23 * hash + this.limit;
+        hash = 23 * hash + this.offset;
+        hash = 23 * hash + Arrays.deepHashCode(this.orderby);
         return hash;
     }
 
@@ -70,6 +88,9 @@ public class QueryOptions {
             return false;
         }
         if (this.offset != other.offset) {
+            return false;
+        }
+        if (!Arrays.deepEquals(this.orderby, other.orderby)) {
             return false;
         }
         return true;

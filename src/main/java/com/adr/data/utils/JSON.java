@@ -135,7 +135,20 @@ public class JSON {
         if (element == null || element.equals(JsonNull.INSTANCE)) {
             return QueryOptions.DEFAULT;
         } else {
-            return new QueryOptions(element.getAsJsonObject().get("limit").getAsInt());
+            JsonObject qo = element.getAsJsonObject();
+            int limit = qo.has("limit") ? qo.get("limit").getAsInt() : 0;
+            int offset = qo.has("offset") ? qo.get("offset").getAsInt() : 0;
+            String[] orderby;
+            if (qo.has("orderby")) {
+                JsonArray a = qo.get("orderby").getAsJsonArray();
+                orderby = new String[a.size()];
+                for (int i = 0; i < orderby.length; i++) {
+                    orderby[i] = a.get(i).getAsString();
+                }
+            } else {
+                orderby = new String[0];
+            }
+            return new QueryOptions(limit, offset, orderby);
         }
     }
     
@@ -212,7 +225,19 @@ public class JSON {
             return JsonNull.INSTANCE;
         } else {
             JsonObject r = new JsonObject();
-            r.addProperty("limit", obj.getLimit());
+            if (obj.getLimit() < Integer.MAX_VALUE) {
+                r.addProperty("limit", obj.getLimit());
+            }
+            if (obj.getOffset() > 0) {
+                r.addProperty("offset", obj.getOffset());
+            }
+            if (obj.getOrderBy().length > 0) {
+                JsonArray a = new JsonArray();
+                for (String s : obj.getOrderBy()) {
+                    a.add(s);
+                }
+                r.add("orderby", a);
+            }
             return r;
         }
     }

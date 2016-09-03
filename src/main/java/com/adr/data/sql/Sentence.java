@@ -31,6 +31,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -38,6 +40,8 @@ import java.util.List;
  */
 
 public abstract class Sentence {
+    
+    private static final Logger LOG = Logger.getLogger(Sentence.class.getName());
     
     public abstract String getName(); 
     
@@ -53,7 +57,9 @@ public abstract class Sentence {
     }  
     
     public static int execute(Connection c, CommandSQL command, Record keyval) throws DataException {
-        try (PreparedStatement stmt = c.prepareStatement(command.getCommand())) {
+        String sql = command.getCommand();
+        LOG.log(Level.INFO, "Executing SQL update: {0}", sql);
+        try (PreparedStatement stmt = c.prepareStatement(sql)) {
             SQLParameters kindparams = new SQLParameters(stmt, command.getParamNames());
             write(kindparams, keyval.getKey());
             write(kindparams, keyval.getValue());
@@ -64,7 +70,9 @@ public abstract class Sentence {
     } 
     
     public static List<Record> query(Connection c, CommandSQL command, Record filter, QueryOptions options) throws DataException {
-        try (PreparedStatement stmt = c.prepareStatement(command.getCommand())) {
+        String sql = command.getCommand();
+        LOG.log(Level.INFO, "Executing SQL query: {0}", sql);
+        try (PreparedStatement stmt = c.prepareStatement(sql)) {
             SQLParameters kindparams = new SQLParameters(stmt, command.getParamNames());
             write(kindparams, filter.getKey());
             write(kindparams, filter.getValue());

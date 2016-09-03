@@ -13,6 +13,14 @@ import org.junit.runners.Suite;
  * @author adrian
  */
 @RunWith(Suite.class)
-@Suite.SuiteClasses({com.adr.data.test.SuiteH2.class, com.adr.data.test.SuiteMYSQL.class, com.adr.data.test.SuitePostgreSQL.class})
-public class SuiteAllSQL { 
+@Suite.SuiteClasses({
+    // GSON Suite
+    GSONTests.class,
+    // Cache suites
+    // Database suites
+    SuiteH2.class, 
+    SuiteMYSQL.class, 
+    SuitePostgreSQL.class})
+
+public class SuiteAll { 
 }

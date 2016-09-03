@@ -44,17 +44,8 @@ public class SentenceQuery extends SentenceQRY {
     @Override
     protected CommandSQL build(SQLEngine engine, Record keyval, QueryOptions options) {
         
-        StringBuilder sqlsent = new StringBuilder(command);
-        // Append order and limit
-        if (options.getLimit() < Integer.MAX_VALUE) {
-            sqlsent.append(" LIMIT ");
-            sqlsent.append(options.getLimit());
-        }
-        if (options.getOffset() > 0) {
-            sqlsent.append(" OFFSET ");
-            sqlsent.append(options.getOffset());
-        }   
-        
+        StringBuilder sqlsent = new StringBuilder(command);  
+        SentenceQRY.addQueryOptions(sqlsent, engine, options);        
         return new CommandSQL(sqlsent.toString(), paramnames);
-    }    
+    }   
 }

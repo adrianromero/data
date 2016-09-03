@@ -11,7 +11,6 @@ import com.adr.data.sql.SQLDataLink;
 import com.adr.data.sql.SQLQueryLink;
 import com.adr.data.security.SecureCommands;
 import com.adr.data.sql.SQLEngine;
-import com.adr.data.sql.SentencePut;
 import com.mchange.v2.c3p0.ComboPooledDataSource;
 import java.beans.PropertyVetoException;
 import java.util.Arrays;

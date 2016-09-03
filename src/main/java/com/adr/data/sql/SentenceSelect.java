@@ -52,15 +52,7 @@ public abstract class SentenceSelect extends SentenceQRY {
         sqlsent.append(" TABLE_ALIAS");
         sqlsent.append(builder.getSqlfilter());
         
-        // Append order and limit
-        if (options.getLimit() < Integer.MAX_VALUE) {
-            sqlsent.append(" LIMIT ");
-            sqlsent.append(options.getLimit());
-        }
-        if (options.getOffset() > 0) {
-            sqlsent.append(" OFFSET ");
-            sqlsent.append(options.getOffset());
-        }   
+        SentenceQRY.addQueryOptions(sqlsent, engine, options);     
 
         // build statement
         return new CommandSQL(sqlsent.toString(), builder.getFieldsList());

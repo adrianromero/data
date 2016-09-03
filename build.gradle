@@ -84,6 +84,7 @@ flyway {
 }
 
 test {
+    include 'com/adr/data/test/SuiteAll.class'
     System.properties.each { k, v ->
         if (k.startsWith('app.')) {
             systemProperty k - 'app.', v

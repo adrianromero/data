@@ -35,4 +35,34 @@ public abstract class SentenceQRY  extends Sentence {
     public List<Record> query(Connection c, SQLEngine engine, Record keyval, QueryOptions options) throws DataException {
         return Sentence.query(c, build(engine, keyval, options), keyval, options);
     }
+        
+    public static void addQueryOptions(StringBuilder sqlsent, SQLEngine engine, QueryOptions options) {
+        // order by
+        if (options.getOrderBy().length > 0) {
+            for (int i = 0; i < options.getOrderBy().length; i++) {
+                sqlsent.append(i == 0 ? " ORDER BY " : ", ");
+                String s = options.getOrderBy()[i];
+                if (s.endsWith("::ASC")) {
+                    sqlsent.append(s.substring(i, s.length() - 5));
+                    sqlsent.append(" ASC");
+                } else if (s.endsWith("::DESC")) {
+                    sqlsent.append(s.substring(i, s.length() - 6));
+                    sqlsent.append(" DESC");                    
+                } else {
+                    sqlsent.append(s);
+                    sqlsent.append(" ASC");                    
+                }
+            }
+        }
+        // limit
+        if (options.getLimit() < Integer.MAX_VALUE) {
+            sqlsent.append(" LIMIT ");
+            sqlsent.append(options.getLimit());
+        }
+        // offset
+        if (options.getOffset() > 0) {
+            sqlsent.append(" OFFSET ");
+            sqlsent.append(options.getOffset());
+        }         
+    }
 }

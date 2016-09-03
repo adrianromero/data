@@ -27,13 +27,16 @@ import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.logging.Logger;
 
 /**
  *
  * @author adrian
  */
 public final class SQLParameters implements Parameters {
-
+    
+    private static final Logger LOG = Logger.getLogger(SQLParameters.class.getName());
+    
     private final String[] params;
     private final PreparedStatement stmt;
 

@@ -19,6 +19,7 @@ package com.adr.data.test;
 import com.adr.data.DataException;
 import com.adr.data.DataQueryLink;
 import com.adr.data.QueryLink;
+import com.adr.data.QueryOptions;
 import com.adr.data.Record;
 import com.adr.data.RecordMap;
 import com.adr.data.utils.JSON;
@@ -62,7 +63,8 @@ public class QueryTests {
                         new ValuesEntry("ID", VariantString.NULL)),
                     new ValuesMap(
                         new ValuesEntry("NAME", VariantString.NULL),
-                        new ValuesEntry("CODECARD", VariantString.NULL))))));
+                        new ValuesEntry("CODECARD", VariantString.NULL))),
+                    QueryOptions.orderBy("NAME::DESC"))));
 
             System.out.println("3.- " + JSON.INSTANCE.toSimpleJSON(
                 link.query(new RecordMap(
