@@ -28,6 +28,7 @@ import com.adr.data.ValuesEntry;
 import com.adr.data.security.SecureFacade;
 import com.adr.data.var.VariantBoolean;
 import com.adr.data.var.VariantString;
+import java.util.List;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -47,24 +48,32 @@ public class QueryTests {
             SecureFacade secfac = new SecureFacade(link);
             secfac.login("admin", "admin");
             
-            System.out.println("1.- " + JSON.INSTANCE.toSimpleJSON(
-                link.query(new RecordMap(
+            List<Record> result1 = link.query(new RecordMap(
                     new ValuesMap(
                         new ValuesEntry("_ENTITY", "USERNAME"),
                         new ValuesEntry("ID", new VariantString("admin"))),
                     new ValuesMap(
                         new ValuesEntry("NAME", VariantString.NULL),
-                        new ValuesEntry("CODECARD", VariantString.NULL))))));
-
-            System.out.println("2.- " + JSON.INSTANCE.toSimpleJSON(
-                link.query(new RecordMap(
+                        new ValuesEntry("CODECARD", VariantString.NULL))));
+            
+            Assert.assertEquals(1, result1.size());
+            Assert.assertEquals("admin", result1.get(0).getString("NAME"));
+            Assert.assertEquals(null, result1.get(0).getString("CODECARD"));
+            Assert.assertEquals(null, result1.get(0).getValue().get("IMAGE"));
+            
+            List<Record> result2 = link.query(new RecordMap(
                     new ValuesMap(
                         new ValuesEntry("_ENTITY", "USERNAME"),
                         new ValuesEntry("ID", VariantString.NULL)),
                     new ValuesMap(
                         new ValuesEntry("NAME", VariantString.NULL),
                         new ValuesEntry("CODECARD", VariantString.NULL))),
-                    QueryOptions.orderBy("NAME::DESC"))));
+                    QueryOptions.orderBy("NAME::DESC"));
+                
+            Assert.assertEquals(3, result2.size());
+            Assert.assertEquals("user", result2.get(0).getString("NAME"));            
+            Assert.assertEquals("manager", result2.get(1).getString("NAME"));            
+            Assert.assertEquals("admin", result2.get(2).getString("NAME"));   
 
             System.out.println("3.- " + JSON.INSTANCE.toSimpleJSON(
                 link.query(new RecordMap(

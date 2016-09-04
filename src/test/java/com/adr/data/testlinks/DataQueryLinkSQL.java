@@ -5,11 +5,13 @@
  */
 package com.adr.data.testlinks;
 
+import com.adr.data.DataLink;
 import com.adr.data.DataQueryLink;
+import com.adr.data.QueryLink;
 import com.adr.data.security.SecureLink;
-import com.adr.data.sql.SQLDataLink;
 import com.adr.data.sql.SQLQueryLink;
 import com.adr.data.security.SecureCommands;
+import com.adr.data.sql.SQLDataLink;
 import com.adr.data.sql.SQLEngine;
 import com.mchange.v2.c3p0.ComboPooledDataSource;
 import java.beans.PropertyVetoException;
@@ -41,13 +43,21 @@ public class DataQueryLinkSQL implements DataQueryLinkBuilder {
             Logger.getLogger(DataQueryLinkSQL.class.getName()).log(Level.SEVERE, null, ex);
             throw new RuntimeException(ex);
         }
-    }        
+    }     
+    
+    public QueryLink createQueryLink() {
+        return new SQLQueryLink(cpds, engine, SecureCommands.QUERIES);
+    }
+    
+    public DataLink createDataLink() {
+        return new SQLDataLink(cpds, engine, SecureCommands.COMMANDS);
+    }
 
     @Override
     public DataQueryLink createDataQueryLink() {
         return new SecureLink(
-            new SQLQueryLink(cpds, engine, SecureCommands.QUERIES),
-            new SQLDataLink(cpds, engine, SecureCommands.COMMANDS),
+            createQueryLink(),
+            createDataLink(),
             new HashSet<>(Arrays.asList("USERNAME_VISIBLE")), // anonymous res
             new HashSet<>(Arrays.asList("authenticatedres"))); // authenticated res
     }

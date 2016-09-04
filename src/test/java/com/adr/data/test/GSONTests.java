@@ -60,16 +60,19 @@ public class GSONTests {
                 new ValuesMap(
                         new ValuesEntry("field", "hilario"))));
         
-        System.out.println(JSON.INSTANCE.toJSON(keval));  
-        System.out.println(JSON.INSTANCE.toJSON(JSON.INSTANCE.fromJSONRecord(JSON.INSTANCE.toJSON(keval))));
-
-        System.out.println(JSON.INSTANCE.toJSON(dl));
-        System.out.println(JSON.INSTANCE.toJSON(JSON.INSTANCE.fromJSONListRecord(JSON.INSTANCE.toJSON(dl))));      
-
-        System.out.println(JSON.INSTANCE.toJSON(JSON.INSTANCE.fromJSONRecord(JSON.INSTANCE.toJSON(keval))));
+        String sdl = "[{\"key\":[{\"name\":\"id\",\"kind\":\"STRING\",\"value\":\"1\"}],"
+                + "\"value\":[{\"name\":\"field\",\"kind\":\"STRING\",\"value\":\"pepeluis\"}]},"
+                + "{\"key\":[{\"name\":\"id\",\"kind\":\"STRING\",\"value\":\"2\"}],"
+                + "\"value\":[{\"name\":\"field\",\"kind\":\"STRING\",\"value\":\"hilario\"}]}]";
+        Assert.assertEquals(sdl, JSON.INSTANCE.toJSON(dl));
+        Assert.assertEquals(sdl, JSON.INSTANCE.toJSON(JSON.INSTANCE.fromJSONListRecord(JSON.INSTANCE.toJSON(dl))));     
+        Assert.assertEquals("[{\"id\":\"1\",\"field\":\"pepeluis\"},{\"id\":\"2\",\"field\":\"hilario\"}]", JSON.INSTANCE.toSimpleJSON(dl));
         
-        System.out.println(JSON.INSTANCE.toJSON(keval));
-        System.out.println(JSON.INSTANCE.toSimpleJSON(keval));
+        String skeval = "{\"key\":[{\"name\":\"id\",\"kind\":\"STRING\",\"value\":\"1\"}],"
+                + "\"value\":[{\"name\":\"field\",\"kind\":\"STRING\",\"value\":\"pepeluis\"},{\"name\":\"value\",\"kind\":\"STRING\"}]}";
+        Assert.assertEquals(skeval, JSON.INSTANCE.toJSON(keval));
+        Assert.assertEquals(skeval, JSON.INSTANCE.toJSON(JSON.INSTANCE.fromJSONRecord(JSON.INSTANCE.toJSON(keval))));        
+        Assert.assertEquals("{\"id\":\"1\",\"field\":\"pepeluis\",\"value\":null}", JSON.INSTANCE.toSimpleJSON(keval));
     }
      
     @Test

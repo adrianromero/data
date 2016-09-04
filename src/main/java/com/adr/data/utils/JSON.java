@@ -136,7 +136,7 @@ public class JSON {
             return QueryOptions.DEFAULT;
         } else {
             JsonObject qo = element.getAsJsonObject();
-            int limit = qo.has("limit") ? qo.get("limit").getAsInt() : 0;
+            int limit = qo.has("limit") ? qo.get("limit").getAsInt() : Integer.MAX_VALUE;
             int offset = qo.has("offset") ? qo.get("offset").getAsInt() : 0;
             String[] orderby;
             if (qo.has("orderby")) {
