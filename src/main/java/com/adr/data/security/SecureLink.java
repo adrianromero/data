@@ -317,16 +317,24 @@ public class SecureLink implements DataQueryLink {
         }
         
         private static void writeString(DataOutput out, String str) throws IOException {
-            byte[] data=str.getBytes("UTF-8");
-            out.writeInt(data.length);
-            out.write(data);            
+            if (str == null) {
+                out.writeInt(-1);
+            } else {
+                byte[] data=str.getBytes("UTF-8");
+                out.writeInt(data.length);
+                out.write(data);
+            }
         }
         
         private static String readString(DataInput in) throws IOException {
             int length = in.readInt();
-            byte[] data = new byte[length];
-            in.readFully(data);
-            return new String(data,"UTF-8");            
+            if (length < 0) {
+                return null;
+            } else {
+                byte[] data = new byte[length];
+                in.readFully(data);
+                return new String(data,"UTF-8");            
+            }
         }
 
         private void newUser(Record user, String password) {
