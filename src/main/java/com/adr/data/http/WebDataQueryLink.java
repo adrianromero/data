@@ -73,7 +73,7 @@ public class WebDataQueryLink implements DataQueryLink {
 
             Request request = new Request.Builder()
                 .url(newurl)
-                //                .header("User-Agent", USERAGENT)   
+                // .header("User-Agent", USERAGENT)   
                 .post(RequestBody.create(MEDIA_TYPE_JSON, message))
                 .build();
 
@@ -100,7 +100,7 @@ public class WebDataQueryLink implements DataQueryLink {
 
             Request request = new Request.Builder()
                 .url(newurl)
-                //                .header("User-Agent", USERAGENT)
+                // .header("User-Agent", USERAGENT)
                 .post(RequestBody.create(MEDIA_TYPE_JSON, message))
                 .build();
 
