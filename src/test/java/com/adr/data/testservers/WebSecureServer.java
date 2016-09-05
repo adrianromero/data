@@ -21,6 +21,7 @@ import com.adr.data.security.SecureLink;
 import com.adr.data.testlinks.DataQueryLinkSQL;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.logging.Logger;
 import spark.Service;
 
 /**
@@ -29,6 +30,7 @@ import spark.Service;
  */
 public class WebSecureServer {
     
+    private static final Logger LOG = Logger.getLogger(WebSecureServer.class.getName());
     private static final String SESSIONNAME ="DataSessionName";
     
     private Service http;
@@ -69,10 +71,12 @@ public class WebSecureServer {
         });
         
         http.awaitInitialization();
+        LOG.info("Web Server started.");
     }
     
     public void stop() throws Exception {
         http.stop();
+        LOG.info("Web Server stopped.");
     }
     
     public WebSecureLinkServer createWebSecureLinkServer() {

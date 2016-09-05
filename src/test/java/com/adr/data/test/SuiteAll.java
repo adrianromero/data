@@ -34,7 +34,10 @@ import org.junit.runners.Suite;
     SuitePostgreSQL.class,
     
     // HTTP suite
-    SuiteHTTP.class
+    SuiteHTTP.class,
+    
+    // MQ Sync suite
+    SuiteMQSync.class
     
 })
 
