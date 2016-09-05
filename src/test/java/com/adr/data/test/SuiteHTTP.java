@@ -17,7 +17,7 @@
 package com.adr.data.test;
 
 import com.adr.data.testlinks.DataQueryLinkHTTP;
-import com.adr.data.testservers.WebQueryServer;
+import com.adr.data.testservers.WebSecureServer;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.runner.RunWith;
@@ -30,20 +30,23 @@ import org.junit.runners.Suite;
 @RunWith(Suite.class)
 @Suite.SuiteClasses({QueryTests.class, SecurityTests.class})
 public class SuiteHTTP {
+    
+    private static final int PORT = 4567;
+    private static final String CONTEXT = "/data";
+    private static final String SQLNAME = "h2";
+    
+    private static final WebSecureServer server = new WebSecureServer(PORT, CONTEXT, SQLNAME);
+    private static final String url = "http://localhost:" + Integer.toString(PORT) + CONTEXT;
 
     @BeforeClass
     public static void setUpClass() throws Exception {
-        WebQueryServer.start();
-        Thread.sleep(1000);
-                
-        SourceLink.setBuilder(new DataQueryLinkHTTP());
+        server.start();                
+        SourceLink.setBuilder(new DataQueryLinkHTTP(url));
     }
 
     @AfterClass
     public static void tearDownClass() throws Exception {
-        SourceLink.setBuilder(null);
-        
-        WebQueryServer.stop();
-        Thread.sleep(1000);
+        SourceLink.setBuilder(null);       
+        server.stop();
     }   
 }

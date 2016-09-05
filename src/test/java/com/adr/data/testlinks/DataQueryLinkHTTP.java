@@ -24,9 +24,15 @@ import com.adr.data.http.WebDataQueryLink;
  * @author adrian
  */
 public class DataQueryLinkHTTP implements DataQueryLinkBuilder {
+    
+    private final String url;
+    
+    public DataQueryLinkHTTP(String url) {
+        this.url = url;
+    }
 
     @Override
     public DataQueryLink createDataQueryLink() {
-        return new WebDataQueryLink(System.getProperty("http.url"));
+        return new WebDataQueryLink(url);
     }
 }

@@ -21,22 +21,36 @@ import com.adr.data.security.SecureLink;
 import com.adr.data.testlinks.DataQueryLinkSQL;
 import java.util.Arrays;
 import java.util.HashSet;
-import spark.Spark;
+import spark.Service;
 
 /**
  *
  * @author adrian
  */
-public class WebQueryServer {
+public class WebSecureServer {
     
     private static final String SESSIONNAME ="DataSessionName";
     
-    public static void start() throws Exception {
+    private Service http;
+    private final int port;
+    private final String context;
+    private final String sqlname;
+    
+    public WebSecureServer(int port, String context, String sqlname) {
+        this.port = port;
+        this.context = context;
+        this.sqlname = sqlname;
+    }
+    
+    public void start() throws Exception {
 
         WebSecureLinkServer route = createWebSecureLinkServer();
         
+        http = Service.ignite();
+        http.port(port);
+        
         // default port 4567
-        Spark.post("/data/:process", (request, response) -> {
+        http.post(context + "/:process", (request, response) -> {
 
             // loads the session or create a new one
             byte[] session = request.session().attribute(SESSIONNAME);
@@ -53,15 +67,17 @@ public class WebQueryServer {
             response.type("application/json; charset=utf-8");
             return result;
         });
-    }
-    
-    public static void stop() throws Exception {
-        Spark.stop();
-    }
-    
-    public static WebSecureLinkServer createWebSecureLinkServer() {
         
-        DataQueryLinkSQL dql = new DataQueryLinkSQL("h2");
+        http.awaitInitialization();
+    }
+    
+    public void stop() throws Exception {
+        http.stop();
+    }
+    
+    public WebSecureLinkServer createWebSecureLinkServer() {
+        
+        DataQueryLinkSQL dql = new DataQueryLinkSQL(sqlname);
         
         return new WebSecureLinkServer(
             dql.createQueryLink(),
