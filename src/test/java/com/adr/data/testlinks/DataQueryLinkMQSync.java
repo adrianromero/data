@@ -33,6 +33,8 @@ import java.util.logging.Logger;
  */
 public class DataQueryLinkMQSync implements DataQueryLinkBuilder {
     
+    private static final Logger LOG = Logger.getLogger(DataQueryLinkMQSync.class.getName());  
+    
     private final String host;
     private final String queryexchange;
     private final String dataexchange;
@@ -51,7 +53,7 @@ public class DataQueryLinkMQSync implements DataQueryLinkBuilder {
                 new MQQueryLink(getConnection(), queryexchange),
                 new MQDataLinkSync(getConnection(), dataexchange));
         } catch (IOException ex) {
-            Logger.getLogger(SourceLink_OLD.class.getName()).log(Level.SEVERE, null, ex);
+            LOG.log(Level.SEVERE, null, ex);
             throw new RuntimeException(ex);
         }
     }
@@ -63,7 +65,7 @@ public class DataQueryLinkMQSync implements DataQueryLinkBuilder {
                 factory.setHost(host);            
                 connection = factory.newConnection();
             } catch (IOException | TimeoutException ex) {
-                Logger.getLogger(SourceLink_OLD.class.getName()).log(Level.SEVERE, null, ex);
+                LOG.log(Level.SEVERE, null, ex);
                 throw new RuntimeException(ex);
             }
         }

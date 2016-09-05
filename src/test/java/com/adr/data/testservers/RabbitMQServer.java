@@ -21,7 +21,6 @@ import com.adr.data.DataQueryLink;
 import com.adr.data.rabbitmq.MQDataLinkServer;
 import com.adr.data.rabbitmq.MQQueryLinkServer;
 import com.adr.data.testlinks.DataQueryLinkSQL;
-import com.adr.data.testlinks.SourceLink_OLD;
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.ConnectionFactory;
@@ -34,11 +33,11 @@ import java.util.logging.Logger;
 
 /**
  *
- * @author adrian
+ * @author adrian           
  */
 public class RabbitMQServer {
     
-    private static final Logger LOG = Logger.getLogger(WebSecureServer.class.getName());
+    private static final Logger LOG = Logger.getLogger(RabbitMQServer.class.getName());
     
     private final String host;
     private final String queryqueue;
@@ -124,7 +123,7 @@ public class RabbitMQServer {
                 resource.close();
             }
         } catch (IOException ex) {
-             Logger.getLogger(RabbitMQServer.class.getName()).log(Level.WARNING, null, ex);
+            LOG.log(Level.WARNING, null, ex);
         }   
     }
     
@@ -134,7 +133,7 @@ public class RabbitMQServer {
                 resource.close();
             }
         } catch (IOException | TimeoutException ex) {
-             Logger.getLogger(RabbitMQServer.class.getName()).log(Level.WARNING, null, ex);
+             LOG.log(Level.WARNING, null, ex);
         }   
     }
     
@@ -144,7 +143,7 @@ public class RabbitMQServer {
             factory.setHost(host);            
             return factory.newConnection();
         } catch (IOException | TimeoutException ex) {
-            Logger.getLogger(SourceLink_OLD.class.getName()).log(Level.SEVERE, null, ex);
+            LOG.log(Level.SEVERE, null, ex);
             throw new RuntimeException(ex);
         }
     }       

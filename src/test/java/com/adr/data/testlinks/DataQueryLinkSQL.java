@@ -37,6 +37,8 @@ import java.util.logging.Logger;
  */
 public class DataQueryLinkSQL implements DataQueryLinkBuilder {
     
+    private final static Logger LOG = Logger.getLogger(DataQueryLinkSQL.class.getName());
+    
     private final ComboPooledDataSource cpds;
     private final SQLEngine engine;
     
@@ -49,9 +51,9 @@ public class DataQueryLinkSQL implements DataQueryLinkBuilder {
             cpds.setPassword(System.getProperty(enginename + ".database.password"));
             engine = SQLEngine.valueOf(System.getProperty(enginename + ".database.engine", SQLEngine.GENERIC.name()));
             
-            Logger.getLogger(DataQueryLinkSQL.class.getName()).log(Level.INFO, "Database engine = {0}", engine.toString());
+            LOG.log(Level.INFO, "Database engine = {0}", engine.toString());
         } catch (PropertyVetoException ex) {
-            Logger.getLogger(DataQueryLinkSQL.class.getName()).log(Level.SEVERE, null, ex);
+            LOG.log(Level.SEVERE, null, ex);
             throw new RuntimeException(ex);
         }
     }     
