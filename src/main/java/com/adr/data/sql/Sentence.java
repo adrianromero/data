@@ -58,7 +58,7 @@ public abstract class Sentence {
     
     public static int execute(Connection c, CommandSQL command, Record keyval) throws DataException {
         String sql = command.getCommand();
-        LOG.log(Level.INFO, "Executing SQL update: {0}", sql);
+        LOG.log(Level.CONFIG, "Executing SQL update: {0}", sql);
         try (PreparedStatement stmt = c.prepareStatement(sql)) {
             SQLParameters kindparams = new SQLParameters(stmt, command.getParamNames());
             write(kindparams, keyval.getKey());
@@ -71,7 +71,7 @@ public abstract class Sentence {
     
     public static List<Record> query(Connection c, CommandSQL command, Record filter, QueryOptions options) throws DataException {
         String sql = command.getCommand();
-        LOG.log(Level.INFO, "Executing SQL query: {0}", sql);
+        LOG.log(Level.CONFIG, "Executing SQL query: {0}", sql);
         try (PreparedStatement stmt = c.prepareStatement(sql)) {
             SQLParameters kindparams = new SQLParameters(stmt, command.getParamNames());
             write(kindparams, filter.getKey());
