@@ -23,20 +23,20 @@ import com.adr.data.QueryLink;
  * @author adrian
  */
 public class RouteEntry {
-    
-    private final String key;
-    private final QueryLink link;
-    
-    public RouteEntry(String key, QueryLink link) {
-        this.link = link;
-        this.key = key;
-    }
 
-    public String getKey() {
-        return key;
+    private final QueryLink link;    
+    private final String[] keys;
+
+    public RouteEntry(QueryLink link, String... keys) {
+        this.link = link;
+        this.keys = keys;
     }
 
     public QueryLink getLink() {
         return link;
+    }
+
+    public String[] getKeys() {
+        return keys;
     }
 }

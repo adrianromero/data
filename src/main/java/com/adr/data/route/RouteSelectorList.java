@@ -28,13 +28,20 @@ import java.util.Map;
  */
 public class RouteSelectorList implements RouteSelector {
     
+    private final RouteEntry[] entries;
+    
     private final Map<String, QueryLink> links;
     private final QueryLink defaultlink;
 
     public RouteSelectorList(RouteEntry ... entries) {
+        
+        this.entries = entries;
+        
         links = new HashMap<>();
         for (RouteEntry e : entries) {
-            links.put(e.getKey(), e.getLink());
+            for (String s: e.getKeys()){ 
+                links.put(s, e.getLink());
+            }
         }        
         defaultlink = links.get("_DEFAULT");
     }
@@ -56,8 +63,8 @@ public class RouteSelectorList implements RouteSelector {
 
     @Override
     public void close() throws DataException {
-        for(QueryLink link: links.values()) {
-            link.close();
+        for(RouteEntry entry: entries) {
+            entry.getLink().close();
         }
     }  
 }
