@@ -22,7 +22,6 @@ import com.adr.data.QueryLink;
 import com.adr.data.QueryOptions;
 import com.adr.data.Record;
 import com.adr.data.RecordMap;
-import com.adr.data.utils.JSON;
 import com.adr.data.ValuesMap;
 import com.adr.data.ValuesEntry;
 import com.adr.data.security.SecureFacade;
@@ -75,25 +74,36 @@ public class QueryTests {
             Assert.assertEquals("manager", result2.get(1).getString("NAME"));            
             Assert.assertEquals("admin", result2.get(2).getString("NAME"));   
 
-            System.out.println("3.- " + JSON.INSTANCE.toSimpleJSON(
-                link.query(new RecordMap(
+            List<Record> result3 = link.query(new RecordMap(
                     new ValuesMap(
                         new ValuesEntry("_ENTITY", "USERNAME"),
-                        new ValuesEntry("ID", "manager")),
+                        new ValuesEntry("ID", VariantString.NULL)),
                     new ValuesMap(
-                        new ValuesEntry("NAME", VariantString.NULL),
+                        new ValuesEntry("NAME", "manager"),
                         new ValuesEntry("VISIBLE", VariantBoolean.NULL),
-                        new ValuesEntry("CODECARD", VariantString.NULL))))));
+                        new ValuesEntry("CODECARD", VariantString.NULL))));
+            Assert.assertEquals(1, result3.size());
+            Assert.assertEquals("manager", result3.get(0).getString("NAME"));
+            Assert.assertEquals(null, result3.get(0).getString("CODECARD"));
+            Assert.assertEquals(null, result3.get(0).getValue().get("IMAGE"));
 
-            System.out.println("4.- " + JSON.INSTANCE.toSimpleJSON(
-                link.query(new RecordMap(
+
+            List<Record> result4 = link.query(new RecordMap(
                     new ValuesMap(
                         new ValuesEntry("_ENTITY", "USERNAME"),
                         new ValuesEntry("ID", VariantString.NULL)),
                     new ValuesMap(
                         new ValuesEntry("NAME::LIKE", "%a%"),
+                        new ValuesEntry("NAME", VariantString.NULL),
                         new ValuesEntry("VISIBLE", VariantBoolean.NULL),
-                        new ValuesEntry("CODECARD", VariantString.NULL))))));
+                        new ValuesEntry("CODECARD", VariantString.NULL))),
+                    QueryOptions.orderBy("NAME"));
+            Assert.assertEquals(2, result4.size());
+            Assert.assertEquals("admin", result4.get(0).getString("NAME"));           
+            Assert.assertEquals("manager", result4.get(1).getString("NAME"));           
+            
+            // 4.- [{"_ENTITY":"USERNAME","ID":"admin","CODECARD":null,"VISIBLE":"true"},{"_ENTITY":"USERNAME","ID":"manager","CODECARD":null,"VISIBLE":"true"}]
+
             secfac.logout();
         }
     }
