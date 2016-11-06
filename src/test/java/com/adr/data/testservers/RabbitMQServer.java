@@ -70,17 +70,7 @@ public class RabbitMQServer {
             
             // Run the data server
             datachannel = connection.createChannel();
-            dataserver = new MQDataLinkServer(datachannel, dataqueue, link);        
-            
-            Runtime.getRuntime().addShutdownHook(new Thread() {
-                @Override
-                public void run() {
-                    close(queryserver);
-                    close(dataserver);
-                    close(querychannel);
-                    close(datachannel);
-                }            
-            });            
+            dataserver = new MQDataLinkServer(datachannel, dataqueue, link);                 
             
             // Run the query server
             new Thread(() -> {
