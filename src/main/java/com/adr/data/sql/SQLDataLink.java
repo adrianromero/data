@@ -19,7 +19,7 @@ package com.adr.data.sql;
 
 import com.adr.data.DataLink;
 import com.adr.data.DataException;
-import com.adr.data.Record;
+import com.adr.data.record.Record;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.HashMap;

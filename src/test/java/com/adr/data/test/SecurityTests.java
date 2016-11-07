@@ -18,12 +18,12 @@ package com.adr.data.test;
 
 import com.adr.data.DataException;
 import com.adr.data.DataQueryLink;
-import com.adr.data.Record;
-import com.adr.data.RecordMap;
-import com.adr.data.ValuesEntry;
-import com.adr.data.ValuesMap;
+import com.adr.data.record.Entry;
+import com.adr.data.record.Record;
+import com.adr.data.recordmap.RecordMap;
 import com.adr.data.security.SecureFacade;
 import com.adr.data.security.SecurityDataException;
+import com.adr.data.utils.Records;
 import com.adr.data.var.VariantString;
 import java.util.List;
 import org.junit.After;
@@ -72,12 +72,12 @@ public class SecurityTests {
 
             // this query succeds because admin has permissions to all resources
             List<Record> result1 = link.query(new RecordMap(
-                new ValuesMap(
-                    new ValuesEntry("_ENTITY", "USERNAME"),
-                    new ValuesEntry("ID", new VariantString("admin"))),
-                new ValuesMap(
-                    new ValuesEntry("NAME", VariantString.NULL),
-                    new ValuesEntry("CODECARD", VariantString.NULL))));
+                new Entry[]{
+                    new Entry("_ENTITY", "USERNAME"),
+                    new Entry("ID", new VariantString("admin"))},
+                new Entry[]{
+                    new Entry("NAME", VariantString.NULL),
+                    new Entry("CODECARD", VariantString.NULL)}));
             Assert.assertEquals(1, result1.size());
 
             secfac.logout();
@@ -85,12 +85,12 @@ public class SecurityTests {
             try {
                 // This query fails because not logged users 
                 link.query(new RecordMap(
-                    new ValuesMap(
-                        new ValuesEntry("_ENTITY", "USERNAME"),
-                        new ValuesEntry("ID", new VariantString("admin"))),
-                    new ValuesMap(
-                        new ValuesEntry("NAME", VariantString.NULL),
-                        new ValuesEntry("CODECARD", VariantString.NULL))));
+                    new Entry[]{
+                        new Entry("_ENTITY", "USERNAME"),
+                        new Entry("ID", new VariantString("admin"))},
+                    new Entry[]{
+                        new Entry("NAME", VariantString.NULL),
+                        new Entry("CODECARD", VariantString.NULL)}));
                 Assert.fail();
             } catch (SecurityDataException ex) {
                 Assert.assertEquals("No authorization to query resource: USERNAME", ex.getMessage());
@@ -127,12 +127,12 @@ public class SecurityTests {
 
             // this query succeds because anonymous has permissions to all resources
             List<Record> result1 = link.query(new RecordMap(
-                new ValuesMap(
-                    new ValuesEntry("_ENTITY", "USERNAME_VISIBLE"),
-                    new ValuesEntry("ID", VariantString.NULL)),
-                new ValuesMap(
-                    new ValuesEntry("NAME", VariantString.NULL),
-                    new ValuesEntry("DISPLAYNAME", VariantString.NULL))));
+                new Entry[]{
+                    new Entry("_ENTITY", "USERNAME_VISIBLE"),
+                    new Entry("ID", VariantString.NULL)},
+                new Entry[]{
+                    new Entry("NAME", VariantString.NULL),
+                    new Entry("DISPLAYNAME", VariantString.NULL)}));
             Assert.assertEquals(3, result1.size());
         }
     }
@@ -145,10 +145,10 @@ public class SecurityTests {
 
             Record login = secfac.login("manager", null);       
             Assert.assertEquals("Manager", login.getString("DISPLAYNAME"));
+            
+            Record loginupdated = Records.merge(login, new Entry("DISPLAYNAME", new VariantString("ManagerUpdated")));
 
-            login.getValue().set("DISPLAYNAME", new VariantString("ManagerUpdated"));
-
-            Record login2 = secfac.saveCurrent(login);
+            Record login2 = secfac.saveCurrent(loginupdated);
             Assert.assertEquals("ManagerUpdated", login2.getString("DISPLAYNAME"));
 
             secfac.logout();
@@ -156,9 +156,9 @@ public class SecurityTests {
             login = secfac.login("manager", null);       
             Assert.assertEquals("ManagerUpdated", login.getString("DISPLAYNAME"));    
 
-            login.getValue().set("DISPLAYNAME", new VariantString("Manager")); // restore value
+            loginupdated = Records.merge(login, new Entry("DISPLAYNAME", new VariantString("Manager")));
 
-            login2 = secfac.saveCurrent(login);
+            login2 = secfac.saveCurrent(loginupdated);
             Assert.assertEquals("Manager", login2.getString("DISPLAYNAME"));        
 
             secfac.logout();

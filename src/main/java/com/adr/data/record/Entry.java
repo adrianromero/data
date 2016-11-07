@@ -15,43 +15,44 @@
 //     See the License for the specific language governing permissions and
 //     limitations under the License.
 
-package com.adr.data;
+package com.adr.data.record;
 
-import com.adr.data.var.VariantString;
 import com.adr.data.var.Variant;
 import com.adr.data.var.VariantBoolean;
 import com.adr.data.var.VariantDouble;
 import com.adr.data.var.VariantInt;
+import com.adr.data.var.VariantString;
 
 /**
  *
  * @author adrian
  */
-public class ValuesEntry {
-    private String name;
-    private Variant value;
+public class Entry {
     
-    public ValuesEntry(String name) {
+    private final String name;
+    private final Variant value;
+    
+    public Entry(String name) {
         this(name, VariantString.NULL);
     }
     
-    public ValuesEntry(String name, String value) {
+    public Entry(String name, String value) {
         this(name, new VariantString(value));
     }
     
-    public ValuesEntry(String name, Integer value) {
+    public Entry(String name, Integer value) {
         this(name, new VariantInt(value));
     }
     
-    public ValuesEntry(String name, Boolean value) {
+    public Entry(String name, Boolean value) {
         this(name, new VariantBoolean(value));
     }
     
-    public ValuesEntry(String name, Double value) {
+    public Entry(String name, Double value) {
         this(name, new VariantDouble(value));
     }
     
-    public ValuesEntry(String name, Variant value) {
+    public Entry(String name, Variant value) {
         this.name = name;
         this.value = value;
     }
@@ -62,9 +63,5 @@ public class ValuesEntry {
 
     public Variant getValue() {
         return value;
-    }
-
-    public void setValue(Variant value) {
-        this.value = value;
-    } 
+    }    
 }

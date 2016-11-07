@@ -16,7 +16,7 @@
 //     limitations under the License.
 package com.adr.data.cache;
 
-import com.adr.data.Record;
+import com.adr.data.record.Record;
 
 /**
  *

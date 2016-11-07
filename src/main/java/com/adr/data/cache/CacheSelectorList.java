@@ -16,7 +16,7 @@
 //     limitations under the License.
 package com.adr.data.cache;
 
-import com.adr.data.Record;
+import com.adr.data.record.Record;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;

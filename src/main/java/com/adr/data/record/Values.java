@@ -14,18 +14,16 @@
 //     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //     See the License for the specific language governing permissions and
 //     limitations under the License.
-package com.adr.data.route;
 
-import com.adr.data.DataException;
-import com.adr.data.QueryLink;
-import com.adr.data.record.Record;
+package com.adr.data.record;
+
+import com.adr.data.var.Variant;
 
 /**
  *
  * @author adrian
  */
-public interface RouteSelector {
-    
-    public QueryLink getQueryLink(Record filter) throws DataException ;
-    public void close() throws DataException;
+public interface Values {
+    public String [] getNames();   
+    public Variant get(String name);   
 }

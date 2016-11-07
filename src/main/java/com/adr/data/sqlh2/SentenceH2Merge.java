@@ -17,7 +17,7 @@
 
 package com.adr.data.sqlh2;
 
-import com.adr.data.Record;
+import com.adr.data.record.Record;
 import com.adr.data.sql.CommandSQL;
 import com.adr.data.sql.SQLEngine;
 import com.adr.data.sql.SentenceDML;

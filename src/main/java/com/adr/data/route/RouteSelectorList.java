@@ -18,7 +18,7 @@ package com.adr.data.route;
 
 import com.adr.data.DataException;
 import com.adr.data.QueryLink;
-import com.adr.data.Record;
+import com.adr.data.record.Record;
 import java.util.HashMap;
 import java.util.Map;
 

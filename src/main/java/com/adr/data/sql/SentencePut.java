@@ -18,7 +18,7 @@
 package com.adr.data.sql;
 
 import com.adr.data.DataException;
-import com.adr.data.Record;
+import com.adr.data.record.Record;
 import java.sql.Connection;
 
 /**

@@ -15,33 +15,15 @@
 //     See the License for the specific language governing permissions and
 //     limitations under the License.
 
-package com.adr.data;
+package com.adr.data.record;
 
 /**
  *
  * @author adrian
  */
-public interface Record {
-    public Values getKey();
-    public Values getValue();
-    
-    public default String getString(String name) {
-        return getValue().get(name).asString();    
+public interface RecordBuilder {
+    public Record create(Entry[] keys, Entry[] values);
+    public default Record create(Entry[] keys) {
+        return create(keys, null);
     }
-    
-    public default int getInteger(String name) {
-        return getValue().get(name).asInteger(); 
-    }
-    
-    public default double getDouble(String name) {
-        return getValue().get(name).asDouble();
-    }    
-    
-    public default Boolean getBoolean(String name) {
-        return getValue().get(name).asBoolean();
-    }
-    
-    public default byte[] getBytes(String name) {
-        return getValue().get(name).asBytes();
-    }        
 }

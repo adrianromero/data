@@ -17,7 +17,7 @@
 
 package com.adr.data.sql;
 
-import com.adr.data.Record;
+import com.adr.data.record.Record;
 import java.util.ArrayList;
 
 /**

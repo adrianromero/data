@@ -20,10 +20,9 @@ import com.adr.data.DataException;
 import com.adr.data.DataQueryLink;
 import com.adr.data.QueryLink;
 import com.adr.data.QueryOptions;
-import com.adr.data.Record;
-import com.adr.data.RecordMap;
-import com.adr.data.ValuesMap;
-import com.adr.data.ValuesEntry;
+import com.adr.data.record.Entry;
+import com.adr.data.record.Record;
+import com.adr.data.recordmap.RecordMap;
 import com.adr.data.security.SecureFacade;
 import com.adr.data.var.VariantBoolean;
 import com.adr.data.var.VariantString;
@@ -46,87 +45,85 @@ public class QueryTests {
         try (DataQueryLink link = SourceLink.createDataQueryLink()) {
             SecureFacade secfac = new SecureFacade(link);
             secfac.login("admin", "admin");
-            
+
             List<Record> result1 = link.query(new RecordMap(
-                    new ValuesMap(
-                        new ValuesEntry("_ENTITY", "USERNAME"),
-                        new ValuesEntry("ID", new VariantString("admin"))),
-                    new ValuesMap(
-                        new ValuesEntry("NAME", VariantString.NULL),
-                        new ValuesEntry("CODECARD", VariantString.NULL))));
-            
+                    new Entry[]{
+                        new Entry("_ENTITY", "USERNAME"),
+                        new Entry("ID", new VariantString("admin"))},
+                    new Entry[]{
+                        new Entry("NAME", VariantString.NULL),
+                        new Entry("CODECARD", VariantString.NULL)}));
+
             Assert.assertEquals(1, result1.size());
             Assert.assertEquals("admin", result1.get(0).getString("NAME"));
             Assert.assertEquals(null, result1.get(0).getString("CODECARD"));
             Assert.assertEquals(null, result1.get(0).getValue().get("IMAGE"));
-            
+
             List<Record> result2 = link.query(new RecordMap(
-                    new ValuesMap(
-                        new ValuesEntry("_ENTITY", "USERNAME"),
-                        new ValuesEntry("ID", VariantString.NULL)),
-                    new ValuesMap(
-                        new ValuesEntry("NAME", VariantString.NULL),
-                        new ValuesEntry("CODECARD", VariantString.NULL))),
+                    new Entry[]{
+                        new Entry("_ENTITY", "USERNAME"),
+                        new Entry("ID", VariantString.NULL)},
+                    new Entry[]{
+                        new Entry("NAME", VariantString.NULL),
+                        new Entry("CODECARD", VariantString.NULL)}),
                     QueryOptions.orderBy("NAME::DESC"));
-                
+
             Assert.assertEquals(3, result2.size());
-            Assert.assertEquals("user", result2.get(0).getString("NAME"));            
-            Assert.assertEquals("manager", result2.get(1).getString("NAME"));            
-            Assert.assertEquals("admin", result2.get(2).getString("NAME"));   
+            Assert.assertEquals("user", result2.get(0).getString("NAME"));
+            Assert.assertEquals("manager", result2.get(1).getString("NAME"));
+            Assert.assertEquals("admin", result2.get(2).getString("NAME"));
 
             List<Record> result3 = link.query(new RecordMap(
-                    new ValuesMap(
-                        new ValuesEntry("_ENTITY", "USERNAME"),
-                        new ValuesEntry("ID", VariantString.NULL)),
-                    new ValuesMap(
-                        new ValuesEntry("NAME", "manager"),
-                        new ValuesEntry("VISIBLE", VariantBoolean.NULL),
-                        new ValuesEntry("CODECARD", VariantString.NULL))));
+                    new Entry[]{
+                        new Entry("_ENTITY", "USERNAME"),
+                        new Entry("ID", VariantString.NULL)},
+                    new Entry[]{
+                        new Entry("NAME", "manager"),
+                        new Entry("VISIBLE", VariantBoolean.NULL),
+                        new Entry("CODECARD", VariantString.NULL)}));
             Assert.assertEquals(1, result3.size());
             Assert.assertEquals("manager", result3.get(0).getString("NAME"));
             Assert.assertEquals(null, result3.get(0).getString("CODECARD"));
             Assert.assertEquals(null, result3.get(0).getValue().get("IMAGE"));
 
-
             List<Record> result4 = link.query(new RecordMap(
-                    new ValuesMap(
-                        new ValuesEntry("_ENTITY", "USERNAME"),
-                        new ValuesEntry("ID", VariantString.NULL)),
-                    new ValuesMap(
-                        new ValuesEntry("NAME::LIKE", "%a%"),
-                        new ValuesEntry("NAME", VariantString.NULL),
-                        new ValuesEntry("VISIBLE", VariantBoolean.NULL),
-                        new ValuesEntry("CODECARD", VariantString.NULL))),
+                    new Entry[]{
+                        new Entry("_ENTITY", "USERNAME"),
+                        new Entry("ID", VariantString.NULL)},
+                    new Entry[]{
+                        new Entry("NAME::LIKE", "%a%"),
+                        new Entry("NAME", VariantString.NULL),
+                        new Entry("VISIBLE", VariantBoolean.NULL),
+                        new Entry("CODECARD", VariantString.NULL)}),
                     QueryOptions.orderBy("NAME"));
             Assert.assertEquals(2, result4.size());
-            Assert.assertEquals("admin", result4.get(0).getString("NAME"));           
-            Assert.assertEquals("manager", result4.get(1).getString("NAME"));           
-            
-            // 4.- [{"_ENTITY":"USERNAME","ID":"admin","CODECARD":null,"VISIBLE":"true"},{"_ENTITY":"USERNAME","ID":"manager","CODECARD":null,"VISIBLE":"true"}]
+            Assert.assertEquals("admin", result4.get(0).getString("NAME"));
+            Assert.assertEquals("manager", result4.get(1).getString("NAME"));
 
+            // 4.- [{"_ENTITY":"USERNAME","ID":"admin","CODECARD":null,"VISIBLE":"true"},{"_ENTITY":"USERNAME","ID":"manager","CODECARD":null,"VISIBLE":"true"}]
             secfac.logout();
         }
     }
 
     @Test
     public void testSomeUpdates() throws DataException {
-        
+
         try (DataQueryLink link = SourceLink.createDataQueryLink()) {
             SecureFacade secfac = new SecureFacade(link);
             secfac.login("admin", "admin");
 
             // Insert
             link.execute(new RecordMap(
-                new ValuesMap(
-                    new ValuesEntry("_ENTITY", "USERNAME"),
-                    new ValuesEntry("ID", "newid1")),
-                new ValuesMap(
-                    new ValuesEntry("NAME", "newuser"),
-                    new ValuesEntry("DISPLAYNAME", "New User"),
-                    new ValuesEntry("CODECARD", "12345"),
-                    new ValuesEntry("ROLE_ID", "u"),
-                    new ValuesEntry("VISIBLE", true),
-                    new ValuesEntry("ACTIVE", true))));
+                    new Entry[]{
+                        new Entry("_ENTITY", "USERNAME"),
+                        new Entry("ID", "newid1")},
+                    new Entry[]{
+                        new Entry("NAME", "newuser"),
+                        new Entry("DISPLAYNAME", "New User"),
+                        new Entry("CODECARD", "12345"),
+                        new Entry("ROLE_ID", "u"),
+                        new Entry("VISIBLE", true),
+                        new Entry("ACTIVE", true)}));
 
             Record r = getUser(link, "newid1");
             Assert.assertEquals("newuser", r.getString("NAME"));
@@ -135,16 +132,16 @@ public class QueryTests {
 
             // Insert
             link.execute(new RecordMap(
-                new ValuesMap(
-                    new ValuesEntry("_ENTITY", "USERNAME"),
-                    new ValuesEntry("ID", "newid1")),
-                new ValuesMap(
-                    new ValuesEntry("NAME", "newuser"),
-                    new ValuesEntry("DISPLAYNAME", "New User Changed"),
-                    new ValuesEntry("CODECARD", "12345"),
-                    new ValuesEntry("ROLE_ID", "u"),
-                    new ValuesEntry("VISIBLE", true),
-                    new ValuesEntry("ACTIVE", true))));
+                    new Entry[]{
+                        new Entry("_ENTITY", "USERNAME"),
+                        new Entry("ID", "newid1")},
+                    new Entry[]{
+                        new Entry("NAME", "newuser"),
+                        new Entry("DISPLAYNAME", "New User Changed"),
+                        new Entry("CODECARD", "12345"),
+                        new Entry("ROLE_ID", "u"),
+                        new Entry("VISIBLE", true),
+                        new Entry("ACTIVE", true)}));
 
             r = getUser(link, "newid1");
             Assert.assertEquals("newuser", r.getString("NAME"));
@@ -153,28 +150,28 @@ public class QueryTests {
 
             // Delete
             link.execute(new RecordMap(
-                new ValuesMap(
-                    new ValuesEntry("_ENTITY", "USERNAME"),
-                    new ValuesEntry("ID", "newid1"))));
+                    new Entry[]{
+                        new Entry("_ENTITY", "USERNAME"),
+                        new Entry("ID", "newid1")}));
 
             r = getUser(link, "newid1");
             Assert.assertNull(r);
-            
+
             secfac.logout();
         }
     }
 
     private Record getUser(QueryLink link, String id) throws DataException {
         return link.find(new RecordMap(
-            new ValuesMap(
-                new ValuesEntry("_ENTITY", "USERNAME"),
-                new ValuesEntry("ID", id)),
-            new ValuesMap(
-                new ValuesEntry("NAME", VariantString.NULL),
-                new ValuesEntry("DISPLAYNAME", VariantString.NULL),
-                new ValuesEntry("CODECARD", VariantString.NULL),
-                new ValuesEntry("ROLE_ID", VariantString.NULL),
-                new ValuesEntry("VISIBLE", VariantBoolean.NULL),
-                new ValuesEntry("ACTIVE", VariantBoolean.NULL))));
+                new Entry[]{
+                    new Entry("_ENTITY", "USERNAME"),
+                    new Entry("ID", id)},
+                new Entry[]{
+                    new Entry("NAME", VariantString.NULL),
+                    new Entry("DISPLAYNAME", VariantString.NULL),
+                    new Entry("CODECARD", VariantString.NULL),
+                    new Entry("ROLE_ID", VariantString.NULL),
+                    new Entry("VISIBLE", VariantBoolean.NULL),
+                    new Entry("ACTIVE", VariantBoolean.NULL)}));
     }
 }

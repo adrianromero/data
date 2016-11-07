@@ -15,45 +15,35 @@
 //     See the License for the specific language governing permissions and
 //     limitations under the License.
 
-package com.adr.data;
+package com.adr.data.recordmap;
 
+import com.adr.data.record.Values;
 import com.adr.data.var.Variant;
-import java.util.Collection;
 import java.util.Map;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 /**
  *
  * @author adrian
  */
-public class ValuesMap implements Values {
+class ValuesMap implements Values {
 
+    private String[] names = null;
     private final Map<String, Variant> entries;
 
-    public ValuesMap(ValuesEntry... entries) {
-        this(Stream.of(entries));
-    }
-
-    public ValuesMap(Collection<ValuesEntry> entries) {
-        this(entries.stream());
-    }
-
-    public ValuesMap(Stream<ValuesEntry> entries) {
-        this.entries = entries.collect(Collectors.toMap(ValuesEntry::getName, ValuesEntry::getValue));
+    public ValuesMap(Map<String, Variant> entries) {
+        this.entries = entries;
     }
 
     @Override
     public String[] getNames() {
-        return entries.keySet().stream().toArray(String[]::new);
+        if (names == null) {
+            names = entries.keySet().stream().toArray(String[]::new);
+        }
+        return names;
     }
 
     @Override
     public Variant get(String name) {
         return entries.get(name);
-    }
-    @Override
-    public void set(String name, Variant v) {
-        entries.put(name, v);
     }
 }

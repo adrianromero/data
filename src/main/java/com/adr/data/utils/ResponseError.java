@@ -18,7 +18,7 @@
 package com.adr.data.utils;
 
 import com.adr.data.DataException;
-import com.adr.data.Record;
+import com.adr.data.record.Record;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import java.util.List;

@@ -14,17 +14,15 @@
 //     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //     See the License for the specific language governing permissions and
 //     limitations under the License.
-
 package com.adr.data.utils;
 
 import com.adr.data.DataException;
 import com.adr.data.QueryOptions;
+import com.adr.data.record.Entry;
 import com.adr.data.var.Kind;
-import com.adr.data.Record;
-import com.adr.data.RecordMap;
-import com.adr.data.Values;
-import com.adr.data.ValuesEntry;
-import com.adr.data.ValuesMap;
+import com.adr.data.record.Record;
+import com.adr.data.record.Values;
+import com.adr.data.recordmap.RecordMap;
 import com.adr.data.var.Variant;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -99,10 +97,6 @@ public class JSON {
             throw new IllegalStateException("Envelope type invalid: " + type);
         }
     }
-    
-    public List<Record> clone(List<Record> list) {
-        return fromJSONListRecord(toJSONElement(list));    
-    }
 
     public List<Record> fromJSONListRecord(String json) {
         return fromJSONListRecord(gsonparser.parse(json));
@@ -115,22 +109,23 @@ public class JSON {
         }
         return l;
     }
-        public Record fromJSONRecord(String json) {
+
+    public Record fromJSONRecord(String json) {
         return fromJSONRecord(gsonparser.parse(json));
     }
 
-    public RecordMap fromJSONRecord(JsonElement element) {
+    public Record fromJSONRecord(JsonElement element) {
         if (element == null || element.equals(JsonNull.INSTANCE)) {
             return null;
         }
         JsonObject o = element.getAsJsonObject();
         return new RecordMap(fromJSONValues(o.get("key")), fromJSONValues(o.get("value")));
     }
-    
+
     public QueryOptions fromJSONOptions(String json) {
         return fromJSONOptions(gsonparser.parse(json));
     }
-    
+
     public QueryOptions fromJSONOptions(JsonElement element) {
         if (element == null || element.equals(JsonNull.INSTANCE)) {
             return QueryOptions.DEFAULT;
@@ -151,19 +146,20 @@ public class JSON {
             return new QueryOptions(limit, offset, orderby);
         }
     }
-    
-    private ValuesMap fromJSONValues(JsonElement element) {
+
+    private Entry[] fromJSONValues(JsonElement element) {
         if (element == null || element.equals(JsonNull.INSTANCE)) {
             return null;
         }
-        List<ValuesEntry> l = new ArrayList<>();
-        for (JsonElement r : element.getAsJsonArray()) {
-            l.add(fromJSONValuesEntry(r));
+        JsonArray array = element.getAsJsonArray();
+        Entry[] l = new Entry[array.size()];
+        for (int i = 0; i < array.size(); i++) {
+            l[i] = fromJSONEntry(array.get(i));
         }
-        return new ValuesMap(l);
+        return l;
     }
 
-    private ValuesEntry fromJSONValuesEntry(JsonElement element) {
+    private Entry fromJSONEntry(JsonElement element) {
         JsonObject o = element.getAsJsonObject();
         Kind k = Kind.valueOf(o.get("kind").getAsString());
         String iso;
@@ -174,7 +170,7 @@ public class JSON {
             iso = jvalue.getAsString();
         }
         try {
-            return new ValuesEntry(o.get("name").getAsString(), k.fromISO(iso));
+            return new Entry(o.get("name").getAsString(), k.fromISO(iso));
         } catch (DataException ex) {
             throw new IllegalArgumentException(ex);
         }
@@ -241,8 +237,8 @@ public class JSON {
             return r;
         }
     }
-    
-    public JsonElement toJSONElement(Values obj) {
+
+    private JsonElement toJSONElement(Values obj) {
         if (obj == null) {
             return JsonNull.INSTANCE;
         }

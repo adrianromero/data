@@ -14,15 +14,13 @@
 //     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //     See the License for the specific language governing permissions and
 //     limitations under the License.
-
 package com.adr.data.test;
 
 import com.adr.data.QueryOptions;
-import com.adr.data.Record;
+import com.adr.data.record.Entry;
+import com.adr.data.record.Record;
+import com.adr.data.recordmap.RecordMap;
 import com.adr.data.utils.JSON;
-import com.adr.data.RecordMap;
-import com.adr.data.ValuesMap;
-import com.adr.data.ValuesEntry;
 import com.adr.data.var.VariantString;
 import java.util.Arrays;
 import java.util.List;
@@ -34,49 +32,49 @@ import org.junit.Test;
  * @author adrian
  */
 public class GSONTests {
-    
+
     public GSONTests() {
     }
-    
+
     @Test
     public void testJSONSerialization() {
- 
-        RecordMap keval = new RecordMap(     
-            new ValuesMap(
-                    new ValuesEntry("id", new VariantString("1"))),
-            new ValuesMap(
-                    new ValuesEntry("field", new VariantString("pepeluis")),
-                    new ValuesEntry("value", VariantString.NULL)));
+
+        Record keval = new RecordMap(
+                new Entry[]{
+                    new Entry("id", new VariantString("1"))},
+                new Entry[]{
+                    new Entry("field", new VariantString("pepeluis")),
+                    new Entry("value", VariantString.NULL)});
 
         List<Record> dl = Arrays.asList(
-            new RecordMap(     
-                new ValuesMap(
-                        new ValuesEntry("id", "1")),
-                new ValuesMap(
-                        new ValuesEntry("field", "pepeluis"))),                
-            new RecordMap(     
-                new ValuesMap(
-                        new ValuesEntry("id", "2")),
-                new ValuesMap(
-                        new ValuesEntry("field", "hilario"))));
-        
+                new RecordMap(
+                        new Entry[]{
+                            new Entry("id", "1")},
+                        new Entry[]{
+                            new Entry("field", "pepeluis")}),
+                new RecordMap(
+                        new Entry[]{
+                            new Entry("id", "2")},
+                        new Entry[]{
+                            new Entry("field", "hilario")}));
+
         String sdl = "[{\"key\":[{\"name\":\"id\",\"kind\":\"STRING\",\"value\":\"1\"}],"
                 + "\"value\":[{\"name\":\"field\",\"kind\":\"STRING\",\"value\":\"pepeluis\"}]},"
                 + "{\"key\":[{\"name\":\"id\",\"kind\":\"STRING\",\"value\":\"2\"}],"
                 + "\"value\":[{\"name\":\"field\",\"kind\":\"STRING\",\"value\":\"hilario\"}]}]";
         Assert.assertEquals(sdl, JSON.INSTANCE.toJSON(dl));
-        Assert.assertEquals(sdl, JSON.INSTANCE.toJSON(JSON.INSTANCE.fromJSONListRecord(JSON.INSTANCE.toJSON(dl))));     
+        Assert.assertEquals(sdl, JSON.INSTANCE.toJSON(JSON.INSTANCE.fromJSONListRecord(JSON.INSTANCE.toJSON(dl))));
         Assert.assertEquals("[{\"id\":\"1\",\"field\":\"pepeluis\"},{\"id\":\"2\",\"field\":\"hilario\"}]", JSON.INSTANCE.toSimpleJSON(dl));
-        
+
         String skeval = "{\"key\":[{\"name\":\"id\",\"kind\":\"STRING\",\"value\":\"1\"}],"
                 + "\"value\":[{\"name\":\"field\",\"kind\":\"STRING\",\"value\":\"pepeluis\"},{\"name\":\"value\",\"kind\":\"STRING\"}]}";
         Assert.assertEquals(skeval, JSON.INSTANCE.toJSON(keval));
-        Assert.assertEquals(skeval, JSON.INSTANCE.toJSON(JSON.INSTANCE.fromJSONRecord(JSON.INSTANCE.toJSON(keval))));        
+        Assert.assertEquals(skeval, JSON.INSTANCE.toJSON(JSON.INSTANCE.fromJSONRecord(JSON.INSTANCE.toJSON(keval))));
         Assert.assertEquals("{\"id\":\"1\",\"field\":\"pepeluis\",\"value\":null}", JSON.INSTANCE.toSimpleJSON(keval));
     }
-     
+
     @Test
-    public void testQueryOptions() {        
+    public void testQueryOptions() {
         Assert.assertEquals("{\"limit\":1}", JSON.INSTANCE.toJSONElement(QueryOptions.FIND).toString());
         Assert.assertEquals("null", JSON.INSTANCE.toJSONElement(QueryOptions.DEFAULT).toString());
         Assert.assertEquals("{\"limit\":100,\"offset\":10}", JSON.INSTANCE.toJSONElement(QueryOptions.limit(100, 10)).toString());

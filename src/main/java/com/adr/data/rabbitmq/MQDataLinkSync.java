@@ -19,7 +19,7 @@ package com.adr.data.rabbitmq;
 
 import com.adr.data.DataException;
 import com.adr.data.DataLink;
-import com.adr.data.Record;
+import com.adr.data.record.Record;
 import com.adr.data.utils.EnvelopeResponse;
 import com.adr.data.utils.JSON;
 import com.adr.data.utils.RequestExecute;

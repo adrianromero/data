@@ -17,6 +17,7 @@
 
 package com.adr.data;
 
+import com.adr.data.record.Record;
 import java.util.List;
 
 /**

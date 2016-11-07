@@ -14,17 +14,19 @@
 //     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //     See the License for the specific language governing permissions and
 //     limitations under the License.
+package com.adr.data.recordmap;
 
-package com.adr.data;
-
-import com.adr.data.var.Variant;
+import com.adr.data.record.Entry;
+import com.adr.data.record.Record;
+import com.adr.data.record.RecordBuilder;
 
 /**
  *
  * @author adrian
  */
-public interface Values {
-    public String [] getNames();   
-    public Variant get(String name);   
-    public void set(String name, Variant v);   
+public class RecordMapBuilder implements RecordBuilder {
+    @Override
+    public Record create(Entry[] keys, Entry[] values) {
+        return new RecordMap(keys, values);    
+    }
 }

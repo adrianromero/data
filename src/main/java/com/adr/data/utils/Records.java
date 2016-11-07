@@ -17,8 +17,12 @@
 
 package com.adr.data.utils;
 
-import com.adr.data.Record;
-import com.adr.data.Values;
+import com.adr.data.record.Entry;
+import com.adr.data.record.Record;
+import com.adr.data.record.Values;
+import com.adr.data.recordmap.RecordMap;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  *
@@ -26,17 +30,52 @@ import com.adr.data.Values;
  */
 public class Records {
     
-    public static Record clone(Record record) {
-        return JSON.INSTANCE.fromJSONRecord(JSON.INSTANCE.toJSONElement(record));    
+    public static List<Record> clone(List<Record> records) {
+        assert records != null;
+        
+        List<Record> clone = new ArrayList<>(records.size());
+        for (Record r: records) {
+            clone.add(clone(r));
+        }        
+        return clone;  
     }
     
-    public static void merge(Record base, Record record) {
-
-        Values rv = base.getValue();
-        Values recordv = record.getValue();
+    public static Record clone(Record record) {
+        assert record != null;
         
-        for (String n: recordv.getNames()) {
-            rv.set(n, recordv.get(n));
+        return new RecordMap(getEntries(record.getKey()), getEntries(record.getValue()));  
+    }
+    
+    public static Record merge(Record base, Values values) {
+        return merge(base, getEntries(values));
+    }
+    
+    public static Record merge(Record base, Entry... values) {
+        assert base != null;
+        assert values != null;
+        
+        Entry[] basekey = getEntries(base.getKey());
+        Entry[] basevalue = getEntries(base.getValue());
+        
+        if (basevalue == null) {
+            return new RecordMap(basekey, values);
+        } else {
+            Entry[] valuesmerged = new Entry[basevalue.length + values.length];
+            System.arraycopy(basevalue, 0, valuesmerged, 0, basevalue.length);
+            System.arraycopy(values, 0, valuesmerged, basevalue.length, values.length);
+            return new RecordMap(basekey, valuesmerged);
         }
+    }
+    
+    public static Entry[] getEntries(Values values) {
+        if (values == null) {
+            return null;
+        }        
+        String[] names = values.getNames();
+        Entry[] result = new Entry[names.length];
+        for (int i = 0; i < result.length; i++) {
+            result[i] = new Entry(names[i], values.get(names[i]));
+        }
+        return result;
     }
 }

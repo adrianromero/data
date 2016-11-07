@@ -19,7 +19,7 @@ package com.adr.data.http;
 import com.adr.data.DataException;
 import com.adr.data.DataQueryLink;
 import com.adr.data.QueryOptions;
-import com.adr.data.Record;
+import com.adr.data.record.Record;
 import com.adr.data.utils.EnvelopeResponse;
 import com.adr.data.utils.JSON;
 import com.adr.data.utils.RequestExecute;

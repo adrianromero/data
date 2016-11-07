@@ -14,18 +14,34 @@
 //     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //     See the License for the specific language governing permissions and
 //     limitations under the License.
-package com.adr.data.route;
 
-import com.adr.data.DataException;
-import com.adr.data.QueryLink;
-import com.adr.data.record.Record;
+package com.adr.data.record;
 
 /**
  *
  * @author adrian
  */
-public interface RouteSelector {
+public interface Record {
+    public Values getKey();
+    public Values getValue();
     
-    public QueryLink getQueryLink(Record filter) throws DataException ;
-    public void close() throws DataException;
+    public default String getString(String name) {
+        return getValue().get(name).asString();    
+    }
+    
+    public default int getInteger(String name) {
+        return getValue().get(name).asInteger(); 
+    }
+    
+    public default double getDouble(String name) {
+        return getValue().get(name).asDouble();
+    }    
+    
+    public default Boolean getBoolean(String name) {
+        return getValue().get(name).asBoolean();
+    }
+    
+    public default byte[] getBytes(String name) {
+        return getValue().get(name).asBytes();
+    }        
 }

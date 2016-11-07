@@ -18,7 +18,7 @@
 package com.adr.data.sqlpg;
 
 import com.adr.data.DataException;
-import com.adr.data.Record;
+import com.adr.data.record.Record;
 import com.adr.data.sql.SQLEngine;
 import com.adr.data.sql.Sentence;
 import com.adr.data.sql.SentenceDelete;

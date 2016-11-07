@@ -18,7 +18,7 @@
 package com.adr.data.sql;
 
 import com.adr.data.QueryOptions;
-import com.adr.data.Record;
+import com.adr.data.record.Record;
 
 /**
  *

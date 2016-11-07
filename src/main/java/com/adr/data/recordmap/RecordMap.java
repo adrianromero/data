@@ -15,7 +15,14 @@
 //     See the License for the specific language governing permissions and
 //     limitations under the License.
 
-package com.adr.data;
+package com.adr.data.recordmap;
+
+import com.adr.data.record.Entry;
+import com.adr.data.record.Record;
+import com.adr.data.record.Values;
+import com.adr.data.var.Variant;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  *
@@ -23,18 +30,23 @@ package com.adr.data;
  */
 public class RecordMap implements Record {
     
-    private final ValuesMap key;
-    private final ValuesMap value;
+    private final Values key;
+    private final Values value;
     
-    public RecordMap(ValuesMap key, ValuesMap value) {
-        this.key = key;
-        this.value = value;
+    public RecordMap(Entry[] keys, Entry[] values) {
+        assert keys != null;
+        
+        this.key = new ValuesMap(entriesToMap(keys));
+        this.value = values == null ? null : new ValuesMap(entriesToMap(values));
     }
     
-    public RecordMap(ValuesMap key) {
-        this(key, null);
+    public RecordMap(Entry[] keys) {
+        assert keys != null;
+        
+        this.key = new ValuesMap(entriesToMap(keys));
+        this.value = null;
     }
-    
+
     @Override
     public Values getKey() {
         return key;
@@ -43,5 +55,13 @@ public class RecordMap implements Record {
     @Override
     public Values getValue() {
         return value;
-    }    
+    }  
+    
+    private Map<String, Variant> entriesToMap(Entry[] entries) {
+        Map<String, Variant> result = new HashMap<>();
+        for (Entry e: entries) {
+            result.put(e.getName(), e.getValue());
+        }
+        return result;
+    }
 }
