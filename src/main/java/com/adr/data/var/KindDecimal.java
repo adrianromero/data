@@ -19,24 +19,30 @@ package com.adr.data.var;
 
 import com.adr.data.DataException;
 import com.adr.data.Results;
-import com.adr.data.utils.Serializer;
-import java.io.IOException;
+import java.math.BigDecimal;
 
 /**
  *
  * @author adrian
  */
-class KindBuilderObject implements KindBuilder {
+class KindDecimal extends Kind {
+    
     @Override
     public Variant fromISO(String value) throws DataException {
         try {
-            return value == null || value.equals("") ? VariantObject.NULL : new VariantObject(Serializer.deserialize(value));  
-        } catch (IOException | ClassNotFoundException e) {
+            return value == null || value.equals("") ? VariantDecimal.NULL : new VariantDecimal(new BigDecimal(value));  
+        } catch(IllegalArgumentException e) {
             throw new DataException(e);
         }            
     }
+    
     @Override
     public Variant read(Results read, String name) throws DataException {
-        return new VariantObject(read.getObject(name));
-    }   
+        return new VariantDecimal(read.getBigDecimal(name));
+    }      
+    
+    @Override
+    public String toString() {
+        return "DECIMAL";
+    }
 }

@@ -19,23 +19,29 @@ package com.adr.data.var;
 
 import com.adr.data.DataException;
 import com.adr.data.Results;
-import java.util.Base64;
 
 /**
  *
  * @author adrian
  */
-class KindBuilderBytes implements KindBuilder {
+class KindBuilderInt extends Kind {
+    
     @Override
     public Variant fromISO(String value) throws DataException {
         try {
-            return value == null ? VariantBytes.NULL : new VariantBytes(Base64.getDecoder().decode(value));
-        } catch(IllegalArgumentException e) {
+            return value == null || value.equals("") ? VariantInt.NULL : new VariantInt(Integer.parseInt(value));  
+        } catch (NumberFormatException e) {
             throw new DataException(e);
         }            
     }
+    
     @Override
     public Variant read(Results read, String name) throws DataException {
-        return new VariantBytes(read.getBytes(name));
-    }    
+        return new VariantInt(read.getInt(name));
+    }   
+    
+    @Override
+    public String toString() {
+        return "INT";
+    }
 }

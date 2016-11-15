@@ -19,23 +19,25 @@ package com.adr.data.var;
 
 import com.adr.data.DataException;
 import com.adr.data.Results;
-import java.math.BigDecimal;
 
 /**
  *
  * @author adrian
  */
-class KindBuilderDecimal implements KindBuilder {
+class KindBoolean extends Kind {
+    
     @Override
     public Variant fromISO(String value) throws DataException {
-        try {
-            return value == null || value.equals("") ? VariantDecimal.NULL : new VariantDecimal(new BigDecimal(value));  
-        } catch(IllegalArgumentException e) {
-            throw new DataException(e);
-        }            
+        return value == null || value.equals("") ? VariantBoolean.NULL : new VariantBoolean(Boolean.valueOf(value));                
     }
+    
     @Override
     public Variant read(Results read, String name) throws DataException {
-        return new VariantDecimal(read.getBigDecimal(name));
-    }      
+        return new VariantBoolean(read.getBoolean(name));
+    }    
+    
+    @Override
+    public String toString() {
+        return "BOOLEAN";
+    }
 }

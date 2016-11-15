@@ -19,20 +19,31 @@ package com.adr.data.var;
 
 import com.adr.data.DataException;
 import com.adr.data.Results;
+import com.adr.data.utils.Serializer;
+import java.io.IOException;
 
 /**
  *
  * @author adrian
  */
-class KindBuilderBoolean implements KindBuilder {
+class KindObject extends Kind {
     
     @Override
     public Variant fromISO(String value) throws DataException {
-        return value == null || value.equals("") ? VariantBoolean.NULL : new VariantBoolean(Boolean.valueOf(value));                
+        try {
+            return value == null || value.equals("") ? VariantObject.NULL : new VariantObject(Serializer.deserialize(value));  
+        } catch (IOException | ClassNotFoundException e) {
+            throw new DataException(e);
+        }            
     }
     
     @Override
     public Variant read(Results read, String name) throws DataException {
-        return new VariantBoolean(read.getBoolean(name));
-    }    
+        return new VariantObject(read.getObject(name));
+    }   
+    
+    @Override
+    public String toString() {
+        return "OBJECT";
+    }
 }

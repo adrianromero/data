@@ -19,24 +19,30 @@ package com.adr.data.var;
 
 import com.adr.data.DataException;
 import com.adr.data.Results;
-import java.time.Instant;
-import java.time.format.DateTimeParseException;
+import java.util.Base64;
 
 /**
  *
  * @author adrian
  */
-class KindBuilderInstant implements KindBuilder {
+class KindBytes extends Kind {
+    
     @Override
     public Variant fromISO(String value) throws DataException {
         try {
-            return value == null || value.equals("") ? VariantInstant.NULL : new VariantInstant(Instant.parse(value));  
-        } catch (DateTimeParseException e) {
+            return value == null ? VariantBytes.NULL : new VariantBytes(Base64.getDecoder().decode(value));
+        } catch(IllegalArgumentException e) {
             throw new DataException(e);
         }            
     }
+    
     @Override
     public Variant read(Results read, String name) throws DataException {
-        return new VariantInstant(read.getInstant(name));
-    }   
+        return new VariantBytes(read.getBytes(name));
+    }    
+    
+    @Override
+    public String toString() {
+        return "BYTES";
+    }
 }

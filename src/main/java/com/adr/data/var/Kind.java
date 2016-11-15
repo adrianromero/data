@@ -19,34 +19,56 @@ package com.adr.data.var;
 
 import com.adr.data.DataException;
 import com.adr.data.Results;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  *
  * @author adrian
  */
-public enum Kind {
-    INT(new KindBuilderInt()), 
-    LONG(new KindBuilderLong()),
-    STRING(new KindBuilderString()), 
-    DOUBLE(new KindBuilderDouble()), 
-    DECIMAL(new KindBuilderDecimal()), 
-    BOOLEAN(new KindBuilderBoolean()), 
-    INSTANT(new KindBuilderInstant()), 
-    LOCALDATETIME(new KindBuilderLocalDateTime()), 
-    LOCALDATE(new KindBuilderLocalDate()), 
-    LOCALTIME(new KindBuilderLocalTime()),  
-    BYTES(new KindBuilderBytes()), 
-    OBJECT(new KindBuilderObject());
+public abstract class Kind {
+    public final static Kind INT = new KindBuilderInt();
+    public final static Kind LONG = new KindLong();
+    public final static Kind STRING = new KindString(); 
+    public final static Kind DOUBLE = new KindDouble(); 
+    public final static Kind DECIMAL = new KindDecimal(); 
+    public final static Kind BOOLEAN = new KindBoolean(); 
+    public final static Kind INSTANT = new KindInstant(); 
+    public final static Kind LOCALDATETIME = new KindLocalDateTime(); 
+    public final static Kind LOCALDATE = new KindLocalDate(); 
+    public final static Kind LOCALTIME = new KindLocalTime();  
+    public final static Kind BYTES = new KindBytes(); 
+    public final static Kind OBJECT = new KindObject();
    
-    private final KindBuilder builder;
+    public abstract Variant fromISO(String value) throws DataException;
+    public abstract Variant read(Results read, String name) throws DataException;
+     
+    private static final Map<String, Kind> valuesof = new HashMap<>();
     
-    private Kind(KindBuilder builder) {
-        this.builder = builder;
+    static { 
+        put(Kind.INT);
+        put(Kind.LONG);
+        put(Kind.STRING);
+        put(Kind.DOUBLE);
+        put(Kind.DECIMAL);
+        put(Kind.BOOLEAN);
+        put(Kind.INSTANT);
+        put(Kind.LOCALDATETIME);
+        put(Kind.LOCALDATE);
+        put(Kind.LOCALTIME);
+        put(Kind.BYTES);
+        put(Kind.OBJECT);
     }
-    public Variant fromISO(String value) throws DataException {
-        return builder.fromISO(value);
+    
+    private static void put(Kind kind) {
+        valuesof.put(kind.toString(), kind);
     }
-    public Variant read(Results read, String name) throws DataException {
-        return builder.read(read, name);
-    }
+    
+    public static final Kind valueOf(String value) {
+        Kind kind = valuesof.get(value);
+        if (kind == null) {
+            throw new IllegalArgumentException("Kind not found: " + value);
+        }
+        return kind;
+    }        
 }

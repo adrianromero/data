@@ -24,17 +24,24 @@ import com.adr.data.Results;
  *
  * @author adrian
  */
-class KindBuilderDouble implements KindBuilder {
+class KindLong extends Kind {
+    
     @Override
     public Variant fromISO(String value) throws DataException {
         try {
-            return value == null || value.equals("") ? VariantDouble.NULL : new VariantDouble(Double.parseDouble(value));  
+            return value == null || value.equals("") ? VariantLong.NULL : new VariantLong(Long.parseLong(value));  
         } catch (NumberFormatException e) {
             throw new DataException(e);
         }            
     }
+    
     @Override
     public Variant read(Results read, String name) throws DataException {
-        return new VariantDouble(read.getDouble(name));
+        return new VariantLong(read.getLong(name));
     }   
+    
+    @Override
+    public String toString() {
+        return "LONG";
+    }
 }

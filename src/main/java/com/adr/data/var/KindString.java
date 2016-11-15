@@ -24,13 +24,20 @@ import com.adr.data.Results;
  *
  * @author adrian
  */
-class KindBuilderString implements KindBuilder {
+class KindString extends Kind {
+    
     @Override
     public Variant fromISO(String value) throws DataException {
         return value == null ? VariantString.NULL : new VariantString(value);             
     }
+    
     @Override
     public Variant read(Results read, String name) throws DataException {
         return new VariantString(read.getString(name));
     }   
+    
+    @Override
+    public String toString() {
+        return "STRING";
+    }
 }

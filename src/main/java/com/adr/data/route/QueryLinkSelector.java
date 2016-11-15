@@ -14,29 +14,18 @@
 //     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //     See the License for the specific language governing permissions and
 //     limitations under the License.
-
-package com.adr.data.var;
+package com.adr.data.route;
 
 import com.adr.data.DataException;
-import com.adr.data.Results;
-import java.time.LocalDate;
-import java.time.format.DateTimeParseException;
+import com.adr.data.QueryLink;
+import com.adr.data.record.Record;
 
 /**
  *
  * @author adrian
  */
-class KindBuilderLocalDate implements KindBuilder {
-    @Override
-    public Variant fromISO(String value) throws DataException {
-        try {
-            return value == null || value.equals("") ? VariantLocalDate.NULL : new VariantLocalDate(LocalDate.parse(value));  
-        } catch (DateTimeParseException e) {
-            throw new DataException(e);
-        }            
-    }
-    @Override
-    public Variant read(Results read, String name) throws DataException {
-        return new VariantLocalDate(read.getLocalDate(name));
-    }   
+public interface QueryLinkSelector {
+    
+    public QueryLink getQueryLink(Record filter) throws DataException ;
+    public void close() throws DataException;
 }
