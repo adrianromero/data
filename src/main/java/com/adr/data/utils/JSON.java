@@ -31,9 +31,12 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonNull;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import java.io.IOException;
+import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Scanner;
 
 /**
  *
@@ -108,6 +111,13 @@ public class JSON {
             l.add(fromJSONRecord(r));
         }
         return l;
+    }
+    
+    public Record fromResRecord(String res) throws IOException {
+        try (InputStream is = getClass().getResourceAsStream("/" + res + ".json")) {
+            Scanner s = new Scanner(is, "UTF-8").useDelimiter("\\A");
+            return fromJSONRecord(s.next());
+        }         
     }
 
     public Record fromJSONRecord(String json) {
