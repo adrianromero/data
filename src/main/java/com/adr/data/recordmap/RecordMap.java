@@ -30,6 +30,9 @@ import java.util.Map;
  */
 public class RecordMap implements Record {
     
+    public final static RecordMap EMPTY = new RecordMap(new Entry[0], new Entry[0]);
+    public final static RecordMap KEY = new RecordMap(new Entry[0]);
+    
     private final Values key;
     private final Values value;
     
