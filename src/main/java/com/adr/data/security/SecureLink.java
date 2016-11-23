@@ -207,7 +207,7 @@ public class SecureLink implements DataQueryLink {
                 throw new SecurityDataException("Trying to save a user different than authenticated user.");
             }
 
-            Record saveduser = Records.merge(usersession.getUser(),
+            Record saveduser = Records.mergeValues(usersession.getUser(),
                     new Entry("DISPLAYNAME", filter.getValue().get("DISPLAYNAME")),
                     new Entry("VISIBLE", filter.getValue().get("VISIBLE")),
                     new Entry("IMAGE", filter.getValue().get("IMAGE")));
@@ -219,7 +219,7 @@ public class SecureLink implements DataQueryLink {
         } else if (AUTHORIZATION_REQUEST.equals(entity)) {
             String resource = filter.getString("RESOURCE");
             String action = filter.getString("ACTION");
-            Record response = Records.merge(filter,
+            Record response = Records.mergeValues(filter,
                     new Entry("RESULT", new VariantBoolean(hasAuthorization(resource, action))));
             return Collections.singletonList(response);
         } else if (AUTHORIZATIONS_QUERY.equals(entity)) {

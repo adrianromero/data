@@ -146,7 +146,7 @@ public class SecurityTests {
             Record login = secfac.login("manager", null);       
             Assert.assertEquals("Manager", login.getString("DISPLAYNAME"));
             
-            Record loginupdated = Records.merge(login, new Entry("DISPLAYNAME", new VariantString("ManagerUpdated")));
+            Record loginupdated = Records.mergeValues(login, new Entry("DISPLAYNAME", new VariantString("ManagerUpdated")));
 
             Record login2 = secfac.saveCurrent(loginupdated);
             Assert.assertEquals("ManagerUpdated", login2.getString("DISPLAYNAME"));
@@ -156,7 +156,7 @@ public class SecurityTests {
             login = secfac.login("manager", null);       
             Assert.assertEquals("ManagerUpdated", login.getString("DISPLAYNAME"));    
 
-            loginupdated = Records.merge(login, new Entry("DISPLAYNAME", new VariantString("Manager")));
+            loginupdated = Records.mergeValues(login, new Entry("DISPLAYNAME", new VariantString("Manager")));
 
             login2 = secfac.saveCurrent(loginupdated);
             Assert.assertEquals("Manager", login2.getString("DISPLAYNAME"));        

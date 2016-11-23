@@ -46,11 +46,11 @@ public class Records {
         return new RecordMap(getEntries(record.getKey()), getEntries(record.getValue()));  
     }
     
-    public static Record merge(Record base, Values values) {
-        return merge(base, getEntries(values));
+    public static Record mergeValues(Record base, Values values) {
+        return mergeValues(base, getEntries(values));
     }
     
-    public static Record merge(Record base, Entry... values) {
+    public static Record mergeValues(Record base, Entry... values) {
         assert base != null;
         assert values != null;
         
@@ -66,7 +66,7 @@ public class Records {
             return new RecordMap(basekey, valuesmerged);
         }
     }
-    
+
     public static Entry[] getEntries(Values values) {
         if (values == null) {
             return null;
