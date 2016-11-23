@@ -46,6 +46,15 @@ public class Records {
         return new RecordMap(getEntries(record.getKey()), getEntries(record.getValue()));  
     }
     
+    public static Record merge(Record base, Record record) {
+        assert base != null;
+        assert record != null;
+        
+        return new RecordMap(
+                mergeEntries(getEntries(base.getKey()), getEntries(record.getKey())), 
+                mergeEntries(getEntries(base.getValue()), getEntries(record.getValue())));
+    }
+    
     public static Record mergeValues(Record base, Values values) {
         return mergeValues(base, getEntries(values));
     }
@@ -54,16 +63,18 @@ public class Records {
         assert base != null;
         assert values != null;
         
-        Entry[] basekey = getEntries(base.getKey());
-        Entry[] basevalue = getEntries(base.getValue());
-        
+        return new RecordMap(getEntries(base.getKey()), mergeEntries(getEntries(base.getValue()), values));
+    }
+    
+    public static Entry[] mergeEntries(Entry[] basevalue, Entry... values) {
+        assert values != null;
         if (basevalue == null) {
-            return new RecordMap(basekey, values);
+            return values;
         } else {
             Entry[] valuesmerged = new Entry[basevalue.length + values.length];
             System.arraycopy(basevalue, 0, valuesmerged, 0, basevalue.length);
-            System.arraycopy(values, 0, valuesmerged, basevalue.length, values.length);
-            return new RecordMap(basekey, valuesmerged);
+            System.arraycopy(values, 0, valuesmerged, basevalue.length, values.length); 
+            return valuesmerged;
         }
     }
 
