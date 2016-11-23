@@ -47,7 +47,12 @@ public class SecureCommands {
         "USERNAME_BYID",
         "SELECT U.ID, U.NAME, U.DISPLAYNAME, U.CODECARD, U.ROLE_ID, R.NAME AS ROLE, U.VISIBLE, U.IMAGE "
         + "FROM USERNAME U JOIN ROLE R ON U.ROLE_ID = R.ID "
-        + "WHERE U.ID = ? AND U.ACTIVE = TRUE", "ID")
+        + "WHERE U.ID = ? AND U.ACTIVE = TRUE", "ID"),
+        new SentenceQuery(
+        "VIEW_PERMISSION",
+        "SELECT PERMISSION.ID, PERMISSION.ROLE_ID, SUBJECT.ID AS SUBJECT_ID, SUBJECT.NAME AS SUBJECT_NAME, SUBJECT.CODE AS SUBJECT_CODE "
+        + "FROM PERMISSION JOIN SUBJECT ON PERMISSION.SUBJECT_ID = SUBJECT.ID "
+        + "WHERE PERMISSION.ROLE_ID = ?", "ROLE_ID")         
     };
 
     public final static Sentence[] COMMANDS = new Sentence[]{
