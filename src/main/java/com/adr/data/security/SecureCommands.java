@@ -16,10 +16,14 @@
 //     limitations under the License.
 package com.adr.data.security;
 
+import com.adr.data.DataException;
+import com.adr.data.record.Record;
+import com.adr.data.sql.SQLEngine;
 import com.adr.data.sql.Sentence;
 import com.adr.data.sql.SentenceCommand;
 import com.adr.data.sql.SentenceQuery;
 import com.adr.data.sql.SentenceView;
+import java.sql.Connection;
 
 /**
  *
@@ -50,7 +54,7 @@ public class SecureCommands {
         + "WHERE U.ID = ? AND U.ACTIVE = TRUE", "ID"),
         new SentenceQuery(
         "VIEW_PERMISSION",
-        "SELECT PERMISSION.ID, PERMISSION.ROLE_ID, SUBJECT.ID AS SUBJECT_ID, SUBJECT.NAME AS SUBJECT_NAME, SUBJECT.CODE AS SUBJECT_CODE "
+        "SELECT PERMISSION.ID, PERMISSION.ROLE_ID, SUBJECT.ID AS SUBJECT_ID, SUBJECT.NAME AS NAME, SUBJECT.CODE AS CODE "
         + "FROM PERMISSION JOIN SUBJECT ON PERMISSION.SUBJECT_ID = SUBJECT.ID "
         + "WHERE PERMISSION.ROLE_ID = ?", "ROLE_ID")         
     };
@@ -63,6 +67,28 @@ public class SecureCommands {
         new SentenceCommand(
         "USERNAME_PASSWORD",
         "UPDATE USERNAME SET PASSWORD = ? WHERE ID = ?",
-        "PASSWORD", "ID")
+        "PASSWORD", "ID"),
+        new Sentence() {
+            private final SentenceCommand delete = new SentenceCommand(
+                    "VIEW_PERMISSION DELETE", 
+                    "DELETE FROM PERMISSION WHERE ID = ?",
+                    "ID");
+            private final SentenceCommand insert = new SentenceCommand(
+                    "VIEW_PERMISSION INSERT", 
+                    "INSERT INTO PERMISSION(ID, ROLE_ID, SUBJECT_ID) VALUES (?, ?, ?)",
+                    "ID", "ROLE_ID", "SUBJECT_ID");
+            @Override
+            public String getName() {
+                return "VIEW_PERMISSION";  
+            }
+            @Override
+            public void execute(Connection c, SQLEngine engine, Record keyval) throws DataException {        
+                if (keyval.getValue() == null) {
+                    delete.execute(c, engine, keyval);
+                } else {
+                    insert.execute(c, engine, keyval);
+                }
+            }        
+        }
     };
 }
