@@ -43,10 +43,16 @@ public class WebQueryLink implements QueryLink {
 
     private final OkHttpClient client;
     private final HttpUrl baseurl;
+    private final String segment;
 
-    public WebQueryLink(String url) {
-        client = new OkHttpClient.Builder().build();
-        baseurl = HttpUrl.parse(url);
+    public WebQueryLink(String baseurl, String segment, OkHttpClient client) {
+        this.client = client;
+        this.baseurl = HttpUrl.parse(baseurl);
+        this.segment = segment;
+    }
+
+    public WebQueryLink(String baseurl) {
+        this(baseurl, null, new OkHttpClient.Builder().build());
     }
 
     @Override
@@ -55,11 +61,17 @@ public class WebQueryLink implements QueryLink {
         try {
             String message = JSON.INSTANCE.toJSON(new RequestQuery(filter, options));
 
+            HttpUrl newurl = segment == null
+                    ? baseurl
+                    : baseurl.newBuilder()
+                            .addPathSegment(segment)
+                            .build();
+
             Request request = new Request.Builder()
-                .url(baseurl)
-                // .header("User-Agent", USERAGENT)   
-                .post(RequestBody.create(MEDIA_TYPE_JSON, message))
-                .build();
+                    .url(newurl)
+                    // .header("User-Agent", USERAGENT)   
+                    .post(RequestBody.create(MEDIA_TYPE_JSON, message))
+                    .build();
 
             Response response = client.newCall(request).execute();
             if (!response.isSuccessful()) {

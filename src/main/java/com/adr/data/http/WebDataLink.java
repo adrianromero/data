@@ -42,19 +42,31 @@ public class WebDataLink implements DataLink {
 
     private final OkHttpClient client;
     private final HttpUrl baseurl;
+    private final String segment;
+    
+    public WebDataLink(String baseurl, String segment, OkHttpClient client) {
+        this.client = client;
+        this.baseurl = HttpUrl.parse(baseurl);
+        this.segment = segment;
+    }
 
-    public WebDataLink(String url) {
-        client = new OkHttpClient.Builder().build();
-        baseurl = HttpUrl.parse(url);
+    public WebDataLink(String baseurl) {
+        this(baseurl, null, new OkHttpClient.Builder().build());
     }
 
     @Override
     public void execute(List<Record> l) throws DataException {
         try {
             String message = JSON.INSTANCE.toJSON(new RequestExecute(l));
-
+            
+            HttpUrl newurl = segment == null
+                    ? baseurl
+                    : baseurl.newBuilder()
+                            .addPathSegment(segment)
+                            .build();
+            
             Request request = new Request.Builder()
-                .url(baseurl)
+                .url(newurl)
                 // .header("User-Agent", USERAGENT)
                 .post(RequestBody.create(MEDIA_TYPE_JSON, message))
                 .build();

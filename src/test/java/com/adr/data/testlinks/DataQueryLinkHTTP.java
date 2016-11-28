@@ -17,7 +17,7 @@
 package com.adr.data.testlinks;
 
 import com.adr.data.DataQueryLink;
-import com.adr.data.http.WebSecureLink;
+import com.adr.data.http.WebDataQueryLink;
 
 /**
  *
@@ -33,6 +33,6 @@ public class DataQueryLinkHTTP implements DataQueryLinkBuilder {
 
     @Override
     public DataQueryLink createDataQueryLink() {
-        return new WebSecureLink(url);
+        return new WebDataQueryLink(url);
     }
 }
