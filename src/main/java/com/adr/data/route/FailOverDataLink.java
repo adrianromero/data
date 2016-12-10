@@ -20,39 +20,47 @@ import com.adr.data.DataException;
 import com.adr.data.DataLink;
 import com.adr.data.record.Record;
 import java.util.List;
-import java.util.function.Function;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 /**
  *
  * @author adrian
  */
-public class MapDataLink implements DataLink {
+public class FailOverDataLink implements DataLink {
 
-    private final DataLink datalink;
-    private final Function<? super Record, ? extends Stream<? extends Record>> mapper;
-    private final boolean ifemptyex;
+    private final DataLink[] datalinks;
 
-    public MapDataLink(DataLink datalink, Function<? super Record, ? extends Stream<? extends Record>> mapper, boolean ifemptyex) {
-        this.datalink = datalink;
-        this.mapper = mapper;
-        this.ifemptyex = ifemptyex;
+    public FailOverDataLink(DataLink... datalinks) {
+        this.datalinks = datalinks;
     }
-
+    
     @Override
     public void execute(List<Record> l) throws DataException {
-        List<Record> l2 = l.stream().flatMap(mapper).collect(Collectors.toList());
-        if (!l2.isEmpty()) {
-            datalink.execute(l2);
-        } else if (ifemptyex) {
-            throw new DataException("Empty List to execute.");
+        for(DataLink d : datalinks) {
+            try {
+                d.execute(l);
+                return;
+            } catch (DataException e) {
+                // Ignore and go to next
+            }
         }
+        throw new DataException("Failed all DataLinks");
     }
 
     @Override
     public void close() throws DataException {
-        datalink.close();
-    }
-
+        DataException t = null;
+        for(DataLink d : datalinks) {
+            try {
+                d.close();
+            } catch (DataException e) {
+                if (t == null) {
+                    t = new DataException();
+                }
+                t.addSuppressed(e);
+            }
+        }  
+        if (t != null) {
+            throw t;
+        }
+    }    
 }

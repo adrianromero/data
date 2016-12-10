@@ -20,33 +20,36 @@ import com.adr.data.DataException;
 import com.adr.data.DataLink;
 import com.adr.data.record.Record;
 import java.util.List;
-import java.util.function.Function;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
+import java.util.function.Predicate;
 
 /**
  *
  * @author adrian
  */
-public class MapDataLink implements DataLink {
-
+public class AnyMatchDataLink implements DataLink {
+    
     private final DataLink datalink;
-    private final Function<? super Record, ? extends Stream<? extends Record>> mapper;
-    private final boolean ifemptyex;
+    private final Predicate<? super Record> p;
+    private final boolean iffailex;
 
-    public MapDataLink(DataLink datalink, Function<? super Record, ? extends Stream<? extends Record>> mapper, boolean ifemptyex) {
+    public AnyMatchDataLink(DataLink datalink,  Predicate<? super Record> p, boolean iffailex) {
         this.datalink = datalink;
-        this.mapper = mapper;
-        this.ifemptyex = ifemptyex;
+        this.p = p;
+        this.iffailex = iffailex;
     }
 
+    public AnyMatchDataLink(DataLink datalink,  Predicate<? super Record> p) {
+        this.datalink = datalink;
+        this.p = p;
+        this.iffailex = false;
+    }
+    
     @Override
     public void execute(List<Record> l) throws DataException {
-        List<Record> l2 = l.stream().flatMap(mapper).collect(Collectors.toList());
-        if (!l2.isEmpty()) {
-            datalink.execute(l2);
-        } else if (ifemptyex) {
-            throw new DataException("Empty List to execute.");
+        if (l.stream().anyMatch(p)) {
+            datalink.execute(l);
+        } else if (iffailex) {
+            throw new DataException("Not matched condition");
         }
     }
 
@@ -54,5 +57,4 @@ public class MapDataLink implements DataLink {
     public void close() throws DataException {
         datalink.close();
     }
-
 }
