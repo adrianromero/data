@@ -16,11 +16,16 @@
 //     limitations under the License.
 package com.adr.data.cache;
 
+import com.adr.data.DataException;
+import com.adr.data.QueryOptions;
+import com.adr.data.record.Record;
+import java.util.List;
+
 /**
  *
  * @author adrian
  */
 public interface CacheProvider {
-    public void put(String key, String value);
-    public String getIfPresent(String key);
+    public void put(Record filter, QueryOptions options, List<Record> value) throws DataException;
+    public List<Record> getIfPresent(Record filter, QueryOptions options) throws DataException;
 }

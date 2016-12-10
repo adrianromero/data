@@ -16,8 +16,15 @@
 //     limitations under the License.
 package com.adr.data.cache;
 
+import com.adr.data.DataException;
+import com.adr.data.QueryOptions;
+import com.adr.data.record.Record;
+import com.adr.data.utils.JSON;
+import com.adr.data.utils.RequestQuery;
+import com.adr.data.utils.ResponseListRecord;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
+import java.util.List;
 
 /**
  *
@@ -34,12 +41,19 @@ public class CacheProviderMem implements CacheProvider {
     }
     
     @Override
-    public void put(String key, String value) {
-        cache.put(key, value);
+    public void put(Record filter, QueryOptions options, List<Record> value) {
+        cache.put(              
+                JSON.INSTANCE.toJSON(new RequestQuery(filter, options)), 
+                JSON.INSTANCE.toJSON(new ResponseListRecord(value)));
     }
 
     @Override
-    public String getIfPresent(String key) {
-        return cache.getIfPresent(key);
+    public List<Record> getIfPresent(Record filter, QueryOptions options) throws DataException {
+        String cachedresult = cache.getIfPresent(JSON.INSTANCE.toJSON(new RequestQuery(filter, options)));
+        if (cachedresult == null) {
+            return null;
+        } else {
+            return JSON.INSTANCE.fromJSONResponse(cachedresult).getAsListRecord();
+        }
     } 
 }
