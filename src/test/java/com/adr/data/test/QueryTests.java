@@ -66,7 +66,7 @@ public class QueryTests {
                     new Entry[]{
                         new Entry("NAME", VariantString.NULL),
                         new Entry("CODECARD", VariantString.NULL)}),
-                    QueryOptions.orderBy("NAME::DESC"));
+                    QueryOptions.orderBy("NAME..DESC"));
 
             Assert.assertEquals(3, result2.size());
             Assert.assertEquals("user", result2.get(0).getString("NAME"));
@@ -91,7 +91,7 @@ public class QueryTests {
                         new Entry("_ENTITY", "USERNAME"),
                         new Entry("ID", VariantString.NULL)},
                     new Entry[]{
-                        new Entry("NAME::LIKE", "%a%"),
+                        new Entry("NAME..LIKE", "%a%"),
                         new Entry("NAME", VariantString.NULL),
                         new Entry("VISIBLE", VariantBoolean.NULL),
                         new Entry("CODECARD", VariantString.NULL)}),

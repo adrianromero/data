@@ -379,7 +379,7 @@ public class SecureLink implements DataQueryLink {
                 Record subjectsquery = new RecordMap(
                         new Entry[]{
                             new Entry("_ENTITY", "SUBJECT_BYROLE"),
-                            new Entry("ROLE_ID::PARAM", user.getString("ROLE_ID"))},
+                            new Entry("ROLE_ID..PARAM", user.getString("ROLE_ID"))},
                         new Entry[]{
                             new Entry("CODE"),
                             new Entry("NAME")});

@@ -114,7 +114,7 @@ public abstract class Sentence {
             Variant p = param.get(name);
             if ("_ENTITY".equals(name)) {
                 l.add(new Entry(name, p));
-            } else if (!name.contains("::")) { // Is a field
+            } else if (!name.contains("..")) { // Is a field
                 Variant newv = p.getKind().read(kindresults, name);
                 l.add(new Entry(name, newv));
             }

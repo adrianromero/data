@@ -42,10 +42,10 @@ public abstract class SentenceQRY  extends Sentence {
             for (int i = 0; i < options.getOrderBy().length; i++) {
                 sqlsent.append(i == 0 ? " ORDER BY " : ", ");
                 String s = options.getOrderBy()[i];
-                if (s.endsWith("::ASC")) {
+                if (s.endsWith("..ASC")) {
                     sqlsent.append(s.substring(0, s.length() - 5));
                     sqlsent.append(" ASC");
-                } else if (s.endsWith("::DESC")) {
+                } else if (s.endsWith("..DESC")) {
                     sqlsent.append(s.substring(0, s.length() - 6));
                     sqlsent.append(" DESC");                    
                 } else {
