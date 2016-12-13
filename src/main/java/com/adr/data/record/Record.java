@@ -17,6 +17,8 @@
 
 package com.adr.data.record;
 
+import com.adr.data.var.Variant;
+
 /**
  *
  * @author adrian
@@ -25,23 +27,28 @@ public interface Record {
     public Values getKey();
     public Values getValue();
     
+    public default Variant get(String name) {
+        Variant v = getValue().get(name);
+        return v == null ? getKey().get(name) : v;
+    }
+    
     public default String getString(String name) {
-        return getValue().get(name).asString();    
+        return get(name).asString();    
     }
     
     public default int getInteger(String name) {
-        return getValue().get(name).asInteger(); 
+        return get(name).asInteger(); 
     }
     
     public default double getDouble(String name) {
-        return getValue().get(name).asDouble();
+        return get(name).asDouble();
     }    
     
     public default Boolean getBoolean(String name) {
-        return getValue().get(name).asBoolean();
+        return get(name).asBoolean();
     }
     
     public default byte[] getBytes(String name) {
-        return getValue().get(name).asBytes();
+        return get(name).asBytes();
     }        
 }
