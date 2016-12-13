@@ -76,10 +76,10 @@ public abstract class SentenceSelect extends SentenceQRY {
             // FILTERING THINGS
             String realname;
             String criteria;
-            if (n.endsWith("..EQUAL")) {
+            if (n.endsWith("__EQUAL")) {
                 realname = n.substring(0, n.length() - 7);
                 criteria = " = ?";
-            } else if (n.endsWith("..LIKE")) {
+            } else if (n.endsWith("__LIKE")) {
                 realname = n.substring(0, n.length() - 6);
                 criteria = engine.getLikeExpression();
             } else {
@@ -87,7 +87,7 @@ public abstract class SentenceSelect extends SentenceQRY {
                 criteria = " = ?";
             }
             // PROJECTION
-            if (!n.contains("..")) {
+            if (!n.contains("__")) {
                 if (comma) {
                     sqlsent.append(", ");
                 } else {
