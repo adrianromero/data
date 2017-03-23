@@ -36,7 +36,7 @@ public class QueryOptions {
     public QueryOptions(int limit, int offset, String[] orderby) {
         this.limit = limit;
         this.offset = offset;
-        this.orderby = orderby; // Assyme not null array
+        this.orderby = orderby; // Assume not null array
     }
     
     public static QueryOptions limit(int limit) {

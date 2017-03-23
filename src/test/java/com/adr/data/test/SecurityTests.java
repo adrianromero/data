@@ -23,7 +23,7 @@ import com.adr.data.record.Record;
 import com.adr.data.recordmap.RecordMap;
 import com.adr.data.security.SecureFacade;
 import com.adr.data.security.SecurityDataException;
-import com.adr.data.utils.Records;
+import com.adr.data.recordmap.Records;
 import com.adr.data.var.VariantString;
 import java.util.List;
 import org.junit.After;

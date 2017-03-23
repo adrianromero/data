@@ -18,7 +18,6 @@ package com.adr.data.var;
 
 import com.adr.data.DataException;
 import com.adr.data.Parameters;
-import com.adr.data.utils.Serializer;
 import java.io.IOException;
 import java.util.Objects;
 

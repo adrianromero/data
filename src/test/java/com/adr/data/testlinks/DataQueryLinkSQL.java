@@ -24,12 +24,13 @@ import com.adr.data.sql.SQLQueryLink;
 import com.adr.data.security.SecureCommands;
 import com.adr.data.sql.SQLDataLink;
 import com.adr.data.sql.SQLEngine;
-import com.mchange.v2.c3p0.ComboPooledDataSource;
-import java.beans.PropertyVetoException;
+import com.zaxxer.hikari.HikariConfig;
+import com.zaxxer.hikari.HikariDataSource;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.sql.DataSource;
 
 /**
  *
@@ -39,23 +40,21 @@ public class DataQueryLinkSQL implements DataQueryLinkBuilder {
     
     private final static Logger LOG = Logger.getLogger(DataQueryLinkSQL.class.getName());
     
-    private final ComboPooledDataSource cpds;
+    private final DataSource cpds;
     private final SQLEngine engine;
     
     public DataQueryLinkSQL(String enginename) {
-        try {
-            cpds = new ComboPooledDataSource();
-            cpds.setDriverClass(System.getProperty(enginename + ".database.driver"));
-            cpds.setJdbcUrl(System.getProperty(enginename + ".database.url"));
-            cpds.setUser(System.getProperty(enginename + ".database.user"));  
-            cpds.setPassword(System.getProperty(enginename + ".database.password"));
-            engine = SQLEngine.valueOf(System.getProperty(enginename + ".database.engine", SQLEngine.GENERIC.name()));
-            
-            LOG.log(Level.INFO, "Database engine = {0}", engine.toString());
-        } catch (PropertyVetoException ex) {
-            LOG.log(Level.SEVERE, null, ex);
-            throw new RuntimeException(ex);
-        }
+         
+        HikariConfig config = new HikariConfig();
+        config.setDriverClassName(System.getProperty(enginename + ".database.driver"));
+        config.setJdbcUrl(System.getProperty(enginename + ".database.url"));
+        config.setUsername(System.getProperty(enginename + ".database.user"));  
+        config.setPassword(System.getProperty(enginename + ".database.password"));
+        
+        cpds = new HikariDataSource(config);
+        engine = SQLEngine.valueOf(System.getProperty(enginename + ".database.engine", SQLEngine.GENERIC.name()));
+
+        LOG.log(Level.INFO, "Database engine = {0}", engine.toString());
     }     
     
     public QueryLink createQueryLink() {

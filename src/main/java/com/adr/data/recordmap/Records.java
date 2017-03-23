@@ -15,12 +15,11 @@
 //     See the License for the specific language governing permissions and
 //     limitations under the License.
 
-package com.adr.data.utils;
+package com.adr.data.recordmap;
 
 import com.adr.data.record.Entry;
 import com.adr.data.record.Record;
 import com.adr.data.record.Values;
-import com.adr.data.recordmap.RecordMap;
 import java.util.ArrayList;
 import java.util.List;
 
