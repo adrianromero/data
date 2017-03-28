@@ -19,7 +19,7 @@ package com.adr.data.recordmap;
 
 import com.adr.data.record.Values;
 import com.adr.data.var.Variant;
-import java.util.Map;
+import java.util.LinkedHashMap;
 
 /**
  *
@@ -28,9 +28,9 @@ import java.util.Map;
 class ValuesMap implements Values {
 
     private String[] names = null;
-    private final Map<String, Variant> entries;
+    private final LinkedHashMap<String, Variant> entries;
 
-    public ValuesMap(Map<String, Variant> entries) {
+    public ValuesMap(LinkedHashMap<String, Variant> entries) {
         this.entries = entries;
     }
 

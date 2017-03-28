@@ -21,8 +21,7 @@ import com.adr.data.record.Entry;
 import com.adr.data.record.Record;
 import com.adr.data.record.Values;
 import com.adr.data.var.Variant;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.LinkedHashMap;
 
 /**
  *
@@ -60,8 +59,8 @@ public class RecordMap implements Record {
         return value;
     }  
     
-    private Map<String, Variant> entriesToMap(Entry[] entries) {
-        Map<String, Variant> result = new HashMap<>();
+    private LinkedHashMap<String, Variant> entriesToMap(Entry[] entries) {
+        LinkedHashMap<String, Variant> result = new LinkedHashMap<>();
         for (Entry e: entries) {
             result.put(e.getName(), e.getValue());
         }
