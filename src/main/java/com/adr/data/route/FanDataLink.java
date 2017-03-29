@@ -19,6 +19,7 @@ package com.adr.data.route;
 import com.adr.data.DataException;
 import com.adr.data.DataLink;
 import com.adr.data.record.Record;
+import com.adr.data.record.Values;
 import java.util.List;
 
 /**
@@ -34,9 +35,9 @@ public class FanDataLink implements DataLink {
     }
     
     @Override
-    public void execute(List<Record> l) throws DataException {
+    public void execute(Values headers, List<Record> l) throws DataException {
         for(DataLink d : datalinks) {
-            d.execute(l);
+            d.execute(headers, l);
         }
     }
 

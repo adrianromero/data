@@ -20,6 +20,7 @@ package com.adr.data.sql;
 import com.adr.data.DataLink;
 import com.adr.data.DataException;
 import com.adr.data.record.Record;
+import com.adr.data.record.Values;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.HashMap;
@@ -50,7 +51,7 @@ public class SQLDataLink implements DataLink {
     }
 
     @Override
-    public void execute(List<Record> l) throws DataException {
+    public void execute(Values headers, List<Record> l) throws DataException {
         try (Connection c = ds.getConnection()) {
             c.setAutoCommit(false);
             for (Record keyval : l) {

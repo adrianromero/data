@@ -18,7 +18,7 @@ package com.adr.data.test;
 
 import com.adr.data.DataException;
 import com.adr.data.DataQueryLink;
-import com.adr.data.record.Entry;
+import com.adr.data.recordmap.Entry;
 import com.adr.data.record.Record;
 import com.adr.data.recordmap.RecordMap;
 import com.adr.data.security.SecureFacade;

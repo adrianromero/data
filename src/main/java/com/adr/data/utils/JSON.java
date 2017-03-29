@@ -18,11 +18,11 @@ package com.adr.data.utils;
 
 import com.adr.data.DataException;
 import com.adr.data.QueryOptions;
-import com.adr.data.record.Entry;
 import com.adr.data.var.Kind;
 import com.adr.data.record.Record;
 import com.adr.data.record.Values;
 import com.adr.data.recordmap.RecordMap;
+import com.adr.data.recordmap.ValuesMap;
 import com.adr.data.var.Variant;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -35,6 +35,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Scanner;
 
@@ -70,9 +71,10 @@ public class JSON {
         String type = envelope.get("type").getAsString();
         if (RequestQuery.NAME.equals(type)) {
             JsonObject data = envelope.get("data").getAsJsonObject();
-            return new RequestQuery(fromJSONRecord(data.get("filter")), fromJSONOptions(data.get("options")));
+            return new RequestQuery(fromJSONValues(data.get("headers")), fromJSONOptions(data.get("options")), fromJSONRecord(data.get("filter")));
         } else if (RequestExecute.NAME.equals(type)) {
-            return new RequestExecute(JSON.this.fromJSONListRecord(envelope.get("data")));
+            JsonObject data2 = envelope.get("data").getAsJsonObject();
+            return new RequestExecute(fromJSONValues(data2.get("headers")), fromJSONListRecord(data2.get("list")));
         } else {
             throw new IllegalStateException("Envelope type invalid: " + type);
         }
@@ -82,7 +84,7 @@ public class JSON {
         JsonObject envelope = gsonparser.parse(json).getAsJsonObject();
         String type = envelope.get("type").getAsString();
         if (ResponseListRecord.NAME.equals(type)) {
-            return new ResponseListRecord(JSON.this.fromJSONListRecord(envelope.get("data")));
+            return new ResponseListRecord(fromJSONListRecord(envelope.get("data")));
         } else if (ResponseError.NAME.equals(type)) {
             JsonObject jsonex = envelope.get("data").getAsJsonObject();
             String name = jsonex.get("exception").getAsString();
@@ -157,33 +159,29 @@ public class JSON {
         }
     }
 
-    private Entry[] fromJSONValues(JsonElement element) {
+    private Values fromJSONValues(JsonElement element) {
         if (element == null || element.equals(JsonNull.INSTANCE)) {
             return null;
         }
         JsonArray array = element.getAsJsonArray();
-        Entry[] l = new Entry[array.size()];
+        LinkedHashMap<String, Variant> entries = new LinkedHashMap<>();
         for (int i = 0; i < array.size(); i++) {
-            l[i] = fromJSONEntry(array.get(i));
+            JsonObject o = array.get(i).getAsJsonObject();
+            Kind k = Kind.valueOf(o.get("kind").getAsString());
+            String iso;
+            JsonElement jvalue = o.get("value");
+            if (jvalue == null || jvalue.equals(JsonNull.INSTANCE)) {
+                iso = null;
+            } else {
+                iso = jvalue.getAsString();
+            }
+            try {
+                entries.put(o.get("name").getAsString(), k.fromISO(iso));
+            } catch (DataException ex) {
+                throw new IllegalArgumentException(ex);
+            }            
         }
-        return l;
-    }
-
-    private Entry fromJSONEntry(JsonElement element) {
-        JsonObject o = element.getAsJsonObject();
-        Kind k = Kind.valueOf(o.get("kind").getAsString());
-        String iso;
-        JsonElement jvalue = o.get("value");
-        if (jvalue == null || jvalue.equals(JsonNull.INSTANCE)) {
-            iso = null;
-        } else {
-            iso = jvalue.getAsString();
-        }
-        try {
-            return new Entry(o.get("name").getAsString(), k.fromISO(iso));
-        } catch (DataException ex) {
-            throw new IllegalArgumentException(ex);
-        }
+        return new ValuesMap(entries);
     }
 
     public String toJSON(EnvelopeRequest obj) {
@@ -248,7 +246,7 @@ public class JSON {
         }
     }
 
-    private JsonElement toJSONElement(Values obj) {
+    public JsonElement toJSONElement(Values obj) {
         if (obj == null) {
             return JsonNull.INSTANCE;
         }

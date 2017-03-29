@@ -18,6 +18,7 @@
 package com.adr.data.record;
 
 import com.adr.data.var.Variant;
+import com.adr.data.var.VariantVoid;
 
 /**
  *
@@ -29,7 +30,7 @@ public interface Record {
     
     public default Variant get(String name) {
         Variant v = getValue().get(name);
-        return v == null ? getKey().get(name) : v;
+        return v == VariantVoid.INSTANCE ? getKey().get(name) : v;
     }
     
     public default String getString(String name) {

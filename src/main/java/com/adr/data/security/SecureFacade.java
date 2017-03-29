@@ -19,7 +19,7 @@ package com.adr.data.security;
 import com.adr.data.DataException;
 import com.adr.data.QueryLink;
 import com.adr.data.record.Record;
-import com.adr.data.record.Entry;
+import com.adr.data.recordmap.Entry;
 import com.adr.data.recordmap.RecordMap;
 import java.util.List;
 

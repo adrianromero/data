@@ -19,6 +19,7 @@ package com.adr.data.route;
 import com.adr.data.DataException;
 import com.adr.data.DataLink;
 import com.adr.data.record.Record;
+import com.adr.data.record.Values;
 import java.util.List;
 import java.util.function.Predicate;
 
@@ -45,9 +46,9 @@ public class AllMatchDataLink implements DataLink {
     }
 
     @Override
-    public void execute(List<Record> l) throws DataException {
+    public void execute(Values headers, List<Record> l) throws DataException {
         if (l.stream().allMatch(p)) {
-            datalink.execute(l);
+            datalink.execute(headers, l);
         } else if (iffailex) {
             throw new DataException("Not matched condition");
         }

@@ -19,19 +19,32 @@ package com.adr.data.recordmap;
 
 import com.adr.data.record.Values;
 import com.adr.data.var.Variant;
+import com.adr.data.var.VariantVoid;
+import java.util.Collections;
 import java.util.LinkedHashMap;
+import java.util.Map;
 
 /**
  *
  * @author adrian
  */
-class ValuesMap implements Values {
+public class ValuesMap implements Values {
+    
+    public final static ValuesMap EMPTY = new ValuesMap(new LinkedHashMap<>());
 
     private String[] names = null;
-    private final LinkedHashMap<String, Variant> entries;
+    private final Map<String, Variant> entries;
+
+    public ValuesMap(Entry... entries) {
+        LinkedHashMap<String, Variant> entriesmap = new LinkedHashMap<>();
+        for (Entry e: entries) {
+            entriesmap.put(e.getName(), e.getValue());
+        }       
+        this.entries = Collections.unmodifiableMap(entriesmap);
+    }
 
     public ValuesMap(LinkedHashMap<String, Variant> entries) {
-        this.entries = entries;
+        this.entries = Collections.unmodifiableMap(entries);
     }
 
     @Override
@@ -44,6 +57,6 @@ class ValuesMap implements Values {
 
     @Override
     public Variant get(String name) {
-        return entries.get(name);
+        return entries.getOrDefault(name, VariantVoid.INSTANCE);
     }
 }

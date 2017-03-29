@@ -1,5 +1,5 @@
 //     Data Access is a Java library to store data
-//     Copyright (C) 2016 Adrián Romero Corchado.
+//     Copyright (C) 2016-2017 Adrián Romero Corchado.
 //
 //     This file is part of Data Access
 //
@@ -17,11 +17,8 @@
 
 package com.adr.data.recordmap;
 
-import com.adr.data.record.Entry;
 import com.adr.data.record.Record;
 import com.adr.data.record.Values;
-import com.adr.data.var.Variant;
-import java.util.LinkedHashMap;
 
 /**
  *
@@ -29,8 +26,8 @@ import java.util.LinkedHashMap;
  */
 public class RecordMap implements Record {
     
-    public final static RecordMap EMPTY = new RecordMap(new Entry[0], new Entry[0]);
-    public final static RecordMap KEY = new RecordMap(new Entry[0]);
+    public final static RecordMap EMPTY = new RecordMap(ValuesMap.EMPTY, ValuesMap.EMPTY);
+    public final static RecordMap KEY = new RecordMap(ValuesMap.EMPTY);
     
     private final Values key;
     private final Values value;
@@ -38,17 +35,25 @@ public class RecordMap implements Record {
     public RecordMap(Entry[] keys, Entry[] values) {
         assert keys != null;
         
-        this.key = new ValuesMap(entriesToMap(keys));
-        this.value = values == null ? null : new ValuesMap(entriesToMap(values));
+        this.key = new ValuesMap(keys);
+        this.value = values == null ? null : new ValuesMap(values);
     }
     
     public RecordMap(Entry[] keys) {
+        this(keys, null);
+    }
+    
+    public RecordMap(Values keys, Values values) {
         assert keys != null;
         
-        this.key = new ValuesMap(entriesToMap(keys));
-        this.value = null;
+        this.key = keys;
+        this.value = values;
     }
-
+    
+    public RecordMap(Values keys) {
+        this(keys, null);
+    }
+    
     @Override
     public Values getKey() {
         return key;
@@ -58,12 +63,4 @@ public class RecordMap implements Record {
     public Values getValue() {
         return value;
     }  
-    
-    private LinkedHashMap<String, Variant> entriesToMap(Entry[] entries) {
-        LinkedHashMap<String, Variant> result = new LinkedHashMap<>();
-        for (Entry e: entries) {
-            result.put(e.getName(), e.getValue());
-        }
-        return result;
-    }
 }

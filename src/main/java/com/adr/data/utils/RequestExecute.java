@@ -18,7 +18,9 @@
 package com.adr.data.utils;
 
 import com.adr.data.record.Record;
+import com.adr.data.record.Values;
 import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import java.util.List;
 
 /**
@@ -29,10 +31,16 @@ public class RequestExecute extends EnvelopeRequest {
     
     public static final String NAME = "EXECUTE";
     
+    private final Values headers;
     private final List<Record> list;
     
-    public RequestExecute(List<Record> list) {
+    public RequestExecute(Values headers, List<Record> list) {
+        this.headers = headers;
         this.list = list;
+    }
+    
+    public Values getHeaders() {
+        return headers;
     }
     
     public List<Record> getListRecord() {
@@ -51,6 +59,9 @@ public class RequestExecute extends EnvelopeRequest {
 
     @Override
     public JsonElement dataToJSON() {
-        return JSON.INSTANCE.toJSONElement(list);
+        JsonObject obj = new JsonObject();
+        obj.add("headers", JSON.INSTANCE.toJSONElement(headers));        
+        obj.add("list", JSON.INSTANCE.toJSONElement(list));        
+        return obj;
     }     
 }

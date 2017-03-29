@@ -18,7 +18,7 @@ package com.adr.data.sql;
 
 import com.adr.data.DataException;
 import com.adr.data.QueryOptions;
-import com.adr.data.record.Entry;
+import com.adr.data.recordmap.Entry;
 import com.adr.data.record.Record;
 import com.adr.data.record.Values;
 import com.adr.data.recordmap.RecordMap;

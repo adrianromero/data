@@ -20,6 +20,7 @@ import com.adr.data.DataException;
 import com.adr.data.QueryLink;
 import com.adr.data.QueryOptions;
 import com.adr.data.record.Record;
+import com.adr.data.record.Values;
 import com.adr.data.utils.PredicateSelectorList;
 import java.util.List;
 import java.util.function.Predicate;
@@ -52,17 +53,17 @@ public class CachedQueryLink implements QueryLink {
     }
 
     @Override
-    public List<Record> query(Record filter, QueryOptions options) throws DataException {
+    public List<Record> query(Values headers, QueryOptions options, Record filter) throws DataException {
         
         if (selector.test(filter)) {
-            List<Record> cachedresult = provider.getIfPresent(filter, options);
+            List<Record> cachedresult = provider.getIfPresent(headers, options, filter);
             if (cachedresult == null) {
-                cachedresult = link.query(filter, options);
-                provider.put(filter, options, cachedresult);                
+                cachedresult = link.query(headers, options, filter);
+                provider.put(headers, options, filter, cachedresult);                
             }
             return cachedresult;
         } else {
-            return link.query(filter, options);
+            return link.query(headers, options, filter);
         }
     }
 

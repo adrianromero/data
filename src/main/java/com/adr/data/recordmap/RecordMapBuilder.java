@@ -16,9 +16,9 @@
 //     limitations under the License.
 package com.adr.data.recordmap;
 
-import com.adr.data.record.Entry;
 import com.adr.data.record.Record;
 import com.adr.data.record.RecordBuilder;
+import com.adr.data.record.Values;
 
 /**
  *
@@ -26,7 +26,7 @@ import com.adr.data.record.RecordBuilder;
  */
 public class RecordMapBuilder implements RecordBuilder {
     @Override
-    public Record create(Entry[] keys, Entry[] values) {
+    public Record create(Values keys, Values values) {
         return new RecordMap(keys, values);    
     }
 }

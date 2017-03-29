@@ -19,6 +19,7 @@ package com.adr.data.utils;
 
 import com.adr.data.QueryOptions;
 import com.adr.data.record.Record;
+import com.adr.data.record.Values;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
@@ -30,10 +31,12 @@ public class RequestQuery extends EnvelopeRequest {
     
     public static final String NAME = "QUERY";
     
-    private final Record filter;
+    private final Values headers;
     private final QueryOptions options;
+    private final Record filter;
     
-    public RequestQuery(Record filter, QueryOptions options) {
+    public RequestQuery(Values headers, QueryOptions options, Record filter) {
+        this.headers = headers;
         this.filter = filter;
         this.options = options;
     }
@@ -44,6 +47,10 @@ public class RequestQuery extends EnvelopeRequest {
     
     public QueryOptions getOptions() {
         return options;
+    }
+    
+    public Values getHeaders() {
+        return headers;
     }
 
     @Override
@@ -59,8 +66,9 @@ public class RequestQuery extends EnvelopeRequest {
     @Override
     public JsonElement dataToJSON() {
         JsonObject obj = new JsonObject();
+        obj.add("headers", JSON.INSTANCE.toJSONElement(headers));        
+        obj.add("options", JSON.INSTANCE.toJSONElement(options));        
         obj.add("filter", JSON.INSTANCE.toJSONElement(filter));
-        obj.add("options", JSON.INSTANCE.toJSONElement(options));
         return obj;
     }    
 }

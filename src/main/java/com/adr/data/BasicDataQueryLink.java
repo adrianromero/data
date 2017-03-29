@@ -1,5 +1,5 @@
 //     Data Access is a Java library to store data
-//     Copyright (C) 2016 Adrián Romero Corchado.
+//     Copyright (C) 2016-2017 Adrián Romero Corchado.
 //
 //     This file is part of Data Access
 //
@@ -18,6 +18,7 @@
 package com.adr.data;
 
 import com.adr.data.record.Record;
+import com.adr.data.record.Values;
 import java.util.List;
 
 /**
@@ -35,13 +36,13 @@ public class BasicDataQueryLink implements DataQueryLink {
     }
     
     @Override
-    public List<Record> query(Record filter, QueryOptions options) throws DataException {
-        return querylink.query(filter, options);
+    public List<Record> query(Values headers, QueryOptions options, Record filter) throws DataException {
+        return querylink.query(headers, options, filter);
     }
 
     @Override
-    public void execute(List<Record> l) throws DataException {
-        datalink.execute(l);
+    public void execute(Values headers, List<Record> l) throws DataException {
+        datalink.execute(headers, l);
     }
 
     @Override

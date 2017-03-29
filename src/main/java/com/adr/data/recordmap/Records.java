@@ -17,7 +17,6 @@
 
 package com.adr.data.recordmap;
 
-import com.adr.data.record.Entry;
 import com.adr.data.record.Record;
 import com.adr.data.record.Values;
 import java.util.ArrayList;

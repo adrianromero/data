@@ -20,6 +20,7 @@ import com.adr.data.DataException;
 import com.adr.data.QueryLink;
 import com.adr.data.QueryOptions;
 import com.adr.data.record.Record;
+import com.adr.data.record.Values;
 import com.adr.data.utils.EnvelopeResponse;
 import com.adr.data.utils.JSON;
 import com.adr.data.utils.RequestQuery;
@@ -56,10 +57,10 @@ public class WebQueryLink implements QueryLink {
     }
 
     @Override
-    public List<Record> query(Record filter, QueryOptions options) throws DataException {
+    public List<Record> query(Values headers, QueryOptions options, Record filter) throws DataException {
 
         try {
-            String message = JSON.INSTANCE.toJSON(new RequestQuery(filter, options));
+            String message = JSON.INSTANCE.toJSON(new RequestQuery(headers, options, filter));
 
             HttpUrl newurl = segment == null
                     ? baseurl

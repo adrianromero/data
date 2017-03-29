@@ -20,6 +20,7 @@ import com.adr.data.DataException;
 import com.adr.data.DataQueryLink;
 import com.adr.data.QueryOptions;
 import com.adr.data.record.Record;
+import com.adr.data.record.Values;
 import java.net.CookieHandler;
 import java.net.CookieManager;
 import java.net.CookiePolicy;
@@ -47,13 +48,13 @@ public class WebDataQueryLink implements DataQueryLink {
     }
 
     @Override
-    public List<Record> query(Record filter, QueryOptions options) throws DataException {
-        return querylink.query(filter, options);
+    public List<Record> query(Values headers, QueryOptions options, Record filter) throws DataException {
+        return querylink.query(headers, options, filter);
     }
 
     @Override
-    public void execute(List<Record> l) throws DataException {
-        datalink.execute(l);
+    public void execute(Values headers, List<Record> l) throws DataException {
+        datalink.execute(headers, l);
     }
 
     @Override

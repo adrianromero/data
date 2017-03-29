@@ -1,5 +1,5 @@
 //     Data Access is a Java library to store data
-//     Copyright (C) 2016 Adrián Romero Corchado.
+//     Copyright (C) 2016-2017 Adrián Romero Corchado.
 //
 //     This file is part of Data Access
 //
@@ -18,6 +18,8 @@
 package com.adr.data;
 
 import com.adr.data.record.Record;
+import com.adr.data.record.Values;
+import com.adr.data.recordmap.ValuesMap;
 import java.util.Arrays;
 import java.util.List;
 
@@ -27,9 +29,14 @@ import java.util.List;
  */
 public interface DataLink extends AutoCloseable {
     
-    public void execute(List<Record> l) throws DataException;    
+    public void execute(Values headers, List<Record> l) throws DataException; 
+    
     public default void execute(Record... keyval) throws DataException {
-        execute(Arrays.asList(keyval));
+        execute(ValuesMap.EMPTY, Arrays.asList(keyval));
+    }
+    
+    public default void execute(Values headers, Record... keyval) throws DataException {
+        execute(headers, Arrays.asList(keyval));
     }
     
     @Override

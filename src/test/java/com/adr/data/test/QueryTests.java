@@ -20,12 +20,14 @@ import com.adr.data.DataException;
 import com.adr.data.DataQueryLink;
 import com.adr.data.QueryLink;
 import com.adr.data.QueryOptions;
-import com.adr.data.record.Entry;
+import com.adr.data.recordmap.Entry;
 import com.adr.data.record.Record;
 import com.adr.data.recordmap.RecordMap;
+import com.adr.data.recordmap.ValuesMap;
 import com.adr.data.security.SecureFacade;
 import com.adr.data.var.VariantBoolean;
 import com.adr.data.var.VariantString;
+import com.adr.data.var.VariantVoid;
 import java.util.List;
 import org.junit.Assert;
 import org.junit.Test;
@@ -57,45 +59,51 @@ public class QueryTests {
             Assert.assertEquals(1, result1.size());
             Assert.assertEquals("admin", result1.get(0).getString("NAME"));
             Assert.assertEquals(null, result1.get(0).getString("CODECARD"));
-            Assert.assertEquals(null, result1.get(0).getValue().get("IMAGE"));
+            Assert.assertEquals(VariantVoid.INSTANCE, result1.get(0).getValue().get("IMAGE"));
 
-            List<Record> result2 = link.query(new RecordMap(
-                    new Entry[]{
-                        new Entry("_ENTITY", "USERNAME"),
-                        new Entry("ID", VariantString.NULL)},
-                    new Entry[]{
-                        new Entry("NAME", VariantString.NULL),
-                        new Entry("CODECARD", VariantString.NULL)}),
-                    QueryOptions.orderBy("NAME__DESC"));
+            List<Record> result2 = link.query(
+                    ValuesMap.EMPTY,
+                    QueryOptions.orderBy("NAME__DESC"),
+                    new RecordMap(
+                            new Entry[]{
+                                new Entry("_ENTITY", "USERNAME"),
+                                new Entry("ID", VariantString.NULL)},
+                            new Entry[]{
+                                new Entry("NAME", VariantString.NULL),
+                                new Entry("CODECARD", VariantString.NULL)}));
 
             Assert.assertEquals(3, result2.size());
             Assert.assertEquals("user", result2.get(0).getString("NAME"));
             Assert.assertEquals("manager", result2.get(1).getString("NAME"));
             Assert.assertEquals("admin", result2.get(2).getString("NAME"));
 
-            List<Record> result3 = link.query(new RecordMap(
-                    new Entry[]{
-                        new Entry("_ENTITY", "USERNAME"),
-                        new Entry("ID", VariantString.NULL)},
-                    new Entry[]{
-                        new Entry("NAME", "manager"),
-                        new Entry("VISIBLE", VariantBoolean.NULL),
-                        new Entry("CODECARD", VariantString.NULL)}));
+            List<Record> result3 = link.query(
+                    ValuesMap.EMPTY,
+                    new RecordMap(
+                            new Entry[]{
+                                new Entry("_ENTITY", "USERNAME"),
+                                new Entry("ID", VariantString.NULL)},
+                            new Entry[]{
+                                new Entry("NAME", "manager"),
+                                new Entry("VISIBLE", VariantBoolean.NULL),
+                                new Entry("CODECARD", VariantString.NULL)}));
             Assert.assertEquals(1, result3.size());
             Assert.assertEquals("manager", result3.get(0).getString("NAME"));
             Assert.assertEquals(null, result3.get(0).getString("CODECARD"));
-            Assert.assertEquals(null, result3.get(0).getValue().get("IMAGE"));
+            Assert.assertEquals(VariantVoid.INSTANCE, result3.get(0).getValue().get("IMAGE"));
 
-            List<Record> result4 = link.query(new RecordMap(
-                    new Entry[]{
-                        new Entry("_ENTITY", "USERNAME"),
-                        new Entry("ID", VariantString.NULL)},
-                    new Entry[]{
-                        new Entry("NAME__LIKE", "%a%"),
-                        new Entry("NAME", VariantString.NULL),
-                        new Entry("VISIBLE", VariantBoolean.NULL),
-                        new Entry("CODECARD", VariantString.NULL)}),
-                    QueryOptions.orderBy("NAME"));
+            List<Record> result4 = link.query(
+                    ValuesMap.EMPTY,
+                    QueryOptions.orderBy("NAME"),
+                    new RecordMap(
+                            new Entry[]{
+                                new Entry("_ENTITY", "USERNAME"),
+                                new Entry("ID", VariantString.NULL)},
+                            new Entry[]{
+                                new Entry("NAME__LIKE", "%a%"),
+                                new Entry("NAME", VariantString.NULL),
+                                new Entry("VISIBLE", VariantBoolean.NULL),
+                                new Entry("CODECARD", VariantString.NULL)}));
             Assert.assertEquals(2, result4.size());
             Assert.assertEquals("admin", result4.get(0).getString("NAME"));
             Assert.assertEquals("manager", result4.get(1).getString("NAME"));

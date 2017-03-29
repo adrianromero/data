@@ -23,11 +23,13 @@ import com.adr.data.QueryOptions;
 import com.adr.data.record.Record;
 import com.adr.data.recordmap.RecordMap;
 import com.adr.data.DataQueryLink;
-import com.adr.data.record.Entry;
+import com.adr.data.record.Values;
+import com.adr.data.recordmap.Entry;
 import com.adr.data.utils.JSON;
 import com.adr.data.recordmap.Records;
 import com.adr.data.var.VariantBoolean;
 import com.adr.data.var.VariantBytes;
+import com.adr.data.var.VariantString;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.DataInput;
@@ -108,7 +110,7 @@ public class SecureLink implements DataQueryLink {
     }
 
     @Override
-    public List<Record> query(Record filter, QueryOptions options) throws DataException {
+    public List<Record> query(Values headers, QueryOptions options, Record filter) throws DataException {
 
         String entity = filter.getKey().get("_ENTITY").asString();
         if (AUTHENTICATION_REQUEST.equals(entity)) {
@@ -124,12 +126,12 @@ public class SecureLink implements DataQueryLink {
                 Record userauthenticationquery = new RecordMap(
                         new Entry[]{
                             new Entry("_ENTITY", "USERNAME_BYNAME"),
-                            new Entry("ID")},
+                            new Entry("ID", VariantString.NULL)},
                         new Entry[]{
                             new Entry("NAME", username),
-                            new Entry("DISPLAYNAME"),
-                            new Entry("PASSWORD"),
-                            new Entry("CODECARD")});
+                            new Entry("DISPLAYNAME", VariantString.NULL),
+                            new Entry("PASSWORD", VariantString.NULL),
+                            new Entry("CODECARD", VariantString.NULL)});
 
                 Record userauthentication = querylink.find(userauthenticationquery);
 
@@ -143,11 +145,11 @@ public class SecureLink implements DataQueryLink {
                                 new Entry("_ENTITY", "USERNAME_BYID"),
                                 new Entry("ID", userauthentication.getKey().get("ID"))},
                             new Entry[]{
-                                new Entry("NAME"),
-                                new Entry("DISPLAYNAME"),
-                                new Entry("CODECARD"),
-                                new Entry("ROLE_ID"),
-                                new Entry("ROLE"),
+                                new Entry("NAME", VariantString.NULL),
+                                new Entry("DISPLAYNAME", VariantString.NULL),
+                                new Entry("CODECARD", VariantString.NULL),
+                                new Entry("ROLE_ID", VariantString.NULL),
+                                new Entry("ROLE", VariantString.NULL),
                                 new Entry("VISIBLE", VariantBoolean.NULL),
                                 new Entry("IMAGE", VariantBytes.NULL)});
                     Record userrecord = querylink.find(usernamequery);
@@ -230,7 +232,7 @@ public class SecureLink implements DataQueryLink {
         } else {
             // Normal query
             if (hasAuthorization(entity, ACTION_QUERY)) {
-                return querylink.query(filter, options);
+                return querylink.query(headers, options, filter);
             } else {
                 throw new SecurityDataException("No authorization to query resource: " + entity);
             }
@@ -238,7 +240,7 @@ public class SecureLink implements DataQueryLink {
     }
 
     @Override
-    public void execute(List<Record> l) throws DataException {
+    public void execute(Values headers, List<Record> l) throws DataException {
 
         for (Record r : l) {
             String entity = r.getKey().get("_ENTITY").asString();
@@ -247,7 +249,7 @@ public class SecureLink implements DataQueryLink {
             }
         }
 
-        datalink.execute(l);
+        datalink.execute(headers, l);
     }
 
     @Override
@@ -380,8 +382,8 @@ public class SecureLink implements DataQueryLink {
                             new Entry("_ENTITY", "SUBJECT_BYROLE"),
                             new Entry("ROLE_ID__PARAM", user.getString("ROLE_ID"))},
                         new Entry[]{
-                            new Entry("CODE"),
-                            new Entry("NAME")});
+                            new Entry("CODE", VariantString.NULL),
+                            new Entry("NAME", VariantString.NULL)});
                 session = link.query(subjectsquery);
                 sessionset = session.stream().map(r -> r.getString("CODE")).collect(Collectors.toSet());
             }

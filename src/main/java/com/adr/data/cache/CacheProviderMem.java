@@ -19,6 +19,8 @@ package com.adr.data.cache;
 import com.adr.data.DataException;
 import com.adr.data.QueryOptions;
 import com.adr.data.record.Record;
+import com.adr.data.record.Values;
+import com.adr.data.recordmap.ValuesMap;
 import com.adr.data.utils.JSON;
 import com.adr.data.utils.RequestQuery;
 import com.adr.data.utils.ResponseListRecord;
@@ -41,15 +43,15 @@ public class CacheProviderMem implements CacheProvider {
     }
     
     @Override
-    public void put(Record filter, QueryOptions options, List<Record> value) {
+    public void put(Values headers, QueryOptions options, Record filter, List<Record> value) {
         cache.put(              
-                JSON.INSTANCE.toJSON(new RequestQuery(filter, options)), 
+                JSON.INSTANCE.toJSON(new RequestQuery(ValuesMap.EMPTY, options, filter)), 
                 JSON.INSTANCE.toJSON(new ResponseListRecord(value)));
     }
 
     @Override
-    public List<Record> getIfPresent(Record filter, QueryOptions options) throws DataException {
-        String cachedresult = cache.getIfPresent(JSON.INSTANCE.toJSON(new RequestQuery(filter, options)));
+    public List<Record> getIfPresent(Values headers, QueryOptions options, Record filter) throws DataException {
+        String cachedresult = cache.getIfPresent(JSON.INSTANCE.toJSON(new RequestQuery(ValuesMap.EMPTY, options, filter)));
         if (cachedresult == null) {
             return null;
         } else {

@@ -22,8 +22,8 @@ package com.adr.data.record;
  * @author adrian
  */
 public interface RecordBuilder {
-    public Record create(Entry[] keys, Entry[] values);
-    public default Record create(Entry[] keys) {
+    public Record create(Values keys, Values values);
+    public default Record create(Values keys) {
         return create(keys, null);
     }
 }

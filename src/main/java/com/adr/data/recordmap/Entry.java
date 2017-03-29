@@ -15,7 +15,7 @@
 //     See the License for the specific language governing permissions and
 //     limitations under the License.
 
-package com.adr.data.record;
+package com.adr.data.recordmap;
 
 import com.adr.data.var.Variant;
 import com.adr.data.var.VariantBoolean;
@@ -31,11 +31,7 @@ public class Entry {
     
     private final String name;
     private final Variant value;
-    
-    public Entry(String name) {
-        this(name, VariantString.NULL);
-    }
-    
+       
     public Entry(String name, String value) {
         this(name, new VariantString(value));
     }

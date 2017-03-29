@@ -21,6 +21,7 @@ import com.adr.data.DataException;
 import com.adr.data.QueryLink;
 import com.adr.data.QueryOptions;
 import com.adr.data.record.Record;
+import com.adr.data.record.Values;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.HashMap;
@@ -53,7 +54,7 @@ public class SQLQueryLink implements QueryLink {
     }
     
     @Override
-    public List<Record> query(Record filter, QueryOptions options) throws DataException {
+    public List<Record> query(Values headers, QueryOptions options, Record filter) throws DataException {
         try (Connection c = ds.getConnection()) {
             String entity = Sentence.getEntity(filter);
             Sentence s = queries.get(entity);

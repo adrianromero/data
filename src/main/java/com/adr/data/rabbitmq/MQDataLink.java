@@ -20,6 +20,7 @@ package com.adr.data.rabbitmq;
 import com.adr.data.DataException;
 import com.adr.data.DataLink;
 import com.adr.data.record.Record;
+import com.adr.data.record.Values;
 import com.adr.data.utils.JSON;
 import com.adr.data.utils.RequestExecute;
 import com.rabbitmq.client.Channel;
@@ -55,10 +56,10 @@ public class MQDataLink implements DataLink {
     }
 
     @Override
-    public void execute(List<Record> l) throws DataException {
+    public void execute(Values headers, List<Record> l) throws DataException {
         
         try {
-            byte[] request = JSON.INSTANCE.toJSON(new RequestExecute(l)).getBytes("UTF-8");
+            byte[] request = JSON.INSTANCE.toJSON(new RequestExecute(headers, l)).getBytes("UTF-8");
             client.publish(null, request);
         } catch (UnsupportedEncodingException ex) {
             throw new UnsupportedOperationException(ex); // Never happens

@@ -1,5 +1,5 @@
 //     Data Access is a Java library to store data
-//     Copyright (C) 2016 Adrián Romero Corchado.
+//     Copyright (C) 2016-2017 Adrián Romero Corchado.
 //
 //     This file is part of Data Access
 //
@@ -18,6 +18,8 @@
 package com.adr.data;
 
 import com.adr.data.record.Record;
+import com.adr.data.record.Values;
+import com.adr.data.recordmap.ValuesMap;
 import java.util.List;
 
 /**
@@ -26,12 +28,23 @@ import java.util.List;
  */
 public interface QueryLink extends AutoCloseable {
     
-    public List<Record> query(Record filter, QueryOptions options) throws DataException;       
+    public List<Record> query(Values headers, QueryOptions options, Record filter) throws DataException;   
+    
     public default List<Record> query(Record filter) throws DataException {
-        return query(filter, QueryOptions.DEFAULT);
+        return query(ValuesMap.EMPTY, QueryOptions.DEFAULT, filter);
     }
+    
     public default Record find(Record filter) throws DataException {
-        List<Record> l = query(filter, QueryOptions.FIND);
+        List<Record> l = query(ValuesMap.EMPTY, QueryOptions.FIND ,filter);
+        return l.isEmpty() ? null : l.get(0);
+    } 
+    
+    public default List<Record> query(Values headers, Record filter) throws DataException {
+        return query(headers, QueryOptions.DEFAULT, filter);
+    }
+    
+    public default Record find(Values headers, Record filter) throws DataException {
+        List<Record> l = query(headers, QueryOptions.FIND, filter);
         return l.isEmpty() ? null : l.get(0);
     } 
     
