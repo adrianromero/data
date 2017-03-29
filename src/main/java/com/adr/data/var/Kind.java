@@ -1,5 +1,5 @@
 //     Data Access is a Java library to store data
-//     Copyright (C) 2016 Adrián Romero Corchado.
+//     Copyright (C) 2016-2017 Adrián Romero Corchado.
 //
 //     This file is part of Data Access
 //
@@ -39,6 +39,7 @@ public abstract class Kind {
     public final static Kind LOCALTIME = new KindLocalTime();  
     public final static Kind BYTES = new KindBytes(); 
     public final static Kind OBJECT = new KindObject();
+    public final static Kind VOID = new KindVoid();
    
     public abstract Variant fromISO(String value) throws DataException;
     public abstract Variant read(Results read, String name) throws DataException;
@@ -58,6 +59,7 @@ public abstract class Kind {
         put(Kind.LOCALTIME);
         put(Kind.BYTES);
         put(Kind.OBJECT);
+        put(Kind.VOID);
     }
     
     private static void put(Kind kind) {
