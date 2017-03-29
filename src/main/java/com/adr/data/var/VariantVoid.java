@@ -48,9 +48,4 @@ public class VariantVoid extends Variant {
     public boolean isNull() {
         return true;
     }
-    
-    @Override
-    public String asString() {
-        return null;
-    }
 }
