@@ -17,7 +17,6 @@
 
 package com.adr.data.sql;
 
-import com.adr.data.QueryOptions;
 import com.adr.data.record.Record;
 
 /**
@@ -42,10 +41,10 @@ public class SentenceQuery extends SentenceQRY {
     }
     
     @Override
-    protected CommandSQL build(SQLEngine engine, Record keyval, QueryOptions options) {
+    protected CommandSQL build(SQLEngine engine, Record keyval) {
         
         StringBuilder sqlsent = new StringBuilder(command);  
-        SentenceQRY.addQueryOptions(sqlsent, engine, options);        
+        SentenceQRY.addQueryOptions(sqlsent, engine, keyval.getKey());        
         return new CommandSQL(sqlsent.toString(), paramnames);
     }   
 }

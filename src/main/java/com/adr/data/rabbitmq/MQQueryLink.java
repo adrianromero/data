@@ -19,7 +19,6 @@ package com.adr.data.rabbitmq;
 
 import com.adr.data.DataException;
 import com.adr.data.QueryLink;
-import com.adr.data.QueryOptions;
 import com.adr.data.record.Record;
 import com.adr.data.record.Values;
 import com.adr.data.utils.EnvelopeResponse;
@@ -58,10 +57,10 @@ public class MQQueryLink implements QueryLink {
     }
 
     @Override
-    public List<Record> query(Values headers, QueryOptions options, Record filter) throws DataException {
+    public List<Record> query(Values headers, Record filter) throws DataException {
         
         try {
-            byte[] request = JSON.INSTANCE.toJSON(new RequestQuery(headers, options, filter)).getBytes("UTF-8");
+            byte[] request = JSON.INSTANCE.toJSON(new RequestQuery(headers, filter)).getBytes("UTF-8");
             byte[] response = client.primitiveCall(request);
             EnvelopeResponse envelope = JSON.INSTANCE.fromJSONResponse(new String(response, "UTF-8"));
             return envelope.getAsListRecord();

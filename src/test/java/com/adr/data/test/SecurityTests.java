@@ -73,7 +73,7 @@ public class SecurityTests {
             // this query succeds because admin has permissions to all resources
             List<Record> result1 = link.query(new RecordMap(
                 new Entry[]{
-                    new Entry("_ENTITY", "USERNAME"),
+                    new Entry("__ENTITY", "USERNAME"),
                     new Entry("ID", new VariantString("admin"))},
                 new Entry[]{
                     new Entry("NAME", VariantString.NULL),
@@ -86,7 +86,7 @@ public class SecurityTests {
                 // This query fails because not logged users 
                 link.query(new RecordMap(
                     new Entry[]{
-                        new Entry("_ENTITY", "USERNAME"),
+                        new Entry("__ENTITY", "USERNAME"),
                         new Entry("ID", new VariantString("admin"))},
                     new Entry[]{
                         new Entry("NAME", VariantString.NULL),
@@ -128,7 +128,7 @@ public class SecurityTests {
             // this query succeds because anonymous has permissions to all resources
             List<Record> result1 = link.query(new RecordMap(
                 new Entry[]{
-                    new Entry("_ENTITY", "USERNAME_VISIBLE"),
+                    new Entry("__ENTITY", "USERNAME_VISIBLE"),
                     new Entry("ID", VariantString.NULL)},
                 new Entry[]{
                     new Entry("NAME", VariantString.NULL),

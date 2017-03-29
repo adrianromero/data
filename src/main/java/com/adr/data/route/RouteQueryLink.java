@@ -18,7 +18,6 @@ package com.adr.data.route;
 
 import com.adr.data.DataException;
 import com.adr.data.QueryLink;
-import com.adr.data.QueryOptions;
 import com.adr.data.record.Record;
 import com.adr.data.record.Values;
 import java.util.List;
@@ -36,10 +35,10 @@ public class RouteQueryLink implements QueryLink {
     }
 
     @Override
-    public List<Record> query(Values headers, QueryOptions options, Record filter) throws DataException {
+    public List<Record> query(Values headers, Record filter) throws DataException {
         
         QueryLink link = selector.getQueryLink(filter);
-        return link.query(headers, options, filter);
+        return link.query(headers, filter);
     }
 
     @Override

@@ -39,7 +39,7 @@ public class SecureFacade {
         // Convenience login method
         return securelink.find(new RecordMap(
                 new Entry[]{
-                    new Entry("_ENTITY", SecureLink.AUTHENTICATION_REQUEST)},
+                    new Entry("__ENTITY", SecureLink.AUTHENTICATION_REQUEST)},
                 new Entry[]{
                     new Entry("NAME", username),
                     new Entry("PASSWORD", password)}));
@@ -49,14 +49,14 @@ public class SecureFacade {
         // Convenience logout method
         securelink.find(new RecordMap(
                 new Entry[]{
-                    new Entry("_ENTITY", SecureLink.AUTHENTICATION_REQUEST)}));
+                    new Entry("__ENTITY", SecureLink.AUTHENTICATION_REQUEST)}));
     }
 
     public Record current() throws DataException {
         // Convenience logout method
         return securelink.find(new RecordMap(
                 new Entry[]{
-                    new Entry("_ENTITY", SecureLink.AUTHENTICATION_CURRENT)}));
+                    new Entry("__ENTITY", SecureLink.AUTHENTICATION_CURRENT)}));
     }
 
     public Record saveCurrent(Record login) throws DataException {
@@ -66,7 +66,7 @@ public class SecureFacade {
     public void savePassword(String name, String oldpassword, String password) throws DataException {
         securelink.find(new RecordMap(
                 new Entry[]{
-                    new Entry("_ENTITY", SecureLink.AUTHENTICATION_PASSWORD)},
+                    new Entry("__ENTITY", SecureLink.AUTHENTICATION_PASSWORD)},
                 new Entry[]{
                     new Entry("NAME", name),
                     new Entry("OLDPASSWORD", oldpassword),
@@ -76,7 +76,7 @@ public class SecureFacade {
     public boolean hasAuthorization(String resource, String action) throws DataException {
         Record result = securelink.find(new RecordMap(
                 new Entry[]{
-                    new Entry("_ENTITY", SecureLink.AUTHORIZATION_REQUEST)},
+                    new Entry("__ENTITY", SecureLink.AUTHORIZATION_REQUEST)},
                 new Entry[]{
                     new Entry("RESOURCE", resource),
                     new Entry("ACTION", action)}));
@@ -92,6 +92,6 @@ public class SecureFacade {
         // Convenience logout method
         return securelink.query(new RecordMap(
                 new Entry[]{
-                    new Entry("_ENTITY", SecureLink.AUTHORIZATIONS_QUERY)}));
+                    new Entry("__ENTITY", SecureLink.AUTHORIZATIONS_QUERY)}));
     }
 }

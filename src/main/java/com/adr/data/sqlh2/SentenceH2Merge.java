@@ -47,7 +47,7 @@ public class SentenceH2Merge extends SentenceDML {
         
         boolean filter = false;
         for (String f : keyval.getKey().getNames()) {
-            if (!"_ENTITY".equals(f)) {
+            if (!f.contains("__")) {
                 sentence.append(filter ? ", " : "(");
                 sentence.append(f);
                 keys.append(filter ? ", " : "(");

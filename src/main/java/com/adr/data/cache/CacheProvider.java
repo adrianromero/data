@@ -17,7 +17,6 @@
 package com.adr.data.cache;
 
 import com.adr.data.DataException;
-import com.adr.data.QueryOptions;
 import com.adr.data.record.Record;
 import com.adr.data.record.Values;
 import java.util.List;
@@ -27,6 +26,6 @@ import java.util.List;
  * @author adrian
  */
 public interface CacheProvider {
-    public void put(Values headers, QueryOptions options, Record filter, List<Record> value) throws DataException;
-    public List<Record> getIfPresent(Values headers, QueryOptions options, Record filter) throws DataException;
+    public void put(Values headers, Record filter, List<Record> value) throws DataException;
+    public List<Record> getIfPresent(Values headers, Record filter) throws DataException;
 }

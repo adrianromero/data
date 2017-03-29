@@ -16,7 +16,6 @@
 //     limitations under the License.
 package com.adr.data.test;
 
-import com.adr.data.QueryOptions;
 import com.adr.data.recordmap.Entry;
 import com.adr.data.record.Record;
 import com.adr.data.recordmap.RecordMap;
@@ -71,14 +70,5 @@ public class GSONTests {
         Assert.assertEquals(skeval, JSON.INSTANCE.toJSON(keval));
         Assert.assertEquals(skeval, JSON.INSTANCE.toJSON(JSON.INSTANCE.fromJSONRecord(JSON.INSTANCE.toJSON(keval))));
         Assert.assertEquals("{\"id\":\"1\",\"field\":\"pepeluis\",\"value\":null}", JSON.INSTANCE.toSimpleJSON(keval));
-    }
-
-    @Test
-    public void testQueryOptions() {
-        Assert.assertEquals("{\"limit\":1}", JSON.INSTANCE.toJSONElement(QueryOptions.FIND).toString());
-        Assert.assertEquals("null", JSON.INSTANCE.toJSONElement(QueryOptions.DEFAULT).toString());
-        Assert.assertEquals("{\"limit\":100,\"offset\":10}", JSON.INSTANCE.toJSONElement(QueryOptions.limit(100, 10)).toString());
-        Assert.assertEquals("null", JSON.INSTANCE.toJSONElement(QueryOptions.limit(Integer.MAX_VALUE)).toString());
-        Assert.assertEquals("{\"orderby\":[\"COLUMN1\",\"COLUMN2\"]}", JSON.INSTANCE.toJSONElement(QueryOptions.orderBy("COLUMN1", "COLUMN2")).toString());
     }
 }

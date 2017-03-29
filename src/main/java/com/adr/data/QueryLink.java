@@ -28,26 +28,21 @@ import java.util.List;
  */
 public interface QueryLink extends AutoCloseable {
     
-    public List<Record> query(Values headers, QueryOptions options, Record filter) throws DataException;   
+    public List<Record> query(Values headers, Record filter) throws DataException;   
     
     public default List<Record> query(Record filter) throws DataException {
-        return query(ValuesMap.EMPTY, QueryOptions.DEFAULT, filter);
-    }
-    
-    public default Record find(Record filter) throws DataException {
-        List<Record> l = query(ValuesMap.EMPTY, QueryOptions.FIND ,filter);
-        return l.isEmpty() ? null : l.get(0);
-    } 
-    
-    public default List<Record> query(Values headers, Record filter) throws DataException {
-        return query(headers, QueryOptions.DEFAULT, filter);
+        return query(ValuesMap.EMPTY, filter);
     }
     
     public default Record find(Values headers, Record filter) throws DataException {
-        List<Record> l = query(headers, QueryOptions.FIND, filter);
+        List<Record> l = query(headers, filter);
         return l.isEmpty() ? null : l.get(0);
-    } 
+    }
     
+    public default Record find(Record filter) throws DataException {
+        return find(ValuesMap.EMPTY, filter);
+    } 
+ 
     @Override
     public void close() throws DataException;
 }

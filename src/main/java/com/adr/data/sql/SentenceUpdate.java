@@ -51,7 +51,7 @@ public class SentenceUpdate extends SentenceDML {
 
         filter = false;
         for (String f : keyval.getKey().getNames()) {
-            if (!"_ENTITY".equals(f)) {
+            if (!f.contains("__")) {
                 sentence.append(filter ? " AND " : " WHERE ");
                 sentence.append(f);
                 sentence.append(" = ?");

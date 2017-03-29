@@ -17,7 +17,6 @@
 package com.adr.data.sql;
 
 import com.adr.data.DataException;
-import com.adr.data.QueryOptions;
 import com.adr.data.recordmap.Entry;
 import com.adr.data.record.Record;
 import com.adr.data.record.Values;
@@ -46,12 +45,12 @@ public abstract class Sentence {
         throw new UnsupportedOperationException();
     }
 
-    public List<Record> query(Connection c, SQLEngine engine, Record keyval, QueryOptions options) throws DataException {
+    public List<Record> query(Connection c, SQLEngine engine, Record keyval) throws DataException {
         throw new UnsupportedOperationException();
     }
 
     public static String getEntity(Record keyval) {
-        return keyval.getKey().get("_ENTITY").asString();
+        return keyval.getKey().get("__ENTITY").asString();
     }
 
     public static int execute(Connection c, CommandSQL command, Record keyval) throws DataException {
@@ -67,7 +66,7 @@ public abstract class Sentence {
         }
     }
 
-    public static List<Record> query(Connection c, CommandSQL command, Record filter, QueryOptions options) throws DataException {
+    public static List<Record> query(Connection c, CommandSQL command, Record filter) throws DataException {
         String sql = command.getCommand();
         LOG.log(Level.CONFIG, "Executing SQL query: {0}", sql);
         try (PreparedStatement stmt = c.prepareStatement(sql)) {
@@ -75,7 +74,7 @@ public abstract class Sentence {
             write(kindparams, filter.getKey());
             write(kindparams, filter.getValue());
 
-            int limit = options.getLimit();
+            int limit = getLimit(filter.getKey());
             // int offset = options.getOffset(); // offset is applied in the CommandSQL
 
             try (ResultSet resultset = stmt.executeQuery()) {
@@ -112,7 +111,7 @@ public abstract class Sentence {
         List<Entry> l = new ArrayList<>();
         for (String name : param.getNames()) {
             Variant p = param.get(name);
-            if ("_ENTITY".equals(name)) {
+            if ("__ENTITY".equals(name)) {
                 l.add(new Entry(name, p));
             } else if (!name.contains("__")) { // Is a field
                 Variant newv = p.getKind().read(kindresults, name);
@@ -121,4 +120,19 @@ public abstract class Sentence {
         }
         return l.stream().toArray(Entry[]::new);
     }
+       
+    public static int getLimit(Values values) {
+        Variant v = values.get("__LIMIT");
+        return v.isNull() ? Integer.MAX_VALUE : v.asInteger();
+    }
+    
+    public static int getOffset(Values values) {
+        Variant v = values.get("__OFFSET");
+        return v.isNull() ? 0 : v.asInteger();
+    }
+    
+    public static String[] getOrderBy(Values values) {
+        Variant v = values.get("__ORDERBY");
+        return v.isNull() ? new String[0] : v.asString().split("\\s+");
+    }    
 }

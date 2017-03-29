@@ -18,7 +18,6 @@ package com.adr.data.http;
 
 import com.adr.data.DataException;
 import com.adr.data.DataQueryLink;
-import com.adr.data.QueryOptions;
 import com.adr.data.record.Record;
 import com.adr.data.record.Values;
 import java.net.CookieHandler;
@@ -48,8 +47,8 @@ public class WebDataQueryLink implements DataQueryLink {
     }
 
     @Override
-    public List<Record> query(Values headers, QueryOptions options, Record filter) throws DataException {
-        return querylink.query(headers, options, filter);
+    public List<Record> query(Values headers, Record filter) throws DataException {
+        return querylink.query(headers, filter);
     }
 
     @Override

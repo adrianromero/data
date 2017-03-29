@@ -19,7 +19,6 @@ package com.adr.data.security;
 import com.adr.data.DataException;
 import com.adr.data.DataLink;
 import com.adr.data.QueryLink;
-import com.adr.data.QueryOptions;
 import com.adr.data.record.Record;
 import com.adr.data.recordmap.RecordMap;
 import com.adr.data.DataQueryLink;
@@ -110,9 +109,9 @@ public class SecureLink implements DataQueryLink {
     }
 
     @Override
-    public List<Record> query(Values headers, QueryOptions options, Record filter) throws DataException {
+    public List<Record> query(Values headers, Record filter) throws DataException {
 
-        String entity = filter.getKey().get("_ENTITY").asString();
+        String entity = filter.getKey().get("__ENTITY").asString();
         if (AUTHENTICATION_REQUEST.equals(entity)) {
 
             if (filter.getValue() == null) {
@@ -125,7 +124,7 @@ public class SecureLink implements DataQueryLink {
 
                 Record userauthenticationquery = new RecordMap(
                         new Entry[]{
-                            new Entry("_ENTITY", "USERNAME_BYNAME"),
+                            new Entry("__ENTITY", "USERNAME_BYNAME"),
                             new Entry("ID", VariantString.NULL)},
                         new Entry[]{
                             new Entry("NAME", username),
@@ -142,7 +141,7 @@ public class SecureLink implements DataQueryLink {
                     // Valid login, load user details.
                     Record usernamequery = new RecordMap(
                             new Entry[]{
-                                new Entry("_ENTITY", "USERNAME_BYID"),
+                                new Entry("__ENTITY", "USERNAME_BYID"),
                                 new Entry("ID", userauthentication.getKey().get("ID"))},
                             new Entry[]{
                                 new Entry("NAME", VariantString.NULL),
@@ -186,7 +185,7 @@ public class SecureLink implements DataQueryLink {
                         : CryptUtils.hashsaltPassword(password, CryptUtils.generateSalt());
                 Record usernamepassword = new RecordMap(
                         new Entry[]{
-                            new Entry("_ENTITY", "USERNAME_PASSWORD"),
+                            new Entry("__ENTITY", "USERNAME_PASSWORD"),
                             new Entry("ID", usersession.getUser().getKey().get("ID"))},
                         new Entry[]{
                             new Entry("PASSWORD", saltedpassword)});
@@ -232,7 +231,7 @@ public class SecureLink implements DataQueryLink {
         } else {
             // Normal query
             if (hasAuthorization(entity, ACTION_QUERY)) {
-                return querylink.query(headers, options, filter);
+                return querylink.query(headers, filter);
             } else {
                 throw new SecurityDataException("No authorization to query resource: " + entity);
             }
@@ -243,7 +242,7 @@ public class SecureLink implements DataQueryLink {
     public void execute(Values headers, List<Record> l) throws DataException {
 
         for (Record r : l) {
-            String entity = r.getKey().get("_ENTITY").asString();
+            String entity = r.getKey().get("__ENTITY").asString();
             if (!hasAuthorization(entity, ACTION_EXECUTE)) {
                 throw new SecurityDataException("No authorization to execute resource: " + entity);
             }
@@ -379,7 +378,7 @@ public class SecureLink implements DataQueryLink {
             if (user != null && session == null) {
                 Record subjectsquery = new RecordMap(
                         new Entry[]{
-                            new Entry("_ENTITY", "SUBJECT_BYROLE"),
+                            new Entry("__ENTITY", "SUBJECT_BYROLE"),
                             new Entry("ROLE_ID__PARAM", user.getString("ROLE_ID"))},
                         new Entry[]{
                             new Entry("CODE", VariantString.NULL),

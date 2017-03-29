@@ -17,7 +17,6 @@
 package com.adr.data.utils;
 
 import com.adr.data.DataException;
-import com.adr.data.QueryOptions;
 import com.adr.data.var.Kind;
 import com.adr.data.record.Record;
 import com.adr.data.record.Values;
@@ -71,7 +70,7 @@ public class JSON {
         String type = envelope.get("type").getAsString();
         if (RequestQuery.NAME.equals(type)) {
             JsonObject data = envelope.get("data").getAsJsonObject();
-            return new RequestQuery(fromJSONValues(data.get("headers")), fromJSONOptions(data.get("options")), fromJSONRecord(data.get("filter")));
+            return new RequestQuery(fromJSONValues(data.get("headers")), fromJSONRecord(data.get("filter")));
         } else if (RequestExecute.NAME.equals(type)) {
             JsonObject data2 = envelope.get("data").getAsJsonObject();
             return new RequestExecute(fromJSONValues(data2.get("headers")), fromJSONListRecord(data2.get("list")));
@@ -132,31 +131,6 @@ public class JSON {
         }
         JsonObject o = element.getAsJsonObject();
         return new RecordMap(fromJSONValues(o.get("key")), fromJSONValues(o.get("value")));
-    }
-
-    public QueryOptions fromJSONOptions(String json) {
-        return fromJSONOptions(gsonparser.parse(json));
-    }
-
-    public QueryOptions fromJSONOptions(JsonElement element) {
-        if (element == null || element.equals(JsonNull.INSTANCE)) {
-            return QueryOptions.DEFAULT;
-        } else {
-            JsonObject qo = element.getAsJsonObject();
-            int limit = qo.has("limit") ? qo.get("limit").getAsInt() : Integer.MAX_VALUE;
-            int offset = qo.has("offset") ? qo.get("offset").getAsInt() : 0;
-            String[] orderby;
-            if (qo.has("orderby")) {
-                JsonArray a = qo.get("orderby").getAsJsonArray();
-                orderby = new String[a.size()];
-                for (int i = 0; i < orderby.length; i++) {
-                    orderby[i] = a.get(i).getAsString();
-                }
-            } else {
-                orderby = new String[0];
-            }
-            return new QueryOptions(limit, offset, orderby);
-        }
     }
 
     private Values fromJSONValues(JsonElement element) {
@@ -222,28 +196,6 @@ public class JSON {
         r.add("key", toJSONElement(obj.getKey()));
         r.add("value", toJSONElement(obj.getValue()));
         return r;
-    }
-
-    public JsonElement toJSONElement(QueryOptions obj) {
-        if (QueryOptions.DEFAULT.equals(obj)) {
-            return JsonNull.INSTANCE;
-        } else {
-            JsonObject r = new JsonObject();
-            if (obj.getLimit() < Integer.MAX_VALUE) {
-                r.addProperty("limit", obj.getLimit());
-            }
-            if (obj.getOffset() > 0) {
-                r.addProperty("offset", obj.getOffset());
-            }
-            if (obj.getOrderBy().length > 0) {
-                JsonArray a = new JsonArray();
-                for (String s : obj.getOrderBy()) {
-                    a.add(s);
-                }
-                r.add("orderby", a);
-            }
-            return r;
-        }
     }
 
     public JsonElement toJSONElement(Values obj) {

@@ -36,8 +36,8 @@ public class BasicDataQueryLink implements DataQueryLink {
     }
     
     @Override
-    public List<Record> query(Values headers, QueryOptions options, Record filter) throws DataException {
-        return querylink.query(headers, options, filter);
+    public List<Record> query(Values headers, Record filter) throws DataException {
+        return querylink.query(headers, filter);
     }
 
     @Override

@@ -17,7 +17,6 @@
 
 package com.adr.data.sql;
 
-import com.adr.data.QueryOptions;
 import com.adr.data.record.Record;
 import com.adr.data.record.Values;
 import java.util.ArrayList;
@@ -32,13 +31,13 @@ public abstract class SentenceSelect extends SentenceQRY {
     protected abstract String getViewName(Record keyval);
 
     @Override
-    public CommandSQL build(SQLEngine engine, Record keyval, QueryOptions options) {
+    public CommandSQL build(SQLEngine engine, Record keyval) {
 
         SentenceSelect.SentenceBuilder builder = new SentenceSelect.SentenceBuilder(engine);
         StringBuilder sqlsent = new StringBuilder();
 
         for (String f : keyval.getKey().getNames()) {
-            if (!"_ENTITY".equals(f)) {
+            if (!f.contains("__")) {
                 builder.add(keyval.getKey(), f);
             }
         }
@@ -52,7 +51,7 @@ public abstract class SentenceSelect extends SentenceQRY {
         sqlsent.append(" TABLE_ALIAS");
         sqlsent.append(builder.getSqlfilter());
         
-        SentenceQRY.addQueryOptions(sqlsent, engine, options);     
+        SentenceQRY.addQueryOptions(sqlsent, engine, keyval.getKey());     
 
         // build statement
         return new CommandSQL(sqlsent.toString(), builder.getFieldsList());

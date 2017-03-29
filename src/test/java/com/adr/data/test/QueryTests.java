@@ -19,7 +19,6 @@ package com.adr.data.test;
 import com.adr.data.DataException;
 import com.adr.data.DataQueryLink;
 import com.adr.data.QueryLink;
-import com.adr.data.QueryOptions;
 import com.adr.data.recordmap.Entry;
 import com.adr.data.record.Record;
 import com.adr.data.recordmap.RecordMap;
@@ -50,7 +49,7 @@ public class QueryTests {
 
             List<Record> result1 = link.query(new RecordMap(
                     new Entry[]{
-                        new Entry("_ENTITY", "USERNAME"),
+                        new Entry("__ENTITY", "USERNAME"),
                         new Entry("ID", new VariantString("admin"))},
                     new Entry[]{
                         new Entry("NAME", VariantString.NULL),
@@ -63,10 +62,10 @@ public class QueryTests {
 
             List<Record> result2 = link.query(
                     ValuesMap.EMPTY,
-                    QueryOptions.orderBy("NAME__DESC"),
                     new RecordMap(
                             new Entry[]{
-                                new Entry("_ENTITY", "USERNAME"),
+                                new Entry("__ENTITY", "USERNAME"),
+                                new Entry("__ORDERBY", "NAME__DESC"),
                                 new Entry("ID", VariantString.NULL)},
                             new Entry[]{
                                 new Entry("NAME", VariantString.NULL),
@@ -81,7 +80,7 @@ public class QueryTests {
                     ValuesMap.EMPTY,
                     new RecordMap(
                             new Entry[]{
-                                new Entry("_ENTITY", "USERNAME"),
+                                new Entry("__ENTITY", "USERNAME"),
                                 new Entry("ID", VariantString.NULL)},
                             new Entry[]{
                                 new Entry("NAME", "manager"),
@@ -94,10 +93,10 @@ public class QueryTests {
 
             List<Record> result4 = link.query(
                     ValuesMap.EMPTY,
-                    QueryOptions.orderBy("NAME"),
                     new RecordMap(
                             new Entry[]{
-                                new Entry("_ENTITY", "USERNAME"),
+                                new Entry("__ENTITY", "USERNAME"),
+                                new Entry("__ORDERBY", "NAME"),
                                 new Entry("ID", VariantString.NULL)},
                             new Entry[]{
                                 new Entry("NAME__LIKE", "%a%"),
@@ -108,7 +107,7 @@ public class QueryTests {
             Assert.assertEquals("admin", result4.get(0).getString("NAME"));
             Assert.assertEquals("manager", result4.get(1).getString("NAME"));
 
-            // 4.- [{"_ENTITY":"USERNAME","ID":"admin","CODECARD":null,"VISIBLE":"true"},{"_ENTITY":"USERNAME","ID":"manager","CODECARD":null,"VISIBLE":"true"}]
+            // 4.- [{"__ENTITY":"USERNAME","ID":"admin","CODECARD":null,"VISIBLE":"true"},{"__ENTITY":"USERNAME","ID":"manager","CODECARD":null,"VISIBLE":"true"}]
             secfac.logout();
         }
     }
@@ -123,7 +122,7 @@ public class QueryTests {
             // Insert
             link.execute(new RecordMap(
                     new Entry[]{
-                        new Entry("_ENTITY", "USERNAME"),
+                        new Entry("__ENTITY", "USERNAME"),
                         new Entry("ID", "newid1")},
                     new Entry[]{
                         new Entry("NAME", "newuser"),
@@ -141,7 +140,7 @@ public class QueryTests {
             // Insert
             link.execute(new RecordMap(
                     new Entry[]{
-                        new Entry("_ENTITY", "USERNAME"),
+                        new Entry("__ENTITY", "USERNAME"),
                         new Entry("ID", "newid1")},
                     new Entry[]{
                         new Entry("NAME", "newuser"),
@@ -159,7 +158,7 @@ public class QueryTests {
             // Delete
             link.execute(new RecordMap(
                     new Entry[]{
-                        new Entry("_ENTITY", "USERNAME"),
+                        new Entry("__ENTITY", "USERNAME"),
                         new Entry("ID", "newid1")}));
 
             r = getUser(link, "newid1");
@@ -172,7 +171,7 @@ public class QueryTests {
     private Record getUser(QueryLink link, String id) throws DataException {
         return link.find(new RecordMap(
                 new Entry[]{
-                    new Entry("_ENTITY", "USERNAME"),
+                    new Entry("__ENTITY", "USERNAME"),
                     new Entry("ID", id)},
                 new Entry[]{
                     new Entry("NAME", VariantString.NULL),

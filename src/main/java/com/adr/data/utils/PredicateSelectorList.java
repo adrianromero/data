@@ -40,6 +40,6 @@ public class PredicateSelectorList implements Predicate<Record> {
 
     @Override
     public boolean test(Record t) {
-        return names.contains(t.getKey().get("_ENTITY").asString());
+        return names.contains(t.getKey().get("__ENTITY").asString());
     }   
 }

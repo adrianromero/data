@@ -51,7 +51,7 @@ public abstract class ProcessRequest {
             @Override
             public EnvelopeResponse query(RequestQuery req) {
                 try {
-                    return new ResponseListRecord(link.query(req.getHeaders(), req.getOptions(), req.getFilter()));
+                    return new ResponseListRecord(link.query(req.getHeaders(), req.getFilter()));
                 } catch (DataException ex) {
                     logger.log(Level.SEVERE, "Cannot execute query request.", ex);
                     return new ResponseError(ex);

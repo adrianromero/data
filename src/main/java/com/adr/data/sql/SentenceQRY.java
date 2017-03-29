@@ -18,8 +18,9 @@
 package com.adr.data.sql;
 
 import com.adr.data.DataException;
-import com.adr.data.QueryOptions;
 import com.adr.data.record.Record;
+import com.adr.data.record.Values;
+import com.adr.data.var.Variant;
 import java.sql.Connection;
 import java.util.List;
 
@@ -27,21 +28,23 @@ import java.util.List;
  *
  * @author adrian
  */
-public abstract class SentenceQRY  extends Sentence {
+public abstract class SentenceQRY extends Sentence {
 
-    protected abstract CommandSQL build(SQLEngine engine, Record keyval, QueryOptions options);
+    protected abstract CommandSQL build(SQLEngine engine, Record keyval);
     
     @Override
-    public List<Record> query(Connection c, SQLEngine engine, Record keyval, QueryOptions options) throws DataException {
-        return Sentence.query(c, build(engine, keyval, options), keyval, options);
+    public List<Record> query(Connection c, SQLEngine engine, Record keyval) throws DataException {
+        return Sentence.query(c, build(engine, keyval), keyval);
     }
         
-    public static void addQueryOptions(StringBuilder sqlsent, SQLEngine engine, QueryOptions options) {
-        // order by
-        if (options.getOrderBy().length > 0) {
-            for (int i = 0; i < options.getOrderBy().length; i++) {
+    public static void addQueryOptions(StringBuilder sqlsent, SQLEngine engine, Values values) {
+        
+        // order by       
+        String[] orderby = getOrderBy(values);
+        if (orderby.length > 0) {
+            for (int i = 0; i < orderby.length; i++) {
                 sqlsent.append(i == 0 ? " ORDER BY " : ", ");
-                String s = options.getOrderBy()[i];
+                String s = orderby[i];
                 if (s.endsWith("__ASC")) {
                     sqlsent.append(s.substring(0, s.length() - 5));
                     sqlsent.append(" ASC");
@@ -54,15 +57,19 @@ public abstract class SentenceQRY  extends Sentence {
                 }
             }
         }
+        
         // limit
-        if (options.getLimit() < Integer.MAX_VALUE) {
+        int limit = getLimit(values);
+        if (limit < Integer.MAX_VALUE) {
             sqlsent.append(" LIMIT ");
-            sqlsent.append(options.getLimit());
+            sqlsent.append(limit);
         }
+        
         // offset
-        if (options.getOffset() > 0) {
+        int offset = getOffset(values);
+        if (offset > 0) {
             sqlsent.append(" OFFSET ");
-            sqlsent.append(options.getOffset());
+            sqlsent.append(offset);
         }         
     }
 }
