@@ -20,7 +20,6 @@ package com.adr.data.sql;
 import com.adr.data.DataException;
 import com.adr.data.record.Record;
 import com.adr.data.record.Values;
-import com.adr.data.var.Variant;
 import java.sql.Connection;
 import java.util.List;
 

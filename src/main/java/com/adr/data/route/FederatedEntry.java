@@ -16,33 +16,27 @@
 //     limitations under the License.
 package com.adr.data.route;
 
-import com.adr.data.DataException;
 import com.adr.data.QueryLink;
-import com.adr.data.record.Record;
-import com.adr.data.record.Values;
-import java.util.List;
 
 /**
  *
  * @author adrian
  */
-public class RouteQueryLink implements QueryLink {
+public class FederatedEntry {
 
-    private final RouteSelector selector;
+    private final QueryLink link;    
+    private final String[] keys;
 
-    public RouteQueryLink(RouteSelector selector) {
-        this.selector = selector;
+    public FederatedEntry(QueryLink link, String... keys) {
+        this.link = link;
+        this.keys = keys;
     }
 
-    @Override
-    public List<Record> query(Values headers, Record filter) throws DataException {
-        
-        QueryLink link = selector.getQueryLink(filter);
-        return link.query(headers, filter);
+    public QueryLink getLink() {
+        return link;
     }
 
-    @Override
-    public void close() throws DataException {
-        selector.close();
+    public String[] getKeys() {
+        return keys;
     }
 }
