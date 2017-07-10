@@ -24,7 +24,7 @@ import java.util.List;
  *
  * @author adrian
  */
-public abstract class ReducerCurrentUser implements ReducerQuery {
+public class ReducerJWTCurrentUser implements ReducerQuery {
     
     public final static String AUTHENTICATION_CURRENT = "AUTHENTICATION_CURRENT";
     
@@ -36,19 +36,19 @@ public abstract class ReducerCurrentUser implements ReducerQuery {
             return null;
         }
         
-        Variant token = headers.get("token");        
+        Variant authorization = headers.get("Authorization");        
         
-        if (token.isNull()) {
+        if (authorization.isNull()) {
             return Collections.emptyList(); // anonymous
         } else {
-            JWT jwttoken = JWT.decode(token.asString());
+            JWT jwtauthorizaion = JWT.decode(authorization.asString());
             // Valid login, load user details.
             Record usernamequery = new RecordMap(
                     new Entry[]{
                         new Entry("__ENTITY", "USERNAME_BYNAME"),
                         new Entry("ID", VariantString.NULL)},
                     new Entry[]{
-                        new Entry("NAME", jwttoken.getSubject()),
+                        new Entry("NAME", jwtauthorizaion.getSubject()),
                         new Entry("DISPLAYNAME", VariantString.NULL),
                         new Entry("CODECARD", VariantString.NULL),
                         new Entry("ROLE_ID", VariantString.NULL),

@@ -32,6 +32,19 @@ import java.sql.Connection;
 public class SecureCommands {
 
     public final static Sentence[] QUERIES = new Sentence[]{
+        new SentenceQuery(
+        "ROLE_SUBJECT",
+        "SELECT S.NAME, S.DISPLAYNAME FROM PERMISSION P JOIN SUBJECT S ON P.SUBJECT_ID = S.ID JOIN ROLE R ON P.ROLE_ID = R.ID WHERE R.NAME = ? AND S.NAME = ?", "ROLE__PARAM", "SUBJECT__PARAM"),
+        new SentenceQuery(
+        "USERNAME_BYNAME",
+        "SELECT U.ID, U.NAME, U.DISPLAYNAME, R.NAME AS ROLE, R.DISPLAYNAME AS ROLEDISPLAY, U.PASSWORD "
+        + "FROM USERNAME U JOIN ROLE R ON U.ROLE_ID = R.ID "
+        + "WHERE U.NAME = ? AND U.ACTIVE = TRUE", "NAME"),
+        
+        
+        
+        
+        
         new SentenceView(
         "PERMISSION_SUBJECT",
         "SELECT PERMISSION.ID, PERMISSION.ROLE_ID, SUBJECT.ID AS SUBJECT_ID, SUBJECT.NAME AS SUBJECT_NAME, SUBJECT.CODE AS SUBJECT_CODE "
@@ -43,11 +56,6 @@ public class SecureCommands {
         "SUBJECT_BYROLE",
         "SELECT S.CODE, S.NAME FROM SUBJECT S JOIN PERMISSION P ON S.ID = P.SUBJECT_ID WHERE P.ROLE_ID = ?", "ROLE_ID__PARAM"),
         new SentenceQuery(
-        "USERNAME_BYNAME",
-        "SELECT U.ID, U.NAME, U.DISPLAYNAME, U.PASSWORD, U.CODECARD "
-        + "FROM USERNAME U "
-        + "WHERE U.NAME = ? AND U.ACTIVE = TRUE", "NAME"),
-        new SentenceQuery(
         "USERNAME_BYID",
         "SELECT U.ID, U.NAME, U.DISPLAYNAME, U.CODECARD, U.ROLE_ID, R.NAME AS ROLE, U.VISIBLE, U.IMAGE "
         + "FROM USERNAME U JOIN ROLE R ON U.ROLE_ID = R.ID "
@@ -56,7 +64,7 @@ public class SecureCommands {
         "VIEW_PERMISSION",
         "SELECT PERMISSION.ID, PERMISSION.ROLE_ID, SUBJECT.ID AS SUBJECT_ID, SUBJECT.NAME AS NAME, SUBJECT.CODE AS CODE "
         + "FROM PERMISSION JOIN SUBJECT ON PERMISSION.SUBJECT_ID = SUBJECT.ID "
-        + "WHERE PERMISSION.ROLE_ID = ?", "ROLE_ID")         
+        + "WHERE PERMISSION.ROLE_ID = ?", "ROLE_ID")
     };
 
     public final static Sentence[] COMMANDS = new Sentence[]{
@@ -70,25 +78,27 @@ public class SecureCommands {
         "PASSWORD", "ID"),
         new Sentence() {
             private final SentenceCommand delete = new SentenceCommand(
-                    "VIEW_PERMISSION DELETE", 
+                    "VIEW_PERMISSION DELETE",
                     "DELETE FROM PERMISSION WHERE ID = ?",
                     "ID");
             private final SentenceCommand insert = new SentenceCommand(
-                    "VIEW_PERMISSION INSERT", 
+                    "VIEW_PERMISSION INSERT",
                     "INSERT INTO PERMISSION(ID, ROLE_ID, SUBJECT_ID) VALUES (?, ?, ?)",
                     "ID", "ROLE_ID", "SUBJECT_ID");
+
             @Override
             public String getName() {
-                return "VIEW_PERMISSION";  
+                return "VIEW_PERMISSION";
             }
+
             @Override
-            public void execute(Connection c, SQLEngine engine, Record keyval) throws DataException {        
+            public void execute(Connection c, SQLEngine engine, Record keyval) throws DataException {
                 if (keyval.getValue() == null) {
                     delete.execute(c, engine, keyval);
                 } else {
                     insert.execute(c, engine, keyval);
                 }
-            }        
+            }
         }
     };
 }

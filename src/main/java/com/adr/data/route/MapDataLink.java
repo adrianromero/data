@@ -50,10 +50,4 @@ public class MapDataLink implements DataLink {
             throw new DataException("Empty List to execute.");
         }
     }
-
-    @Override
-    public void close() throws DataException {
-        datalink.close();
-    }
-
 }

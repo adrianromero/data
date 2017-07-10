@@ -61,9 +61,11 @@ public class SecurityTests {
     @Test
     public void testLoginLogout() throws DataException {
 
-        try (DataQueryLink link = SourceLink.createDataQueryLink()) {
+        
+        DataQueryLink link = SourceLink.createDataQueryLink();
+        
+        try {
             SecureFacade secfac = new SecureFacade(link);
-
             Record login = secfac.login("admin", "admin");
 
             // Assert loging success
@@ -95,13 +97,17 @@ public class SecurityTests {
             } catch (SecurityDataException ex) {
                 Assert.assertEquals("No authorization to query resource: USERNAME", ex.getMessage());
             }
+        } finally {
+            SourceLink.destroyDataQueryLink();
         }
     }
     
     @Test
     public void testLoginManager() throws DataException {
         
-        try (DataQueryLink link = SourceLink.createDataQueryLink()) {
+        DataQueryLink link = SourceLink.createDataQueryLink();
+        
+        try {
             SecureFacade secfac = new SecureFacade(link);
 
             Record login = secfac.login("manager", null);       
@@ -113,13 +119,17 @@ public class SecurityTests {
             secfac.logout();
             login = secfac.current();
             Assert.assertNull(login);
+        } finally {
+            SourceLink.destroyDataQueryLink();
         }
     }
     
     @Test
     public void testAnonymous() throws DataException {
         
-        try (DataQueryLink link = SourceLink.createDataQueryLink()) {
+        DataQueryLink link = SourceLink.createDataQueryLink();
+        
+        try {
             SecureFacade secfac = new SecureFacade(link);      
 
             Record login = secfac.current();
@@ -134,13 +144,17 @@ public class SecurityTests {
                     new Entry("NAME", VariantString.NULL),
                     new Entry("DISPLAYNAME", VariantString.NULL)}));
             Assert.assertEquals(3, result1.size());
+        } finally {
+            SourceLink.destroyDataQueryLink();
         }
     }
     
     @Test
     public void testSave() throws DataException {
         
-        try (DataQueryLink link = SourceLink.createDataQueryLink()) {
+        DataQueryLink link = SourceLink.createDataQueryLink();
+        
+        try {
             SecureFacade secfac = new SecureFacade(link);
 
             Record login = secfac.login("manager", null);       
@@ -162,13 +176,17 @@ public class SecurityTests {
             Assert.assertEquals("Manager", login2.getString("DISPLAYNAME"));        
 
             secfac.logout();
+        } finally {
+            SourceLink.destroyDataQueryLink();
         }
     }   
     
     @Test
     public void testSaveFails() throws DataException {
         
-        try (DataQueryLink link = SourceLink.createDataQueryLink()) {
+        DataQueryLink link = SourceLink.createDataQueryLink();
+        
+        try {
             
             SecureFacade secfac = new SecureFacade(link);
 
@@ -187,13 +205,17 @@ public class SecurityTests {
             }
 
             secfac.logout();  
+        } finally {
+            SourceLink.destroyDataQueryLink();
         }
     }      
     
     @Test
     public void testAuthorizations() throws DataException {
         
-        try (DataQueryLink link = SourceLink.createDataQueryLink()) {
+        DataQueryLink link = SourceLink.createDataQueryLink();
+        
+        try {
             SecureFacade secfac = new SecureFacade(link);
 
             Assert.assertTrue(secfac.hasAuthorization("USERNAME_VISIBLE"));
@@ -223,13 +245,17 @@ public class SecurityTests {
             Assert.assertTrue(secfac.hasAuthorization("anyotherresource"));
 
             secfac.logout();
+        } finally {
+            SourceLink.destroyDataQueryLink();
         }
     }
     
     @Test
     public void testQueryAuthorizations() throws DataException {
        
-        try (DataQueryLink link = SourceLink.createDataQueryLink()) {
+        DataQueryLink link = SourceLink.createDataQueryLink();
+        
+        try {
             SecureFacade secfac = new SecureFacade(link);       
 
             List<Record> auth1 = secfac.getCurrentRoleAuthorizations();
@@ -246,13 +272,17 @@ public class SecurityTests {
             secfac.logout();  
             auth1 = secfac.getCurrentRoleAuthorizations();
             Assert.assertEquals(0, auth1.size());
+        } finally {
+            SourceLink.destroyDataQueryLink();
         }
     }
     
     
     @Test
     public void testChangePasswords() throws DataException {
-        try (DataQueryLink link = SourceLink.createDataQueryLink()) {
+        DataQueryLink link = SourceLink.createDataQueryLink();
+        
+        try {
             SecureFacade secfac = new SecureFacade(link);       
 
             Record loginuser = secfac.login("user", null);  
@@ -280,6 +310,8 @@ public class SecurityTests {
             secfac.savePassword("user", "joselito", null);
 
             secfac.logout();  
+        } finally {
+            SourceLink.destroyDataQueryLink();
         }        
     }
     

@@ -21,31 +21,41 @@ import java.util.List;
  * @author adrian
  */
 public abstract class ReducerLogin implements ReducerQuery {
-    
+
     public final static String AUTHENTICATION_REQUEST = "AUTHENTICATION_REQUEST";
     public final static String AUTHENTICATION_RESPONSE = "AUTHENTICATION_RESPONSE";
-    
-    protected abstract Variant createToken(QueryLink link, String user, String password) throws DataException;
-    
+
+    protected abstract Variant createAuthorization(QueryLink link, String user, String password) throws DataException;
+
     @Override
     public List<Record> query(QueryLink link, Values headers, Record filter) throws DataException {
-        
+
         String entity = filter.getKey().get("__ENTITY").asString();
-        if (!AUTHENTICATION_REQUEST.equals(entity)) {          
+        if (!AUTHENTICATION_REQUEST.equals(entity)) {
             return null;
         }
-        
+
         // Filter Authentication requests logins
         String username = filter.getString("NAME");
-        String password = filter.getString("PASSWORD");     
+        String password = filter.getString("PASSWORD");
 
-        Variant token = createToken(link, username, password);
+        Variant authorization = createAuthorization(link, username, password);
 
         Record result = new RecordMap(
-                        new Entry[]{
-                            new Entry("__ENTITY", AUTHENTICATION_RESPONSE)},
-                        new Entry[]{
-                            new Entry("TOKEN", token)});            
-        return Collections.singletonList(result);          
-    }    
+                new Entry[]{
+                    new Entry("__ENTITY", AUTHENTICATION_RESPONSE)},
+                new Entry[]{
+                    new Entry("AUTHORIZATION", authorization)});
+        return Collections.singletonList(result);
+    }
+
+    public static String login(QueryLink link, String user, String password) throws DataException {
+        Record r = link.find(new RecordMap(
+                new Entry[]{
+                    new Entry("__ENTITY", AUTHENTICATION_REQUEST)},
+                new Entry[]{
+                    new Entry("NAME", user),
+                    new Entry("PASSWORD", password)}));
+        return r.getString("AUTHORIZATION");
+    }
 }

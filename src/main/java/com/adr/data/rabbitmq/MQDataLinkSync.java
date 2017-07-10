@@ -39,21 +39,16 @@ import java.util.concurrent.TimeoutException;
  */
 public class MQDataLinkSync implements DataLink {
     
-    private Channel channel = null;
-    private RpcClient client = null;
+    private final RpcClient client;
     
-    public MQDataLinkSync(Connection connection, String exchange, String routingKey, int timeout) throws IOException {
-        channel = connection.createChannel();        
-        client = new RpcClient(channel, exchange, routingKey, timeout);
-    }
-    public MQDataLinkSync(Connection connection, String exchange, int timeout) throws IOException {
-        this(connection, exchange, "", timeout);
-    }
-    public MQDataLinkSync(Connection connection, String exchange, String routingKey) throws IOException {
-        this(connection, exchange, routingKey, 2500);
-    }
-    public MQDataLinkSync(Connection connection, String exchange) throws IOException {
-        this(connection, exchange, "", 2500);
+//        channel = connection.createChannel();
+//        client = new RpcClient(channel, exchange, routingKey, timeout);
+// DO STUFF
+//        client.close();
+//        channel.close();
+    
+    public MQDataLinkSync(RpcClient client) {
+        this.client = client;
     }
 
     @Override
@@ -69,24 +64,5 @@ public class MQDataLinkSync implements DataLink {
         } catch (IOException | ShutdownSignalException | TimeoutException ex) {
             throw new DataException(ex);
         }
-    }
-    
-    @Override
-    public void close() throws DataException {
-        try {
-            if (client != null) {
-                client.close();
-            }
-        } catch (IOException ex) {
-            throw new DataException(ex);
-        } finally {
-            if (channel != null) {
-                try {
-                    channel.close();
-                } catch (IOException | TimeoutException ex) {
-                    throw new DataException(ex);
-                }
-            }
-        }
-    }   
+    }  
 }

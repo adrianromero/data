@@ -27,7 +27,7 @@ import java.util.List;
  *
  * @author adrian
  */
-public interface DataLink extends AutoCloseable {
+public interface DataLink {
     
     public void execute(Values headers, List<Record> l) throws DataException; 
     
@@ -38,7 +38,4 @@ public interface DataLink extends AutoCloseable {
     public default void execute(Values headers, Record... keyval) throws DataException {
         execute(headers, Arrays.asList(keyval));
     }
-    
-    @Override
-    public void close() throws DataException;    
 }

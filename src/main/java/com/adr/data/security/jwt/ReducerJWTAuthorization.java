@@ -13,6 +13,7 @@ import com.adr.data.recordmap.Entry;
 import com.adr.data.recordmap.RecordMap;
 import com.adr.data.recordmap.ValuesMap;
 import com.adr.data.route.ReducerQuery;
+import com.adr.data.security.SecurityDataException;
 import com.adr.data.var.Variant;
 import com.adr.data.var.VariantBoolean;
 import com.adr.data.var.VariantString;
@@ -27,6 +28,9 @@ import java.util.Set;
  */
 public class ReducerJWTAuthorization implements ReducerQuery {
     
+    public final static String ACTION_QUERY = "_QUERY";
+    public final static String ACTION_EXECUTE = "_EXECUTE";
+
     public final static String AUTHORIZATION_REQUEST = "AUTHORIZATION_REQUEST";
     
     private final Set<String> anonymousresources; // resources everybody logged or not has access
@@ -39,33 +43,41 @@ public class ReducerJWTAuthorization implements ReducerQuery {
         
     @Override
     public List<Record> query(QueryLink link, Values headers, Record filter) throws DataException {
-
-        String entity = filter.getKey().get("__ENTITY").asString();
-        if (!AUTHORIZATION_REQUEST.equals(entity)) {          
-            return null;
-        }
-        
-        String resource = filter.getString("RESOURCE");
-        String action = filter.getString("ACTION");
             
-        Variant token = headers.get("token");        
+        Variant authorization = headers.get("Authorization");        
         String role;
-        
-        if (token.isNull()) {
+        String roledisplay;
+        if (authorization.isNull()) {
             role = "ANONYMOUS";
+            roledisplay = "Anonymous";
         } else {
-            JWT jwttoken = JWT.decode(token.asString());         
-            role = jwttoken.getClaim("role").asString();
+            JWT jwtauthorization = JWT.decode(authorization.asString());         
+            role = jwtauthorization.getClaim("role").asString();
+            roledisplay = jwtauthorization.getClaim("roledisplay").asString();
         }
-        Record response = new RecordMap(
-                new ValuesMap(
-                    new Entry("__ENTITY", AUTHORIZATION_REQUEST)),
-                new ValuesMap(
-                    new Entry("RESOURCE", resource),
-                    new Entry("ACTION", action),
-                    new Entry("ROLE", role),
-                    new Entry("RESULT", new VariantBoolean(hasAuthorization(link, role, resource, action)))));
-        return Collections.singletonList(response);            
+        
+        String entity = filter.getKey().get("__ENTITY").asString();
+        if (AUTHORIZATION_REQUEST.equals(entity)) {        
+            // Request authorization
+            String resource = filter.getString("RESOURCE");
+            String action = filter.getString("ACTION");
+            Record response = new RecordMap(
+                    new ValuesMap(
+                        new Entry("__ENTITY", AUTHORIZATION_REQUEST)),
+                    new ValuesMap(
+                        new Entry("RESOURCE", resource),
+                        new Entry("ACTION", action),
+                        new Entry("ROLE", role),
+                        new Entry("RESULT", new VariantBoolean(hasAuthorization(link, role, resource, action)))));
+            return Collections.singletonList(response);             
+        } else {
+            // Normal query
+            if (hasAuthorization(link, role, entity, ACTION_QUERY)) {
+                return null;
+            } else {
+                throw new SecurityDataException("Role " + roledisplay + " does not have authorization to query the resource: " + entity);
+            }            
+        }          
     }
     
     private boolean hasAuthorization(QueryLink link, String role, String resource, String action) throws DataException {
@@ -98,12 +110,12 @@ public class ReducerJWTAuthorization implements ReducerQuery {
         // Valid login, load user details.
         Record subjectsquery = new RecordMap(
                 new Entry[]{
-                    new Entry("__ENTITY", "SUBJECT_BYROLE")},
-                new Entry[]{
+                    new Entry("__ENTITY", "ROLE_SUBJECT"),
                     new Entry("ROLE__PARAM", role),
-                    new Entry("CODE__PARAM", resource),
-                    new Entry("HASPERMISSION", VariantBoolean.NULL),
-                    new Entry("NAME", VariantString.NULL)});
+                    new Entry("SUBJECT__PARAM", resource)},
+                new Entry[]{
+                    new Entry("NAME", VariantString.NULL),
+                    new Entry("DISPLAYNAME", VariantString.NULL)});
         return link.find(subjectsquery) != null;    
     }    
 }

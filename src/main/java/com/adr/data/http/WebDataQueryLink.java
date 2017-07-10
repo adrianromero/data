@@ -55,10 +55,4 @@ public class WebDataQueryLink implements DataQueryLink {
     public void execute(Values headers, List<Record> l) throws DataException {
         datalink.execute(headers, l);
     }
-
-    @Override
-    public void close() throws DataException {
-        querylink.close();
-        datalink.close();
-    }
 }

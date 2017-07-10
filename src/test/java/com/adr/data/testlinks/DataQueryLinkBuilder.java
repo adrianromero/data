@@ -24,5 +24,6 @@ import com.adr.data.DataQueryLink;
  */
 public interface DataQueryLinkBuilder {
     
-    public DataQueryLink createDataQueryLink();   
+    public DataQueryLink create();   
+    public void destroy();
 }

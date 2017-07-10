@@ -53,9 +53,4 @@ public class AnyMatchDataLink implements DataLink {
             throw new DataException("Not matched condition");
         }
     }
-
-    @Override
-    public void close() throws DataException {
-        datalink.close();
-    }
 }

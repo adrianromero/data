@@ -84,8 +84,4 @@ public class WebQueryLink implements QueryLink {
             throw new DataException(ex);
         }
     }
-
-    @Override
-    public void close() throws DataException {
-    }
 }

@@ -65,9 +65,4 @@ public class CachedQueryLink implements QueryLink {
             return link.query(headers, filter);
         }
     }
-
-    @Override
-    public void close() throws DataException {
-        link.close();
-    }
 }

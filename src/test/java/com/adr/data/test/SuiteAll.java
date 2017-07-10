@@ -29,15 +29,15 @@ import org.junit.runners.Suite;
     GSONTests.class,
     // Cache suites
     // Database suites
-    SuiteH2.class, 
+//    SuiteH2.class, 
     SuiteMYSQL.class, 
     SuitePostgreSQL.class,
     
-    // HTTP suite
-    SuiteHTTP.class,
-    
-    // MQ Sync suite
-    SuiteMQSync.class
+//    // HTTP suite
+//    SuiteHTTP.class,
+//    
+//    // MQ Sync suite
+//    SuiteMQSync.class
     
 })
 

@@ -27,7 +27,9 @@ import org.junit.runners.Suite;
  * @author adrian
  */
 @RunWith(Suite.class)
-@Suite.SuiteClasses({QueryTests.class, SecurityTests.class})
+@Suite.SuiteClasses({
+    QueryTests.class /*, 
+    SecurityTests.class*/})
 public class SuitePostgreSQL {
 
     @BeforeClass

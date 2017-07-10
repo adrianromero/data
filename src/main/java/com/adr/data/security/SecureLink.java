@@ -251,15 +251,6 @@ public class SecureLink implements DataQueryLink {
         datalink.execute(headers, l);
     }
 
-    @Override
-    public void close() throws DataException {
-        try {
-            querylink.close();
-        } finally {
-            datalink.close();
-        }
-    }
-
     public static class UserSession {
 
         private Record user = null;

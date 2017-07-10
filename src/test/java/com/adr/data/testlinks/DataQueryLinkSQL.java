@@ -16,16 +16,23 @@
 //     limitations under the License.
 package com.adr.data.testlinks;
 
+import com.adr.data.BasicDataQueryLink;
 import com.adr.data.DataLink;
 import com.adr.data.DataQueryLink;
 import com.adr.data.QueryLink;
-import com.adr.data.security.SecureLink;
+import com.adr.data.route.ReducerQueryIdentity;
+import com.adr.data.route.ReducerQueryLink;
 import com.adr.data.sql.SQLQueryLink;
 import com.adr.data.security.SecureCommands;
+import com.adr.data.security.jwt.ReducerJWTAuthorization;
+import com.adr.data.security.jwt.ReducerJWTCurrentUser;
+import com.adr.data.security.jwt.ReducerJWTLogin;
+import com.adr.data.security.jwt.ReducerJWTVerifyAuthorization;
 import com.adr.data.sql.SQLDataLink;
 import com.adr.data.sql.SQLEngine;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.logging.Level;
@@ -58,7 +65,13 @@ public class DataQueryLinkSQL implements DataQueryLinkBuilder {
     }     
     
     public QueryLink createQueryLink() {
-        return new SQLQueryLink(cpds, engine, SecureCommands.QUERIES);
+        return new ReducerQueryLink(
+                new SQLQueryLink(cpds, engine, SecureCommands.QUERIES),
+                new ReducerJWTVerifyAuthorization("secret".getBytes(StandardCharsets.UTF_8)),
+                new ReducerJWTLogin("secret".getBytes(StandardCharsets.UTF_8), 5000),
+                new ReducerJWTCurrentUser(),
+                new ReducerJWTAuthorization(new HashSet<>(Arrays.asList("USERNAME_VISIBLE")), new HashSet<>(Arrays.asList("authenticatedres"))),
+                ReducerQueryIdentity.INSTANCE);
     }
     
     public DataLink createDataLink() {
@@ -66,11 +79,11 @@ public class DataQueryLinkSQL implements DataQueryLinkBuilder {
     }
 
     @Override
-    public DataQueryLink createDataQueryLink() {
-        return new SecureLink(
-            createQueryLink(),
-            createDataLink(),
-            new HashSet<>(Arrays.asList("USERNAME_VISIBLE")), // anonymous res
-            new HashSet<>(Arrays.asList("authenticatedres"))); // authenticated res
+    public DataQueryLink create() {
+        return new BasicDataQueryLink(createQueryLink(),  createDataLink());
+    }
+
+    @Override
+    public void destroy() {
     }
 }

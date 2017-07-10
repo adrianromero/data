@@ -39,21 +39,16 @@ import java.util.concurrent.TimeoutException;
  */
 public class MQQueryLink implements QueryLink {
     
-    private Channel channel = null;
-    private RpcClient client = null;
+    private final RpcClient client;
     
-    public MQQueryLink(Connection connection, String exchange, String routingKey, int timeout) throws IOException {
-        channel = connection.createChannel();
-        client = new RpcClient(channel, exchange, routingKey, timeout);
-    }
-    public MQQueryLink(Connection connection, String exchange, int timeout) throws IOException {
-        this(connection, exchange, "", timeout);
-    }
-    public MQQueryLink(Connection connection,  String exchange, String routingKey) throws IOException {
-        this(connection, exchange, routingKey, 2500);
-    }
-    public MQQueryLink(Connection connection, String exchange) throws IOException {
-        this(connection, exchange, "", 2500);
+//        channel = connection.createChannel();
+//        client = new RpcClient(channel, exchange, routingKey, timeout);
+// DO STUFF
+//        client.close();
+//        channel.close();
+    
+    public MQQueryLink(RpcClient client) {
+        this.client = client;
     }
 
     @Override
@@ -68,25 +63,6 @@ public class MQQueryLink implements QueryLink {
             throw new UnsupportedOperationException(ex); // Never happens
         } catch (IOException | ShutdownSignalException | TimeoutException ex) {
             throw new DataException(ex);
-        }
-    }
-    
-    @Override
-    public void close() throws DataException {
-        try {
-            if (client != null) {
-                client.close();
-            }
-        } catch (IOException ex) {
-            throw new DataException(ex);
-        } finally {
-            if (channel != null) {
-                try {
-                    channel.close();
-                } catch (IOException | TimeoutException ex) {
-                    throw new DataException(ex);
-                }
-            }
         }
     }
 }

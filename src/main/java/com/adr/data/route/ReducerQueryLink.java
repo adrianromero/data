@@ -36,10 +36,4 @@ public class ReducerQueryLink implements QueryLink {
         }
         throw new DataException("Query cannot be found.");
     }
-
-    @Override
-    public void close() throws DataException {
-        link.close();
-    }
-    
 }

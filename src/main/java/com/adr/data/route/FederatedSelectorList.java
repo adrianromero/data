@@ -60,11 +60,4 @@ public class FederatedSelectorList implements FederatedSelector {
             return link;
         }
     }
-
-    @Override
-    public void close() throws DataException {
-        for(FederatedEntry entry: entries) {
-            entry.getLink().close();
-        }
-    }  
 }

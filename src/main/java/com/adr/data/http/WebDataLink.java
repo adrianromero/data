@@ -83,8 +83,4 @@ public class WebDataLink implements DataLink {
             throw new DataException(ex);
         }
     }
-
-    @Override
-    public void close() throws DataException {
-    }
 }

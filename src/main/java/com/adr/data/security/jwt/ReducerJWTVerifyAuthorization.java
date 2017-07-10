@@ -22,11 +22,11 @@ import java.util.List;
  *
  * @author adrian
  */
-public abstract class ReducerJWTVerifyToken implements ReducerQuery {
+public class ReducerJWTVerifyAuthorization implements ReducerQuery {
     
     private final JWTVerifier verifier;
     
-    public ReducerJWTVerifyToken(byte[] secret) {
+    public ReducerJWTVerifyAuthorization(byte[] secret) {
         Algorithm algorithm = Algorithm.HMAC256(secret);
         verifier = JWT.require(algorithm).build();
     }
@@ -35,14 +35,14 @@ public abstract class ReducerJWTVerifyToken implements ReducerQuery {
     @Override
     public List<Record> query(QueryLink link, Values headers, Record filter) throws DataException {
 
-        Variant token = headers.get("token");        
+        Variant authorization = headers.get("Authorization");        
         
-        if (token.isNull()) {
+        if (authorization.isNull()) {
             return null; // anonymous;
         }
          
         try {
-            verifier.verify(token.asString());
+            verifier.verify(authorization.asString());
         } catch (JWTVerificationException exception) {
             throw new SecurityDataException(exception);
         } 

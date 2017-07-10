@@ -65,8 +65,4 @@ public class SQLQueryLink implements QueryLink {
             throw new DataException(ex);
         }
     }
-
-    @Override
-    public void close() throws DataException {
-    }
 }

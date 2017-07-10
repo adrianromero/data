@@ -26,7 +26,7 @@ import java.util.List;
  *
  * @author adrian
  */
-public interface QueryLink extends AutoCloseable {
+public interface QueryLink {
     
     public List<Record> query(Values headers, Record filter) throws DataException;   
     
@@ -42,7 +42,4 @@ public interface QueryLink extends AutoCloseable {
     public default Record find(Record filter) throws DataException {
         return find(ValuesMap.EMPTY, filter);
     } 
- 
-    @Override
-    public void close() throws DataException;
 }

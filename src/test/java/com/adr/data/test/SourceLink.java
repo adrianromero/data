@@ -33,6 +33,10 @@ public class SourceLink {
     }
     
     public static DataQueryLink createDataQueryLink() {
-        return builder.createDataQueryLink();
+        return builder.create();
+    }
+    
+    public static void destroyDataQueryLink() {
+        builder.destroy();
     }
 }

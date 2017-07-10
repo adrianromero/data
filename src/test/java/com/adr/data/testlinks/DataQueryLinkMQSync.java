@@ -18,10 +18,13 @@ package com.adr.data.testlinks;
 
 import com.adr.data.BasicDataQueryLink;
 import com.adr.data.DataQueryLink;
+import com.adr.data.rabbitmq.MQDataLink;
 import com.adr.data.rabbitmq.MQDataLinkSync;
 import com.adr.data.rabbitmq.MQQueryLink;
+import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.ConnectionFactory;
+import com.rabbitmq.client.RpcClient;
 import java.io.IOException;
 import java.util.concurrent.TimeoutException;
 import java.util.logging.Level;
@@ -34,41 +37,58 @@ import java.util.logging.Logger;
 public class DataQueryLinkMQSync implements DataQueryLinkBuilder {
     
     private static final Logger LOG = Logger.getLogger(DataQueryLinkMQSync.class.getName());  
-    
-    private final String host;
+
     private final String queryexchange;
     private final String dataexchange;
-    private Connection connection = null;
+    private final Connection connection;
+
+    private Channel channelquery = null;
+    private RpcClient clientquery = null;
+    private Channel channeldata = null;
+    private RpcClient clientdata = null;
         
     public DataQueryLinkMQSync(String host, String queryexchange, String dataexchange) {
-        this.host = host;
+
         this.queryexchange = queryexchange;
         this.dataexchange = dataexchange;
+
+        try {
+            ConnectionFactory factory = new ConnectionFactory();
+            factory.setHost(host);
+            connection = factory.newConnection();
+        } catch (IOException | TimeoutException ex) {
+            LOG.log(Level.SEVERE, null, ex);
+            throw new RuntimeException(ex);
+        }        
     }
 
     @Override
-    public DataQueryLink createDataQueryLink() {
+    public DataQueryLink create() {
         try {
+            channelquery = connection.createChannel();
+            clientquery = new RpcClient(channelquery, queryexchange, "", 2500);
+            channeldata = connection.createChannel();
+            clientdata = new RpcClient(channeldata, dataexchange, "", 2500);
+
             return new BasicDataQueryLink(
-                new MQQueryLink(getConnection(), queryexchange),
-                new MQDataLinkSync(getConnection(), dataexchange));
+                    new MQQueryLink(clientquery),
+                    new MQDataLink(clientdata));
         } catch (IOException ex) {
             LOG.log(Level.SEVERE, null, ex);
             throw new RuntimeException(ex);
         }
     }
     
-    public Connection getConnection() {
-        if (connection == null) {
-            try {
-                ConnectionFactory factory = new ConnectionFactory();
-                factory.setHost(host);            
-                connection = factory.newConnection();
-            } catch (IOException | TimeoutException ex) {
-                LOG.log(Level.SEVERE, null, ex);
-                throw new RuntimeException(ex);
-            }
+    @Override
+    public void destroy() {
+        try {
+            clientdata.close();
+            channeldata.close();
+            clientquery.close();
+            channelquery.close();
+        } catch (IOException | TimeoutException ex) {
+            LOG.log(Level.SEVERE, null, ex);
+            throw new RuntimeException(ex);
         }
-        return connection;
     }    
 }

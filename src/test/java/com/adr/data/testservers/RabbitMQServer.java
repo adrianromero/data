@@ -60,7 +60,7 @@ public class RabbitMQServer {
     public void start() {
        try {
             DataQueryLinkSQL dql = new DataQueryLinkSQL(sqlname);
-            DataQueryLink link = dql.createDataQueryLink();
+            DataQueryLink link = dql.create();
             
             connection = connect(host);
             

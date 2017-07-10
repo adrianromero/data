@@ -32,7 +32,11 @@ public class DataQueryLinkHTTP implements DataQueryLinkBuilder {
     }
 
     @Override
-    public DataQueryLink createDataQueryLink() {
+    public DataQueryLink create() {
         return new WebDataQueryLink(url);
+    }
+
+    @Override
+    public void destroy() {
     }
 }

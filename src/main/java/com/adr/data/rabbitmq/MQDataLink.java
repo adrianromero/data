@@ -23,36 +23,28 @@ import com.adr.data.record.Record;
 import com.adr.data.record.Values;
 import com.adr.data.utils.JSON;
 import com.adr.data.utils.RequestExecute;
-import com.rabbitmq.client.Channel;
-import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.RpcClient;
 import com.rabbitmq.client.ShutdownSignalException;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.List;
-import java.util.concurrent.TimeoutException;
 
 /**
  *
  * @author adrian
  */
 public class MQDataLink implements DataLink {
+
+    private final RpcClient client;
     
-    private Channel channel = null;
-    private RpcClient client = null;
+//        channel = connection.createChannel();
+//        client = new RpcClient(channel, exchange, routingKey, timeout);
+// DO STUFF
+//        client.close();
+//        channel.close();
     
-    public MQDataLink(Connection connection, String exchange, String routingKey, int timeout) throws IOException {
-        channel = connection.createChannel();
-        client = new RpcClient(channel, exchange, routingKey, timeout);
-    }
-    public MQDataLink(Connection connection, String exchange, int timeout) throws IOException {
-        this(connection, exchange, "", timeout);
-    }
-    public MQDataLink(Connection connection, String exchange, String routingKey) throws IOException {
-        this(connection, exchange, routingKey, 2500);
-    }
-    public MQDataLink(Connection connection, String exchange) throws IOException {
-        this(connection, exchange, "", 2500);
+    public MQDataLink(RpcClient client) {
+        this.client = client;
     }
 
     @Override
@@ -65,25 +57,6 @@ public class MQDataLink implements DataLink {
             throw new UnsupportedOperationException(ex); // Never happens
         } catch (IOException | ShutdownSignalException ex) {
             throw new DataException(ex);
-        }
-    }
-    
-    @Override
-    public void close() throws DataException {
-        try {
-            if (client != null) {
-                client.close();
-            }
-        } catch (IOException ex) {
-            throw new DataException(ex);
-        } finally {
-            if (channel != null) {
-                try {
-                    channel.close();
-                } catch (IOException | TimeoutException ex) {
-                    throw new DataException(ex);
-                }
-            }
         }
     }
 }

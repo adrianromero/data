@@ -45,22 +45,4 @@ public class FailOverQueryLink implements QueryLink {
         }
         throw new DataException("Failed all QueryLinks");
     }
-
-    @Override
-    public void close() throws DataException {
-        DataException t = null;
-        for(QueryLink q : querylinks) {
-            try {
-                q.close();
-            } catch (DataException e) {
-                if (t == null) {
-                    t = new DataException("Exception closing Query Links.");
-                }
-                t.addSuppressed(e);
-            }
-        }  
-        if (t != null) {
-            throw t;
-        }
-    }
 }

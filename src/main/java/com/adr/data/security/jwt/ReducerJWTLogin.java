@@ -39,7 +39,7 @@ public class ReducerJWTLogin extends ReducerLogin {
     }
 
     @Override
-    protected Variant createToken(QueryLink link, String username, String password) throws DataException {
+    protected Variant createAuthorization(QueryLink link, String username, String password) throws DataException {
         Record userauthenticationquery = new RecordMap(
                 new Entry[]{
                     new Entry("__ENTITY", "USERNAME_BYNAME")},
@@ -47,25 +47,28 @@ public class ReducerJWTLogin extends ReducerLogin {
                     new Entry("NAME", username),
                     new Entry("DISPLAYNAME", VariantString.NULL),
                     new Entry("ROLE", VariantString.NULL),                    
+                    new Entry("ROLEDISPLAY", VariantString.NULL),                    
                     new Entry("PASSWORD", VariantString.NULL)});
 
-        Record userauthentication = link.find(userauthenticationquery);        
+        Record userauthentication = link.find(userauthenticationquery);  
+        
         if (userauthentication == null || !CryptUtils.validatePassword(password, userauthentication.getString("PASSWORD"))) {
             // Invalid login
             throw new SecurityDataException ("Invalid user or password.");
         } else {        
             try {
                 long now = new Date().getTime();
-                String token = JWT.create()
+                String authorization = JWT.create()
                         .withIssuer("datajwt")
                         .withSubject(username)
                         .withClaim("displayname", userauthentication.getString("DISPLAYNAME"))
                         .withClaim("role",  userauthentication.getString("ROLE"))
+                        .withClaim("roledisplay",  userauthentication.getString("ROLEDISPLAY"))
                         .withIssuedAt(new Date(now))
                         .withExpiresAt(new Date(now + validtime))
                         .sign(algorithm);
 
-                return new VariantString(token);
+                return new VariantString(authorization);
             } catch (JWTCreationException exception) {
                 throw new SecurityDataException(exception);
             }

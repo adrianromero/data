@@ -46,22 +46,4 @@ public class FailOverDataLink implements DataLink {
         }
         throw new DataException("Failed all DataLinks");
     }
-
-    @Override
-    public void close() throws DataException {
-        DataException t = null;
-        for(DataLink d : datalinks) {
-            try {
-                d.close();
-            } catch (DataException e) {
-                if (t == null) {
-                    t = new DataException();
-                }
-                t.addSuppressed(e);
-            }
-        }  
-        if (t != null) {
-            throw t;
-        }
-    }    
 }

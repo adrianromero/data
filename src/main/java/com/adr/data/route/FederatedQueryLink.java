@@ -40,9 +40,4 @@ public class FederatedQueryLink implements QueryLink {
         QueryLink link = selector.getQueryLink(filter);
         return link.query(headers, filter);
     }
-
-    @Override
-    public void close() throws DataException {
-        selector.close();
-    }
 }

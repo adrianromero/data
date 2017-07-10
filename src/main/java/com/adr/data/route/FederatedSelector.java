@@ -27,5 +27,4 @@ import com.adr.data.record.Record;
 public interface FederatedSelector {
     
     public QueryLink getQueryLink(Record filter) throws DataException ;
-    public void close() throws DataException;
 }
