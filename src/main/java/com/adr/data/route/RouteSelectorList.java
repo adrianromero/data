@@ -60,11 +60,4 @@ public class RouteSelectorList implements RouteSelector {
             return link;
         }
     }
-
-    @Override
-    public void close() throws DataException {
-        for(RouteEntry entry: entries) {
-            entry.getLink().close();
-        }
-    }  
 }
