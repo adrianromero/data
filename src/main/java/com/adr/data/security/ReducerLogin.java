@@ -25,6 +25,9 @@ public abstract class ReducerLogin implements ReducerQuery {
     public final static String AUTHENTICATION_REQUEST = "AUTHENTICATION_REQUEST";
     public final static String AUTHENTICATION_RESPONSE = "AUTHENTICATION_RESPONSE";
 
+    public final static String AUTHENTICATION_CURRENT = "AUTHENTICATION_CURRENT";
+    public final static String AUTHORIZATION_REQUEST = "AUTHORIZATION_REQUEST";
+
     protected abstract Variant createAuthorization(QueryLink link, String user, String password) throws DataException;
 
     @Override
@@ -57,5 +60,26 @@ public abstract class ReducerLogin implements ReducerQuery {
                     new Entry("NAME", user),
                     new Entry("PASSWORD", password)}));
         return r.getString("AUTHORIZATION");
+    }
+
+    public static Record current(QueryLink link, Values headers) throws DataException {
+        return link.find(
+                headers,
+                new RecordMap(
+                        new Entry[]{
+                            new Entry("__ENTITY", AUTHENTICATION_CURRENT)},
+                        new Entry[0]));
+    }
+
+    public static boolean hasAuthorization(QueryLink link, Values headers, String resource) throws DataException {
+        Record result = link.find(
+                headers,
+                new RecordMap(
+                        new Entry[]{
+                            new Entry("__ENTITY", AUTHORIZATION_REQUEST)},
+                        new Entry[]{
+                            new Entry("RESOURCE", resource)}));
+
+        return result.getBoolean("RESULT");
     }
 }

@@ -1,5 +1,5 @@
 //     Data Access is a Java library to store data
-//     Copyright (C) 2016 Adrián Romero Corchado.
+//     Copyright (C) 2016-2017 Adrián Romero Corchado.
 //
 //     This file is part of Data Access
 //
@@ -24,8 +24,6 @@ import com.adr.data.record.Values;
 import com.adr.data.utils.EnvelopeResponse;
 import com.adr.data.utils.JSON;
 import com.adr.data.utils.RequestQuery;
-import com.rabbitmq.client.Channel;
-import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.RpcClient;
 import com.rabbitmq.client.ShutdownSignalException;
 import java.io.IOException;

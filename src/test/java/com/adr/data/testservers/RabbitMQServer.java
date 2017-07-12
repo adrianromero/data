@@ -1,5 +1,5 @@
 //     Data Access is a Java library to store data
-//     Copyright (C) 2016 Adrián Romero Corchado.
+//     Copyright (C) 2016-2017 Adrián Romero Corchado.
 //
 //     This file is part of Data Access
 //
@@ -20,6 +20,7 @@ package com.adr.data.testservers;
 import com.adr.data.DataQueryLink;
 import com.adr.data.rabbitmq.MQDataLinkServer;
 import com.adr.data.rabbitmq.MQQueryLinkServer;
+import com.adr.data.testlinks.DataQueryLinkBuilder;
 import com.adr.data.testlinks.DataQueryLinkSQL;
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
@@ -42,7 +43,7 @@ public class RabbitMQServer {
     private final String host;
     private final String queryqueue;
     private final String dataqueue;    
-    private final String sqlname;
+    private final DataQueryLinkBuilder builder;
     
     private Connection connection;
     private Channel querychannel;
@@ -54,13 +55,12 @@ public class RabbitMQServer {
         this.host = host;
         this.queryqueue = queryqueue;
         this.dataqueue = dataqueue;
-        this.sqlname = sqlname;
+        this.builder = new DataQueryLinkSQL(sqlname);
     }    
     
     public void start() {
        try {
-            DataQueryLinkSQL dql = new DataQueryLinkSQL(sqlname);
-            DataQueryLink link = dql.create();
+            DataQueryLink link = builder.create();
             
             connection = connect(host);
             
@@ -105,6 +105,7 @@ public class RabbitMQServer {
         close(querychannel);
         close(datachannel);
         connection.close();
+        builder.destroy();
     }
 
     private static void close(RpcServer resource) {

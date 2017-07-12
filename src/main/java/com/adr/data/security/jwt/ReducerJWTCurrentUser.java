@@ -12,9 +12,8 @@ import com.adr.data.record.Values;
 import com.adr.data.recordmap.Entry;
 import com.adr.data.recordmap.RecordMap;
 import com.adr.data.route.ReducerQuery;
+import com.adr.data.security.ReducerLogin;
 import com.adr.data.var.Variant;
-import com.adr.data.var.VariantBoolean;
-import com.adr.data.var.VariantBytes;
 import com.adr.data.var.VariantString;
 import com.auth0.jwt.JWT;
 import java.util.Collections;
@@ -25,14 +24,13 @@ import java.util.List;
  * @author adrian
  */
 public class ReducerJWTCurrentUser implements ReducerQuery {
-    
-    public final static String AUTHENTICATION_CURRENT = "AUTHENTICATION_CURRENT";
+
     
     @Override
     public List<Record> query(QueryLink link, Values headers, Record filter) throws DataException {
         
         String entity = filter.getKey().get("__ENTITY").asString();
-        if (!AUTHENTICATION_CURRENT.equals(entity)) {          
+        if (!ReducerLogin.AUTHENTICATION_CURRENT.equals(entity)) {          
             return null;
         }
         
@@ -50,13 +48,9 @@ public class ReducerJWTCurrentUser implements ReducerQuery {
                     new Entry[]{
                         new Entry("NAME", jwtauthorizaion.getSubject()),
                         new Entry("DISPLAYNAME", VariantString.NULL),
-                        new Entry("CODECARD", VariantString.NULL),
-                        new Entry("ROLE_ID", VariantString.NULL),
                         new Entry("ROLE", VariantString.NULL),
-                        new Entry("VISIBLE", VariantBoolean.NULL),
-                        new Entry("IMAGE", VariantBytes.NULL)});
+                        new Entry("ROLEDISPLAY", VariantString.NULL)});
             return link.query(usernamequery);
         }
     }
- 
 }

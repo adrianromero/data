@@ -29,7 +29,7 @@ import org.junit.runners.Suite;
 @RunWith(Suite.class)
 @Suite.SuiteClasses({
     QueryTests.class, 
-//    SecurityTests.class
+    SecurityTests.class
 })
 public class SuiteMYSQL {
 

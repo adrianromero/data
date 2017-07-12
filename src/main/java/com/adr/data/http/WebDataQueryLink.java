@@ -1,5 +1,5 @@
 //     Data Access is a Java library to store data
-//     Copyright (C) 2016 Adrián Romero Corchado.
+//     Copyright (C) 2016-2017 Adrián Romero Corchado.
 //
 //     This file is part of Data Access
 //
@@ -20,11 +20,7 @@ import com.adr.data.DataException;
 import com.adr.data.DataQueryLink;
 import com.adr.data.record.Record;
 import com.adr.data.record.Values;
-import java.net.CookieHandler;
-import java.net.CookieManager;
-import java.net.CookiePolicy;
 import java.util.List;
-import okhttp3.JavaNetCookieJar;
 import okhttp3.OkHttpClient;
 
 /**
@@ -37,10 +33,7 @@ public class WebDataQueryLink implements DataQueryLink {
     private final WebDataLink datalink;
 
     public WebDataQueryLink(String baseurl) {
-        CookieHandler cookieHandler = new CookieManager(null, CookiePolicy.ACCEPT_ALL);
-        OkHttpClient client = new OkHttpClient.Builder()
-            .cookieJar(new JavaNetCookieJar(cookieHandler))
-            .build();
+        OkHttpClient client = new OkHttpClient.Builder().build();
         
         querylink = new WebQueryLink(baseurl, "query", client);
         datalink = new WebDataLink(baseurl, "execute", client);

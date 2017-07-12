@@ -19,7 +19,6 @@ package com.adr.data.testlinks;
 import com.adr.data.BasicDataQueryLink;
 import com.adr.data.DataQueryLink;
 import com.adr.data.rabbitmq.MQDataLink;
-import com.adr.data.rabbitmq.MQDataLinkSync;
 import com.adr.data.rabbitmq.MQQueryLink;
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;

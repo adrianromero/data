@@ -20,17 +20,14 @@ import com.adr.data.DataException;
 import com.adr.data.DataQueryLink;
 import com.adr.data.recordmap.Entry;
 import com.adr.data.record.Record;
+import com.adr.data.record.Values;
 import com.adr.data.recordmap.RecordMap;
-import com.adr.data.security.SecureFacade;
 import com.adr.data.security.SecurityDataException;
-import com.adr.data.recordmap.Records;
+import com.adr.data.recordmap.ValuesMap;
+import com.adr.data.security.ReducerLogin;
 import com.adr.data.var.VariantString;
 import java.util.List;
-import org.junit.After;
-import org.junit.AfterClass;
 import org.junit.Assert;
-import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 
 /**
@@ -39,176 +36,95 @@ import org.junit.Test;
  */
 public class SecurityTests {
 
-    public SecurityTests() {
-    }
-
-    @BeforeClass
-    public static void setUpClass() {
-    }
-
-    @AfterClass
-    public static void tearDownClass() {
-    }
-
-    @Before
-    public void setUp() {
-    }
-
-    @After
-    public void tearDown() {
-    }
-
     @Test
     public void testLoginLogout() throws DataException {
 
-        
         DataQueryLink link = SourceLink.createDataQueryLink();
-        
+
         try {
-            SecureFacade secfac = new SecureFacade(link);
-            Record login = secfac.login("admin", "admin");
+            // Login
+            String authorization = ReducerLogin.login(link, "admin", "admin");
+            Values header = new ValuesMap(new Entry("Authorization", authorization));
+
+            Record current = ReducerLogin.current(link, header);
 
             // Assert loging success
-            Assert.assertEquals("Administrator", login.getString("DISPLAYNAME"));
-            Assert.assertEquals("System", login.getString("ROLE"));
+            Assert.assertEquals("Administrator", current.getString("DISPLAYNAME"));
+            Assert.assertEquals("ADMIN", current.getString("ROLE"));
 
             // this query succeds because admin has permissions to all resources
-            List<Record> result1 = link.query(new RecordMap(
-                new Entry[]{
-                    new Entry("__ENTITY", "USERNAME"),
-                    new Entry("ID", new VariantString("admin"))},
-                new Entry[]{
-                    new Entry("NAME", VariantString.NULL),
-                    new Entry("CODECARD", VariantString.NULL)}));
+            List<Record> result1 = link.query(
+                    header, new RecordMap(
+                            new Entry[]{
+                                new Entry("__ENTITY", "USERNAME"),
+                                new Entry("ID", new VariantString("admin"))},
+                            new Entry[]{
+                                new Entry("NAME", VariantString.NULL),
+                                new Entry("CODECARD", VariantString.NULL)}));
             Assert.assertEquals(1, result1.size());
-
-            secfac.logout();
 
             try {
                 // This query fails because not logged users 
-                link.query(new RecordMap(
-                    new Entry[]{
-                        new Entry("__ENTITY", "USERNAME"),
-                        new Entry("ID", new VariantString("admin"))},
-                    new Entry[]{
-                        new Entry("NAME", VariantString.NULL),
-                        new Entry("CODECARD", VariantString.NULL)}));
+                link.query(
+                        ValuesMap.EMPTY,
+                        new RecordMap(
+                                new Entry[]{
+                                    new Entry("__ENTITY", "USERNAME"),
+                                    new Entry("ID", new VariantString("admin"))},
+                                new Entry[]{
+                                    new Entry("NAME", VariantString.NULL),
+                                    new Entry("CODECARD", VariantString.NULL)}));
                 Assert.fail();
             } catch (SecurityDataException ex) {
-                Assert.assertEquals("No authorization to query resource: USERNAME", ex.getMessage());
+                Assert.assertEquals("Role Anonymous does not have authorization to query the resource: USERNAME", ex.getMessage());
             }
         } finally {
             SourceLink.destroyDataQueryLink();
         }
     }
-    
+
     @Test
     public void testLoginManager() throws DataException {
-        
+
         DataQueryLink link = SourceLink.createDataQueryLink();
-        
+
         try {
-            SecureFacade secfac = new SecureFacade(link);
+            // Login
+            String authorization = ReducerLogin.login(link, "manager", "");
+            Values header = new ValuesMap(new Entry("Authorization", authorization));
 
-            Record login = secfac.login("manager", null);       
-            Assert.assertEquals("Manager", login.getString("DISPLAYNAME"));
+            Record current = ReducerLogin.current(link, header);
+            Assert.assertEquals("Manager", current.getString("DISPLAYNAME"));
 
-            login = secfac.current();        
-            Assert.assertEquals("Manager", login.getString("DISPLAYNAME"));
-
-            secfac.logout();
-            login = secfac.current();
-            Assert.assertNull(login);
+            current = ReducerLogin.current(link, ValuesMap.EMPTY);
+            Assert.assertNull(current);
         } finally {
             SourceLink.destroyDataQueryLink();
         }
     }
-    
+
     @Test
     public void testAnonymous() throws DataException {
-        
+
         DataQueryLink link = SourceLink.createDataQueryLink();
-        
+
         try {
-            SecureFacade secfac = new SecureFacade(link);      
-
-            Record login = secfac.current();
-            Assert.assertNull(login);  
-
             // this query succeds because anonymous has permissions to all resources
-            List<Record> result1 = link.query(new RecordMap(
-                new Entry[]{
-                    new Entry("__ENTITY", "USERNAME_VISIBLE"),
-                    new Entry("ID", VariantString.NULL)},
-                new Entry[]{
-                    new Entry("NAME", VariantString.NULL),
-                    new Entry("DISPLAYNAME", VariantString.NULL)}));
+            List<Record> result1 = link.query(
+                    ValuesMap.EMPTY,
+                    new RecordMap(
+                            new Entry[]{
+                                new Entry("__ENTITY", "USERNAME_VISIBLE"),
+                                new Entry("ID", VariantString.NULL)},
+                            new Entry[]{
+                                new Entry("NAME", VariantString.NULL),
+                                new Entry("DISPLAYNAME", VariantString.NULL)}));
             Assert.assertEquals(3, result1.size());
         } finally {
             SourceLink.destroyDataQueryLink();
         }
     }
-    
-    @Test
-    public void testSave() throws DataException {
-        
-        DataQueryLink link = SourceLink.createDataQueryLink();
-        
-        try {
-            SecureFacade secfac = new SecureFacade(link);
-
-            Record login = secfac.login("manager", null);       
-            Assert.assertEquals("Manager", login.getString("DISPLAYNAME"));
-            
-            Record loginupdated = Records.mergeValues(login, new Entry("DISPLAYNAME", new VariantString("ManagerUpdated")));
-
-            Record login2 = secfac.saveCurrent(loginupdated);
-            Assert.assertEquals("ManagerUpdated", login2.getString("DISPLAYNAME"));
-
-            secfac.logout();
-
-            login = secfac.login("manager", null);       
-            Assert.assertEquals("ManagerUpdated", login.getString("DISPLAYNAME"));    
-
-            loginupdated = Records.mergeValues(login, new Entry("DISPLAYNAME", new VariantString("Manager")));
-
-            login2 = secfac.saveCurrent(loginupdated);
-            Assert.assertEquals("Manager", login2.getString("DISPLAYNAME"));        
-
-            secfac.logout();
-        } finally {
-            SourceLink.destroyDataQueryLink();
-        }
-    }   
-    
-    @Test
-    public void testSaveFails() throws DataException {
-        
-        DataQueryLink link = SourceLink.createDataQueryLink();
-        
-        try {
-            
-            SecureFacade secfac = new SecureFacade(link);
-
-            Record loginmanager = secfac.login("manager", null);       
-            Assert.assertEquals("Manager", loginmanager.getString("DISPLAYNAME"));
-            secfac.logout();
-
-            Record loginuser = secfac.login("user", null);       
-            Assert.assertEquals("User", loginuser.getString("DISPLAYNAME"));
-
-            try {
-                Record loginsaved = secfac.saveCurrent(loginmanager);
-                Assert.fail(); // Cannot save a differentuser
-            } catch (SecurityDataException ex) {
-                Assert.assertEquals("Trying to save a user different than authenticated user.", ex.getMessage());    
-            }
-
-            secfac.logout();  
-        } finally {
-            SourceLink.destroyDataQueryLink();
-        }
-    }      
+     
     
     @Test
     public void testAuthorizations() throws DataException {
@@ -216,103 +132,37 @@ public class SecurityTests {
         DataQueryLink link = SourceLink.createDataQueryLink();
         
         try {
-            SecureFacade secfac = new SecureFacade(link);
 
-            Assert.assertTrue(secfac.hasAuthorization("USERNAME_VISIBLE"));
-            Assert.assertFalse(secfac.hasAuthorization("authenticatedres"));
-            Assert.assertFalse(secfac.hasAuthorization("com/adr/hellocore/fxml/datalist?datatable=com/adr/hellocore/security/role"));        
-            Assert.assertFalse(secfac.hasAuthorization("anyotherresource"));
+            // Anonymous
+            String authorization;
+            Values header = ValuesMap.EMPTY;            
+            Assert.assertTrue(ReducerLogin.hasAuthorization(link, header, "USERNAME_VISIBLE_QUERY"));
+            Assert.assertFalse(ReducerLogin.hasAuthorization(link, header, "authenticatedres"));
+            Assert.assertFalse(ReducerLogin.hasAuthorization(link, header, "com/adr/hellocore/fxml/datalist?datatable=com/adr/hellocore/security/role"));        
+            Assert.assertFalse(ReducerLogin.hasAuthorization(link, header, "anyotherresource"));
 
-            secfac.login("manager", null);  
+            authorization = ReducerLogin.login(link, "manager", "");
+            header = new ValuesMap(new Entry("Authorization", authorization));
+            Assert.assertTrue(ReducerLogin.hasAuthorization(link, header, "USERNAME_VISIBLE_QUERY"));
+            Assert.assertTrue(ReducerLogin.hasAuthorization(link, header, "authenticatedres"));
+            Assert.assertTrue(ReducerLogin.hasAuthorization(link, header, "com/adr/hellocore/fxml/datalist?datatable=com/adr/hellocore/security/role"));
+            Assert.assertFalse(ReducerLogin.hasAuthorization(link, header, "anyotherresource"));
 
-            Assert.assertTrue(secfac.hasAuthorization("USERNAME_VISIBLE"));
-            Assert.assertTrue(secfac.hasAuthorization("authenticatedres"));
-            Assert.assertTrue(secfac.hasAuthorization("com/adr/hellocore/fxml/datalist?datatable=com/adr/hellocore/security/role"));
-            Assert.assertFalse(secfac.hasAuthorization("anyotherresource"));
+            authorization = ReducerLogin.login(link, "guest", "");
+            header = new ValuesMap(new Entry("Authorization", authorization));
+            Assert.assertTrue(ReducerLogin.hasAuthorization(link, header, "USERNAME_VISIBLE_QUERY"));
+            Assert.assertTrue(ReducerLogin.hasAuthorization(link, header, "authenticatedres"));
+            Assert.assertFalse(ReducerLogin.hasAuthorization(link, header, "com/adr/hellocore/fxml/datalist?datatable=com/adr/hellocore/security/role"));
+            Assert.assertFalse(ReducerLogin.hasAuthorization(link, header, "anyotherresource"));
 
-            secfac.login("user", null);  
-
-            Assert.assertTrue(secfac.hasAuthorization("USERNAME_VISIBLE"));
-            Assert.assertTrue(secfac.hasAuthorization("authenticatedres"));
-            Assert.assertFalse(secfac.hasAuthorization("com/adr/hellocore/fxml/datalist?datatable=com/adr/hellocore/security/role"));
-            Assert.assertFalse(secfac.hasAuthorization("anyotherresource"));
-
-            secfac.login("admin", "admin");  
-
-            Assert.assertTrue(secfac.hasAuthorization("USERNAME_VISIBLE"));
-            Assert.assertTrue(secfac.hasAuthorization("authenticatedres"));
-            Assert.assertTrue(secfac.hasAuthorization("com/adr/hellocore/fxml/datalist?datatable=com/adr/hellocore/security/role"));
-            Assert.assertTrue(secfac.hasAuthorization("anyotherresource"));
-
-            secfac.logout();
+            authorization = ReducerLogin.login(link, "admin", "admin");
+            header = new ValuesMap(new Entry("Authorization", authorization));
+            Assert.assertTrue(ReducerLogin.hasAuthorization(link, header, "USERNAME_VISIBLE_QUERY"));
+            Assert.assertTrue(ReducerLogin.hasAuthorization(link, header, "authenticatedres"));
+            Assert.assertTrue(ReducerLogin.hasAuthorization(link, header, "com/adr/hellocore/fxml/datalist?datatable=com/adr/hellocore/security/role"));
+            Assert.assertTrue(ReducerLogin.hasAuthorization(link, header, "anyotherresource"));
         } finally {
             SourceLink.destroyDataQueryLink();
         }
-    }
-    
-    @Test
-    public void testQueryAuthorizations() throws DataException {
-       
-        DataQueryLink link = SourceLink.createDataQueryLink();
-        
-        try {
-            SecureFacade secfac = new SecureFacade(link);       
-
-            List<Record> auth1 = secfac.getCurrentRoleAuthorizations();
-            Assert.assertEquals(0, auth1.size());
-
-            secfac.login("manager", null);  
-            auth1 = secfac.getCurrentRoleAuthorizations();
-            Assert.assertEquals(3, auth1.size());
-
-            secfac.login("user", null);  
-            auth1 = secfac.getCurrentRoleAuthorizations();
-            Assert.assertEquals(0, auth1.size());
-
-            secfac.logout();  
-            auth1 = secfac.getCurrentRoleAuthorizations();
-            Assert.assertEquals(0, auth1.size());
-        } finally {
-            SourceLink.destroyDataQueryLink();
-        }
-    }
-    
-    
-    @Test
-    public void testChangePasswords() throws DataException {
-        DataQueryLink link = SourceLink.createDataQueryLink();
-        
-        try {
-            SecureFacade secfac = new SecureFacade(link);       
-
-            Record loginuser = secfac.login("user", null);  
-            Assert.assertEquals("User", loginuser.getString("DISPLAYNAME"));
-            
-            secfac.savePassword("user", null, "pepeluis");
-            
-            try {
-                secfac.savePassword("manager", "nope", "foo");
-                Assert.fail(); // Cannot save a differentuser
-            } catch (SecurityDataException ex) {
-                Assert.assertEquals("Trying to save a user different than authenticated user.", ex.getMessage());    
-            }           
-            
-            try {
-                secfac.savePassword("user", "idontremember", "other");
-                Assert.fail();
-            } catch (SecurityDataException ex) {
-                Assert.assertEquals("Invalid password.", ex.getMessage());    
-            }           
-            
-            
-            secfac.savePassword("user", "pepeluis", "joselito");
-
-            secfac.savePassword("user", "joselito", null);
-
-            secfac.logout();  
-        } finally {
-            SourceLink.destroyDataQueryLink();
-        }        
-    }
-    
+    }  
 }

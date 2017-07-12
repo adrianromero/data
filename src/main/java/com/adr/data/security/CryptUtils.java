@@ -54,6 +54,8 @@ public class CryptUtils {
         
         if ((password == null || password.isEmpty())) {
             return hashsalt == null || hashsalt.isEmpty(); // empty password. 
+        } else if (hashsalt == null || hashsalt.isEmpty()) {
+            return false;
         } else {
             String [] splitted = hashsalt.split(":");
             

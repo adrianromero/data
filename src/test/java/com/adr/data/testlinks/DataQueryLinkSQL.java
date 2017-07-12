@@ -70,7 +70,7 @@ public class DataQueryLinkSQL implements DataQueryLinkBuilder {
                 new ReducerJWTVerifyAuthorization("secret".getBytes(StandardCharsets.UTF_8)),
                 new ReducerJWTLogin("secret".getBytes(StandardCharsets.UTF_8), 5000),
                 new ReducerJWTCurrentUser(),
-                new ReducerJWTAuthorization(new HashSet<>(Arrays.asList("USERNAME_VISIBLE")), new HashSet<>(Arrays.asList("authenticatedres"))),
+                new ReducerJWTAuthorization(new HashSet<>(Arrays.asList("USERNAME_VISIBLE_QUERY")), new HashSet<>(Arrays.asList("authenticatedres"))),
                 ReducerQueryIdentity.INSTANCE);
     }
     

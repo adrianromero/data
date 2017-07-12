@@ -13,6 +13,7 @@ import com.adr.data.recordmap.Entry;
 import com.adr.data.recordmap.RecordMap;
 import com.adr.data.recordmap.ValuesMap;
 import com.adr.data.route.ReducerQuery;
+import com.adr.data.security.ReducerLogin;
 import com.adr.data.security.SecurityDataException;
 import com.adr.data.var.Variant;
 import com.adr.data.var.VariantBoolean;
@@ -31,7 +32,6 @@ public class ReducerJWTAuthorization implements ReducerQuery {
     public final static String ACTION_QUERY = "_QUERY";
     public final static String ACTION_EXECUTE = "_EXECUTE";
 
-    public final static String AUTHORIZATION_REQUEST = "AUTHORIZATION_REQUEST";
     
     private final Set<String> anonymousresources; // resources everybody logged or not has access
     private final Set<String> authenticatedresources; // resources everybody logged has access
@@ -57,36 +57,29 @@ public class ReducerJWTAuthorization implements ReducerQuery {
         }
         
         String entity = filter.getKey().get("__ENTITY").asString();
-        if (AUTHORIZATION_REQUEST.equals(entity)) {        
+        if (ReducerLogin.AUTHORIZATION_REQUEST.equals(entity)) {        
             // Request authorization
             String resource = filter.getString("RESOURCE");
-            String action = filter.getString("ACTION");
             Record response = new RecordMap(
                     new ValuesMap(
-                        new Entry("__ENTITY", AUTHORIZATION_REQUEST)),
+                        new Entry("__ENTITY", ReducerLogin.AUTHORIZATION_REQUEST)),
                     new ValuesMap(
                         new Entry("RESOURCE", resource),
-                        new Entry("ACTION", action),
                         new Entry("ROLE", role),
-                        new Entry("RESULT", new VariantBoolean(hasAuthorization(link, role, resource, action)))));
+                        new Entry("RESULT", new VariantBoolean(hasAuthorization(link, role, resource)))));
             return Collections.singletonList(response);             
         } else {
             // Normal query
-            if (hasAuthorization(link, role, entity, ACTION_QUERY)) {
+            if (hasAuthorization(link, role, entity + ACTION_QUERY)) {
                 return null;
             } else {
                 throw new SecurityDataException("Role " + roledisplay + " does not have authorization to query the resource: " + entity);
             }            
         }          
-    }
+    }  
     
-    private boolean hasAuthorization(QueryLink link, String role, String resource, String action) throws DataException {
-        return hasAuthorizationForString(link, role, resource)
-                || (action != null && !action.isEmpty() && hasAuthorizationForString(link, role, resource + action));
-    }    
-    
-    private boolean hasAuthorizationForString(QueryLink link, String role, String resource) throws DataException {
-
+    private boolean hasAuthorization(QueryLink link, String role, String resource) throws DataException {
+        
         // Everybody logged or not has access to anonymous resources
         if (anonymousresources.contains(resource)) {
             return true;
