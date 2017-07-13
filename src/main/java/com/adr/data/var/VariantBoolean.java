@@ -4,7 +4,7 @@
 //     This file is part of Data Access
 //
 //     Licensed under the Apache License, Version 2.0 (the "License");
-//     you may not use this file except in compliance with the License.
+//     you may not use this f2016-2017ile except in compliance with the License.
 //     You may obtain a copy of the License at
 //     
 //         http://www.apache.org/licenses/LICENSE-2.0
@@ -48,8 +48,8 @@ public class VariantBoolean extends Variant {
     }
     
     @Override
-    public void write(Parameters write, String name) throws DataException {
-        write.setBoolean(name, value);
+    public void write(Parameters write) throws DataException {
+        write.setBoolean(value);
     }
     
     @Override

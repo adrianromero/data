@@ -1,5 +1,5 @@
 //     Data Access is a Java library to store data
-//     Copyright (C) 2016 Adrián Romero Corchado.
+//     Copyright (C) 2016-2017 Adrián Romero Corchado.
 //
 //     This file is part of Data Access
 //
@@ -29,16 +29,16 @@ import java.time.LocalTime;
  */
 public interface Parameters {
 
-    public void setString(String name, String value) throws DataException;
-    public void setInt(String name, Integer value) throws DataException;
-    public void setLong(String name, Long value) throws DataException;
-    public void setDouble(String name, Double value) throws DataException;
-    public void setBigDecimal(String name, BigDecimal value) throws DataException;
-    public void setBoolean(String name, Boolean value) throws DataException;
-    public void setInstant(String name, Instant value) throws DataException;
-    public void setLocalDateTime(String name, LocalDateTime value) throws DataException;
-    public void setLocalDate(String name, LocalDate value) throws DataException;
-    public void setLocalTime(String name, LocalTime value) throws DataException;
-    public void setBytes(String name, byte[] value) throws DataException;
-    public void setObject(String name, Object value) throws DataException;
+    public void setString(String value) throws DataException;
+    public void setInt(Integer value) throws DataException;
+    public void setLong(Long value) throws DataException;
+    public void setDouble(Double value) throws DataException;
+    public void setBigDecimal(BigDecimal value) throws DataException;
+    public void setBoolean(Boolean value) throws DataException;
+    public void setInstant(Instant value) throws DataException;
+    public void setLocalDateTime(LocalDateTime value) throws DataException;
+    public void setLocalDate(LocalDate value) throws DataException;
+    public void setLocalTime(LocalTime value) throws DataException;
+    public void setBytes(byte[] value) throws DataException;
+    public void setObject(Object value) throws DataException;
 }

@@ -15,7 +15,7 @@
 //     See the License for the specific language governing permissions and
 //     limitations under the License.
 
-package com.adr.data.var;
+package com.adr.data.utils;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;

@@ -1,5 +1,5 @@
 //     Data Access is a Java library to store data
-//     Copyright (C) 2016 Adrián Romero Corchado.
+//     Copyright (C) 2016-2017 Adrián Romero Corchado.
 //
 //     This file is part of Data Access
 //
@@ -39,10 +39,12 @@ public final class SQLParameters implements Parameters {
     
     private final String[] params;
     private final PreparedStatement stmt;
+    private final String paramName;
 
-    public SQLParameters(PreparedStatement stmt, String[] params) {
+    public SQLParameters(PreparedStatement stmt, String[] params, String paramName) {
         this.stmt = stmt;
         this.params = params;
+        this.paramName = paramName;
     }
     
     @FunctionalInterface
@@ -59,7 +61,7 @@ public final class SQLParameters implements Parameters {
     }     
 
     @Override
-    public void setInt(String paramName, Integer value) throws DataException {
+    public void setInt(Integer value) throws DataException {
         try {  
             set(paramName, i -> stmt.setObject(i, value, Types.INTEGER));
         } catch (SQLException ex) {
@@ -67,7 +69,7 @@ public final class SQLParameters implements Parameters {
         }
     }
     @Override
-    public void setLong(String paramName, Long value) throws DataException {
+    public void setLong(Long value) throws DataException {
         try {  
             set(paramName, i -> stmt.setObject(i, value, Types.BIGINT));
         } catch (SQLException ex) {
@@ -75,7 +77,7 @@ public final class SQLParameters implements Parameters {
         }
     }
     @Override
-    public void setString(String paramName, String value) throws DataException {
+    public void setString(String value) throws DataException {
         try {              
             set(paramName, i -> stmt.setString(i, value));
         } catch (SQLException ex) {
@@ -83,7 +85,7 @@ public final class SQLParameters implements Parameters {
         }
     }
     @Override
-    public void setDouble(String paramName, Double value) throws DataException {
+    public void setDouble(Double value) throws DataException {
         try {               
             set(paramName, i -> stmt.setObject(i, value, Types.DOUBLE));
         } catch (SQLException ex) {
@@ -91,7 +93,7 @@ public final class SQLParameters implements Parameters {
         }
     }
     @Override
-    public void setBigDecimal(String paramName, BigDecimal value) throws DataException {
+    public void setBigDecimal(BigDecimal value) throws DataException {
         try {                          
             set(paramName, i -> stmt.setBigDecimal(i, value));
         } catch (SQLException ex) {
@@ -100,7 +102,7 @@ public final class SQLParameters implements Parameters {
     }
 
     @Override
-    public void setBoolean(String paramName, Boolean value) throws DataException {
+    public void setBoolean(Boolean value) throws DataException {
         try {                         
             set(paramName, index -> stmt.setObject(index, value, Types.BOOLEAN));
         } catch (SQLException ex) {
@@ -109,7 +111,7 @@ public final class SQLParameters implements Parameters {
     }
 
     @Override
-    public void setInstant(String paramName, Instant value) throws DataException {
+    public void setInstant(Instant value) throws DataException {
         try {
             set(paramName, i -> stmt.setObject(i, value == null ? null : java.sql.Timestamp.from(value), Types.TIMESTAMP_WITH_TIMEZONE));
         } catch (SQLException ex) {
@@ -118,7 +120,7 @@ public final class SQLParameters implements Parameters {
     }
 
     @Override
-    public void setLocalDateTime(String paramName, LocalDateTime value) throws DataException {
+    public void setLocalDateTime(LocalDateTime value) throws DataException {
         try {
             set(paramName, i -> stmt.setObject(i, value == null ? null : java.sql.Timestamp.valueOf(value), Types.TIMESTAMP));
         } catch (SQLException ex) {
@@ -127,7 +129,7 @@ public final class SQLParameters implements Parameters {
     }
 
     @Override
-    public void setLocalDate(String paramName, LocalDate value) throws DataException {
+    public void setLocalDate(LocalDate value) throws DataException {
         try {     
             set(paramName, i -> stmt.setObject(i, value == null ? null : java.sql.Date.valueOf(value), Types.DATE));
         } catch (SQLException ex) {
@@ -136,7 +138,7 @@ public final class SQLParameters implements Parameters {
     }
     
     @Override
-    public void setLocalTime(String paramName, LocalTime value) throws DataException {
+    public void setLocalTime(LocalTime value) throws DataException {
         try {     
             set(paramName, i -> stmt.setObject(i, value == null ? null : java.sql.Time.valueOf(value), Types.TIME));
         } catch (SQLException ex) {
@@ -145,7 +147,7 @@ public final class SQLParameters implements Parameters {
     }        
 
     @Override
-    public void setBytes(String paramName, byte[] value) throws DataException {
+    public void setBytes(byte[] value) throws DataException {
         try {     
             set(paramName, i -> stmt.setBytes(i, value));
         } catch (SQLException ex) {
@@ -154,7 +156,7 @@ public final class SQLParameters implements Parameters {
     }
 
     @Override
-    public void setObject(String paramName, Object value) throws DataException {
+    public void setObject(Object value) throws DataException {
         try {     
             set(paramName, i -> stmt.setObject(i, value));
         } catch (SQLException ex) {

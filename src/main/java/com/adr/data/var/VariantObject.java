@@ -1,5 +1,5 @@
 //     Data Access is a Java library to store data
-//     Copyright (C) 2016 Adrián Romero Corchado.
+//     Copyright (C) 2016-2017 Adrián Romero Corchado.
 //
 //     This file is part of Data Access
 //
@@ -16,6 +16,7 @@
 //     limitations under the License.
 package com.adr.data.var;
 
+import com.adr.data.utils.Serializer;
 import com.adr.data.DataException;
 import com.adr.data.Parameters;
 import java.io.IOException;
@@ -50,8 +51,8 @@ public class VariantObject extends Variant {
     }
     
     @Override
-    public void write(Parameters write, String name) throws DataException {
-        write.setObject(name, value);
+    public void write(Parameters write) throws DataException {
+        write.setObject(value);
     }
     
     @Override

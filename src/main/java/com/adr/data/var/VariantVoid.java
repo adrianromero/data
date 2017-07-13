@@ -41,7 +41,7 @@ public class VariantVoid extends Variant {
     }
     
     @Override
-    public void write(Parameters write, String name) throws DataException {
+    public void write(Parameters write) throws DataException {
     }
 
     @Override

@@ -1,5 +1,5 @@
 //     Data Access is a Java library to store data
-//     Copyright (C) 2016 Adrián Romero Corchado.
+//     Copyright (C) 2016-2017 Adrián Romero Corchado.
 //
 //     This file is part of Data Access
 //
@@ -34,13 +34,15 @@ import java.time.LocalTime;
 public final class SQLResults implements Results {
     
     private final ResultSet resultset;
+    private final String columnName;
     
-    public SQLResults(ResultSet resultset) {
+    public SQLResults(ResultSet resultset, String columnName) {
         this.resultset = resultset;
+        this.columnName = columnName;
     }
     
     @Override
-    public String getString(String columnName) throws DataException {
+    public String getString() throws DataException {
         try {
             return resultset.getString(columnName);
         } catch (SQLException ex) {
@@ -48,7 +50,7 @@ public final class SQLResults implements Results {
         }
     }
     @Override
-    public Integer getInt(String columnName) throws DataException {
+    public Integer getInt() throws DataException {
         try {
             int value = resultset.getInt(columnName);
             return resultset.wasNull() ? null : value;
@@ -57,7 +59,7 @@ public final class SQLResults implements Results {
         }
     }
     @Override
-    public Long getLong(String columnName) throws DataException {
+    public Long getLong() throws DataException {
         try {
             long value = resultset.getLong(columnName);
             return resultset.wasNull() ? null : value;
@@ -66,7 +68,7 @@ public final class SQLResults implements Results {
         }
     }
     @Override
-    public Double getDouble(String columnName) throws DataException {
+    public Double getDouble() throws DataException {
         try {
             double value = resultset.getDouble(columnName);
             return resultset.wasNull() ? null : value;
@@ -75,7 +77,7 @@ public final class SQLResults implements Results {
         }
     }
     @Override
-    public BigDecimal getBigDecimal(String columnName) throws DataException {
+    public BigDecimal getBigDecimal() throws DataException {
         try {
             return resultset.getBigDecimal(columnName);
         } catch (SQLException ex) {
@@ -83,7 +85,7 @@ public final class SQLResults implements Results {
         }
     }
     @Override
-    public Boolean getBoolean(String columnName) throws DataException {
+    public Boolean getBoolean() throws DataException {
         try {
             boolean value = resultset.getBoolean(columnName);
             return resultset.wasNull() ? null : value;
@@ -92,7 +94,7 @@ public final class SQLResults implements Results {
         }
     }
     @Override
-    public Instant getInstant(String columnName) throws DataException {
+    public Instant getInstant() throws DataException {
         try {
             java.sql.Timestamp ts = resultset.getTimestamp(columnName);
             return ts == null ? null : ts.toInstant();
@@ -101,7 +103,7 @@ public final class SQLResults implements Results {
         }
     }
     @Override
-    public LocalDateTime getLocalDateTime(String columnName) throws DataException {
+    public LocalDateTime getLocalDateTime() throws DataException {
         try {
             java.sql.Timestamp ts = resultset.getTimestamp(columnName);
             return ts == null ? null : ts.toLocalDateTime();
@@ -110,7 +112,7 @@ public final class SQLResults implements Results {
         }
     }
     @Override
-    public LocalDate getLocalDate(String columnName) throws DataException {
+    public LocalDate getLocalDate() throws DataException {
         try {
             java.sql.Date da = resultset.getDate(columnName);
             return da == null ? null : da.toLocalDate();
@@ -119,7 +121,7 @@ public final class SQLResults implements Results {
         }
     }
     @Override
-    public LocalTime getLocalTime(String columnName) throws DataException {
+    public LocalTime getLocalTime() throws DataException {
         try {
             java.sql.Time da = resultset.getTime(columnName);
             return da == null ? null : da.toLocalTime();
@@ -128,7 +130,7 @@ public final class SQLResults implements Results {
         }
     }        
     @Override
-    public byte[] getBytes(String columnName) throws DataException {
+    public byte[] getBytes() throws DataException {
         try {
             return resultset.getBytes(columnName);
         } catch (SQLException ex) {
@@ -136,7 +138,7 @@ public final class SQLResults implements Results {
         }
     }
     @Override
-    public Object getObject(String columnName) throws DataException {
+    public Object getObject() throws DataException {
         try {
             return resultset.getObject(columnName);
         } catch (SQLException ex) {

@@ -1,5 +1,5 @@
 //     Data Access is a Java library to store data
-//     Copyright (C) 2016 Adrián Romero Corchado.
+//     Copyright (C) 2016-2017 Adrián Romero Corchado.
 //
 //     This file is part of Data Access
 //
@@ -57,9 +57,8 @@ public abstract class Sentence {
         String sql = command.getCommand();
         LOG.log(Level.CONFIG, "Executing SQL update: {0}", sql);
         try (PreparedStatement stmt = c.prepareStatement(sql)) {
-            SQLParameters kindparams = new SQLParameters(stmt, command.getParamNames());
-            write(kindparams, keyval.getKey());
-            write(kindparams, keyval.getValue());
+            write(stmt, command.getParamNames(), keyval.getKey());
+            write(stmt, command.getParamNames(), keyval.getValue());
             return stmt.executeUpdate();
         } catch (SQLException ex) {
             throw new DataException(ex);
@@ -70,22 +69,20 @@ public abstract class Sentence {
         String sql = command.getCommand();
         LOG.log(Level.CONFIG, "Executing SQL query: {0}", sql);
         try (PreparedStatement stmt = c.prepareStatement(sql)) {
-            SQLParameters kindparams = new SQLParameters(stmt, command.getParamNames());
-            write(kindparams, filter.getKey());
-            write(kindparams, filter.getValue());
+            write(stmt, command.getParamNames(), filter.getKey());
+            write(stmt, command.getParamNames(), filter.getValue());
 
             int limit = getLimit(filter.getKey());
             // int offset = options.getOffset(); // offset is applied in the CommandSQL
 
             try (ResultSet resultset = stmt.executeQuery()) {
                 List<Record> r = new ArrayList<>();
-                SQLResults kindresults = new SQLResults(resultset);
 
                 int i = 0;
                 while (i < limit && resultset.next()) {
                     r.add(new RecordMap(
-                            read(kindresults, filter.getKey()),
-                            read(kindresults, filter.getValue())));
+                            read(resultset, filter.getKey()),
+                            read(resultset, filter.getValue())));
                     i++;
                 }
                 return r;
@@ -95,16 +92,17 @@ public abstract class Sentence {
         }
     }
 
-    private static void write(SQLParameters kindparams, Values param) throws DataException {
+    private static void write(PreparedStatement stmt, String[] params, Values param) throws DataException {
         if (param == null) {
             return;
         }
         for (String name : param.getNames()) {
-            param.get(name).write(kindparams, name);
+            SQLParameters sqlparams = new SQLParameters(stmt, params, name);
+            param.get(name).write(sqlparams);
         }
     }
 
-    private static Entry[] read(SQLResults kindresults, Values param) throws DataException {
+    private static Entry[] read(ResultSet resultset, Values param) throws DataException {
         if (param == null) {
             return new Entry[0];
         }
@@ -114,7 +112,8 @@ public abstract class Sentence {
             if ("__ENTITY".equals(name)) {
                 l.add(new Entry(name, p));
             } else if (!name.contains("__")) { // Is a field
-                Variant newv = p.getKind().read(kindresults, name);
+                SQLResults sqlresults = new SQLResults(resultset, name);
+                Variant newv = p.getKind().read(sqlresults);
                 l.add(new Entry(name, newv));
             }
         }

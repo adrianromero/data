@@ -32,7 +32,7 @@ class KindVoid extends Kind {
     }
     
     @Override
-    public Variant read(Results read, String name) throws DataException {
+    public Variant read(Results read) throws DataException {
         return VariantVoid.INSTANCE;
     }   
     

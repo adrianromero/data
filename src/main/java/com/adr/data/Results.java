@@ -1,5 +1,5 @@
 //     Data Access is a Java library to store data
-//     Copyright (C) 2016 Adrián Romero Corchado.
+//     Copyright (C) 2016-2017 Adrián Romero Corchado.
 //
 //     This file is part of Data Access
 //
@@ -29,16 +29,16 @@ import java.time.LocalTime;
  */
 public interface Results {
 
-    public String getString(String columnName) throws DataException;
-    public Integer getInt(String columnName) throws DataException;
-    public Long getLong(String columnName) throws DataException;
-    public Double getDouble(String columnName) throws DataException;
-    public BigDecimal getBigDecimal(String columnName) throws DataException;
-    public Boolean getBoolean(String columnName) throws DataException;
-    public Instant getInstant(String columnName) throws DataException;
-    public LocalDateTime getLocalDateTime(String columnName) throws DataException;
-    public LocalDate getLocalDate(String columnName) throws DataException;
-    public LocalTime getLocalTime(String columnName) throws DataException;
-    public byte[] getBytes(String columnName) throws DataException;
-    public Object getObject(String columnName) throws DataException;
+    public String getString() throws DataException;
+    public Integer getInt() throws DataException;
+    public Long getLong() throws DataException;
+    public Double getDouble() throws DataException;
+    public BigDecimal getBigDecimal() throws DataException;
+    public Boolean getBoolean() throws DataException;
+    public Instant getInstant() throws DataException;
+    public LocalDateTime getLocalDateTime() throws DataException;
+    public LocalDate getLocalDate() throws DataException;
+    public LocalTime getLocalTime() throws DataException;
+    public byte[] getBytes() throws DataException;
+    public Object getObject() throws DataException;
 }

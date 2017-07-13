@@ -1,5 +1,5 @@
 //     Data Access is a Java library to store data
-//     Copyright (C) 2016 Adrián Romero Corchado.
+//     Copyright (C) 2016-2017 Adrián Romero Corchado.
 //
 //     This file is part of Data Access
 //
@@ -46,8 +46,8 @@ public class VariantLocalDateTime extends Variant {
     }
     
     @Override
-    public void write(Parameters write, String name) throws DataException {
-        write.setLocalDateTime(name, value);
+    public void write(Parameters write) throws DataException {
+        write.setLocalDateTime(value);
     }
     
     @Override
