@@ -19,7 +19,6 @@ package com.adr.data.var;
 
 import com.adr.data.DataException;
 import java.math.BigDecimal;
-import com.adr.data.Parameters;
 import java.io.IOException;
 import java.time.Instant;
 import java.time.LocalDate;

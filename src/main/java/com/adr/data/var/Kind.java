@@ -18,7 +18,6 @@
 package com.adr.data.var;
 
 import com.adr.data.DataException;
-import com.adr.data.Results;
 import java.util.HashMap;
 import java.util.Map;
 
