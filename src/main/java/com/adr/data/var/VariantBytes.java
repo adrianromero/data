@@ -19,7 +19,6 @@ package com.adr.data.var;
 import com.adr.data.DataException;
 import com.adr.data.Parameters;
 import java.util.Arrays;
-import java.util.Base64;
 
 /**
  *
@@ -38,11 +37,6 @@ public class VariantBytes extends Variant {
     @Override
     public Kind getKind() {
         return Kind.BYTES;
-    }
-
-    @Override
-    public String asISO() throws DataException {
-        return value == null ? null : Base64.getEncoder().encodeToString(value);
     }
     
     @Override

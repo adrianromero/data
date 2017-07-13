@@ -19,23 +19,13 @@ package com.adr.data.var;
 
 import com.adr.data.DataException;
 import com.adr.data.Results;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeParseException;
 
 /**
  *
  * @author adrian
  */
 class KindLocalDateTime extends Kind {
-    
-    @Override
-    public Variant fromISO(String value) throws DataException {
-        try {
-            return value == null || value.equals("") ? VariantLocalDateTime.NULL : new VariantLocalDateTime(LocalDateTime.parse(value));  
-        } catch (DateTimeParseException e) {
-            throw new DataException(e);
-        }            
-    }
+
     @Override
     public Variant read(Results read) throws DataException {
         return new VariantLocalDateTime(read.getLocalDateTime());

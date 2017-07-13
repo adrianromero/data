@@ -25,12 +25,7 @@ import com.adr.data.Results;
  * @author adrian
  */
 class KindString extends Kind {
-    
-    @Override
-    public Variant fromISO(String value) throws DataException {
-        return value == null ? VariantString.NULL : new VariantString(value);             
-    }
-    
+
     @Override
     public Variant read(Results read) throws DataException {
         return new VariantString(read.getString());

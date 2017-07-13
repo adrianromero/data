@@ -33,8 +33,6 @@ public abstract class Variant {
     
     public abstract Kind getKind();
     
-    public abstract String asISO() throws DataException;
-
     public abstract void write(Parameters write) throws DataException;
 
     public abstract boolean isNull();

@@ -16,7 +16,6 @@
 //     limitations under the License.
 package com.adr.data.var;
 
-import com.adr.data.utils.Serializer;
 import com.adr.data.DataException;
 import com.adr.data.Parameters;
 import java.io.IOException;
@@ -39,15 +38,6 @@ public class VariantObject extends Variant {
     @Override
     public Kind getKind() {
         return Kind.OBJECT;
-    }
-
-    @Override
-    public String asISO() throws DataException {
-        try {
-            return value == null ? null : Serializer.serialize(value);
-        } catch (IOException ex) {
-            throw new DataException(ex);
-        }
     }
     
     @Override

@@ -25,16 +25,7 @@ import com.adr.data.Results;
  * @author adrian
  */
 class KindLong extends Kind {
-    
-    @Override
-    public Variant fromISO(String value) throws DataException {
-        try {
-            return value == null || value.equals("") ? VariantLong.NULL : new VariantLong(Long.parseLong(value));  
-        } catch (NumberFormatException e) {
-            throw new DataException(e);
-        }            
-    }
-    
+
     @Override
     public Variant read(Results read) throws DataException {
         return new VariantLong(read.getLong());

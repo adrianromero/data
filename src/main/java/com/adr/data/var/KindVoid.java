@@ -25,11 +25,6 @@ import com.adr.data.Results;
  * @author adrian
  */
 class KindVoid extends Kind {
-
-    @Override
-    public Variant fromISO(String value) throws DataException {
-        return VariantVoid.INSTANCE;            
-    }
     
     @Override
     public Variant read(Results read) throws DataException {

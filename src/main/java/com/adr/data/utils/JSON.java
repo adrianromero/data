@@ -22,6 +22,8 @@ import com.adr.data.record.Record;
 import com.adr.data.record.Values;
 import com.adr.data.recordmap.RecordMap;
 import com.adr.data.recordmap.ValuesMap;
+import com.adr.data.var.ISOParameters;
+import com.adr.data.var.ISOResults;
 import com.adr.data.var.Variant;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -150,7 +152,7 @@ public class JSON {
                 iso = jvalue.getAsString();
             }
             try {
-                entries.put(o.get("name").getAsString(), k.fromISO(iso));
+                entries.put(o.get("name").getAsString(), k.read(new ISOResults(iso)));
             } catch (DataException ex) {
                 throw new IllegalArgumentException(ex);
             }            
@@ -203,13 +205,15 @@ public class JSON {
             return JsonNull.INSTANCE;
         }
         JsonArray array = new JsonArray();
+        ISOParameters params = new ISOParameters();
         for (String name : obj.getNames()) {
             JsonObject entry = new JsonObject();
             Variant v = obj.get(name);
             entry.addProperty("name", name);
             entry.addProperty("kind", v.getKind().toString());
-            try {
-                entry.addProperty("value", v.asISO());
+            try {             
+                v.write(params);
+                entry.addProperty("value", params.toString());
             } catch (DataException ex) {
                 throw new IllegalArgumentException(ex);
             }
@@ -248,10 +252,12 @@ public class JSON {
         if (obj == null) {
             return;
         }
+        ISOParameters params = new ISOParameters();
         for (String name : obj.getNames()) {
             Variant v = obj.get(name);
             try {
-                r.addProperty(name, v.asISO());
+                v.write(params);
+                r.addProperty(name, params.toString());
             } catch (DataException ex) {
                 throw new IllegalArgumentException(ex);
             }

@@ -39,11 +39,6 @@ public class VariantDecimal extends Variant {
     public Kind getKind() {
         return Kind.DECIMAL;
     }
-
-    @Override
-    public String asISO() throws DataException {
-        return value == null ? null : value.toString();
-    }
     
     @Override
     public void write(Parameters write) throws DataException {

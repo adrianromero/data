@@ -38,11 +38,6 @@ public class VariantString extends Variant {
     public Kind getKind() {
         return Kind.STRING;
     }
-
-    @Override
-    public String asISO() throws DataException {
-        return value;
-    }
     
     @Override
     public void write(Parameters write) throws DataException {

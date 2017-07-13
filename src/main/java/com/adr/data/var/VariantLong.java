@@ -40,11 +40,6 @@ public class VariantLong extends Variant {
     public Kind getKind() {
         return Kind.LONG;
     }
-
-    @Override
-    public String asISO() throws DataException {
-        return value == null ? null : value.toString();
-    }
     
     @Override
     public void write(Parameters write) throws DataException {

@@ -41,7 +41,6 @@ public abstract class Kind {
     public final static Kind OBJECT = new KindObject();
     public final static Kind VOID = new KindVoid();
    
-    public abstract Variant fromISO(String value) throws DataException;
     public abstract Variant read(Results read) throws DataException;
      
     private static final Map<String, Kind> valuesof = new HashMap<>();

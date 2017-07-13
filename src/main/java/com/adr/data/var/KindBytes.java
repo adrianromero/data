@@ -19,22 +19,12 @@ package com.adr.data.var;
 
 import com.adr.data.DataException;
 import com.adr.data.Results;
-import java.util.Base64;
 
 /**
  *
  * @author adrian
  */
 class KindBytes extends Kind {
-    
-    @Override
-    public Variant fromISO(String value) throws DataException {
-        try {
-            return value == null ? VariantBytes.NULL : new VariantBytes(Base64.getDecoder().decode(value));
-        } catch(IllegalArgumentException e) {
-            throw new DataException(e);
-        }            
-    }
     
     @Override
     public Variant read(Results read) throws DataException {

@@ -39,11 +39,6 @@ public class VariantLocalDate extends Variant {
     public Kind getKind() {
         return Kind.LOCALDATE;
     }
-
-    @Override
-    public String asISO() throws DataException {
-        return value == null ? null : value.toString();
-    }
     
     @Override
     public void write(Parameters write) throws DataException {

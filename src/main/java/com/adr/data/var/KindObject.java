@@ -17,25 +17,14 @@
 
 package com.adr.data.var;
 
-import com.adr.data.utils.Serializer;
 import com.adr.data.DataException;
 import com.adr.data.Results;
-import java.io.IOException;
 
 /**
  *
  * @author adrian
  */
 class KindObject extends Kind {
-    
-    @Override
-    public Variant fromISO(String value) throws DataException {
-        try {
-            return value == null || value.equals("") ? VariantObject.NULL : new VariantObject(Serializer.deserialize(value));  
-        } catch (IOException | ClassNotFoundException e) {
-            throw new DataException(e);
-        }            
-    }
     
     @Override
     public Variant read(Results read) throws DataException {

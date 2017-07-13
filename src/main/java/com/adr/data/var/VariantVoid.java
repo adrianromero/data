@@ -34,11 +34,6 @@ public class VariantVoid extends Variant {
     public Kind getKind() {
         return Kind.VOID;
     }
-
-    @Override
-    public String asISO() throws DataException {
-        return null;
-    }
     
     @Override
     public void write(Parameters write) throws DataException {

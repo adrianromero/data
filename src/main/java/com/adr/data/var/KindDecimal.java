@@ -19,22 +19,12 @@ package com.adr.data.var;
 
 import com.adr.data.DataException;
 import com.adr.data.Results;
-import java.math.BigDecimal;
 
 /**
  *
  * @author adrian
  */
 class KindDecimal extends Kind {
-    
-    @Override
-    public Variant fromISO(String value) throws DataException {
-        try {
-            return value == null || value.equals("") ? VariantDecimal.NULL : new VariantDecimal(new BigDecimal(value));  
-        } catch(IllegalArgumentException e) {
-            throw new DataException(e);
-        }            
-    }
     
     @Override
     public Variant read(Results read) throws DataException {

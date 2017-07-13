@@ -27,11 +27,6 @@ import com.adr.data.Results;
 class KindBoolean extends Kind {
     
     @Override
-    public Variant fromISO(String value) throws DataException {
-        return value == null || value.equals("") ? VariantBoolean.NULL : new VariantBoolean(Boolean.valueOf(value));                
-    }
-    
-    @Override
     public Variant read(Results read) throws DataException {
         return new VariantBoolean(read.getBoolean());
     }    

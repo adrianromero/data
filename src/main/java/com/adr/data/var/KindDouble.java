@@ -27,15 +27,6 @@ import com.adr.data.Results;
 class KindDouble extends Kind {
     
     @Override
-    public Variant fromISO(String value) throws DataException {
-        try {
-            return value == null || value.equals("") ? VariantDouble.NULL : new VariantDouble(Double.parseDouble(value));  
-        } catch (NumberFormatException e) {
-            throw new DataException(e);
-        }            
-    }
-    
-    @Override
     public Variant read(Results read) throws DataException {
         return new VariantDouble(read.getDouble());
     }   

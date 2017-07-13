@@ -39,11 +39,6 @@ public class VariantInstant extends Variant {
     public Kind getKind() {
         return Kind.INSTANT;
     }
-
-    @Override
-    public String asISO() throws DataException {
-        return value == null ? null : value.toString();
-    }
     
     @Override
     public void write(Parameters write) throws DataException {

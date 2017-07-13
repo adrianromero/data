@@ -41,11 +41,6 @@ public class VariantBoolean extends Variant {
     public Kind getKind() {
         return Kind.BOOLEAN;
     }
-
-    @Override
-    public String asISO() throws DataException {
-        return value == null ? null : value.toString();
-    }
     
     @Override
     public void write(Parameters write) throws DataException {
