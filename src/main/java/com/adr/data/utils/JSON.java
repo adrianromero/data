@@ -1,5 +1,5 @@
 //     Data Access is a Java library to store data
-//     Copyright (C) 2016 Adrián Romero Corchado.
+//     Copyright (C) 2016-2017 Adrián Romero Corchado.
 //
 //     This file is part of Data Access
 //
@@ -35,6 +35,7 @@ import com.google.gson.JsonParser;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -189,6 +190,10 @@ public class JSON {
     public String toJSON(Record obj) {
         return gson.toJson(toJSONElement(obj));
     }
+    
+    public String toJSON(Values obj) {
+        return gson.toJson(toJSONElement(obj));
+    }
 
     public JsonElement toJSONElement(Record obj) {
         if (obj == null) {
@@ -245,6 +250,19 @@ public class JSON {
         JsonObject r = new JsonObject();
         populateValues(r, obj.getKey());
         populateValues(r, obj.getValue());
+        return r;
+    }
+    
+    public String toSimpleJSON(Values obj) {
+        return gsonsimple.toJson(toSimpleJSONElement(obj));
+    }
+    
+    private JsonElement toSimpleJSONElement(Values obj) {
+        if (obj == null) {
+            return JsonNull.INSTANCE;
+        }
+        JsonObject r = new JsonObject();
+        populateValues(r, obj);
         return r;
     }
 
