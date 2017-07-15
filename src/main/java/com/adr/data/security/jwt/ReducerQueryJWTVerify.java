@@ -1,5 +1,5 @@
 //     Data Access is a Java library to store data
-//     Copyright (C) 2016 Adrián Romero Corchado.
+//     Copyright (C) 2017 Adrián Romero Corchado.
 //
 //     This file is part of Data Access
 //
@@ -14,30 +14,31 @@
 //     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //     See the License for the specific language governing permissions and
 //     limitations under the License.
-package com.adr.data.test;
 
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
+package com.adr.data.security.jwt;
+
+import com.adr.data.DataException;
+import com.adr.data.QueryLink;
+import com.adr.data.record.Record;
+import com.adr.data.record.Values;
+import com.adr.data.route.ReducerQuery;
+import java.util.List;
 
 /**
  *
  * @author adrian
  */
-@RunWith(Suite.class)
-@Suite.SuiteClasses({
-    // GSON Suite
-    GSONTests.class,
-    // Database suites
-    SuiteH2.class, 
-    SuiteMYSQL.class, 
-    SuitePostgreSQL.class,
+public class ReducerQueryJWTVerify implements ReducerQuery {
     
-    // HTTP suite
-    SuiteHTTP.class,
+    private final TokenVerifier verifier;
     
-    // MQ Sync suite
-    SuiteMQ.class 
-})
-
-public class SuiteAll { 
+    public ReducerQueryJWTVerify(byte[] secret) {
+        verifier = new TokenVerifier(secret);
+    }
+   
+    @Override
+    public List<Record> query(QueryLink link, Values headers, Record filter) throws DataException {
+        verifier.verify(headers);      
+        return null;
+    }
 }

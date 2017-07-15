@@ -23,7 +23,7 @@ import com.rabbitmq.client.AMQP;
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.RpcServer;
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 import java.util.logging.Logger;
 
 /**
@@ -42,19 +42,15 @@ public class MQDataLinkServer extends RpcServer {
     }
     
     @Override
-    public void handleCast(byte[] requestBody) {
+    public void handleCast(byte[] requestBody) {      
         // Ignorer the return
         handleCall(requestBody, null);            
     }
 
     @Override
-    public byte[] handleCall(byte[] requestBody, AMQP.BasicProperties replyProperties) {       
+    public byte[] handleCall(byte[] requestBody, AMQP.BasicProperties replyProperties) {
         // the result must be just the result: OK or exception
-        try {
-            String message = new String(requestBody, "UTF-8");
-            return ProcessRequest.serverDataProcess(link, message, LOG).getBytes("UTF-8");
-        } catch (UnsupportedEncodingException ex) {
-            throw new RuntimeException(ex);
-        }              
+        String message = new String(requestBody, StandardCharsets.UTF_8);
+        return ProcessRequest.serverDataProcess(link, message, LOG).getBytes(StandardCharsets.UTF_8);            
     }    
 }

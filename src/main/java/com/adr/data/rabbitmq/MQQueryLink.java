@@ -27,7 +27,7 @@ import com.adr.data.utils.RequestQuery;
 import com.rabbitmq.client.RpcClient;
 import com.rabbitmq.client.ShutdownSignalException;
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.concurrent.TimeoutException;
 
@@ -53,12 +53,10 @@ public class MQQueryLink implements QueryLink {
     public List<Record> query(Values headers, Record filter) throws DataException {
         
         try {
-            byte[] request = JSON.INSTANCE.toJSON(new RequestQuery(headers, filter)).getBytes("UTF-8");
+            byte[] request = JSON.INSTANCE.toJSON(new RequestQuery(headers, filter)).getBytes(StandardCharsets.UTF_8);
             byte[] response = client.primitiveCall(request);
-            EnvelopeResponse envelope = JSON.INSTANCE.fromJSONResponse(new String(response, "UTF-8"));
+            EnvelopeResponse envelope = JSON.INSTANCE.fromJSONResponse(new String(response, StandardCharsets.UTF_8));
             return envelope.getAsListRecord();
-        } catch (UnsupportedEncodingException ex) {
-            throw new UnsupportedOperationException(ex); // Never happens
         } catch (IOException | ShutdownSignalException | TimeoutException ex) {
             throw new DataException(ex);
         }

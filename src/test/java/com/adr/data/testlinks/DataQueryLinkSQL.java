@@ -20,14 +20,18 @@ import com.adr.data.BasicDataQueryLink;
 import com.adr.data.DataLink;
 import com.adr.data.DataQueryLink;
 import com.adr.data.QueryLink;
+import com.adr.data.route.ReducerDataIdentity;
+import com.adr.data.route.ReducerDataLink;
 import com.adr.data.route.ReducerQueryIdentity;
 import com.adr.data.route.ReducerQueryLink;
 import com.adr.data.sql.SQLQueryLink;
 import com.adr.data.security.SecureCommands;
-import com.adr.data.security.jwt.ReducerJWTAuthorization;
+import com.adr.data.security.jwt.ReducerDataJWTAuthorization;
+import com.adr.data.security.jwt.ReducerDataJWTVerify;
+import com.adr.data.security.jwt.ReducerQueryJWTAuthorization;
 import com.adr.data.security.jwt.ReducerJWTCurrentUser;
 import com.adr.data.security.jwt.ReducerJWTLogin;
-import com.adr.data.security.jwt.ReducerJWTVerifyAuthorization;
+import com.adr.data.security.jwt.ReducerQueryJWTVerify;
 import com.adr.data.sql.SQLDataLink;
 import com.adr.data.sql.SQLEngine;
 import com.zaxxer.hikari.HikariConfig;
@@ -67,15 +71,19 @@ public class DataQueryLinkSQL implements DataQueryLinkBuilder {
     public QueryLink createQueryLink() {
         return new ReducerQueryLink(
                 new SQLQueryLink(cpds, engine, SecureCommands.QUERIES),
-                new ReducerJWTVerifyAuthorization("secret".getBytes(StandardCharsets.UTF_8)),
+                new ReducerQueryJWTVerify("secret".getBytes(StandardCharsets.UTF_8)),
                 new ReducerJWTLogin("secret".getBytes(StandardCharsets.UTF_8), 5000),
                 new ReducerJWTCurrentUser(),
-                new ReducerJWTAuthorization(new HashSet<>(Arrays.asList("USERNAME_VISIBLE_QUERY")), new HashSet<>(Arrays.asList("authenticatedres"))),
+                new ReducerQueryJWTAuthorization(new HashSet<>(Arrays.asList("USERNAME_VISIBLE_QUERY")), new HashSet<>(Arrays.asList("authenticatedres"))),
                 ReducerQueryIdentity.INSTANCE);
     }
     
     public DataLink createDataLink() {
-        return new SQLDataLink(cpds, engine, SecureCommands.COMMANDS);
+        return new ReducerDataLink(
+                new SQLDataLink(cpds, engine, SecureCommands.COMMANDS),
+                new ReducerDataJWTVerify("secret".getBytes(StandardCharsets.UTF_8)),
+                new ReducerDataJWTAuthorization(new SQLQueryLink(cpds, engine, SecureCommands.QUERIES), new HashSet<>(Arrays.asList("USERNAME_VISIBLE_QUERY")), new HashSet<>(Arrays.asList("authenticatedres"))),
+                ReducerDataIdentity.INSTANCE);
     }
 
     @Override

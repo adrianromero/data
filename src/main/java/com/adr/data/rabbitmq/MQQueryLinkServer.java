@@ -14,7 +14,6 @@
 //     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //     See the License for the specific language governing permissions and
 //     limitations under the License.
-
 package com.adr.data.rabbitmq;
 
 import com.adr.data.QueryLink;
@@ -25,7 +24,7 @@ import com.rabbitmq.client.AMQP;
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.RpcServer;
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -34,34 +33,26 @@ import java.util.logging.Logger;
  * @author adrian
  */
 public class MQQueryLinkServer extends RpcServer {
-    
+
     private static final Logger LOG = Logger.getLogger(MQQueryLinkServer.class.getName());
-    
+
     private final QueryLink link;
 
     public MQQueryLinkServer(Channel channel, String queueName, QueryLink link) throws IOException {
         super(channel, queueName);
         this.link = link;
     }
-    
+
     @Override
-    public void handleCast(byte[] requestBody) {
-        try {
-            String message = new String(requestBody, "UTF-8");
-            EnvelopeRequest request = JSON.INSTANCE.fromJSONRequest(message);
-            LOG.log(Level.SEVERE, "There is no correlation or destination in the request {0} : {1}.", new Object[]{request.getType(), message});
-        } catch (UnsupportedEncodingException ex) {
-            throw new UnsupportedOperationException(ex);            
-        }            
+    public void handleCast(byte[] requestBody) {    
+        String message = new String(requestBody, StandardCharsets.UTF_8);
+        EnvelopeRequest request = JSON.INSTANCE.fromJSONRequest(message);
+        LOG.log(Level.SEVERE, "There is no correlation or destination in the request {0} : {1}.", new Object[]{request.getType(), message});
     }
 
     @Override
-    public byte[] handleCall(byte[] requestBody, AMQP.BasicProperties replyProperties) {        
-        try{
-            String message = new String(requestBody, "UTF-8");          
-            return ProcessRequest.serverQueryProcess(link, message, LOG).getBytes("UTF-8");
-        } catch (UnsupportedEncodingException ex) {
-            throw new UnsupportedOperationException(ex);            
-        }
+    public byte[] handleCall(byte[] requestBody, AMQP.BasicProperties replyProperties) {  
+        String message = new String(requestBody, StandardCharsets.UTF_8);
+        return ProcessRequest.serverQueryProcess(link, message, LOG).getBytes(StandardCharsets.UTF_8);
     }
 }

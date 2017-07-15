@@ -1,5 +1,5 @@
 //     Data Access is a Java library to store data
-//     Copyright (C) 2016 Adrián Romero Corchado.
+//     Copyright (C) 2017 Adrián Romero Corchado.
 //
 //     This file is part of Data Access
 //
@@ -14,38 +14,31 @@
 //     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //     See the License for the specific language governing permissions and
 //     limitations under the License.
-package com.adr.data.security;
+
+package com.adr.data.security.jwt;
 
 import com.adr.data.DataException;
 import com.adr.data.DataLink;
-import com.adr.data.QueryLink;
 import com.adr.data.record.Record;
-import com.adr.data.recordmap.RecordMap;
-import com.adr.data.DataQueryLink;
 import com.adr.data.record.Values;
-import com.adr.data.recordmap.Entry;
-import com.adr.data.utils.JSON;
-import com.adr.data.recordmap.Records;
-import com.adr.data.var.VariantBoolean;
-import com.adr.data.var.VariantBytes;
-import com.adr.data.var.VariantString;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.DataInput;
-import java.io.DataInputStream;
-import java.io.DataOutput;
-import java.io.DataOutputStream;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
+import com.adr.data.route.ReducerData;
 import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 /**
  *
  * @author adrian
  */
-public class SecureLink /*implements DataQueryLink*/ {
+public class ReducerDataJWTVerify implements ReducerData {
+    
+    private final TokenVerifier verifier;
+    
+    public ReducerDataJWTVerify(byte[] secret) {
+        verifier = new TokenVerifier(secret);
+    }
 
+    @Override
+    public boolean execute(DataLink link, Values headers, List<Record> l) throws DataException {
+        verifier.verify(headers);      
+        return false;
+    } 
 }

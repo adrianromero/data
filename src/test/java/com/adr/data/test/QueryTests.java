@@ -1,5 +1,5 @@
 //     Data Access is a Java library to store data
-//     Copyright (C) 2016 Adrián Romero Corchado.
+//     Copyright (C) 2016-2017 Adrián Romero Corchado.
 //
 //     This file is part of Data Access
 //
@@ -57,7 +57,7 @@ public class QueryTests {
                     new RecordMap(
                             new Entry[]{
                                 new Entry("__ENTITY", "USERNAME"),
-                                new Entry("ID", new VariantString("admin"))},
+                                new Entry("ID", "admin")},
                             new Entry[]{
                                 new Entry("NAME", VariantString.NULL),
                                 new Entry("CODECARD", VariantString.NULL)}));
@@ -138,7 +138,7 @@ public class QueryTests {
                             new Entry[]{
                                 new Entry("NAME", "newuser"),
                                 new Entry("DISPLAYNAME", "New User"),
-                                new Entry("CODECARD", "123452"),
+                                new Entry("CODECARD", "123457"),
                                 new Entry("ROLE_ID", "g"),
                                 new Entry("VISIBLE", true),
                                 new Entry("ACTIVE", true)}));

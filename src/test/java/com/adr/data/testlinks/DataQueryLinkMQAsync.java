@@ -1,5 +1,5 @@
 //     Data Access is a Java library to store data
-//     Copyright (C) 2016 Adrián Romero Corchado.
+//     Copyright (C) 2016-2017 Adrián Romero Corchado.
 //
 //     This file is part of Data Access
 //
@@ -18,7 +18,7 @@ package com.adr.data.testlinks;
 
 import com.adr.data.BasicDataQueryLink;
 import com.adr.data.DataQueryLink;
-import com.adr.data.rabbitmq.MQDataLink;
+import com.adr.data.rabbitmq.MQDataLinkAsync;
 import com.adr.data.rabbitmq.MQQueryLink;
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
@@ -71,7 +71,7 @@ public class DataQueryLinkMQAsync implements DataQueryLinkBuilder {
 
             return new BasicDataQueryLink(
                     new MQQueryLink(clientquery),
-                    new MQDataLink(clientdata));
+                    new MQDataLinkAsync(clientdata));
         } catch (IOException ex) {
             LOG.log(Level.SEVERE, null, ex);
             throw new RuntimeException(ex);

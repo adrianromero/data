@@ -16,7 +16,7 @@
 //     limitations under the License.
 package com.adr.data.test;
 
-import com.adr.data.testlinks.DataQueryLinkMQSync;
+import com.adr.data.testlinks.DataQueryLinkMQ;
 import com.adr.data.testservers.RabbitMQServer;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -28,8 +28,11 @@ import org.junit.runners.Suite;
  * @author adrian
  */
 @RunWith(Suite.class)
-@Suite.SuiteClasses({QueryTests.class, SecurityTests.class})
-public class SuiteMQSync {
+@Suite.SuiteClasses({
+    QueryTests.class, 
+    SecurityTests.class
+})
+public class SuiteMQ {
     
     private static final String HOST = "localhost";
     private static final String EXCHANGEQUERY ="exquerylink";
@@ -43,7 +46,7 @@ public class SuiteMQSync {
     @BeforeClass
     public static void setUpClass() throws Exception {
         server.start();
-        SourceLink.setBuilder(new DataQueryLinkMQSync(HOST, EXCHANGEQUERY, EXCHANGEDATA));
+        SourceLink.setBuilder(new DataQueryLinkMQ(HOST, EXCHANGEQUERY, EXCHANGEDATA));
     }
 
     @AfterClass

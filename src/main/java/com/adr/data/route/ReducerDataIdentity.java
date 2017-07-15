@@ -1,5 +1,5 @@
 //     Data Access is a Java library to store data
-//     Copyright (C) 2016 Adrián Romero Corchado.
+//     Copyright (C) 2017 Adrián Romero Corchado.
 //
 //     This file is part of Data Access
 //
@@ -12,32 +12,27 @@
 //     Unless required by applicable law or agreed to in writing, software
 //     distributed under the License is distributed on an "AS IS" BASIS,
 //     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-//     See the License for the specific language governing permissions and
-//     limitations under the License.
-package com.adr.data.test;
+package com.adr.data.route;
 
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
+import com.adr.data.DataException;
+import com.adr.data.DataLink;
+import com.adr.data.record.Record;
+import com.adr.data.record.Values;
+import java.util.List;
 
 /**
  *
  * @author adrian
  */
-@RunWith(Suite.class)
-@Suite.SuiteClasses({
-    // GSON Suite
-    GSONTests.class,
-    // Database suites
-    SuiteH2.class, 
-    SuiteMYSQL.class, 
-    SuitePostgreSQL.class,
+public class ReducerDataIdentity implements ReducerData {
     
-    // HTTP suite
-    SuiteHTTP.class,
+    public static ReducerData INSTANCE = new ReducerDataIdentity();
     
-    // MQ Sync suite
-    SuiteMQ.class 
-})
+    private ReducerDataIdentity() {}
 
-public class SuiteAll { 
+    @Override
+    public boolean execute(DataLink link, Values headers, List<Record> l) throws DataException {
+        link.execute(headers, l);
+        return true;
+    }
 }

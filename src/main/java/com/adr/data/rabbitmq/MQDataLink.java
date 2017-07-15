@@ -21,20 +21,22 @@ import com.adr.data.DataException;
 import com.adr.data.DataLink;
 import com.adr.data.record.Record;
 import com.adr.data.record.Values;
+import com.adr.data.utils.EnvelopeResponse;
 import com.adr.data.utils.JSON;
 import com.adr.data.utils.RequestExecute;
 import com.rabbitmq.client.RpcClient;
 import com.rabbitmq.client.ShutdownSignalException;
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
+import java.util.concurrent.TimeoutException;
 
 /**
  *
  * @author adrian
  */
 public class MQDataLink implements DataLink {
-
+    
     private final RpcClient client;
     
 //        channel = connection.createChannel();
@@ -51,12 +53,12 @@ public class MQDataLink implements DataLink {
     public void execute(Values headers, List<Record> l) throws DataException {
         
         try {
-            byte[] request = JSON.INSTANCE.toJSON(new RequestExecute(headers, l)).getBytes("UTF-8");
-            client.publish(null, request);
-        } catch (UnsupportedEncodingException ex) {
-            throw new UnsupportedOperationException(ex); // Never happens
-        } catch (IOException | ShutdownSignalException ex) {
+            byte[] request = JSON.INSTANCE.toJSON(new RequestExecute(headers, l)).getBytes(StandardCharsets.UTF_8);
+            byte[] response = client.primitiveCall(request);
+            EnvelopeResponse envelope = JSON.INSTANCE.fromJSONResponse(new String(response, StandardCharsets.UTF_8));
+            envelope.asSuccess();
+        } catch (IOException | ShutdownSignalException | TimeoutException ex) {
             throw new DataException(ex);
         }
-    }
+    }  
 }
