@@ -1,5 +1,5 @@
 //     Data Access is a Java library to store data
-//     Copyright (C) 2016 Adrián Romero Corchado.
+//     Copyright (C) 2016-2017 Adrián Romero Corchado.
 //
 //     This file is part of Data Access
 //
@@ -22,6 +22,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.nio.charset.StandardCharsets;
 
 /**
  *
@@ -39,7 +40,7 @@ public class Serializer {
     
     public static Object deserialize(String value) throws IOException, ClassNotFoundException {
 
-        byte b[] = value.getBytes("UTF-8"); 
+        byte b[] = value.getBytes(StandardCharsets.UTF_8); 
         ByteArrayInputStream bi = new ByteArrayInputStream(b);
         ObjectInputStream si = new ObjectInputStream(bi);
         return si.readObject();
