@@ -20,14 +20,14 @@ package com.adr.data.security.jwt;
 import com.adr.data.DataException;
 import com.adr.data.DataLink;
 import com.adr.data.QueryLink;
-import com.adr.data.record.Record;
-import com.adr.data.record.Values;
 import com.adr.data.route.ReducerData;
 import com.adr.data.security.SecurityDataException;
 import com.adr.data.var.Variant;
 import com.auth0.jwt.JWT;
 import java.util.List;
 import java.util.Set;
+import com.adr.data.record.Record;
+import com.adr.data.record.Records;
 
 /**
  *
@@ -44,7 +44,7 @@ public class ReducerDataJWTAuthorization implements ReducerData {
     }
 
     @Override
-    public boolean execute(DataLink link, Values headers, List<Record> l) throws DataException {
+    public boolean execute(DataLink link, Record headers, List<Record> l) throws DataException {
 
         Variant authorization = headers.get("Authorization");        
         String role;
@@ -59,7 +59,7 @@ public class ReducerDataJWTAuthorization implements ReducerData {
         }
         
         for (Record r: l) {
-            String entity = r.getKey().get("__ENTITY").asString();
+            String entity = Records.getEntity(r);
             if (!authorizer.hasAuthorization(querylink, role, entity + Authorizer.ACTION_EXECUTE)) {
                 throw new SecurityDataException("Role " + roledisplay + " does not have authorization to execute the resource: " + entity);
             }

@@ -17,8 +17,9 @@
 
 package com.adr.data.sql;
 
-import com.adr.data.record.Record;
 import java.util.ArrayList;
+import com.adr.data.record.Record;
+import com.adr.data.record.Records;
 
 /**
  *
@@ -32,36 +33,31 @@ public class SentenceInsert extends SentenceDML {
     }
     
     @Override
-    protected final CommandSQL build(SQLEngine engine, Record keyval) {
+    protected final CommandSQL build(SQLEngine engine, Record record) {
 
         StringBuilder sentence = new StringBuilder();
         StringBuilder values = new StringBuilder();
         ArrayList<String> fieldslist = new ArrayList<>();
 
         sentence.append("INSERT INTO ");
-        sentence.append(Sentence.getEntity(keyval));
+        sentence.append(Records.getEntity(record));
         sentence.append("(");
 
         boolean filter = false;
-        for (String f : keyval.getKey().getNames()) {
+        String realname;
+        for (String f : record.getNames()) {
             if (!f.contains("__")) {
+                if (f.endsWith("$KEY")) {
+                    realname = f.substring(0, f.length() - 4);
+                } else {
+                    realname = f;
+                }            
                 sentence.append(filter ? ", " : "");
-                sentence.append(f);
-
+                sentence.append(realname);
                 values.append(filter ? ", ?" : "?");
                 fieldslist.add(f);
-
                 filter = true;
             }
-        }
-        for (String f : keyval.getValue().getNames()) {
-            sentence.append(filter ? ", " : "");
-            sentence.append(f);
-
-            values.append(filter ? ", ?" : "?");
-            fieldslist.add(f);
-
-            filter = true;
         }
         sentence.append(") VALUES (");
         sentence.append(values);

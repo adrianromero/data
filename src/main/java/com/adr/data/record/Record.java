@@ -25,13 +25,21 @@ import com.adr.data.var.VariantVoid;
  * @author adrian
  */
 public interface Record {
-    public Values getKey();
-    public Values getValue();
+
+    public final static Record EMPTY = new Record() {
+        private String [] NONAMES = {};
+        @Override
+        public String[] getNames() { 
+            return NONAMES;
+        }
+        @Override
+        public Variant get(String name) {
+            return VariantVoid.INSTANCE;
+        }
+    };
     
-    public default Variant get(String name) {
-        Variant v = getValue().get(name);
-        return v == VariantVoid.INSTANCE ? getKey().get(name) : v;
-    }
+    public String [] getNames();   
+    public Variant get(String name);   
     
     public default String getString(String name) {
         return get(name).asString();    
@@ -51,5 +59,5 @@ public interface Record {
     
     public default byte[] getBytes(String name) {
         return get(name).asBytes();
-    }        
+    }      
 }

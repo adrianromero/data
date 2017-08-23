@@ -15,9 +15,8 @@
 //     See the License for the specific language governing permissions and
 //     limitations under the License.
 
-package com.adr.data.recordmap;
+package com.adr.data.record;
 
-import com.adr.data.record.Values;
 import com.adr.data.var.Variant;
 import com.adr.data.var.VariantVoid;
 import java.util.Collections;
@@ -28,23 +27,21 @@ import java.util.Map;
  *
  * @author adrian
  */
-public class ValuesMap implements Values {
-    
-    public final static ValuesMap EMPTY = new ValuesMap(new LinkedHashMap<>());
+public class RecordMap implements Record {
 
     private String[] names = null;
     private final Map<String, Variant> entries;
 
-    public ValuesMap(Entry... entries) {
+    public RecordMap(Entry... record) {
         LinkedHashMap<String, Variant> entriesmap = new LinkedHashMap<>();
-        for (Entry e: entries) {
+        for (Entry e: record) {
             entriesmap.put(e.getName(), e.getValue());
         }       
         this.entries = Collections.unmodifiableMap(entriesmap);
     }
 
-    public ValuesMap(LinkedHashMap<String, Variant> entries) {
-        this.entries = Collections.unmodifiableMap(entries);
+    public RecordMap(LinkedHashMap<String, Variant> record) {
+        this.entries = Collections.unmodifiableMap(record);
     }
 
     @Override

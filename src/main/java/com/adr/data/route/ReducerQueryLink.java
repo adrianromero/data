@@ -18,9 +18,8 @@ package com.adr.data.route;
 
 import com.adr.data.DataException;
 import com.adr.data.QueryLink;
-import com.adr.data.record.Record;
-import com.adr.data.record.Values;
 import java.util.List;
+import com.adr.data.record.Record;
 
 /**
  *
@@ -37,7 +36,7 @@ public class ReducerQueryLink implements QueryLink {
     }
 
     @Override
-    public List<Record> query(Values headers, Record filter) throws DataException {
+    public List<Record> query(Record headers, Record filter) throws DataException {
         List<Record> result;
         for (ReducerQuery r : reducers) {
             result = r.query(link, headers, filter);

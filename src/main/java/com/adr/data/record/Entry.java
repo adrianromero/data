@@ -15,7 +15,7 @@
 //     See the License for the specific language governing permissions and
 //     limitations under the License.
 
-package com.adr.data.recordmap;
+package com.adr.data.record;
 
 import com.adr.data.var.Variant;
 import com.adr.data.var.VariantBoolean;

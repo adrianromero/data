@@ -17,11 +17,10 @@
 
 package com.adr.data.utils;
 
-import com.adr.data.record.Record;
-import com.adr.data.record.Values;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import java.util.List;
+import com.adr.data.record.Record;
 
 /**
  *
@@ -31,15 +30,15 @@ public class RequestExecute extends EnvelopeRequest {
     
     public static final String NAME = "EXECUTE";
     
-    private final Values headers;
+    private final Record headers;
     private final List<Record> list;
     
-    public RequestExecute(Values headers, List<Record> list) {
+    public RequestExecute(Record headers, List<Record> list) {
         this.headers = headers;
         this.list = list;
     }
     
-    public Values getHeaders() {
+    public Record getHeaders() {
         return headers;
     }
     

@@ -18,12 +18,11 @@ package com.adr.data.route;
 
 import com.adr.data.DataException;
 import com.adr.data.DataLink;
-import com.adr.data.record.Record;
-import com.adr.data.record.Values;
 import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import com.adr.data.record.Record;
 
 /**
  *
@@ -42,7 +41,7 @@ public class MapDataLink implements DataLink {
     }
 
     @Override
-    public void execute(Values headers, List<Record> l) throws DataException {
+    public void execute(Record headers, List<Record> l) throws DataException {
         List<Record> l2 = l.stream().flatMap(mapper).collect(Collectors.toList());
         if (!l2.isEmpty()) {
             datalink.execute(headers, l2);

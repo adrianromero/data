@@ -18,10 +18,9 @@
 package com.adr.data.sql;
 
 import com.adr.data.DataException;
-import com.adr.data.record.Record;
-import com.adr.data.record.Values;
 import java.sql.Connection;
 import java.util.List;
+import com.adr.data.record.Record;
 
 /**
  *
@@ -29,26 +28,26 @@ import java.util.List;
  */
 public abstract class SentenceQRY extends Sentence {
 
-    protected abstract CommandSQL build(SQLEngine engine, Record keyval);
+    protected abstract CommandSQL build(SQLEngine engine, Record record);
     
     @Override
-    public List<Record> query(Connection c, SQLEngine engine, Record keyval) throws DataException {
-        return Sentence.query(c, build(engine, keyval), keyval);
+    public List<Record> query(Connection c, SQLEngine engine, Record record) throws DataException {
+        return Sentence.query(c, build(engine, record), record);
     }
         
-    public static void addQueryOptions(StringBuilder sqlsent, SQLEngine engine, Values values) {
+    public static void addQueryOptions(StringBuilder sqlsent, SQLEngine engine, Record record) {
         
         // order by       
-        String[] orderby = getOrderBy(values);
+        String[] orderby = getOrderBy(record);
         if (orderby.length > 0) {
             for (int i = 0; i < orderby.length; i++) {
                 sqlsent.append(i == 0 ? " ORDER BY " : ", ");
                 String s = orderby[i];
-                if (s.endsWith("__ASC")) {
-                    sqlsent.append(s.substring(0, s.length() - 5));
+                if (s.endsWith("$ASC")) {
+                    sqlsent.append(s.substring(0, s.length() - 4));
                     sqlsent.append(" ASC");
-                } else if (s.endsWith("__DESC")) {
-                    sqlsent.append(s.substring(0, s.length() - 6));
+                } else if (s.endsWith("$DESC")) {
+                    sqlsent.append(s.substring(0, s.length() - 5));
                     sqlsent.append(" DESC");                    
                 } else {
                     sqlsent.append(s);
@@ -58,14 +57,14 @@ public abstract class SentenceQRY extends Sentence {
         }
         
         // limit
-        int limit = getLimit(values);
+        int limit = getLimit(record);
         if (limit < Integer.MAX_VALUE) {
             sqlsent.append(" LIMIT ");
             sqlsent.append(limit);
         }
         
         // offset
-        int offset = getOffset(values);
+        int offset = getOffset(record);
         if (offset > 0) {
             sqlsent.append(" OFFSET ");
             sqlsent.append(offset);

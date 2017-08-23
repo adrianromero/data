@@ -17,14 +17,13 @@ package com.adr.data.route;
 
 import com.adr.data.DataException;
 import com.adr.data.DataLink;
-import com.adr.data.record.Record;
-import com.adr.data.record.Values;
 import java.util.List;
+import com.adr.data.record.Record;
 
 /**
  *
  * @author adrian
  */
 public interface ReducerData {
-    public boolean execute(DataLink link, Values headers, List<Record> l) throws DataException;
+    public boolean execute(DataLink link, Record headers, List<Record> l) throws DataException;
 }

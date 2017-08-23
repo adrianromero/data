@@ -19,11 +19,8 @@ package com.adr.data.security.jwt;
 
 import com.adr.data.DataException;
 import com.adr.data.QueryLink;
-import com.adr.data.record.Record;
-import com.adr.data.record.Values;
-import com.adr.data.recordmap.Entry;
-import com.adr.data.recordmap.RecordMap;
-import com.adr.data.recordmap.ValuesMap;
+import com.adr.data.record.Entry;
+import com.adr.data.record.RecordMap;
 import com.adr.data.route.ReducerQuery;
 import com.adr.data.security.ReducerLogin;
 import com.adr.data.security.SecurityDataException;
@@ -33,6 +30,8 @@ import com.auth0.jwt.JWT;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
+import com.adr.data.record.Record;
+import com.adr.data.record.Records;
 
 /**
  *
@@ -47,7 +46,7 @@ public class ReducerQueryJWTAuthorization implements ReducerQuery {
     }
         
     @Override
-    public List<Record> query(QueryLink link, Values headers, Record filter) throws DataException {
+    public List<Record> query(QueryLink link, Record headers, Record filter) throws DataException {
             
         Variant authorization = headers.get("Authorization");        
         String role;
@@ -61,17 +60,15 @@ public class ReducerQueryJWTAuthorization implements ReducerQuery {
             roledisplay = jwtauthorization.getClaim("roledisplay").asString();
         }
         
-        String entity = filter.getKey().get("__ENTITY").asString();
+        String entity = Records.getEntity(filter);
         if (ReducerLogin.AUTHORIZATION_REQUEST.equals(entity)) {        
             // Request authorizer
             String resource = filter.getString("RESOURCE");
             Record response = new RecordMap(
-                    new ValuesMap(
-                        new Entry("__ENTITY", ReducerLogin.AUTHORIZATION_REQUEST)),
-                    new ValuesMap(
-                        new Entry("RESOURCE", resource),
-                        new Entry("ROLE", role),
-                        new Entry("RESULT", new VariantBoolean(authorizer.hasAuthorization(link, role, resource)))));
+                    new Entry("__ENTITY", ReducerLogin.AUTHORIZATION_REQUEST),
+                    new Entry("RESOURCE", resource),
+                    new Entry("ROLE", role),
+                    new Entry("RESULT", new VariantBoolean(authorizer.hasAuthorization(link, role, resource))));
             return Collections.singletonList(response);             
         } else {
             // Normal query

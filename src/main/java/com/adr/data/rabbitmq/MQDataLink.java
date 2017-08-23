@@ -19,8 +19,6 @@ package com.adr.data.rabbitmq;
 
 import com.adr.data.DataException;
 import com.adr.data.DataLink;
-import com.adr.data.record.Record;
-import com.adr.data.record.Values;
 import com.adr.data.utils.EnvelopeResponse;
 import com.adr.data.utils.JSON;
 import com.adr.data.utils.RequestExecute;
@@ -30,6 +28,7 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.concurrent.TimeoutException;
+import com.adr.data.record.Record;
 
 /**
  *
@@ -50,7 +49,7 @@ public class MQDataLink implements DataLink {
     }
 
     @Override
-    public void execute(Values headers, List<Record> l) throws DataException {
+    public void execute(Record headers, List<Record> l) throws DataException {
         
         try {
             byte[] request = JSON.INSTANCE.toJSON(new RequestExecute(headers, l)).getBytes(StandardCharsets.UTF_8);

@@ -17,9 +17,8 @@
 
 package com.adr.data;
 
-import com.adr.data.record.Record;
-import com.adr.data.record.Values;
 import java.util.List;
+import com.adr.data.record.Record;
 
 /**
  *
@@ -36,12 +35,12 @@ public class BasicDataQueryLink implements DataQueryLink {
     }
     
     @Override
-    public List<Record> query(Values headers, Record filter) throws DataException {
+    public List<Record> query(Record headers, Record filter) throws DataException {
         return querylink.query(headers, filter);
     }
 
     @Override
-    public void execute(Values headers, List<Record> l) throws DataException {
+    public void execute(Record headers, List<Record> l) throws DataException {
         datalink.execute(headers, l);
     }
 }

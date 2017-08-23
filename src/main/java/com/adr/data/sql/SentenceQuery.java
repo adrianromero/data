@@ -41,10 +41,10 @@ public class SentenceQuery extends SentenceQRY {
     }
     
     @Override
-    protected CommandSQL build(SQLEngine engine, Record keyval) {
+    protected CommandSQL build(SQLEngine engine, Record val) {
         
         StringBuilder sqlsent = new StringBuilder(command);  
-        SentenceQRY.addQueryOptions(sqlsent, engine, keyval.getKey());        
+        SentenceQRY.addQueryOptions(sqlsent, engine, val);        
         return new CommandSQL(sqlsent.toString(), paramnames);
     }   
 }

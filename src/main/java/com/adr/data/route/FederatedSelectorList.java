@@ -18,9 +18,10 @@ package com.adr.data.route;
 
 import com.adr.data.DataException;
 import com.adr.data.QueryLink;
-import com.adr.data.record.Record;
 import java.util.HashMap;
 import java.util.Map;
+import com.adr.data.record.Record;
+import com.adr.data.record.Records;
 
 /**
  *
@@ -48,7 +49,7 @@ public class FederatedSelectorList implements FederatedSelector {
 
     @Override
     public QueryLink getQueryLink(Record filter) throws DataException {
-        String entity = filter.getKey().get("__ENTITY").asString();
+        String entity = Records.getEntity(filter);
         QueryLink link = links.get(entity);
         if (link == null) {
             if (defaultlink == null) {

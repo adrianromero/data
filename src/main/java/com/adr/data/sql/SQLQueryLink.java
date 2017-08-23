@@ -19,14 +19,14 @@ package com.adr.data.sql;
 
 import com.adr.data.DataException;
 import com.adr.data.QueryLink;
-import com.adr.data.record.Record;
-import com.adr.data.record.Values;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import javax.sql.DataSource;
+import com.adr.data.record.Record;
+import com.adr.data.record.Records;
 
 /**
  *
@@ -53,9 +53,9 @@ public class SQLQueryLink implements QueryLink {
     }
     
     @Override
-    public List<Record> query(Values headers, Record filter) throws DataException {
+    public List<Record> query(Record headers, Record filter) throws DataException {
         try (Connection c = ds.getConnection()) {
-            String entity = Sentence.getEntity(filter);
+            String entity = Records.getEntity(filter);
             Sentence s = queries.get(entity);
             if (s == null) {
                 s = table;

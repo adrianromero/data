@@ -17,15 +17,13 @@
 package com.adr.data.cache;
 
 import com.adr.data.DataException;
-import com.adr.data.record.Record;
-import com.adr.data.record.Values;
-import com.adr.data.recordmap.ValuesMap;
 import com.adr.data.utils.JSON;
 import com.adr.data.utils.RequestQuery;
 import com.adr.data.utils.ResponseListRecord;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import java.util.List;
+import com.adr.data.record.Record;
 
 /**
  *
@@ -42,15 +40,14 @@ public class CacheProviderMem implements CacheProvider {
     }
     
     @Override
-    public void put(Values headers, Record filter, List<Record> value) {
-        cache.put(              
-                JSON.INSTANCE.toJSON(new RequestQuery(ValuesMap.EMPTY, filter)), 
-                JSON.INSTANCE.toJSON(new ResponseListRecord(value)));
+    public void put(Record headers, Record filter, List<Record> records) {
+        cache.put(JSON.INSTANCE.toJSON(new RequestQuery(Record.EMPTY, filter)), 
+                JSON.INSTANCE.toJSON(new ResponseListRecord(records)));
     }
 
     @Override
-    public List<Record> getIfPresent(Values headers, Record filter) throws DataException {
-        String cachedresult = cache.getIfPresent(JSON.INSTANCE.toJSON(new RequestQuery(ValuesMap.EMPTY, filter)));
+    public List<Record> getIfPresent(Record headers, Record filter) throws DataException {
+        String cachedresult = cache.getIfPresent(JSON.INSTANCE.toJSON(new RequestQuery(Record.EMPTY, filter)));
         if (cachedresult == null) {
             return null;
         } else {

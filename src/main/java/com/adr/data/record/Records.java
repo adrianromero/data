@@ -15,10 +15,8 @@
 //     See the License for the specific language governing permissions and
 //     limitations under the License.
 
-package com.adr.data.recordmap;
+package com.adr.data.record;
 
-import com.adr.data.record.Record;
-import com.adr.data.record.Values;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,6 +25,10 @@ import java.util.List;
  * @author adrian
  */
 public class Records {
+   
+    public static String getEntity(Record record) {
+        return record.get("__ENTITY").asString();
+    }    
     
     public static List<Record> clone(List<Record> records) {
         assert records != null;
@@ -41,7 +43,7 @@ public class Records {
     public static Record clone(Record record) {
         assert record != null;
         
-        return new RecordMap(getEntries(record.getKey()), getEntries(record.getValue()));  
+        return new RecordMap(getEntries(record));  
     }
     
     public static Record merge(Record base, Record record) {
@@ -49,41 +51,36 @@ public class Records {
         assert record != null;
         
         return new RecordMap(
-                mergeEntries(getEntries(base.getKey()), getEntries(record.getKey())), 
-                mergeEntries(getEntries(base.getValue()), getEntries(record.getValue())));
+                mergeEntries(getEntries(base), getEntries(record)));
     }
     
-    public static Record mergeValues(Record base, Values values) {
-        return mergeValues(base, getEntries(values));
-    }
-    
-    public static Record mergeValues(Record base, Entry... values) {
+    public static Record merge(Record base, Entry... records) {
         assert base != null;
-        assert values != null;
+        assert records != null;
         
-        return new RecordMap(getEntries(base.getKey()), mergeEntries(getEntries(base.getValue()), values));
+        return new RecordMap(mergeEntries(getEntries(base), records));
     }
     
-    public static Entry[] mergeEntries(Entry[] basevalue, Entry... values) {
-        assert values != null;
-        if (basevalue == null) {
-            return values;
+    public static Entry[] mergeEntries(Entry[] base, Entry... records) {
+        assert records != null;
+        if (base == null) {
+            return records;
         } else {
-            Entry[] valuesmerged = new Entry[basevalue.length + values.length];
-            System.arraycopy(basevalue, 0, valuesmerged, 0, basevalue.length);
-            System.arraycopy(values, 0, valuesmerged, basevalue.length, values.length); 
-            return valuesmerged;
+            Entry[] recordmerged = new Entry[base.length + records.length];
+            System.arraycopy(base, 0, recordmerged, 0, base.length);
+            System.arraycopy(records, 0, recordmerged, base.length, records.length); 
+            return recordmerged;
         }
     }
 
-    public static Entry[] getEntries(Values values) {
-        if (values == null) {
+    public static Entry[] getEntries(Record record) {
+        if (record == null) {
             return null;
         }        
-        String[] names = values.getNames();
+        String[] names = record.getNames();
         Entry[] result = new Entry[names.length];
         for (int i = 0; i < result.length; i++) {
-            result[i] = new Entry(names[i], values.get(names[i]));
+            result[i] = new Entry(names[i], record.get(names[i]));
         }
         return result;
     }

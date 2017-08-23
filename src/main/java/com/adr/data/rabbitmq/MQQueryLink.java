@@ -19,8 +19,6 @@ package com.adr.data.rabbitmq;
 
 import com.adr.data.DataException;
 import com.adr.data.QueryLink;
-import com.adr.data.record.Record;
-import com.adr.data.record.Values;
 import com.adr.data.utils.EnvelopeResponse;
 import com.adr.data.utils.JSON;
 import com.adr.data.utils.RequestQuery;
@@ -30,6 +28,7 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.concurrent.TimeoutException;
+import com.adr.data.record.Record;
 
 /**
  *
@@ -50,7 +49,7 @@ public class MQQueryLink implements QueryLink {
     }
 
     @Override
-    public List<Record> query(Values headers, Record filter) throws DataException {
+    public List<Record> query(Record headers, Record filter) throws DataException {
         
         try {
             byte[] request = JSON.INSTANCE.toJSON(new RequestQuery(headers, filter)).getBytes(StandardCharsets.UTF_8);

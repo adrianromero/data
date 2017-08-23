@@ -17,10 +17,9 @@
 
 package com.adr.data.utils;
 
-import com.adr.data.record.Record;
-import com.adr.data.record.Values;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.adr.data.record.Record;
 
 /**
  *
@@ -30,10 +29,10 @@ public class RequestQuery extends EnvelopeRequest {
     
     public static final String NAME = "QUERY";
     
-    private final Values headers;
+    private final Record headers;
     private final Record filter;
     
-    public RequestQuery(Values headers, Record filter) {
+    public RequestQuery(Record headers, Record filter) {
         this.headers = headers;
         this.filter = filter;
     }
@@ -42,7 +41,7 @@ public class RequestQuery extends EnvelopeRequest {
         return filter;
     }
     
-    public Values getHeaders() {
+    public Record getHeaders() {
         return headers;
     }
 

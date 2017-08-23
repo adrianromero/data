@@ -38,7 +38,7 @@ public class SentenceView extends SentenceSelect {
     }
     
     @Override
-    protected String getViewName(Record keyval) {
+    protected String getViewName(Record record) {
         return  "(" + sentence + ")";
     }
     

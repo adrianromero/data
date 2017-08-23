@@ -18,10 +18,7 @@ package com.adr.data.utils;
 
 import com.adr.data.DataException;
 import com.adr.data.var.Kind;
-import com.adr.data.record.Record;
-import com.adr.data.record.Values;
-import com.adr.data.recordmap.RecordMap;
-import com.adr.data.recordmap.ValuesMap;
+import com.adr.data.record.RecordMap;
 import com.adr.data.var.ISOParameters;
 import com.adr.data.var.ISOResults;
 import com.adr.data.var.Variant;
@@ -40,6 +37,7 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Scanner;
+import com.adr.data.record.Record;
 
 /**
  *
@@ -73,10 +71,10 @@ public class JSON {
         String type = envelope.get("type").getAsString();
         if (RequestQuery.NAME.equals(type)) {
             JsonObject data = envelope.get("data").getAsJsonObject();
-            return new RequestQuery(fromJSONValues(data.get("headers")), fromJSONRecord(data.get("filter")));
+            return new RequestQuery(JSON.this.fromJSONRecord(data.get("headers")), JSON.this.fromJSONRecord(data.get("filter")));
         } else if (RequestExecute.NAME.equals(type)) {
             JsonObject data2 = envelope.get("data").getAsJsonObject();
-            return new RequestExecute(fromJSONValues(data2.get("headers")), fromJSONListRecord(data2.get("list")));
+            return new RequestExecute(JSON.this.fromJSONRecord(data2.get("headers")), JSON.this.fromJSONListRecord(data2.get("list")));
         } else {
             throw new IllegalStateException("Envelope type invalid: " + type);
         }
@@ -86,7 +84,7 @@ public class JSON {
         JsonObject envelope = gsonparser.parse(json).getAsJsonObject();
         String type = envelope.get("type").getAsString();
         if (ResponseListRecord.NAME.equals(type)) {
-            return new ResponseListRecord(fromJSONListRecord(envelope.get("data")));
+            return new ResponseListRecord(JSON.this.fromJSONListRecord(envelope.get("data")));
         } else if (ResponseError.NAME.equals(type)) {
             JsonObject jsonex = envelope.get("data").getAsJsonObject();
             String name = jsonex.get("exception").getAsString();
@@ -106,13 +104,13 @@ public class JSON {
     }
 
     public List<Record> fromJSONListRecord(String json) {
-        return fromJSONListRecord(gsonparser.parse(json));
+        return JSON.this.fromJSONListRecord(gsonparser.parse(json));
     }
 
     public List<Record> fromJSONListRecord(JsonElement element) {
         List<Record> l = new ArrayList<>();
         for (JsonElement r : element.getAsJsonArray()) {
-            l.add(fromJSONRecord(r));
+            l.add(JSON.this.fromJSONRecord(r));
         }
         return l;
     }
@@ -125,18 +123,10 @@ public class JSON {
     }
 
     public Record fromJSONRecord(String json) {
-        return fromJSONRecord(gsonparser.parse(json));
+        return JSON.this.fromJSONRecord(gsonparser.parse(json));
     }
 
-    public Record fromJSONRecord(JsonElement element) {
-        if (element == null || element.equals(JsonNull.INSTANCE)) {
-            return null;
-        }
-        JsonObject o = element.getAsJsonObject();
-        return new RecordMap(fromJSONValues(o.get("key")), fromJSONValues(o.get("value")));
-    }
-
-    private Values fromJSONValues(JsonElement element) {
+    private Record fromJSONRecord(JsonElement element) {
         if (element == null || element.equals(JsonNull.INSTANCE)) {
             return null;
         }
@@ -158,7 +148,7 @@ public class JSON {
                 throw new IllegalArgumentException(ex);
             }            
         }
-        return new ValuesMap(entries);
+        return new RecordMap(entries);
     }
 
     public String toJSON(EnvelopeRequest obj) {
@@ -181,31 +171,17 @@ public class JSON {
 
     public JsonElement toJSONElement(List<Record> obj) {
         JsonArray array = new JsonArray();
-        for (Record r : obj) {
-            array.add(toJSONElement(r));
+        for (Record v : obj) {
+            array.add(toJSONElement(v));
         }
         return array;
     }
-
-    public String toJSON(Record obj) {
-        return gson.toJson(toJSONElement(obj));
-    }
     
-    public String toJSON(Values obj) {
+    public String toJSON(Record obj) {
         return gson.toJson(toJSONElement(obj));
     }
 
     public JsonElement toJSONElement(Record obj) {
-        if (obj == null) {
-            return JsonNull.INSTANCE;
-        }
-        JsonObject r = new JsonObject();
-        r.add("key", toJSONElement(obj.getKey()));
-        r.add("value", toJSONElement(obj.getValue()));
-        return r;
-    }
-
-    public JsonElement toJSONElement(Values obj) {
         if (obj == null) {
             return JsonNull.INSTANCE;
         }
@@ -233,8 +209,8 @@ public class JSON {
 
     public JsonElement toSimpleJSONElement(List<Record> obj) {
         JsonArray array = new JsonArray();
-        for (Record r : obj) {
-            array.add(toSimpleJSONElement(r));
+        for (Record v : obj) {
+            array.add(toSimpleJSONElement(v));
         }
         return array;
     }
@@ -242,22 +218,8 @@ public class JSON {
     public String toSimpleJSON(Record obj) {
         return gsonsimple.toJson(toSimpleJSONElement(obj));
     }
-
+    
     private JsonElement toSimpleJSONElement(Record obj) {
-        if (obj == null) {
-            return JsonNull.INSTANCE;
-        }
-        JsonObject r = new JsonObject();
-        populateValues(r, obj.getKey());
-        populateValues(r, obj.getValue());
-        return r;
-    }
-    
-    public String toSimpleJSON(Values obj) {
-        return gsonsimple.toJson(toSimpleJSONElement(obj));
-    }
-    
-    private JsonElement toSimpleJSONElement(Values obj) {
         if (obj == null) {
             return JsonNull.INSTANCE;
         }
@@ -266,7 +228,7 @@ public class JSON {
         return r;
     }
 
-    private void populateValues(JsonObject r, Values obj) {
+    private void populateValues(JsonObject r, Record obj) {
         if (obj == null) {
             return;
         }

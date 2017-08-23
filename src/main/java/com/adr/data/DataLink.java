@@ -17,11 +17,9 @@
 
 package com.adr.data;
 
-import com.adr.data.record.Record;
-import com.adr.data.record.Values;
-import com.adr.data.recordmap.ValuesMap;
 import java.util.Arrays;
 import java.util.List;
+import com.adr.data.record.Record;
 
 /**
  *
@@ -29,13 +27,13 @@ import java.util.List;
  */
 public interface DataLink {
     
-    public void execute(Values headers, List<Record> l) throws DataException; 
+    public void execute(Record headers, List<Record> records) throws DataException; 
     
-    public default void execute(Record... keyval) throws DataException {
-        execute(ValuesMap.EMPTY, Arrays.asList(keyval));
+    public default void execute(Record... records) throws DataException {
+        execute(Record.EMPTY, Arrays.asList(records));
     }
     
-    public default void execute(Values headers, Record... keyval) throws DataException {
-        execute(headers, Arrays.asList(keyval));
+    public default void execute(Record headers, Record[] records) throws DataException {
+        execute(headers, Arrays.asList(records));
     }
 }

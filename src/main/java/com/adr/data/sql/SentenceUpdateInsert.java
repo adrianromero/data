@@ -18,8 +18,8 @@
 package com.adr.data.sql;
 
 import com.adr.data.DataException;
-import com.adr.data.record.Record;
 import java.sql.Connection;
+import com.adr.data.record.Record;
 
 /**
  *
@@ -36,11 +36,11 @@ public class SentenceUpdateInsert extends Sentence {
     }
 
     @Override
-    public void execute(Connection c, SQLEngine engine, Record keyval) throws DataException {
+    public void execute(Connection c, SQLEngine engine, Record record) throws DataException {
         
-        int rows = Sentence.execute(c, update.build(engine, keyval), keyval);
+        int rows = Sentence.execute(c, update.build(engine, record), record);
         if (rows == 0) {
-            if (Sentence.execute(c, insert.build(engine, keyval), keyval) != 1) {
+            if (Sentence.execute(c, insert.build(engine, record), record) != 1) {
                 throw new DataException("Sentence \"" + insert.getName() + "\" in \"" + getName() + "\" must return 1 row.");
             }
         } else if (rows != 1) {

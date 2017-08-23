@@ -18,9 +18,8 @@ package com.adr.data.route;
 
 import com.adr.data.DataException;
 import com.adr.data.DataLink;
-import com.adr.data.record.Record;
-import com.adr.data.record.Values;
 import java.util.List;
+import com.adr.data.record.Record;
 
 /**
  *
@@ -35,7 +34,7 @@ public class FailOverDataLink implements DataLink {
     }
     
     @Override
-    public void execute(Values headers, List<Record> l) throws DataException {
+    public void execute(Record headers, List<Record> l) throws DataException {
         for(DataLink d : datalinks) {
             try {
                 d.execute(headers, l);

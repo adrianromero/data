@@ -18,8 +18,6 @@ package com.adr.data.http;
 
 import com.adr.data.DataException;
 import com.adr.data.DataLink;
-import com.adr.data.record.Record;
-import com.adr.data.record.Values;
 import com.adr.data.utils.EnvelopeResponse;
 import com.adr.data.utils.JSON;
 import com.adr.data.utils.RequestExecute;
@@ -31,6 +29,7 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
+import com.adr.data.record.Record;
 
 /**
  *
@@ -56,7 +55,7 @@ public class WebDataLink implements DataLink {
     }
 
     @Override
-    public void execute(Values headers, List<Record> l) throws DataException {
+    public void execute(Record headers, List<Record> l) throws DataException {
         try {
             String message = JSON.INSTANCE.toJSON(new RequestExecute(headers, l));
             

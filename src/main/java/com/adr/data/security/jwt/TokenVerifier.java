@@ -17,13 +17,13 @@
 package com.adr.data.security.jwt;
 
 import com.adr.data.DataException;
-import com.adr.data.record.Values;
 import com.adr.data.security.SecurityDataException;
 import com.adr.data.var.Variant;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTVerificationException;
+import com.adr.data.record.Record;
 
 /**
  *
@@ -38,7 +38,7 @@ public class TokenVerifier {
         verifier = JWT.require(algorithm).build();
     }
 
-    public void verify(Values headers) throws DataException {
+    public void verify(Record headers) throws DataException {
 
         Variant authorization = headers.get("Authorization");        
         

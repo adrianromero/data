@@ -17,13 +17,14 @@
 package com.adr.data.security;
 
 import com.adr.data.DataException;
-import com.adr.data.record.Record;
 import com.adr.data.sql.SQLEngine;
 import com.adr.data.sql.Sentence;
 import com.adr.data.sql.SentenceCommand;
+import com.adr.data.sql.SentencePut;
 import com.adr.data.sql.SentenceQuery;
 import com.adr.data.sql.SentenceView;
 import java.sql.Connection;
+import com.adr.data.record.Record;
 
 /**
  *
@@ -42,7 +43,7 @@ public class SecureCommands {
         + "WHERE U.NAME = ? AND U.ACTIVE = TRUE", "NAME"),
         new SentenceQuery(
         "USERNAME_VISIBLE",
-        "SELECT ID, NAME, DISPLAYNAME, IMAGE FROM USERNAME WHERE VISIBLE = TRUE AND ACTIVE = TRUE ORDER BY NAME"),
+        "SELECT ID AS \"ID$KEY\", NAME, DISPLAYNAME, IMAGE FROM USERNAME WHERE VISIBLE = TRUE AND ACTIVE = TRUE ORDER BY NAME"),
         
         
         
@@ -92,11 +93,11 @@ public class SecureCommands {
             }
 
             @Override
-            public void execute(Connection c, SQLEngine engine, Record keyval) throws DataException {
-                if (keyval.getValue() == null) {
-                    delete.execute(c, engine, keyval);
+            public void execute(Connection c, SQLEngine engine, Record records) throws DataException {
+                if (SentencePut.isDeleteSentence(records)) {
+                    delete.execute(c, engine, records);
                 } else {
-                    insert.execute(c, engine, keyval);
+                    insert.execute(c, engine, records);
                 }
             }
         }

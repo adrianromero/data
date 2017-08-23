@@ -18,8 +18,8 @@
 package com.adr.data.sql;
 
 import com.adr.data.DataException;
-import com.adr.data.record.Record;
 import java.sql.Connection;
+import com.adr.data.record.Record;
 
 /**
  *
@@ -36,11 +36,20 @@ public class SentencePut extends Sentence {
     }
 
     @Override
-    public void execute(Connection c, SQLEngine engine, Record keyval) throws DataException {        
-        if (keyval.getValue() == null) {
-            delete.execute(c, engine, keyval);
+    public void execute(Connection c, SQLEngine engine, Record val) throws DataException {
+        if (isDeleteSentence(val)) {
+            delete.execute(c, engine, val);
         } else {
-            updateinsert.execute(c, engine, keyval);
+            updateinsert.execute(c, engine, val);
         }
+    }
+    
+    public static boolean isDeleteSentence(Record val) {
+        for (String name : val.getNames()) {
+            if (!name.contains("__") && !name.endsWith("$KEY")) {
+                return false;
+            }
+        }
+        return true;
     }
 }

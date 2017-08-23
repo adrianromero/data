@@ -19,10 +19,9 @@ package com.adr.data.security.jwt;
 
 import com.adr.data.DataException;
 import com.adr.data.QueryLink;
-import com.adr.data.record.Record;
-import com.adr.data.record.Values;
 import com.adr.data.route.ReducerQuery;
 import java.util.List;
+import com.adr.data.record.Record;
 
 /**
  *
@@ -37,7 +36,7 @@ public class ReducerQueryJWTVerify implements ReducerQuery {
     }
    
     @Override
-    public List<Record> query(QueryLink link, Values headers, Record filter) throws DataException {
+    public List<Record> query(QueryLink link, Record headers, Record filter) throws DataException {
         verifier.verify(headers);      
         return null;
     }

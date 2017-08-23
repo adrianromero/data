@@ -17,10 +17,8 @@
 
 package com.adr.data;
 
-import com.adr.data.record.Record;
-import com.adr.data.record.Values;
-import com.adr.data.recordmap.ValuesMap;
 import java.util.List;
+import com.adr.data.record.Record;
 
 /**
  *
@@ -28,18 +26,18 @@ import java.util.List;
  */
 public interface QueryLink {
     
-    public List<Record> query(Values headers, Record filter) throws DataException;   
+    public List<Record> query(Record headers, Record filter) throws DataException;   
     
     public default List<Record> query(Record filter) throws DataException {
-        return query(ValuesMap.EMPTY, filter);
+        return query(Record.EMPTY, filter);
     }
     
-    public default Record find(Values headers, Record filter) throws DataException {
+    public default Record find(Record headers, Record filter) throws DataException {
         List<Record> l = query(headers, filter);
         return l.isEmpty() ? null : l.get(0);
     }
     
     public default Record find(Record filter) throws DataException {
-        return find(ValuesMap.EMPTY, filter);
+        return find(Record.EMPTY, filter);
     } 
 }

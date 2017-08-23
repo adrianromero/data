@@ -17,10 +17,9 @@
 
 package com.adr.data.sql;
 
-import com.adr.data.record.Record;
-import com.adr.data.record.Values;
 import java.util.ArrayList;
 import java.util.List;
+import com.adr.data.record.Record;
 
 /**
  *
@@ -28,30 +27,25 @@ import java.util.List;
  */
 public abstract class SentenceSelect extends SentenceQRY {
 
-    protected abstract String getViewName(Record keyval);
+    protected abstract String getViewName(Record record);
 
     @Override
-    public CommandSQL build(SQLEngine engine, Record keyval) {
+    public CommandSQL build(SQLEngine engine, Record record) {
 
         SentenceSelect.SentenceBuilder builder = new SentenceSelect.SentenceBuilder(engine);
         StringBuilder sqlsent = new StringBuilder();
 
-        for (String f : keyval.getKey().getNames()) {
-            if (!f.contains("__")) {
-                builder.add(keyval.getKey(), f);
-            }
-        }
-        for (String f : keyval.getValue().getNames()) {
-            builder.add(keyval.getValue(), f);
+        for (String f : record.getNames()) {
+            builder.add(record, f);
         }
         sqlsent.append("SELECT ");
         sqlsent.append(builder.getSqlsent());
         sqlsent.append(" FROM ");
-        sqlsent.append(getViewName(keyval));
+        sqlsent.append(getViewName(record));
         sqlsent.append(" TABLE_ALIAS");
         sqlsent.append(builder.getSqlfilter());
         
-        SentenceQRY.addQueryOptions(sqlsent, engine, keyval.getKey());     
+        SentenceQRY.addQueryOptions(sqlsent, engine, record);     
 
         // build statement
         return new CommandSQL(sqlsent.toString(), builder.getFieldsList());
@@ -71,16 +65,35 @@ public abstract class SentenceSelect extends SentenceQRY {
             this.engine = engine;
         }
 
-        public void add(Values v, String n) {
+        public void add(Record v, String n) {
             // FILTERING THINGS
             String realname;
             String criteria;
+
             if (n.endsWith("__EQUAL")) {
                 realname = n.substring(0, n.length() - 7);
                 criteria = " = ?";
+            } else if (n.endsWith("__DISTINCT")) {
+                realname = n.substring(0, n.length() - 10);
+                criteria = " <> ?";
+           } else if (n.endsWith("__GREATER")) {
+                realname = n.substring(0, n.length() - 9);
+                criteria = " > ?";
+            } else if (n.endsWith("__GREATEROREQUAL")) {
+                realname = n.substring(0, n.length() - 16);
+                criteria = " >= ?";
+           } else if (n.endsWith("__LESS")) {
+                realname = n.substring(0, n.length() - 6);
+                criteria = " < ?";
+            } else if (n.endsWith("__LESSOREQUAL")) {
+                realname = n.substring(0, n.length() - 13);
+                criteria = " <= ?";
             } else if (n.endsWith("__LIKE")) {
                 realname = n.substring(0, n.length() - 6);
                 criteria = engine.getLikeExpression();
+            } else  if (n.endsWith("$KEY")) {
+                realname = n.substring(0, n.length() - 4);
+                criteria = " = ?";
             } else {
                 realname = n;
                 criteria = " = ?";
@@ -93,9 +106,12 @@ public abstract class SentenceSelect extends SentenceQRY {
                     comma = true;
                 }
                 sqlsent.append(realname);
+                sqlsent.append(" AS \"");
+                sqlsent.append(n);
+                sqlsent.append("\"");
             }
             // FILTER
-            if (!v.get(n).isNull()) {
+            if (!realname.contains("__") && !v.get(n).isNull()) {
                 if (commafilter) {
                     sqlfilter.append(" AND ");
                 } else {

@@ -18,11 +18,12 @@
 package com.adr.data.sqlpg;
 
 import com.adr.data.DataException;
-import com.adr.data.record.Record;
 import com.adr.data.sql.SQLEngine;
 import com.adr.data.sql.Sentence;
 import com.adr.data.sql.SentenceDelete;
+import com.adr.data.sql.SentencePut;
 import java.sql.Connection;
+import com.adr.data.record.Record;
 
 /**
  *
@@ -40,7 +41,7 @@ public class SentencePGPut extends Sentence {
 
     @Override
     public void execute(Connection c, SQLEngine engine, Record keyval) throws DataException {        
-        if (keyval.getValue() == null) {
+        if (SentencePut.isDeleteSentence(keyval)) {
             delete.execute(c, engine, keyval);
         } else {
             pgmerge.execute(c, engine, keyval);

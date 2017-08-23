@@ -19,11 +19,11 @@ package com.adr.data.security.jwt;
 
 import com.adr.data.DataException;
 import com.adr.data.QueryLink;
-import com.adr.data.record.Record;
-import com.adr.data.recordmap.Entry;
-import com.adr.data.recordmap.RecordMap;
+import com.adr.data.record.Entry;
+import com.adr.data.record.RecordMap;
 import com.adr.data.var.VariantString;
 import java.util.Set;
+import com.adr.data.record.Record;
 
 /**
  *
@@ -69,8 +69,7 @@ public class Authorizer {
                 new Entry[]{
                     new Entry("__ENTITY", "ROLE_SUBJECT"),
                     new Entry("ROLE__PARAM", role),
-                    new Entry("SUBJECT__PARAM", resource)},
-                new Entry[]{
+                    new Entry("SUBJECT__PARAM", resource),
                     new Entry("NAME", VariantString.NULL),
                     new Entry("DISPLAYNAME", VariantString.NULL)});
         return link.find(subjectsquery) != null;    

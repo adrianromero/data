@@ -19,9 +19,8 @@ package com.adr.data.security.jwt;
 
 import com.adr.data.DataException;
 import com.adr.data.QueryLink;
-import com.adr.data.recordmap.Entry;
-import com.adr.data.record.Record;
-import com.adr.data.recordmap.RecordMap;
+import com.adr.data.record.Entry;
+import com.adr.data.record.RecordMap;
 import com.adr.data.security.CryptUtils;
 import com.adr.data.security.ReducerLogin;
 import com.adr.data.security.SecurityDataException;
@@ -31,6 +30,7 @@ import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTCreationException;
 import java.util.Date;
+import com.adr.data.record.Record;
 
 /**
  *
@@ -54,8 +54,7 @@ public class ReducerJWTLogin extends ReducerLogin {
     protected Variant createAuthorization(QueryLink link, String username, String password) throws DataException {
         Record userauthenticationquery = new RecordMap(
                 new Entry[]{
-                    new Entry("__ENTITY", "USERNAME_BYNAME")},
-                new Entry[]{
+                    new Entry("__ENTITY", "USERNAME_BYNAME"),
                     new Entry("NAME", username),
                     new Entry("DISPLAYNAME", VariantString.NULL),
                     new Entry("ROLE", VariantString.NULL),                    

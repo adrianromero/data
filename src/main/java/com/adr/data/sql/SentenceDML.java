@@ -18,8 +18,8 @@
 package com.adr.data.sql;
 
 import com.adr.data.DataException;
-import com.adr.data.record.Record;
 import java.sql.Connection;
+import com.adr.data.record.Record;
 
 /**
  *
@@ -27,11 +27,11 @@ import java.sql.Connection;
  */
 public abstract class SentenceDML extends Sentence {
 
-    protected abstract CommandSQL build(SQLEngine engine, Record keyval);
+    protected abstract CommandSQL build(SQLEngine engine, Record val);
 
     @Override
-    public final void execute(Connection c, SQLEngine engine, Record keyval) throws DataException {
-        if (Sentence.execute(c, build(engine, keyval), keyval) != 1) {
+    public final void execute(Connection c, SQLEngine engine, Record val) throws DataException {
+        if (Sentence.execute(c, build(engine, val), val) != 1) {
             throw new DataException("Sentence \"" + getName() + "\" must return 1 row.");
         }
     }         

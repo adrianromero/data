@@ -17,9 +17,8 @@ package com.adr.data.route;
 
 import com.adr.data.DataException;
 import com.adr.data.DataLink;
-import com.adr.data.record.Record;
-import com.adr.data.record.Values;
 import java.util.List;
+import com.adr.data.record.Record;
 
 /**
  *
@@ -35,7 +34,7 @@ public class ReducerDataLink implements DataLink {
     }
    
     @Override
-    public void execute(Values headers, List<Record> l) throws DataException {
+    public void execute(Record headers, List<Record> l) throws DataException {
         for (ReducerData r: reducers) {
             if (r.execute(link, headers, l)) {
                 return;
@@ -43,5 +42,4 @@ public class ReducerDataLink implements DataLink {
         }
         throw new DataException("Data cannot be found.");
     }
-    
 }

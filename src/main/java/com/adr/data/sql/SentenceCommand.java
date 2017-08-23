@@ -40,7 +40,7 @@ public class SentenceCommand extends SentenceDML {
     
 
     @Override
-    protected CommandSQL build(SQLEngine engine, Record keyval) {
+    protected CommandSQL build(SQLEngine engine, Record r) {
         return commandsql;
     }   
 }

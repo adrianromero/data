@@ -17,15 +17,14 @@
 package com.adr.data.cache;
 
 import com.adr.data.DataException;
-import com.adr.data.record.Record;
-import com.adr.data.record.Values;
 import java.util.List;
+import com.adr.data.record.Record;
 
 /**
  *
  * @author adrian
  */
 public interface CacheProvider {
-    public void put(Values headers, Record filter, List<Record> value) throws DataException;
-    public List<Record> getIfPresent(Values headers, Record filter) throws DataException;
+    public void put(Record headers, Record filter, List<Record> records) throws DataException;
+    public List<Record> getIfPresent(Record headers, Record filter) throws DataException;
 }

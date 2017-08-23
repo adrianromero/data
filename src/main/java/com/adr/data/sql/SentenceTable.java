@@ -18,6 +18,7 @@
 package com.adr.data.sql;
 
 import com.adr.data.record.Record;
+import com.adr.data.record.Records;
 
 /**
  *
@@ -31,7 +32,7 @@ public class SentenceTable extends SentenceSelect {
     }
 
     @Override
-    protected String getViewName(Record keyval) {
-        return getEntity(keyval);
+    protected String getViewName(Record record) {
+        return Records.getEntity(record);
     }
 }

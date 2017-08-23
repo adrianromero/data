@@ -18,11 +18,10 @@ package com.adr.data.route;
 
 import com.adr.data.DataException;
 import com.adr.data.DataLink;
-import com.adr.data.record.Record;
-import com.adr.data.record.Values;
 import java.util.List;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
+import com.adr.data.record.Record;
 
 /**
  *
@@ -40,7 +39,7 @@ public class FilterDataLink implements DataLink {
         this.ifemptyex = ifemptyex;
     }
     @Override
-    public void execute(Values headers, List<Record> l) throws DataException {
+    public void execute(Record headers, List<Record> l) throws DataException {
         List<Record> l2 = l.stream().filter(p).collect(Collectors.toList());
         if (!l2.isEmpty()) {
             datalink.execute(headers, l2);

@@ -17,8 +17,9 @@
 
 package com.adr.data.sql;
 
-import com.adr.data.record.Record;
 import java.util.ArrayList;
+import com.adr.data.record.Record;
+import com.adr.data.record.Records;
 
 /**
  *
@@ -32,22 +33,26 @@ public class SentenceDelete extends SentenceDML {
     }
     
     @Override
-    protected final CommandSQL build(SQLEngine engine, Record keyval) {
+    protected final CommandSQL build(SQLEngine engine, Record record) {
 
         StringBuilder sentence = new StringBuilder();
         ArrayList<String> keyfields = new ArrayList<>();
 
         sentence.append("DELETE FROM ");
-        sentence.append(Sentence.getEntity(keyval));
+        sentence.append(Records.getEntity(record));
 
         boolean filter = false;
-        for (String f : keyval.getKey().getNames()) {
-            if (!f.contains("__")) {
-                sentence.append(filter ? " AND " : " WHERE ");
-                sentence.append(f);
-                sentence.append(" = ?");
-                keyfields.add(f);
-                filter = true;
+        String realname;
+        for (String f : record.getNames()) {
+            if (!f.contains("__")) {            
+                if (f.endsWith("$KEY")) {
+                    realname = f.substring(0, f.length() - 4);
+                    sentence.append(filter ? " AND " : " WHERE ");
+                    sentence.append(realname);
+                    sentence.append(" = ?");
+                    keyfields.add(f);
+                    filter = true;
+                }                     
             }
         }
         return new CommandSQL(sentence.toString(), keyfields.toArray(new String[keyfields.size()]));

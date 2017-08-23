@@ -18,10 +18,9 @@ package com.adr.data.http;
 
 import com.adr.data.DataException;
 import com.adr.data.DataQueryLink;
-import com.adr.data.record.Record;
-import com.adr.data.record.Values;
 import java.util.List;
 import okhttp3.OkHttpClient;
+import com.adr.data.record.Record;
 
 /**
  *
@@ -40,12 +39,12 @@ public class WebDataQueryLink implements DataQueryLink {
     }
 
     @Override
-    public List<Record> query(Values headers, Record filter) throws DataException {
+    public List<Record> query(Record headers, Record filter) throws DataException {
         return querylink.query(headers, filter);
     }
 
     @Override
-    public void execute(Values headers, List<Record> l) throws DataException {
+    public void execute(Record headers, List<Record> l) throws DataException {
         datalink.execute(headers, l);
     }
 }

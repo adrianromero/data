@@ -16,15 +16,15 @@
 //     limitations under the License.
 package com.adr.data.test;
 
-import com.adr.data.recordmap.Entry;
-import com.adr.data.record.Record;
-import com.adr.data.recordmap.RecordMap;
+import com.adr.data.record.Entry;
+import com.adr.data.record.RecordMap;
 import com.adr.data.utils.JSON;
 import com.adr.data.var.VariantString;
 import java.util.Arrays;
 import java.util.List;
 import org.junit.Assert;
 import org.junit.Test;
+import com.adr.data.record.Record;
 
 /**
  *
@@ -39,34 +39,27 @@ public class GSONTests {
     public void testJSONSerialization() {
 
         Record keval = new RecordMap(
-                new Entry[]{
-                    new Entry("id", new VariantString("1"))},
-                new Entry[]{
-                    new Entry("field", new VariantString("pepeluis")),
-                    new Entry("value", VariantString.NULL)});
+                new Entry("id", new VariantString("1")),
+                new Entry("field", new VariantString("pepeluis")),
+                new Entry("value", VariantString.NULL));
 
         List<Record> dl = Arrays.asList(
                 new RecordMap(
-                        new Entry[]{
-                            new Entry("id", "1")},
-                        new Entry[]{
-                            new Entry("field", "pepeluis")}),
+                        new Entry("id", "1"),
+                        new Entry("field", "pepeluis")),
                 new RecordMap(
-                        new Entry[]{
-                            new Entry("id", "2")},
-                        new Entry[]{
-                            new Entry("field", "hilario")}));
+                        new Entry("id", "2"),
+                        new Entry("field", "hilario")));
 
-        String sdl = "[{\"key\":[{\"name\":\"id\",\"kind\":\"STRING\",\"value\":\"1\"}],"
-                + "\"value\":[{\"name\":\"field\",\"kind\":\"STRING\",\"value\":\"pepeluis\"}]},"
-                + "{\"key\":[{\"name\":\"id\",\"kind\":\"STRING\",\"value\":\"2\"}],"
-                + "\"value\":[{\"name\":\"field\",\"kind\":\"STRING\",\"value\":\"hilario\"}]}]";
+        String sdl = "["
+                + "[{\"name\":\"id\",\"kind\":\"STRING\",\"value\":\"1\"},{\"name\":\"field\",\"kind\":\"STRING\",\"value\":\"pepeluis\"}],"
+                + "[{\"name\":\"id\",\"kind\":\"STRING\",\"value\":\"2\"},{\"name\":\"field\",\"kind\":\"STRING\",\"value\":\"hilario\"}]"
+                + "]";
         Assert.assertEquals(sdl, JSON.INSTANCE.toJSON(dl));
         Assert.assertEquals(sdl, JSON.INSTANCE.toJSON(JSON.INSTANCE.fromJSONListRecord(JSON.INSTANCE.toJSON(dl))));
         Assert.assertEquals("[{\"id\":\"1\",\"field\":\"pepeluis\"},{\"id\":\"2\",\"field\":\"hilario\"}]", JSON.INSTANCE.toSimpleJSON(dl));
 
-        String skeval = "{\"key\":[{\"name\":\"id\",\"kind\":\"STRING\",\"value\":\"1\"}],"
-                + "\"value\":[{\"name\":\"field\",\"kind\":\"STRING\",\"value\":\"pepeluis\"},{\"name\":\"value\",\"kind\":\"STRING\"}]}";
+        String skeval = "[{\"name\":\"id\",\"kind\":\"STRING\",\"value\":\"1\"},{\"name\":\"field\",\"kind\":\"STRING\",\"value\":\"pepeluis\"},{\"name\":\"value\",\"kind\":\"STRING\"}]";
         Assert.assertEquals(skeval, JSON.INSTANCE.toJSON(keval));
         Assert.assertEquals(skeval, JSON.INSTANCE.toJSON(JSON.INSTANCE.fromJSONRecord(JSON.INSTANCE.toJSON(keval))));
         Assert.assertEquals("{\"id\":\"1\",\"field\":\"pepeluis\",\"value\":null}", JSON.INSTANCE.toSimpleJSON(keval));

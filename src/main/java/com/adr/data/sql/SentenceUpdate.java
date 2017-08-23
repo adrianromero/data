@@ -17,8 +17,9 @@
 
 package com.adr.data.sql;
 
-import com.adr.data.record.Record;
 import java.util.ArrayList;
+import com.adr.data.record.Record;
+import com.adr.data.record.Records;
 
 /**
  *
@@ -32,34 +33,41 @@ public class SentenceUpdate extends SentenceDML {
     }
     
     @Override
-    protected final CommandSQL build(SQLEngine engine, Record keyval) {
+    protected final CommandSQL build(SQLEngine engine, Record record) {
 
-        StringBuilder sentence = new StringBuilder();
-        ArrayList<String> keyfields = new ArrayList<>();
+        StringBuilder sentencefields = new StringBuilder();
+        StringBuilder sentencefilters = new StringBuilder();
+        ArrayList<String> namefields = new ArrayList<>();
+        ArrayList<String> namefilters = new ArrayList<>();
 
-        sentence.append("UPDATE ");
-        sentence.append(Sentence.getEntity(keyval));
-
-        boolean filter = false;
-        for (String f : keyval.getValue().getNames()) {
-            sentence.append(filter ? ", " : " SET ");
-            sentence.append(f);
-            sentence.append(" = ?");
-            keyfields.add(f);
-            filter = true;
-        }
-
-        filter = false;
-        for (String f : keyval.getKey().getNames()) {
+        sentencefields.append("UPDATE ");
+        sentencefields.append(Records.getEntity(record));
+        
+        boolean fields = false;
+        boolean filters = false;
+        String realname;
+        for (String f : record.getNames()) {
             if (!f.contains("__")) {
-                sentence.append(filter ? " AND " : " WHERE ");
-                sentence.append(f);
-                sentence.append(" = ?");
-                keyfields.add(f);
-                filter = true;
+                if (f.endsWith("$KEY")) {
+                    realname = f.substring(0, f.length() - 4);
+                    sentencefilters.append(filters ? " AND " : " WHERE ");
+                    sentencefilters.append(realname);
+                    sentencefilters.append(" = ?");
+                    namefilters.add(f);
+                    filters = true;                
+                } else {
+                    sentencefields.append(fields ? ", " : " SET ");
+                    sentencefields.append(f);
+                    sentencefields.append(" = ?");
+                    namefields.add(f);
+                    fields = true;
+                }
             }
         }
-
-        return new CommandSQL(sentence.toString(), keyfields.toArray(new String[keyfields.size()]));
+        
+        sentencefields.append(sentencefilters);
+        namefields.addAll(namefilters);
+        
+        return new CommandSQL(sentencefields.toString(), namefields.toArray(new String[namefields.size()]));
     }  
 }

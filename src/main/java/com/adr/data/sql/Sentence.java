@@ -17,10 +17,8 @@
 package com.adr.data.sql;
 
 import com.adr.data.DataException;
-import com.adr.data.recordmap.Entry;
-import com.adr.data.record.Record;
-import com.adr.data.record.Values;
-import com.adr.data.recordmap.RecordMap;
+import com.adr.data.record.Entry;
+import com.adr.data.record.RecordMap;
 import com.adr.data.var.Variant;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -30,6 +28,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import com.adr.data.record.Record;
 
 /**
  *
@@ -41,24 +40,19 @@ public abstract class Sentence {
 
     public abstract String getName();
 
-    public void execute(Connection c, SQLEngine engine, Record keyval) throws DataException {
+    public void execute(Connection c, SQLEngine engine, Record val) throws DataException {
         throw new UnsupportedOperationException();
     }
 
-    public List<Record> query(Connection c, SQLEngine engine, Record keyval) throws DataException {
+    public List<Record> query(Connection c, SQLEngine engine, Record val) throws DataException {
         throw new UnsupportedOperationException();
     }
 
-    public static String getEntity(Record keyval) {
-        return keyval.getKey().get("__ENTITY").asString();
-    }
-
-    public static int execute(Connection c, CommandSQL command, Record keyval) throws DataException {
+    public static int execute(Connection c, CommandSQL command, Record val) throws DataException {
         String sql = command.getCommand();
         LOG.log(Level.CONFIG, "Executing SQL update: {0}", sql);
         try (PreparedStatement stmt = c.prepareStatement(sql)) {
-            write(stmt, command.getParamNames(), keyval.getKey());
-            write(stmt, command.getParamNames(), keyval.getValue());
+            write(stmt, command.getParamNames(), val);
             return stmt.executeUpdate();
         } catch (SQLException ex) {
             throw new DataException(ex);
@@ -69,10 +63,9 @@ public abstract class Sentence {
         String sql = command.getCommand();
         LOG.log(Level.CONFIG, "Executing SQL query: {0}", sql);
         try (PreparedStatement stmt = c.prepareStatement(sql)) {
-            write(stmt, command.getParamNames(), filter.getKey());
-            write(stmt, command.getParamNames(), filter.getValue());
+            write(stmt, command.getParamNames(), filter);
 
-            int limit = getLimit(filter.getKey());
+            int limit = getLimit(filter);
             // int offset = options.getOffset(); // offset is applied in the CommandSQL
 
             try (ResultSet resultset = stmt.executeQuery()) {
@@ -80,9 +73,7 @@ public abstract class Sentence {
 
                 int i = 0;
                 while (i < limit && resultset.next()) {
-                    r.add(new RecordMap(
-                            read(resultset, filter.getKey()),
-                            read(resultset, filter.getValue())));
+                    r.add(new RecordMap(read(resultset, filter)));
                     i++;
                 }
                 return r;
@@ -92,7 +83,7 @@ public abstract class Sentence {
         }
     }
 
-    private static void write(PreparedStatement stmt, String[] params, Values param) throws DataException {
+    private static void write(PreparedStatement stmt, String[] params, Record param) throws DataException {
         if (param == null) {
             return;
         }
@@ -102,7 +93,7 @@ public abstract class Sentence {
         }
     }
 
-    private static Entry[] read(ResultSet resultset, Values param) throws DataException {
+    private static Entry[] read(ResultSet resultset, Record param) throws DataException {
         if (param == null) {
             return new Entry[0];
         }
@@ -120,18 +111,18 @@ public abstract class Sentence {
         return l.stream().toArray(Entry[]::new);
     }
        
-    public static int getLimit(Values values) {
-        Variant v = values.get("__LIMIT");
+    public static int getLimit(Record record) {
+        Variant v = record.get("__LIMIT");
         return v.isNull() ? Integer.MAX_VALUE : v.asInteger();
     }
     
-    public static int getOffset(Values values) {
-        Variant v = values.get("__OFFSET");
+    public static int getOffset(Record record) {
+        Variant v = record.get("__OFFSET");
         return v.isNull() ? 0 : v.asInteger();
     }
     
-    public static String[] getOrderBy(Values values) {
-        Variant v = values.get("__ORDERBY");
+    public static String[] getOrderBy(Record record) {
+        Variant v = record.get("__ORDERBY");
         return v.isNull() ? new String[0] : v.asString().split("\\s+");
     }    
 }

@@ -18,17 +18,15 @@ package com.adr.data.test;
 
 import com.adr.data.DataException;
 import com.adr.data.DataQueryLink;
-import com.adr.data.recordmap.Entry;
-import com.adr.data.record.Record;
-import com.adr.data.record.Values;
-import com.adr.data.recordmap.RecordMap;
+import com.adr.data.record.Entry;
 import com.adr.data.security.SecurityDataException;
-import com.adr.data.recordmap.ValuesMap;
+import com.adr.data.record.RecordMap;
 import com.adr.data.security.ReducerLogin;
 import com.adr.data.var.VariantString;
 import java.util.List;
 import org.junit.Assert;
 import org.junit.Test;
+import com.adr.data.record.Record;
 
 /**
  *
@@ -44,7 +42,7 @@ public class SecurityTests {
         try {
             // Login
             String authorization = ReducerLogin.login(link, "admin", "admin");
-            Values header = new ValuesMap(new Entry("Authorization", authorization));
+            Record header = new RecordMap(new Entry("Authorization", authorization));
 
             Record current = ReducerLogin.current(link, header);
 
@@ -53,25 +51,21 @@ public class SecurityTests {
             Assert.assertEquals("ADMIN", current.getString("ROLE"));
 
             // this query succeds because admin has permissions to all resources
-            List<Record> result1 = link.query(
-                    header, new RecordMap(
+            List<Record> result1 = link.query(header, new RecordMap(
                             new Entry[]{
                                 new Entry("__ENTITY", "USERNAME"),
-                                new Entry("ID", new VariantString("admin"))},
-                            new Entry[]{
+                                new Entry("ID$KEY", new VariantString("admin")),
                                 new Entry("NAME", VariantString.NULL),
                                 new Entry("CODECARD", VariantString.NULL)}));
             Assert.assertEquals(1, result1.size());
 
             try {
                 // This query fails because not logged users 
-                link.query(
-                        ValuesMap.EMPTY,
+                link.query(Record.EMPTY,
                         new RecordMap(
                                 new Entry[]{
                                     new Entry("__ENTITY", "USERNAME"),
-                                    new Entry("ID", new VariantString("admin"))},
-                                new Entry[]{
+                                    new Entry("ID$KEY", new VariantString("admin")),
                                     new Entry("NAME", VariantString.NULL),
                                     new Entry("CODECARD", VariantString.NULL)}));
                 Assert.fail();
@@ -91,12 +85,12 @@ public class SecurityTests {
         try {
             // Login
             String authorization = ReducerLogin.login(link, "manager", "");
-            Values header = new ValuesMap(new Entry("Authorization", authorization));
+            Record header = new RecordMap(new Entry("Authorization", authorization));
 
             Record current = ReducerLogin.current(link, header);
             Assert.assertEquals("Manager", current.getString("DISPLAYNAME"));
 
-            current = ReducerLogin.current(link, ValuesMap.EMPTY);
+            current = ReducerLogin.current(link, Record.EMPTY);
             Assert.assertNull(current);
         } finally {
             SourceLink.destroyDataQueryLink();
@@ -110,13 +104,11 @@ public class SecurityTests {
 
         try {
             // this query succeds because anonymous has permissions to all resources
-            List<Record> result1 = link.query(
-                    ValuesMap.EMPTY,
+            List<Record> result1 = link.query(Record.EMPTY,
                     new RecordMap(
                             new Entry[]{
                                 new Entry("__ENTITY", "USERNAME_VISIBLE"),
-                                new Entry("ID", VariantString.NULL)},
-                            new Entry[]{
+                                new Entry("ID$KEY", VariantString.NULL),
                                 new Entry("NAME", VariantString.NULL),
                                 new Entry("DISPLAYNAME", VariantString.NULL)}));
             Assert.assertEquals(3, result1.size());
@@ -135,28 +127,28 @@ public class SecurityTests {
 
             // Anonymous
             String authorization;
-            Values header = ValuesMap.EMPTY;            
+            Record header = Record.EMPTY;            
             Assert.assertTrue(ReducerLogin.hasAuthorization(link, header, "USERNAME_VISIBLE_QUERY"));
             Assert.assertFalse(ReducerLogin.hasAuthorization(link, header, "authenticatedres"));
             Assert.assertFalse(ReducerLogin.hasAuthorization(link, header, "com/adr/hellocore/fxml/datalist?datatable=com/adr/hellocore/security/role"));        
             Assert.assertFalse(ReducerLogin.hasAuthorization(link, header, "anyotherresource"));
 
             authorization = ReducerLogin.login(link, "manager", "");
-            header = new ValuesMap(new Entry("Authorization", authorization));
+            header = new RecordMap(new Entry("Authorization", authorization));
             Assert.assertTrue(ReducerLogin.hasAuthorization(link, header, "USERNAME_VISIBLE_QUERY"));
             Assert.assertTrue(ReducerLogin.hasAuthorization(link, header, "authenticatedres"));
             Assert.assertTrue(ReducerLogin.hasAuthorization(link, header, "com/adr/hellocore/fxml/datalist?datatable=com/adr/hellocore/security/role"));
             Assert.assertFalse(ReducerLogin.hasAuthorization(link, header, "anyotherresource"));
 
             authorization = ReducerLogin.login(link, "guest", "");
-            header = new ValuesMap(new Entry("Authorization", authorization));
+            header = new RecordMap(new Entry("Authorization", authorization));
             Assert.assertTrue(ReducerLogin.hasAuthorization(link, header, "USERNAME_VISIBLE_QUERY"));
             Assert.assertTrue(ReducerLogin.hasAuthorization(link, header, "authenticatedres"));
             Assert.assertFalse(ReducerLogin.hasAuthorization(link, header, "com/adr/hellocore/fxml/datalist?datatable=com/adr/hellocore/security/role"));
             Assert.assertFalse(ReducerLogin.hasAuthorization(link, header, "anyotherresource"));
 
             authorization = ReducerLogin.login(link, "admin", "admin");
-            header = new ValuesMap(new Entry("Authorization", authorization));
+            header = new RecordMap(new Entry("Authorization", authorization));
             Assert.assertTrue(ReducerLogin.hasAuthorization(link, header, "USERNAME_VISIBLE_QUERY"));
             Assert.assertTrue(ReducerLogin.hasAuthorization(link, header, "authenticatedres"));
             Assert.assertTrue(ReducerLogin.hasAuthorization(link, header, "com/adr/hellocore/fxml/datalist?datatable=com/adr/hellocore/security/role"));
