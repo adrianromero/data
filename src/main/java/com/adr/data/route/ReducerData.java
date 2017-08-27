@@ -16,7 +16,6 @@
 package com.adr.data.route;
 
 import com.adr.data.DataException;
-import com.adr.data.DataLink;
 import java.util.List;
 import com.adr.data.record.Record;
 
@@ -25,5 +24,6 @@ import com.adr.data.record.Record;
  * @author adrian
  */
 public interface ReducerData {
-    public boolean execute(DataLink link, Record headers, List<Record> l) throws DataException;
+    // returns false to go to next reducer
+    public boolean execute(Record headers, List<Record> l) throws DataException;
 }

@@ -39,14 +39,16 @@ import com.adr.data.record.Records;
  */
 public class ReducerQueryJWTAuthorization implements ReducerQuery {
     
+    private final QueryLink querylink;
     private final Authorizer authorizer;
 
-    public ReducerQueryJWTAuthorization(Set<String> anonymousresources, Set<String> authenticatedresources) {
+    public ReducerQueryJWTAuthorization(QueryLink querylink, Set<String> anonymousresources, Set<String> authenticatedresources) {
+        this.querylink = querylink;
         authorizer = new Authorizer(anonymousresources, authenticatedresources);
     }
         
     @Override
-    public List<Record> query(QueryLink link, Record headers, Record filter) throws DataException {
+    public List<Record> query(Record headers, Record filter) throws DataException {
             
         Variant authorization = headers.get("Authorization");        
         String role;
@@ -68,11 +70,11 @@ public class ReducerQueryJWTAuthorization implements ReducerQuery {
                     new Entry("__ENTITY", ReducerLogin.AUTHORIZATION_REQUEST),
                     new Entry("RESOURCE", resource),
                     new Entry("ROLE", role),
-                    new Entry("RESULT", new VariantBoolean(authorizer.hasAuthorization(link, role, resource))));
+                    new Entry("RESULT", new VariantBoolean(authorizer.hasAuthorization(querylink, role, resource))));
             return Collections.singletonList(response);             
         } else {
             // Normal query
-            if (authorizer.hasAuthorization(link, role, entity + Authorizer.ACTION_QUERY)) {
+            if (authorizer.hasAuthorization(querylink, role, entity + Authorizer.ACTION_QUERY)) {
                 return null;
             } else {
                 throw new SecurityDataException("Role " + displayrole + " does not have authorization to query the resource: " + entity);

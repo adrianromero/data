@@ -16,8 +16,8 @@
 //     limitations under the License.
 package com.adr.data.testlinks;
 
-import com.adr.data.BasicDataQueryLink;
-import com.adr.data.DataQueryLink;
+import com.adr.data.DataLink;
+import com.adr.data.QueryLink;
 import com.adr.data.rabbitmq.MQDataLink;
 import com.adr.data.rabbitmq.MQQueryLink;
 import com.rabbitmq.client.Channel;
@@ -43,13 +43,15 @@ public class DataQueryLinkMQ implements DataQueryLinkBuilder {
 
     private Channel channelquery = null;
     private RpcClient clientquery = null;
+    private QueryLink querylink;
     private Channel channeldata = null;
     private RpcClient clientdata = null;
-        
-    public DataQueryLinkMQ(String host, String queryexchange, String dataexchange) {
+    private DataLink datalink;
+    
+    public DataQueryLinkMQ(String host, String dataexchange, String queryexchange) {
 
-        this.queryexchange = queryexchange;
         this.dataexchange = dataexchange;
+        this.queryexchange = queryexchange;
 
         try {
             ConnectionFactory factory = new ConnectionFactory();
@@ -62,16 +64,14 @@ public class DataQueryLinkMQ implements DataQueryLinkBuilder {
     }
 
     @Override
-    public DataQueryLink create() {
+    public void create() {
         try {
             channelquery = connection.createChannel();
             clientquery = new RpcClient(channelquery, queryexchange, "", 2500);
+            querylink = new MQQueryLink(clientquery);
             channeldata = connection.createChannel();
             clientdata = new RpcClient(channeldata, dataexchange, "", 2500);
-
-            return new BasicDataQueryLink(
-                    new MQQueryLink(clientquery),
-                    new MQDataLink(clientdata));
+            datalink = new MQDataLink(clientdata);
         } catch (IOException ex) {
             LOG.log(Level.SEVERE, null, ex);
             throw new RuntimeException(ex);
@@ -83,11 +83,23 @@ public class DataQueryLinkMQ implements DataQueryLinkBuilder {
         try {
             clientdata.close();
             channeldata.close();
+            datalink = null;
             clientquery.close();
             channelquery.close();
+            querylink = null;
         } catch (IOException | TimeoutException ex) {
             LOG.log(Level.SEVERE, null, ex);
             throw new RuntimeException(ex);
         }
     }    
+
+    @Override
+    public QueryLink getQueryLink() {
+        return querylink;
+    }
+
+    @Override
+    public DataLink getDataLink() {
+        return datalink;
+    }
 }

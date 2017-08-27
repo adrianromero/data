@@ -37,11 +37,14 @@ import com.adr.data.record.Record;
  */
 public class ReducerJWTLogin extends ReducerLogin {
 
+    private final QueryLink link;
     private final Algorithm algorithm;
     private final long validtime;
 
-    public ReducerJWTLogin(byte[] secret, long validtime) {
+    public ReducerJWTLogin(QueryLink link, byte[] secret, long validtime) {
+        
         try {
+            this.link = link;
             this.algorithm = Algorithm.HMAC256(secret);
             this.validtime = validtime;
         } catch (IllegalArgumentException ex) {
@@ -50,7 +53,7 @@ public class ReducerJWTLogin extends ReducerLogin {
     }
 
     @Override
-    protected Variant createAuthorization(QueryLink link, String username, String password) throws DataException {
+    protected Variant createAuthorization(String username, String password) throws DataException {
         Record userauthenticationquery = new RecordMap(
                 new Entry("__ENTITY", "USERNAME_BYNAME"),
                 new Entry("NAME", username),

@@ -41,17 +41,15 @@ public class WebQueryLink implements QueryLink {
     public static final MediaType MEDIA_TYPE_JSON = MediaType.parse("application/json; charset=utf-8");
 
     private final OkHttpClient client;
-    private final HttpUrl baseurl;
-    private final String segment;
+    private final HttpUrl url;
 
-    public WebQueryLink(String baseurl, String segment, OkHttpClient client) {
+    public WebQueryLink(String url, OkHttpClient client) {
         this.client = client;
-        this.baseurl = HttpUrl.parse(baseurl);
-        this.segment = segment;
+        this.url = HttpUrl.parse(url);
     }
 
-    public WebQueryLink(String baseurl) {
-        this(baseurl, null, new OkHttpClient.Builder().build());
+    public WebQueryLink(String url) {
+        this(url, new OkHttpClient.Builder().build());
     }
 
     @Override
@@ -60,14 +58,8 @@ public class WebQueryLink implements QueryLink {
         try {
             String message = JSON.INSTANCE.toJSON(new RequestQuery(headers, filter));
 
-            HttpUrl newurl = segment == null
-                    ? baseurl
-                    : baseurl.newBuilder()
-                            .addPathSegment(segment)
-                            .build();
-
             Request request = new Request.Builder()
-                    .url(newurl)
+                    .url(url)
                     // .header("User-Agent", USERAGENT)   
                     .post(RequestBody.create(MEDIA_TYPE_JSON, message))
                     .build();

@@ -1,5 +1,5 @@
 //     Data Access is a Java library to store data
-//     Copyright (C) 2016 Adrián Romero Corchado.
+//     Copyright (C) 2016-2017 Adrián Romero Corchado.
 //
 //     This file is part of Data Access
 //
@@ -16,9 +16,7 @@
 //     limitations under the License.
 package com.adr.data.testlinks;
 
-import com.adr.data.BasicDataQueryLink;
 import com.adr.data.DataLink;
-import com.adr.data.DataQueryLink;
 import com.adr.data.QueryLink;
 import com.adr.data.route.ReducerDataIdentity;
 import com.adr.data.route.ReducerDataLink;
@@ -56,7 +54,10 @@ public class DataQueryLinkSQL implements DataQueryLinkBuilder {
 
     private final DataSource cpds;
     private final SQLEngine engine;
-
+    
+    private QueryLink querylink;
+    private DataLink datalink;
+    
     public DataQueryLinkSQL(String enginename) {
 
         HikariConfig config = new HikariConfig();
@@ -71,39 +72,54 @@ public class DataQueryLinkSQL implements DataQueryLinkBuilder {
         LOG.log(Level.INFO, "Database engine = {0}", engine.toString());
     }
 
-    public QueryLink createQueryLink() {
+    private QueryLink createQueryLink() {
         Sentence[] morequeries = new Sentence[]{
             new SentenceView(
             "TEST_USERNAME_VIEW",
             "SELECT ID, NAME, DISPLAYNAME, IMAGE FROM USERNAME WHERE VISIBLE = TRUE AND ACTIVE = TRUE ORDER BY NAME")
         };
+        QueryLink querylink = new SQLQueryLink(cpds, engine, concatenate(SecureCommands.QUERIES, morequeries));   
 
         return new ReducerQueryLink(
-                new SQLQueryLink(cpds, engine, concatenate(SecureCommands.QUERIES, morequeries)),
                 new ReducerQueryJWTVerify("secret".getBytes(StandardCharsets.UTF_8)),
-                new ReducerJWTLogin("secret".getBytes(StandardCharsets.UTF_8), 5000),
+                new ReducerJWTLogin(querylink, "secret".getBytes(StandardCharsets.UTF_8), 5000),
                 new ReducerJWTCurrentUser(),
-                new ReducerQueryJWTAuthorization(new HashSet<>(Arrays.asList("USERNAME_VISIBLE_QUERY")), new HashSet<>(Arrays.asList("authenticatedres"))),
-                ReducerQueryIdentity.INSTANCE);
+                new ReducerQueryJWTAuthorization(querylink, new HashSet<>(Arrays.asList("USERNAME_VISIBLE_QUERY")), new HashSet<>(Arrays.asList("authenticatedres"))),
+                new ReducerQueryIdentity(querylink));
     }
 
-    public DataLink createDataLink() {
+    private DataLink createDataLink() {
+        QueryLink querylink = new SQLQueryLink(cpds, engine, SecureCommands.QUERIES);
+        DataLink datalink = new SQLDataLink(cpds, engine, SecureCommands.COMMANDS);
+        
         return new ReducerDataLink(
-                new SQLDataLink(cpds, engine, SecureCommands.COMMANDS),
                 new ReducerDataJWTVerify("secret".getBytes(StandardCharsets.UTF_8)),
-                new ReducerDataJWTAuthorization(new SQLQueryLink(cpds, engine, SecureCommands.QUERIES), new HashSet<>(Arrays.asList("USERNAME_VISIBLE_QUERY")), new HashSet<>(Arrays.asList("authenticatedres"))),
-                ReducerDataIdentity.INSTANCE);
+                new ReducerDataJWTAuthorization(querylink, new HashSet<>(Arrays.asList("USERNAME_VISIBLE_QUERY")), new HashSet<>(Arrays.asList("authenticatedres"))),
+                new ReducerDataIdentity(datalink));
     }
 
     @Override
-    public DataQueryLink create() {
-        return new BasicDataQueryLink(createQueryLink(), createDataLink());
+    public void create() {
+        querylink = createQueryLink();
+        datalink = createDataLink();
     }
 
     @Override
     public void destroy() {
+        querylink = null;
+        datalink = null;
     }
 
+    @Override
+    public QueryLink getQueryLink() {
+        return querylink;
+    }
+
+    @Override
+    public DataLink getDataLink() {
+        return datalink;
+    }
+    
     private <T> T[] concatenate(T[] a, T[] b) {
         int aLen = a.length;
         int bLen = b.length;

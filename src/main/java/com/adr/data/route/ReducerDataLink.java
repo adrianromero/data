@@ -25,18 +25,17 @@ import com.adr.data.record.Record;
  * @author adrian
  */
 public class ReducerDataLink implements DataLink {
-    private final DataLink link;
+
     private final ReducerData[] reducers;
 
-    public ReducerDataLink(DataLink link, ReducerData... reducers) {
-        this.link = link;
+    public ReducerDataLink(ReducerData... reducers) {
         this.reducers = reducers;
     }
    
     @Override
     public void execute(Record headers, List<Record> l) throws DataException {
         for (ReducerData r: reducers) {
-            if (r.execute(link, headers, l)) {
+            if (r.execute(headers, l)) {
                 return;
             }
         }

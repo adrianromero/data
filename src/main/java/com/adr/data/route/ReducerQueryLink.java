@@ -26,12 +26,10 @@ import com.adr.data.record.Record;
  * @author adrian
  */
 public class ReducerQueryLink implements QueryLink {
-    
-    private final QueryLink link;
+
     private final ReducerQuery[] reducers;
     
-    public ReducerQueryLink(QueryLink link, ReducerQuery... reducers) {
-        this.link = link;
+    public ReducerQueryLink(ReducerQuery... reducers) {
         this.reducers = reducers;
     }
 
@@ -39,7 +37,7 @@ public class ReducerQueryLink implements QueryLink {
     public List<Record> query(Record headers, Record filter) throws DataException {
         List<Record> result;
         for (ReducerQuery r : reducers) {
-            result = r.query(link, headers, filter);
+            result = r.query(headers, filter);
             if (result != null) {
                 return result;
             }

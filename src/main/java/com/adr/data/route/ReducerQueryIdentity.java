@@ -27,13 +27,14 @@ import com.adr.data.record.Record;
  */
 public class ReducerQueryIdentity implements ReducerQuery {
     
-    public static final ReducerQuery INSTANCE = new ReducerQueryIdentity();
+    private final QueryLink link;
     
-    private ReducerQueryIdentity() {}
+    public ReducerQueryIdentity(QueryLink link) {
+        this.link = link;
+    }
 
     @Override
-    public List<Record> query(QueryLink link, Record headers, Record filter) throws DataException {
+    public List<Record> query(Record headers, Record filter) throws DataException {
         return link.query(headers, filter);
-    }
-    
+    }  
 }

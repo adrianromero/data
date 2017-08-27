@@ -18,13 +18,11 @@
 package com.adr.data.security.jwt;
 
 import com.adr.data.DataException;
-import com.adr.data.QueryLink;
 import com.adr.data.record.Entry;
 import com.adr.data.record.RecordMap;
 import com.adr.data.route.ReducerQuery;
 import com.adr.data.security.ReducerLogin;
 import com.adr.data.var.Variant;
-import com.adr.data.var.VariantString;
 import com.auth0.jwt.JWT;
 import java.util.Collections;
 import java.util.List;
@@ -39,7 +37,7 @@ public class ReducerJWTCurrentUser implements ReducerQuery {
 
     
     @Override
-    public List<Record> query(QueryLink link, Record headers, Record filter) throws DataException {
+    public List<Record> query(Record headers, Record filter) throws DataException {
         
         String entity = Records.getEntity(filter);
         if (!ReducerLogin.AUTHENTICATION_CURRENT.equals(entity)) {          
@@ -53,14 +51,13 @@ public class ReducerJWTCurrentUser implements ReducerQuery {
         } else {
             JWT jwtauthorizaion = JWT.decode(authorization.asString());
             // Valid login, load user details.
-            Record usernamequery = new RecordMap(
+            Record currentuser = new RecordMap(
                         new Entry("__ENTITY", "USERNAME_BYNAME"),
-                        new Entry("ID$KEY", VariantString.NULL),
                         new Entry("NAME", jwtauthorizaion.getSubject()),
-                        new Entry("DISPLAYNAME", VariantString.NULL),
-                        new Entry("ROLE", VariantString.NULL),
-                        new Entry("DISPLAYROLE", VariantString.NULL));
-            return link.query(usernamequery);
+                        new Entry("DISPLAYNAME", jwtauthorizaion.getClaim("displayname").asString()),
+                        new Entry("ROLE", jwtauthorizaion.getClaim("role").asString()),
+                        new Entry("DISPLAYROLE", jwtauthorizaion.getClaim("displayrole").asString()));
+            return Collections.singletonList(currentuser);
         }
     }
 }

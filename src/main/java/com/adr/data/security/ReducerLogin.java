@@ -39,10 +39,10 @@ public abstract class ReducerLogin implements ReducerQuery {
     public final static String AUTHENTICATION_CURRENT = "AUTHENTICATION_CURRENT";
     public final static String AUTHORIZATION_REQUEST = "AUTHORIZATION_REQUEST";
 
-    protected abstract Variant createAuthorization(QueryLink link, String user, String password) throws DataException;
-
+    protected abstract Variant createAuthorization(String user, String password) throws DataException;
+    
     @Override
-    public List<Record> query(QueryLink link, Record headers, Record filter) throws DataException {
+    public List<Record> query(Record headers, Record filter) throws DataException {
 
         String entity = Records.getEntity(filter);
         if (!AUTHENTICATION_REQUEST.equals(entity)) {
@@ -53,7 +53,7 @@ public abstract class ReducerLogin implements ReducerQuery {
         String username = filter.getString("NAME");
         String password = filter.getString("PASSWORD");
 
-        Variant authorization = createAuthorization(link, username, password);
+        Variant authorization = createAuthorization(username, password);
 
         Record result = new RecordMap(
                 new Entry("__ENTITY", AUTHENTICATION_RESPONSE),

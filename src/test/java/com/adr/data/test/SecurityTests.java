@@ -17,7 +17,6 @@
 package com.adr.data.test;
 
 import com.adr.data.DataException;
-import com.adr.data.DataQueryLink;
 import com.adr.data.record.Entry;
 import com.adr.data.security.SecurityDataException;
 import com.adr.data.record.RecordMap;
@@ -37,21 +36,21 @@ public class SecurityTests {
     @Test
     public void testLoginLogout() throws DataException {
 
-        DataQueryLink link = SourceLink.createDataQueryLink();
+        SourceLink.createDataQueryLink();
 
         try {
             // Login
-            String authorization = ReducerLogin.login(link, "admin", "admin");
+            String authorization = ReducerLogin.login(SourceLink.getQueryLink(), "admin", "admin");
             Record header = new RecordMap(new Entry("Authorization", authorization));
 
-            Record current = ReducerLogin.current(link, header);
+            Record current = ReducerLogin.current(SourceLink.getQueryLink(), header);
 
             // Assert loging success
             Assert.assertEquals("Administrator", current.getString("DISPLAYNAME"));
             Assert.assertEquals("ADMIN", current.getString("ROLE"));
 
             // this query succeds because admin has permissions to all resources
-            List<Record> result1 = link.query(
+            List<Record> result1 = SourceLink.getQueryLink().query(
                     header,
                     new RecordMap(
                             new Entry("__ENTITY", "USERNAME"),
@@ -62,7 +61,7 @@ public class SecurityTests {
 
             try {
                 // This query fails because not logged users
-                link.query(
+                SourceLink.getQueryLink().query(
                         Record.EMPTY,
                         new RecordMap(
                                 new Entry("__ENTITY", "USERNAME"),
@@ -81,17 +80,17 @@ public class SecurityTests {
     @Test
     public void testLoginManager() throws DataException {
 
-        DataQueryLink link = SourceLink.createDataQueryLink();
+        SourceLink.createDataQueryLink();
 
         try {
             // Login
-            String authorization = ReducerLogin.login(link, "manager", "");
+            String authorization = ReducerLogin.login(SourceLink.getQueryLink(), "manager", "");
             Record header = new RecordMap(new Entry("Authorization", authorization));
 
-            Record current = ReducerLogin.current(link, header);
+            Record current = ReducerLogin.current(SourceLink.getQueryLink(), header);
             Assert.assertEquals("Manager", current.getString("DISPLAYNAME"));
 
-            current = ReducerLogin.current(link, Record.EMPTY);
+            current = ReducerLogin.current(SourceLink.getQueryLink(), Record.EMPTY);
             Assert.assertNull(current);
         } finally {
             SourceLink.destroyDataQueryLink();
@@ -101,11 +100,11 @@ public class SecurityTests {
     @Test
     public void testAnonymous() throws DataException {
 
-        DataQueryLink link = SourceLink.createDataQueryLink();
+        SourceLink.createDataQueryLink();
 
         try {
             // this query succeds because anonymous has permissions to USERNAME_VISIBLE
-            List<Record> result1 = link.query(
+            List<Record> result1 = SourceLink.getQueryLink().query(
                     Record.EMPTY,
                     new RecordMap(
                             new Entry("__ENTITY", "USERNAME_VISIBLE"),
@@ -121,38 +120,38 @@ public class SecurityTests {
     @Test
     public void testAuthorizations() throws DataException {
 
-        DataQueryLink link = SourceLink.createDataQueryLink();
+        SourceLink.createDataQueryLink();
 
         try {
 
             // Anonymous
             String authorization;
             Record header = Record.EMPTY;
-            Assert.assertTrue(ReducerLogin.hasAuthorization(link, header, "USERNAME_VISIBLE_QUERY"));
-            Assert.assertFalse(ReducerLogin.hasAuthorization(link, header, "authenticatedres"));
-            Assert.assertFalse(ReducerLogin.hasAuthorization(link, header, "com/adr/hellocore/fxml/datalist?datatable=com/adr/hellocore/security/role"));
-            Assert.assertFalse(ReducerLogin.hasAuthorization(link, header, "anyotherresource"));
+            Assert.assertTrue(ReducerLogin.hasAuthorization(SourceLink.getQueryLink(), header, "USERNAME_VISIBLE_QUERY"));
+            Assert.assertFalse(ReducerLogin.hasAuthorization(SourceLink.getQueryLink(), header, "authenticatedres"));
+            Assert.assertFalse(ReducerLogin.hasAuthorization(SourceLink.getQueryLink(), header, "com/adr/hellocore/fxml/datalist?datatable=com/adr/hellocore/security/role"));
+            Assert.assertFalse(ReducerLogin.hasAuthorization(SourceLink.getQueryLink(), header, "anyotherresource"));
 
-            authorization = ReducerLogin.login(link, "manager", "");
+            authorization = ReducerLogin.login(SourceLink.getQueryLink(), "manager", "");
             header = new RecordMap(new Entry("Authorization", authorization));
-            Assert.assertTrue(ReducerLogin.hasAuthorization(link, header, "USERNAME_VISIBLE_QUERY"));
-            Assert.assertTrue(ReducerLogin.hasAuthorization(link, header, "authenticatedres"));
-            Assert.assertTrue(ReducerLogin.hasAuthorization(link, header, "com/adr/hellocore/fxml/datalist?datatable=com/adr/hellocore/security/role"));
-            Assert.assertFalse(ReducerLogin.hasAuthorization(link, header, "anyotherresource"));
+            Assert.assertTrue(ReducerLogin.hasAuthorization(SourceLink.getQueryLink(), header, "USERNAME_VISIBLE_QUERY"));
+            Assert.assertTrue(ReducerLogin.hasAuthorization(SourceLink.getQueryLink(), header, "authenticatedres"));
+            Assert.assertTrue(ReducerLogin.hasAuthorization(SourceLink.getQueryLink(), header, "com/adr/hellocore/fxml/datalist?datatable=com/adr/hellocore/security/role"));
+            Assert.assertFalse(ReducerLogin.hasAuthorization(SourceLink.getQueryLink(), header, "anyotherresource"));
 
-            authorization = ReducerLogin.login(link, "guest", "");
+            authorization = ReducerLogin.login(SourceLink.getQueryLink(), "guest", "");
             header = new RecordMap(new Entry("Authorization", authorization));
-            Assert.assertTrue(ReducerLogin.hasAuthorization(link, header, "USERNAME_VISIBLE_QUERY"));
-            Assert.assertTrue(ReducerLogin.hasAuthorization(link, header, "authenticatedres"));
-            Assert.assertFalse(ReducerLogin.hasAuthorization(link, header, "com/adr/hellocore/fxml/datalist?datatable=com/adr/hellocore/security/role"));
-            Assert.assertFalse(ReducerLogin.hasAuthorization(link, header, "anyotherresource"));
+            Assert.assertTrue(ReducerLogin.hasAuthorization(SourceLink.getQueryLink(), header, "USERNAME_VISIBLE_QUERY"));
+            Assert.assertTrue(ReducerLogin.hasAuthorization(SourceLink.getQueryLink(), header, "authenticatedres"));
+            Assert.assertFalse(ReducerLogin.hasAuthorization(SourceLink.getQueryLink(), header, "com/adr/hellocore/fxml/datalist?datatable=com/adr/hellocore/security/role"));
+            Assert.assertFalse(ReducerLogin.hasAuthorization(SourceLink.getQueryLink(), header, "anyotherresource"));
 
-            authorization = ReducerLogin.login(link, "admin", "admin");
+            authorization = ReducerLogin.login(SourceLink.getQueryLink(), "admin", "admin");
             header = new RecordMap(new Entry("Authorization", authorization));
-            Assert.assertTrue(ReducerLogin.hasAuthorization(link, header, "USERNAME_VISIBLE_QUERY"));
-            Assert.assertTrue(ReducerLogin.hasAuthorization(link, header, "authenticatedres"));
-            Assert.assertTrue(ReducerLogin.hasAuthorization(link, header, "com/adr/hellocore/fxml/datalist?datatable=com/adr/hellocore/security/role"));
-            Assert.assertTrue(ReducerLogin.hasAuthorization(link, header, "anyotherresource"));
+            Assert.assertTrue(ReducerLogin.hasAuthorization(SourceLink.getQueryLink(), header, "USERNAME_VISIBLE_QUERY"));
+            Assert.assertTrue(ReducerLogin.hasAuthorization(SourceLink.getQueryLink(), header, "authenticatedres"));
+            Assert.assertTrue(ReducerLogin.hasAuthorization(SourceLink.getQueryLink(), header, "com/adr/hellocore/fxml/datalist?datatable=com/adr/hellocore/security/role"));
+            Assert.assertTrue(ReducerLogin.hasAuthorization(SourceLink.getQueryLink(), header, "anyotherresource"));
         } finally {
             SourceLink.destroyDataQueryLink();
         }

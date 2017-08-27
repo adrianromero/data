@@ -25,12 +25,14 @@ import com.adr.data.record.Record;
  */
 public class ReducerDataIdentity implements ReducerData {
     
-    public static ReducerData INSTANCE = new ReducerDataIdentity();
+    private final DataLink link;
     
-    private ReducerDataIdentity() {}
+    public ReducerDataIdentity(DataLink link) {
+        this.link = link;
+    }
 
     @Override
-    public boolean execute(DataLink link, Record headers, List<Record> l) throws DataException {
+    public boolean execute(Record headers, List<Record> l) throws DataException {
         link.execute(headers, l);
         return true;
     }

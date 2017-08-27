@@ -17,12 +17,12 @@
 
 package com.adr.data.rabbitmq;
 
-import com.adr.data.DataQueryLink;
+import com.adr.data.DataLink;
+import com.adr.data.QueryLink;
 import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.ConnectionFactory;
 import java.io.IOException;
 import java.util.concurrent.TimeoutException;
-import java.util.logging.Logger;
 
 
 /**
@@ -34,17 +34,19 @@ public class RabbitServer {
     private final String host;
     private final String queryqueue;
     private final String dataqueue;    
-    private final DataQueryLink link;
+    private final DataLink datalink;
+    private final QueryLink querylink;
     
     private Connection connection;
     private RabbitServerQuery serverquery;
     private RabbitServerData serverdata;   
     
-    public RabbitServer(String host, String queryqueue, String dataqueue, DataQueryLink link) {
+    public RabbitServer(String host, String dataqueue, String queryqueue, DataLink datalink, QueryLink querylink) {
         this.host = host;
         this.queryqueue = queryqueue;
         this.dataqueue = dataqueue;
-        this.link = link;
+        this.datalink = datalink;
+        this.querylink = querylink;
     }    
      
     protected Connection connect(String host) throws IOException, TimeoutException {        
@@ -56,9 +58,9 @@ public class RabbitServer {
     public void start() throws IOException, TimeoutException {
         connection = connect(host);
         
-        serverquery = new RabbitServerQuery(connection, queryqueue, link);
+        serverquery = new RabbitServerQuery(connection, queryqueue, querylink);
         serverquery.start();
-        serverdata = new RabbitServerData(connection, dataqueue, link);
+        serverdata = new RabbitServerData(connection, dataqueue, datalink);
         serverdata.start();
     }
     

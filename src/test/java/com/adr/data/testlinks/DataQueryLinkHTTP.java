@@ -1,5 +1,5 @@
 //     Data Access is a Java library to store data
-//     Copyright (C) 2016 Adrián Romero Corchado.
+//     Copyright (C) 2016-2017 Adrián Romero Corchado.
 //
 //     This file is part of Data Access
 //
@@ -16,8 +16,11 @@
 //     limitations under the License.
 package com.adr.data.testlinks;
 
-import com.adr.data.DataQueryLink;
-import com.adr.data.http.WebDataQueryLink;
+import com.adr.data.DataLink;
+import com.adr.data.QueryLink;
+import com.adr.data.http.WebDataLink;
+import com.adr.data.http.WebQueryLink;
+import okhttp3.OkHttpClient;
 
 /**
  *
@@ -26,17 +29,38 @@ import com.adr.data.http.WebDataQueryLink;
 public class DataQueryLinkHTTP implements DataQueryLinkBuilder {
     
     private final String url;
+    private final String contextdata;
+    private final String contextquery;
     
-    public DataQueryLinkHTTP(String url) {
+    private QueryLink querylink;
+    private DataLink datalink;
+    
+    public DataQueryLinkHTTP(String url, String contextdata, String contextquery) {
         this.url = url;
+        this.contextdata = contextdata;
+        this.contextquery = contextquery;
     }
 
     @Override
-    public DataQueryLink create() {
-        return new WebDataQueryLink(url);
+    public void create() {
+        OkHttpClient client = new OkHttpClient.Builder().build();      
+        querylink = new WebQueryLink(url + contextquery, client);
+        datalink = new WebDataLink(url + contextdata, client);
     }
 
     @Override
     public void destroy() {
+        querylink = null;
+        datalink = null;
+    }
+
+    @Override
+    public QueryLink getQueryLink() {
+        return querylink;
+    }
+
+    @Override
+    public DataLink getDataLink() {
+        return datalink;
     }
 }

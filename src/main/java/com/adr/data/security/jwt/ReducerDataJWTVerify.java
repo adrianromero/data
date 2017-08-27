@@ -18,7 +18,6 @@
 package com.adr.data.security.jwt;
 
 import com.adr.data.DataException;
-import com.adr.data.DataLink;
 import com.adr.data.route.ReducerData;
 import java.util.List;
 import com.adr.data.record.Record;
@@ -36,7 +35,7 @@ public class ReducerDataJWTVerify implements ReducerData {
     }
 
     @Override
-    public boolean execute(DataLink link, Record headers, List<Record> l) throws DataException {
+    public boolean execute(Record headers, List<Record> l) throws DataException {
         verifier.verify(headers);      
         return false;
     } 

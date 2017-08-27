@@ -17,7 +17,6 @@
 package com.adr.data.test;
 
 import com.adr.data.DataException;
-import com.adr.data.DataQueryLink;
 import com.adr.data.QueryLink;
 import com.adr.data.record.Entry;
 import com.adr.data.record.RecordMap;
@@ -36,7 +35,7 @@ import com.adr.data.record.Record;
  */
 public class QueryTests {
 
-    private void testQueryByKey(DataQueryLink link, Record header) throws DataException {
+    private void testQueryByKey(QueryLink link, Record header) throws DataException {
         List<Record> result = link.query(
                 header,
                 new RecordMap(
@@ -53,7 +52,7 @@ public class QueryTests {
         Assert.assertEquals(VariantVoid.INSTANCE, result.get(0).get("IMAGE"));
     }
 
-    private void testQueryOrder(DataQueryLink link, Record header) throws DataException {
+    private void testQueryOrder(QueryLink link, Record header) throws DataException {
         List<Record> result = link.query(header,
                 new RecordMap(
                         new Entry("__ENTITY", "USERNAME"),
@@ -68,7 +67,7 @@ public class QueryTests {
         Assert.assertEquals("admin", result.get(2).getString("NAME"));
     }
 
-    private void testSentenceQuery(DataQueryLink link, Record header) throws DataException {
+    private void testSentenceQuery(QueryLink link, Record header) throws DataException {
         Record result = link.find(header,
                 new RecordMap(
                         new Entry("__ENTITY", "USERNAME_BYNAME"),
@@ -85,7 +84,7 @@ public class QueryTests {
         Assert.assertEquals("Guest", result.getString("DISPLAYROLE"));
     }
 
-    private void testSentenceView(DataQueryLink link, Record header) throws DataException {
+    private void testSentenceView(QueryLink link, Record header) throws DataException {
         Record result = link.find(header,
                 new RecordMap(
                         new Entry("__ENTITY", "TEST_USERNAME_VIEW"),
@@ -99,18 +98,18 @@ public class QueryTests {
     @Test
     public void testSomeQueries() throws DataException {
 
-        DataQueryLink link = SourceLink.createDataQueryLink();
+        SourceLink.createDataQueryLink();
         try {
             // Login
-            String authorization = ReducerLogin.login(link, "admin", "admin");
+            String authorization = ReducerLogin.login(SourceLink.getQueryLink(), "admin", "admin");
             Record header = new RecordMap(new Entry("Authorization", authorization));
 
-            testQueryByKey(link, header);
-            testQueryOrder(link, header);
-            testSentenceQuery(link, header);
-            testSentenceView(link, header);
+            testQueryByKey(SourceLink.getQueryLink(), header);
+            testQueryOrder(SourceLink.getQueryLink(), header);
+            testSentenceQuery(SourceLink.getQueryLink(), header);
+            testSentenceView(SourceLink.getQueryLink(), header);
 
-            List<Record> result3 = link.query(header,
+            List<Record> result3 = SourceLink.getQueryLink().query(header,
                     new RecordMap(
                             new Entry("__ENTITY", "USERNAME"),
                             new Entry("ID$KEY", VariantString.NULL),
@@ -122,7 +121,7 @@ public class QueryTests {
             Assert.assertEquals(null, result3.get(0).getString("CODECARD"));
             Assert.assertEquals(VariantVoid.INSTANCE, result3.get(0).get("IMAGE"));
 
-            List<Record> result4 = link.query(header,
+            List<Record> result4 = SourceLink.getQueryLink().query(header,
                     new RecordMap(
                             new Entry("__ENTITY", "USERNAME"),
                             new Entry("__ORDERBY", "NAME"),
@@ -142,15 +141,16 @@ public class QueryTests {
     @Test
     public void testSomeUpdates() throws DataException {
 
-        DataQueryLink link = SourceLink.createDataQueryLink();
+        SourceLink.createDataQueryLink();
         try {
 
             // Login
-            String authorization = ReducerLogin.login(link, "admin", "admin");
+            String authorization = ReducerLogin.login(SourceLink.getQueryLink(), "admin", "admin");
             Record header = new RecordMap(new Entry("Authorization", authorization));
 
             // Insert
-            link.execute(header,
+            SourceLink.getDataLink().execute(
+                    header,
                     new Record[]{
                         new RecordMap(
                                 new Entry("__ENTITY", "USERNAME"),
@@ -161,13 +161,14 @@ public class QueryTests {
                                 new Entry("ROLE_ID", "g"),
                                 new Entry("VISIBLE", true),
                                 new Entry("ACTIVE", true))});
-            Record r = loadUser(link, header, "newid");
+            Record r = loadUser(SourceLink.getQueryLink(), header, "newid");
             Assert.assertEquals("newuser", r.getString("NAME"));
             Assert.assertEquals("New User", r.getString("DISPLAYNAME"));
             Assert.assertEquals(Boolean.TRUE, r.getBoolean("VISIBLE"));
 
             // update
-            link.execute(header,
+            SourceLink.getDataLink().execute(
+                    header,
                     new Record[]{
                         new RecordMap(
                                 new Entry("__ENTITY", "USERNAME"),
@@ -179,19 +180,20 @@ public class QueryTests {
                                 new Entry("VISIBLE", true),
                                 new Entry("ACTIVE", true))});
 
-            r = loadUser(link, header, "newid");
+            r = loadUser(SourceLink.getQueryLink(), header, "newid");
             Assert.assertEquals("newuser", r.getString("NAME"));
             Assert.assertEquals("New User Changed", r.getString("DISPLAYNAME"));
             Assert.assertEquals(Boolean.TRUE, r.getBoolean("VISIBLE"));
 
             // Delete newid
-            link.execute(header,
+            SourceLink.getDataLink().execute(
+                    header,
                     new Record[]{
                         new RecordMap(
                                 new Entry("__ENTITY", "USERNAME"),
                                 new Entry("ID$KEY", "newid"))});
 
-            r = loadUser(link, header, "newid");
+            r = loadUser(SourceLink.getQueryLink(), header, "newid");
             Assert.assertNull(r);
 
         } finally {
