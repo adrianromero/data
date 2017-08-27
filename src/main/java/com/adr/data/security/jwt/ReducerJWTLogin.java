@@ -14,7 +14,6 @@
 //     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //     See the License for the specific language governing permissions and
 //     limitations under the License.
-
 package com.adr.data.security.jwt;
 
 import com.adr.data.DataException;
@@ -37,10 +36,10 @@ import com.adr.data.record.Record;
  * @author adrian
  */
 public class ReducerJWTLogin extends ReducerLogin {
-    
+
     private final Algorithm algorithm;
     private final long validtime;
-    
+
     public ReducerJWTLogin(byte[] secret, long validtime) {
         try {
             this.algorithm = Algorithm.HMAC256(secret);
@@ -53,28 +52,27 @@ public class ReducerJWTLogin extends ReducerLogin {
     @Override
     protected Variant createAuthorization(QueryLink link, String username, String password) throws DataException {
         Record userauthenticationquery = new RecordMap(
-                new Entry[]{
-                    new Entry("__ENTITY", "USERNAME_BYNAME"),
-                    new Entry("NAME", username),
-                    new Entry("DISPLAYNAME", VariantString.NULL),
-                    new Entry("ROLE", VariantString.NULL),                    
-                    new Entry("ROLEDISPLAY", VariantString.NULL),                    
-                    new Entry("PASSWORD", VariantString.NULL)});
+                new Entry("__ENTITY", "USERNAME_BYNAME"),
+                new Entry("NAME", username),
+                new Entry("DISPLAYNAME", VariantString.NULL),
+                new Entry("ROLE", VariantString.NULL),
+                new Entry("DISPLAYROLE", VariantString.NULL),
+                new Entry("PASSWORD", VariantString.NULL));
 
-        Record userauthentication = link.find(userauthenticationquery);  
-        
+        Record userauthentication = link.find(userauthenticationquery);
+
         if (userauthentication == null || !CryptUtils.validatePassword(password, userauthentication.getString("PASSWORD"))) {
             // Invalid login
-            throw new SecurityDataException ("Invalid user or password.");
-        } else {        
+            throw new SecurityDataException("Invalid user or password.");
+        } else {
             try {
                 long now = new Date().getTime();
                 String authorization = JWT.create()
                         .withIssuer("datajwt")
                         .withSubject(username)
                         .withClaim("displayname", userauthentication.getString("DISPLAYNAME"))
-                        .withClaim("role",  userauthentication.getString("ROLE"))
-                        .withClaim("roledisplay",  userauthentication.getString("ROLEDISPLAY"))
+                        .withClaim("role", userauthentication.getString("ROLE"))
+                        .withClaim("displayrole", userauthentication.getString("DISPLAYROLE"))
                         .withIssuedAt(new Date(now))
                         .withExpiresAt(new Date(now + validtime))
                         .sign(algorithm);

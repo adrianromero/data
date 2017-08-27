@@ -48,20 +48,20 @@ public class ReducerDataJWTAuthorization implements ReducerData {
 
         Variant authorization = headers.get("Authorization");        
         String role;
-        String roledisplay;
+        String displayrole;
         if (authorization.isNull()) {
             role = "ANONYMOUS";
-            roledisplay = "Anonymous";
+            displayrole = "Anonymous";
         } else {
             JWT jwtauthorization = JWT.decode(authorization.asString());         
             role = jwtauthorization.getClaim("role").asString();
-            roledisplay = jwtauthorization.getClaim("roledisplay").asString();
+            displayrole = jwtauthorization.getClaim("displayrole").asString();
         }
         
         for (Record r: l) {
             String entity = Records.getEntity(r);
             if (!authorizer.hasAuthorization(querylink, role, entity + Authorizer.ACTION_EXECUTE)) {
-                throw new SecurityDataException("Role " + roledisplay + " does not have authorization to execute the resource: " + entity);
+                throw new SecurityDataException("Role " + displayrole + " does not have authorization to execute the resource: " + entity);
             }
         }
         return false;

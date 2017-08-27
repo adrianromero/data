@@ -50,14 +50,14 @@ public class ReducerQueryJWTAuthorization implements ReducerQuery {
             
         Variant authorization = headers.get("Authorization");        
         String role;
-        String roledisplay;
+        String displayrole;
         if (authorization.isNull()) {
             role = "ANONYMOUS";
-            roledisplay = "Anonymous";
+            displayrole = "Anonymous";
         } else {
             JWT jwtauthorization = JWT.decode(authorization.asString());         
             role = jwtauthorization.getClaim("role").asString();
-            roledisplay = jwtauthorization.getClaim("roledisplay").asString();
+            displayrole = jwtauthorization.getClaim("displayrole").asString();
         }
         
         String entity = Records.getEntity(filter);
@@ -75,7 +75,7 @@ public class ReducerQueryJWTAuthorization implements ReducerQuery {
             if (authorizer.hasAuthorization(link, role, entity + Authorizer.ACTION_QUERY)) {
                 return null;
             } else {
-                throw new SecurityDataException("Role " + roledisplay + " does not have authorization to query the resource: " + entity);
+                throw new SecurityDataException("Role " + displayrole + " does not have authorization to query the resource: " + entity);
             }            
         }          
     }    

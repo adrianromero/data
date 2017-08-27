@@ -56,34 +56,30 @@ public abstract class ReducerLogin implements ReducerQuery {
         Variant authorization = createAuthorization(link, username, password);
 
         Record result = new RecordMap(
-                new Entry[]{
-                    new Entry("__ENTITY", AUTHENTICATION_RESPONSE),
-                    new Entry("AUTHORIZATION", authorization)});
+                new Entry("__ENTITY", AUTHENTICATION_RESPONSE),
+                new Entry("AUTHORIZATION", authorization));
         return Collections.singletonList(result);
     }
 
     public static String login(QueryLink link, String user, String password) throws DataException {
         Record r = link.find(new RecordMap(
-                new Entry[]{
                     new Entry("__ENTITY", AUTHENTICATION_REQUEST),
                     new Entry("NAME", user),
-                    new Entry("PASSWORD", password)}));
+                    new Entry("PASSWORD", password)));
         return r.getString("AUTHORIZATION");
     }
 
     public static Record current(QueryLink link, Record headers) throws DataException {
         return link.find(headers,
                 new RecordMap(
-                        new Entry[]{
-                            new Entry("__ENTITY", AUTHENTICATION_CURRENT)}));
+                            new Entry("__ENTITY", AUTHENTICATION_CURRENT)));
     }
 
     public static boolean hasAuthorization(QueryLink link, Record headers, String resource) throws DataException {
         Record result = link.find(headers,
                 new RecordMap(
-                        new Entry[]{
-                            new Entry("__ENTITY", AUTHORIZATION_REQUEST),
-                            new Entry("RESOURCE", resource)}));
+                        new Entry("__ENTITY", AUTHORIZATION_REQUEST),
+                            new Entry("RESOURCE", resource)));
 
         return result.getBoolean("RESULT");
     }

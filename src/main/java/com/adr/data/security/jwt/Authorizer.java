@@ -14,7 +14,6 @@
 //     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //     See the License for the specific language governing permissions and
 //     limitations under the License
-
 package com.adr.data.security.jwt;
 
 import com.adr.data.DataException;
@@ -30,20 +29,20 @@ import com.adr.data.record.Record;
  * @author adrian
  */
 public class Authorizer {
-    
+
     public final static String ACTION_QUERY = "_QUERY";
     public final static String ACTION_EXECUTE = "_EXECUTE";
 
     private final Set<String> anonymousresources; // resources everybody logged or not has access
     private final Set<String> authenticatedresources; // resources everybody logged has access
-    
+
     public Authorizer(Set<String> anonymousresources, Set<String> authenticatedresources) {
         this.anonymousresources = anonymousresources;
         this.authenticatedresources = authenticatedresources;
     }
-    
+
     public boolean hasAuthorization(QueryLink link, String role, String resource) throws DataException {
-        
+
         // Everybody logged or not has access to anonymous resources
         if (anonymousresources.contains(resource)) {
             return true;
@@ -66,12 +65,11 @@ public class Authorizer {
 
         // Valid login, load user details.
         Record subjectsquery = new RecordMap(
-                new Entry[]{
-                    new Entry("__ENTITY", "ROLE_SUBJECT"),
-                    new Entry("ROLE__PARAM", role),
-                    new Entry("SUBJECT__PARAM", resource),
-                    new Entry("NAME", VariantString.NULL),
-                    new Entry("DISPLAYNAME", VariantString.NULL)});
-        return link.find(subjectsquery) != null;    
-    }      
+                new Entry("__ENTITY", "ROLE_SUBJECT"),
+                new Entry("ROLE__PARAM", role),
+                new Entry("SUBJECT__PARAM", resource),
+                new Entry("NAME", VariantString.NULL),
+                new Entry("DISPLAYNAME", VariantString.NULL));
+        return link.find(subjectsquery) != null;
+    }
 }

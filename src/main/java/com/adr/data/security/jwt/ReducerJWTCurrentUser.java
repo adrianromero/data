@@ -54,13 +54,12 @@ public class ReducerJWTCurrentUser implements ReducerQuery {
             JWT jwtauthorizaion = JWT.decode(authorization.asString());
             // Valid login, load user details.
             Record usernamequery = new RecordMap(
-                    new Entry[]{
                         new Entry("__ENTITY", "USERNAME_BYNAME"),
-                        new Entry("ID", VariantString.NULL),
+                        new Entry("ID$KEY", VariantString.NULL),
                         new Entry("NAME", jwtauthorizaion.getSubject()),
                         new Entry("DISPLAYNAME", VariantString.NULL),
                         new Entry("ROLE", VariantString.NULL),
-                        new Entry("ROLEDISPLAY", VariantString.NULL)});
+                        new Entry("DISPLAYROLE", VariantString.NULL));
             return link.query(usernamequery);
         }
     }
