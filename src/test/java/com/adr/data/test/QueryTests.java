@@ -36,7 +36,64 @@ import com.adr.data.record.Record;
  */
 public class QueryTests {
 
-    public QueryTests() {
+    private void testQueryByKey(DataQueryLink link, Record header) throws DataException {
+        List<Record> result = link.query(
+                header,
+                new RecordMap(
+                        new Entry("__ENTITY", "USERNAME"),
+                        new Entry("ID$KEY", "admin"),
+                        new Entry("NAME", VariantString.NULL),
+                        new Entry("CODECARD", VariantString.NULL)));
+
+        Assert.assertEquals(1, result.size());
+        Assert.assertEquals("USERNAME", result.get(0).getString("__ENTITY"));
+        Assert.assertEquals("admin", result.get(0).getString("ID$KEY"));
+        Assert.assertEquals("admin", result.get(0).getString("NAME"));
+        Assert.assertEquals(null, result.get(0).getString("CODECARD"));
+        Assert.assertEquals(VariantVoid.INSTANCE, result.get(0).get("IMAGE"));
+    }
+
+    private void testQueryOrder(DataQueryLink link, Record header) throws DataException {
+        List<Record> result = link.query(header,
+                new RecordMap(
+                        new Entry("__ENTITY", "USERNAME"),
+                        new Entry("__ORDERBY", "NAME$DESC"),
+                        new Entry("ID$KEY", VariantString.NULL),
+                        new Entry("NAME", VariantString.NULL),
+                        new Entry("CODECARD", VariantString.NULL)));
+
+        Assert.assertEquals(3, result.size());
+        Assert.assertEquals("manager", result.get(0).getString("NAME"));
+        Assert.assertEquals("guest", result.get(1).getString("NAME"));
+        Assert.assertEquals("admin", result.get(2).getString("NAME"));
+    }
+
+    private void testSentenceQuery(DataQueryLink link, Record header) throws DataException {
+        Record result = link.find(header,
+                new RecordMap(
+                        new Entry("__ENTITY", "USERNAME_BYNAME"),
+                        new Entry("ID$KEY", VariantString.NULL),
+                        new Entry("NAME", "guest"),
+                        new Entry("DISPLAYNAME", VariantString.NULL),
+                        new Entry("ROLE", VariantString.NULL),
+                        new Entry("DISPLAYROLE", VariantString.NULL),
+                        new Entry("PASSWORD", VariantString.NULL)
+                ));
+
+        Assert.assertEquals("Guest", result.getString("DISPLAYNAME"));
+        Assert.assertEquals("GUEST", result.getString("ROLE"));
+        Assert.assertEquals("Guest", result.getString("DISPLAYROLE"));
+    }
+
+    private void testSentenceView(DataQueryLink link, Record header) throws DataException {
+        Record result = link.find(header,
+                new RecordMap(
+                        new Entry("__ENTITY", "TEST_USERNAME_VIEW"),
+                        new Entry("ID$KEY", VariantString.NULL),
+                        new Entry("NAME", "guest"),
+                        new Entry("DISPLAYNAME", VariantString.NULL)));
+
+        Assert.assertEquals("Guest", result.getString("DISPLAYNAME"));
     }
 
     @Test
@@ -44,36 +101,14 @@ public class QueryTests {
 
         DataQueryLink link = SourceLink.createDataQueryLink();
         try {
-
             // Login
             String authorization = ReducerLogin.login(link, "admin", "admin");
             Record header = new RecordMap(new Entry("Authorization", authorization));
 
-            // First query
-            List<Record> result1 = link.query(header,
-                    new RecordMap(
-                            new Entry("__ENTITY", "USERNAME"),
-                            new Entry("ID$KEY", "admin"),
-                            new Entry("NAME", VariantString.NULL),
-                            new Entry("CODECARD", VariantString.NULL)));
-
-            Assert.assertEquals(1, result1.size());
-            Assert.assertEquals("admin", result1.get(0).getString("NAME"));
-            Assert.assertEquals(null, result1.get(0).getString("CODECARD"));
-            Assert.assertEquals(VariantVoid.INSTANCE, result1.get(0).get("IMAGE"));
-
-            List<Record> result2 = link.query(header,
-                    new RecordMap(
-                            new Entry("__ENTITY", "USERNAME"),
-                            new Entry("__ORDERBY", "NAME$DESC"),
-                            new Entry("ID$KEY", VariantString.NULL),
-                            new Entry("NAME", VariantString.NULL),
-                            new Entry("CODECARD", VariantString.NULL)));
-
-            Assert.assertEquals(3, result2.size());
-            Assert.assertEquals("manager", result2.get(0).getString("NAME"));
-            Assert.assertEquals("guest", result2.get(1).getString("NAME"));
-            Assert.assertEquals("admin", result2.get(2).getString("NAME"));
+            testQueryByKey(link, header);
+            testQueryOrder(link, header);
+            testSentenceQuery(link, header);
+            testSentenceView(link, header);
 
             List<Record> result3 = link.query(header,
                     new RecordMap(
@@ -92,8 +127,8 @@ public class QueryTests {
                             new Entry("__ENTITY", "USERNAME"),
                             new Entry("__ORDERBY", "NAME"),
                             new Entry("ID$KEY", VariantString.NULL),
-                            new Entry("NAME__LIKE", "%a%"),
                             new Entry("NAME", VariantString.NULL),
+                            new Entry("NAME__LIKE", "%a%"),
                             new Entry("VISIBLE", VariantBoolean.NULL),
                             new Entry("CODECARD", VariantString.NULL)));
             Assert.assertEquals(2, result4.size());
@@ -131,7 +166,7 @@ public class QueryTests {
             Assert.assertEquals("New User", r.getString("DISPLAYNAME"));
             Assert.assertEquals(Boolean.TRUE, r.getBoolean("VISIBLE"));
 
-            // Insert
+            // update
             link.execute(header,
                     new Record[]{
                         new RecordMap(
@@ -167,14 +202,13 @@ public class QueryTests {
     private Record loadUser(QueryLink link, Record header, String id) throws DataException {
         return link.find(header,
                 new RecordMap(
-                        new Entry[]{
-                            new Entry("__ENTITY", "USERNAME"),
-                            new Entry("ID$KEY", id),
-                            new Entry("NAME", VariantString.NULL),
-                            new Entry("DISPLAYNAME", VariantString.NULL),
-                            new Entry("CODECARD", VariantString.NULL),
-                            new Entry("ROLE_ID", VariantString.NULL),
-                            new Entry("VISIBLE", VariantBoolean.NULL),
-                            new Entry("ACTIVE", VariantBoolean.NULL)}));
+                        new Entry("__ENTITY", "USERNAME"),
+                        new Entry("ID$KEY", id),
+                        new Entry("NAME", VariantString.NULL),
+                        new Entry("DISPLAYNAME", VariantString.NULL),
+                        new Entry("CODECARD", VariantString.NULL),
+                        new Entry("ROLE_ID", VariantString.NULL),
+                        new Entry("VISIBLE", VariantBoolean.NULL),
+                        new Entry("ACTIVE", VariantBoolean.NULL)));
     }
 }

@@ -6,9 +6,9 @@
 //     Licensed under the Apache License, Version 2.0 (the "License");
 //     you may not use this file except in compliance with the License.
 //     You may obtain a copy of the License at
-//     
+//
 //         http://www.apache.org/licenses/LICENSE-2.0
-//     
+//
 //     Unless required by applicable law or agreed to in writing, software
 //     distributed under the License is distributed on an "AS IS" BASIS,
 //     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -51,23 +51,24 @@ public class SecurityTests {
             Assert.assertEquals("ADMIN", current.getString("ROLE"));
 
             // this query succeds because admin has permissions to all resources
-            List<Record> result1 = link.query(header, new RecordMap(
-                            new Entry[]{
-                                new Entry("__ENTITY", "USERNAME"),
-                                new Entry("ID$KEY", new VariantString("admin")),
-                                new Entry("NAME", VariantString.NULL),
-                                new Entry("CODECARD", VariantString.NULL)}));
+            List<Record> result1 = link.query(
+                    header,
+                    new RecordMap(
+                            new Entry("__ENTITY", "USERNAME"),
+                            new Entry("ID$KEY", new VariantString("admin")),
+                            new Entry("NAME", VariantString.NULL),
+                            new Entry("CODECARD", VariantString.NULL)));
             Assert.assertEquals(1, result1.size());
 
             try {
-                // This query fails because not logged users 
-                link.query(Record.EMPTY,
+                // This query fails because not logged users
+                link.query(
+                        Record.EMPTY,
                         new RecordMap(
-                                new Entry[]{
-                                    new Entry("__ENTITY", "USERNAME"),
-                                    new Entry("ID$KEY", new VariantString("admin")),
-                                    new Entry("NAME", VariantString.NULL),
-                                    new Entry("CODECARD", VariantString.NULL)}));
+                                new Entry("__ENTITY", "USERNAME"),
+                                new Entry("ID$KEY", new VariantString("admin")),
+                                new Entry("NAME", VariantString.NULL),
+                                new Entry("CODECARD", VariantString.NULL)));
                 Assert.fail();
             } catch (SecurityDataException ex) {
                 Assert.assertEquals("Role Anonymous does not have authorization to query the resource: USERNAME", ex.getMessage());
@@ -103,34 +104,33 @@ public class SecurityTests {
         DataQueryLink link = SourceLink.createDataQueryLink();
 
         try {
-            // this query succeds because anonymous has permissions to all resources
-            List<Record> result1 = link.query(Record.EMPTY,
+            // this query succeds because anonymous has permissions to USERNAME_VISIBLE
+            List<Record> result1 = link.query(
+                    Record.EMPTY,
                     new RecordMap(
-                            new Entry[]{
-                                new Entry("__ENTITY", "USERNAME_VISIBLE"),
-                                new Entry("ID$KEY", VariantString.NULL),
-                                new Entry("NAME", VariantString.NULL),
-                                new Entry("DISPLAYNAME", VariantString.NULL)}));
+                            new Entry("__ENTITY", "USERNAME_VISIBLE"),
+                            new Entry("ID$KEY", VariantString.NULL),
+                            new Entry("NAME", VariantString.NULL),
+                            new Entry("DISPLAYNAME", VariantString.NULL)));
             Assert.assertEquals(3, result1.size());
         } finally {
             SourceLink.destroyDataQueryLink();
         }
     }
-     
-    
+
     @Test
     public void testAuthorizations() throws DataException {
-        
+
         DataQueryLink link = SourceLink.createDataQueryLink();
-        
+
         try {
 
             // Anonymous
             String authorization;
-            Record header = Record.EMPTY;            
+            Record header = Record.EMPTY;
             Assert.assertTrue(ReducerLogin.hasAuthorization(link, header, "USERNAME_VISIBLE_QUERY"));
             Assert.assertFalse(ReducerLogin.hasAuthorization(link, header, "authenticatedres"));
-            Assert.assertFalse(ReducerLogin.hasAuthorization(link, header, "com/adr/hellocore/fxml/datalist?datatable=com/adr/hellocore/security/role"));        
+            Assert.assertFalse(ReducerLogin.hasAuthorization(link, header, "com/adr/hellocore/fxml/datalist?datatable=com/adr/hellocore/security/role"));
             Assert.assertFalse(ReducerLogin.hasAuthorization(link, header, "anyotherresource"));
 
             authorization = ReducerLogin.login(link, "manager", "");
@@ -156,5 +156,5 @@ public class SecurityTests {
         } finally {
             SourceLink.destroyDataQueryLink();
         }
-    }  
+    }
 }

@@ -16,8 +16,11 @@
 //     limitations under the License.
 package com.adr.data.test;
 
+import com.adr.data.DataQueryLink;
+import com.adr.data.rabbitmq.RabbitServer;
+import com.adr.data.testlinks.DataQueryLinkBuilder;
 import com.adr.data.testlinks.DataQueryLinkMQ;
-import com.adr.data.testservers.RabbitMQServer;
+import com.adr.data.testlinks.DataQueryLinkSQL;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.runner.RunWith;
@@ -41,17 +44,23 @@ public class SuiteMQ {
     private static final String QUEUEDATA = "mqdatalink";
     private static final String SQLNAME = "h2";
     
-    private static final RabbitMQServer server = new RabbitMQServer(HOST, QUEUEQUERY, QUEUEDATA, SQLNAME);
+    private static final DataQueryLinkBuilder builder= new DataQueryLinkSQL(SQLNAME);;
+    private static DataQueryLink link;
+    private static RabbitServer myserver;
 
     @BeforeClass
     public static void setUpClass() throws Exception {
-        server.start();
+        link = builder.create();
+        myserver = new RabbitServer(HOST, QUEUEQUERY, QUEUEDATA, link);
+        myserver.start();
         SourceLink.setBuilder(new DataQueryLinkMQ(HOST, EXCHANGEQUERY, EXCHANGEDATA));
     }
 
     @AfterClass
     public static void tearDownClass() throws Exception {
         SourceLink.setBuilder(null);       
-        server.stop();
+        myserver.stop();
+        link = null;
+        builder.destroy();
     }   
 }

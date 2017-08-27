@@ -34,8 +34,11 @@ import com.adr.data.security.jwt.ReducerJWTLogin;
 import com.adr.data.security.jwt.ReducerQueryJWTVerify;
 import com.adr.data.sql.SQLDataLink;
 import com.adr.data.sql.SQLEngine;
+import com.adr.data.sql.Sentence;
+import com.adr.data.sql.SentenceView;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
+import java.lang.reflect.Array;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -48,36 +51,42 @@ import javax.sql.DataSource;
  * @author adrian
  */
 public class DataQueryLinkSQL implements DataQueryLinkBuilder {
-    
+
     private final static Logger LOG = Logger.getLogger(DataQueryLinkSQL.class.getName());
-    
+
     private final DataSource cpds;
     private final SQLEngine engine;
-    
+
     public DataQueryLinkSQL(String enginename) {
-         
+
         HikariConfig config = new HikariConfig();
         config.setDriverClassName(System.getProperty(enginename + ".database.driver"));
         config.setJdbcUrl(System.getProperty(enginename + ".database.url"));
-        config.setUsername(System.getProperty(enginename + ".database.user"));  
+        config.setUsername(System.getProperty(enginename + ".database.user"));
         config.setPassword(System.getProperty(enginename + ".database.password"));
-        
+
         cpds = new HikariDataSource(config);
         engine = SQLEngine.valueOf(System.getProperty(enginename + ".database.engine", SQLEngine.GENERIC.name()));
 
         LOG.log(Level.INFO, "Database engine = {0}", engine.toString());
-    }     
-    
+    }
+
     public QueryLink createQueryLink() {
+        Sentence[] morequeries = new Sentence[]{
+            new SentenceView(
+            "TEST_USERNAME_VIEW",
+            "SELECT ID, NAME, DISPLAYNAME, IMAGE FROM USERNAME WHERE VISIBLE = TRUE AND ACTIVE = TRUE ORDER BY NAME")
+        };
+
         return new ReducerQueryLink(
-                new SQLQueryLink(cpds, engine, SecureCommands.QUERIES),
+                new SQLQueryLink(cpds, engine, concatenate(SecureCommands.QUERIES, morequeries)),
                 new ReducerQueryJWTVerify("secret".getBytes(StandardCharsets.UTF_8)),
                 new ReducerJWTLogin("secret".getBytes(StandardCharsets.UTF_8), 5000),
                 new ReducerJWTCurrentUser(),
                 new ReducerQueryJWTAuthorization(new HashSet<>(Arrays.asList("USERNAME_VISIBLE_QUERY")), new HashSet<>(Arrays.asList("authenticatedres"))),
                 ReducerQueryIdentity.INSTANCE);
     }
-    
+
     public DataLink createDataLink() {
         return new ReducerDataLink(
                 new SQLDataLink(cpds, engine, SecureCommands.COMMANDS),
@@ -88,10 +97,22 @@ public class DataQueryLinkSQL implements DataQueryLinkBuilder {
 
     @Override
     public DataQueryLink create() {
-        return new BasicDataQueryLink(createQueryLink(),  createDataLink());
+        return new BasicDataQueryLink(createQueryLink(), createDataLink());
     }
 
     @Override
     public void destroy() {
+    }
+
+    private <T> T[] concatenate(T[] a, T[] b) {
+        int aLen = a.length;
+        int bLen = b.length;
+
+        @SuppressWarnings("unchecked")
+        T[] c = (T[]) Array.newInstance(a.getClass().getComponentType(), aLen + bLen);
+        System.arraycopy(a, 0, c, 0, aLen);
+        System.arraycopy(b, 0, c, aLen, bLen);
+
+        return c;
     }
 }
