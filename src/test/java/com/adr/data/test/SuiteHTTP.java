@@ -32,6 +32,7 @@ import org.junit.runners.Suite;
 @RunWith(Suite.class)
 @Suite.SuiteClasses({
     QueryTests.class, 
+    DataTests.class, 
     SecurityTests.class})
 public class SuiteHTTP {
     

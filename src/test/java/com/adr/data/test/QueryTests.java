@@ -95,6 +95,35 @@ public class QueryTests {
         Assert.assertEquals("Guest", result.getString("DISPLAYNAME"));
     }
 
+    private void testSentenceTable(QueryLink link, Record header) throws DataException {
+        List<Record> result3 = link.query(header,
+                new RecordMap(
+                        new Entry("__ENTITY", "USERNAME"),
+                        new Entry("ID$KEY", VariantString.NULL),
+                        new Entry("NAME", "manager"),
+                        new Entry("VISIBLE", VariantBoolean.NULL),
+                        new Entry("CODECARD", VariantString.NULL)));
+        Assert.assertEquals(1, result3.size());
+        Assert.assertEquals("manager", result3.get(0).getString("NAME"));
+        Assert.assertEquals(null, result3.get(0).getString("CODECARD"));
+        Assert.assertEquals(VariantVoid.INSTANCE, result3.get(0).get("IMAGE"));
+    }
+
+    private void testSentenceTableLike(QueryLink link, Record header) throws DataException {
+        List<Record> result4 = SourceLink.getQueryLink().query(header,
+                new RecordMap(
+                        new Entry("__ENTITY", "USERNAME"),
+                        new Entry("__ORDERBY", "NAME"),
+                        new Entry("ID$KEY", VariantString.NULL),
+                        new Entry("NAME", VariantString.NULL),
+                        new Entry("NAME__LIKE", "%a%"),
+                        new Entry("VISIBLE", VariantBoolean.NULL),
+                        new Entry("CODECARD", VariantString.NULL)));
+        Assert.assertEquals(2, result4.size());
+        Assert.assertEquals("admin", result4.get(0).getString("NAME"));
+        Assert.assertEquals("manager", result4.get(1).getString("NAME"));
+    }
+
     @Test
     public void testSomeQueries() throws DataException {
 
@@ -108,109 +137,10 @@ public class QueryTests {
             testQueryOrder(SourceLink.getQueryLink(), header);
             testSentenceQuery(SourceLink.getQueryLink(), header);
             testSentenceView(SourceLink.getQueryLink(), header);
-
-            List<Record> result3 = SourceLink.getQueryLink().query(header,
-                    new RecordMap(
-                            new Entry("__ENTITY", "USERNAME"),
-                            new Entry("ID$KEY", VariantString.NULL),
-                            new Entry("NAME", "manager"),
-                            new Entry("VISIBLE", VariantBoolean.NULL),
-                            new Entry("CODECARD", VariantString.NULL)));
-            Assert.assertEquals(1, result3.size());
-            Assert.assertEquals("manager", result3.get(0).getString("NAME"));
-            Assert.assertEquals(null, result3.get(0).getString("CODECARD"));
-            Assert.assertEquals(VariantVoid.INSTANCE, result3.get(0).get("IMAGE"));
-
-            List<Record> result4 = SourceLink.getQueryLink().query(header,
-                    new RecordMap(
-                            new Entry("__ENTITY", "USERNAME"),
-                            new Entry("__ORDERBY", "NAME"),
-                            new Entry("ID$KEY", VariantString.NULL),
-                            new Entry("NAME", VariantString.NULL),
-                            new Entry("NAME__LIKE", "%a%"),
-                            new Entry("VISIBLE", VariantBoolean.NULL),
-                            new Entry("CODECARD", VariantString.NULL)));
-            Assert.assertEquals(2, result4.size());
-            Assert.assertEquals("admin", result4.get(0).getString("NAME"));
-            Assert.assertEquals("manager", result4.get(1).getString("NAME"));
+            testSentenceTable(SourceLink.getQueryLink(), header);
+            testSentenceTableLike(SourceLink.getQueryLink(), header);
         } finally {
             SourceLink.destroyDataQueryLink();
         }
-    }
-
-    @Test
-    public void testSomeUpdates() throws DataException {
-
-        SourceLink.createDataQueryLink();
-        try {
-
-            // Login
-            String authorization = ReducerLogin.login(SourceLink.getQueryLink(), "admin", "admin");
-            Record header = new RecordMap(new Entry("Authorization", authorization));
-
-            // Insert
-            SourceLink.getDataLink().execute(
-                    header,
-                    new Record[]{
-                        new RecordMap(
-                                new Entry("__ENTITY", "USERNAME"),
-                                new Entry("ID$KEY", "newid"),
-                                new Entry("NAME", "newuser"),
-                                new Entry("DISPLAYNAME", "New User"),
-                                new Entry("CODECARD", "123457"),
-                                new Entry("ROLE_ID", "g"),
-                                new Entry("VISIBLE", true),
-                                new Entry("ACTIVE", true))});
-            Record r = loadUser(SourceLink.getQueryLink(), header, "newid");
-            Assert.assertEquals("newuser", r.getString("NAME"));
-            Assert.assertEquals("New User", r.getString("DISPLAYNAME"));
-            Assert.assertEquals(Boolean.TRUE, r.getBoolean("VISIBLE"));
-
-            // update
-            SourceLink.getDataLink().execute(
-                    header,
-                    new Record[]{
-                        new RecordMap(
-                                new Entry("__ENTITY", "USERNAME"),
-                                new Entry("ID$KEY", "newid"),
-                                new Entry("NAME", "newuser"),
-                                new Entry("DISPLAYNAME", "New User Changed"),
-                                new Entry("CODECARD", "12345"),
-                                new Entry("ROLE_ID", "m"),
-                                new Entry("VISIBLE", true),
-                                new Entry("ACTIVE", true))});
-
-            r = loadUser(SourceLink.getQueryLink(), header, "newid");
-            Assert.assertEquals("newuser", r.getString("NAME"));
-            Assert.assertEquals("New User Changed", r.getString("DISPLAYNAME"));
-            Assert.assertEquals(Boolean.TRUE, r.getBoolean("VISIBLE"));
-
-            // Delete newid
-            SourceLink.getDataLink().execute(
-                    header,
-                    new Record[]{
-                        new RecordMap(
-                                new Entry("__ENTITY", "USERNAME"),
-                                new Entry("ID$KEY", "newid"))});
-
-            r = loadUser(SourceLink.getQueryLink(), header, "newid");
-            Assert.assertNull(r);
-
-        } finally {
-            SourceLink.destroyDataQueryLink();
-        }
-    }
-
-    private Record loadUser(QueryLink link, Record header, String id) throws DataException {
-        return link.find(header,
-                new RecordMap(
-                        new Entry("__ENTITY", "USERNAME"),
-                        new Entry("ID$KEY", id),
-                        new Entry("NAME", VariantString.NULL),
-                        new Entry("DISPLAYNAME", VariantString.NULL),
-                        new Entry("CODECARD", VariantString.NULL),
-                        new Entry("ROLE_ID", VariantString.NULL),
-                        new Entry("VISIBLE", VariantBoolean.NULL),
-                        new Entry("ACTIVE", VariantBoolean.NULL)));
     }
 }
