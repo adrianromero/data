@@ -71,7 +71,6 @@ public class QueryTests {
         Record result = link.find(header,
                 new RecordMap(
                         new Entry("__ENTITY", "USERNAME_BYNAME"),
-                        new Entry("ID$KEY", VariantString.NULL),
                         new Entry("NAME", "guest"),
                         new Entry("DISPLAYNAME", VariantString.NULL),
                         new Entry("ROLE", VariantString.NULL),

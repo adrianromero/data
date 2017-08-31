@@ -16,15 +16,9 @@
 //     limitations under the License.
 package com.adr.data.security;
 
-import com.adr.data.DataException;
-import com.adr.data.sql.SQLEngine;
 import com.adr.data.sql.Sentence;
 import com.adr.data.sql.SentenceCommand;
-import com.adr.data.sql.SentencePut;
 import com.adr.data.sql.SentenceQuery;
-import com.adr.data.sql.SentenceView;
-import java.sql.Connection;
-import com.adr.data.record.Record;
 
 /**
  *
@@ -34,72 +28,32 @@ public class SecureCommands {
 
     public final static Sentence[] QUERIES = new Sentence[]{
         new SentenceQuery(
-        "ROLE_SUBJECT",
+        "SUBJECT_ROLE",
         "SELECT S.NAME, S.DISPLAYNAME FROM PERMISSION P JOIN SUBJECT S ON P.SUBJECT_ID = S.ID JOIN ROLE R ON P.ROLE_ID = R.ID WHERE R.NAME = ? AND S.NAME = ?", "ROLE__PARAM", "SUBJECT__PARAM"),
         new SentenceQuery(
         "USERNAME_BYNAME",
-        "SELECT U.ID AS \"ID$KEY\", U.NAME, U.DISPLAYNAME, R.NAME AS ROLE, R.DISPLAYNAME AS DISPLAYROLE, U.PASSWORD "
+        "SELECT U.NAME, U.DISPLAYNAME, R.NAME AS ROLE, R.DISPLAYNAME AS DISPLAYROLE, U.PASSWORD "
         + "FROM USERNAME U JOIN ROLE R ON U.ROLE_ID = R.ID "
         + "WHERE U.NAME = ? AND U.ACTIVE = TRUE", "NAME"),
         new SentenceQuery(
         "USERNAME_VISIBLE",
         "SELECT ID AS \"ID$KEY\", NAME, DISPLAYNAME, IMAGE FROM USERNAME WHERE VISIBLE = TRUE AND ACTIVE = TRUE ORDER BY NAME"),
-        
-        
-        
-        
-        // Not tested yet
-        new SentenceView(
-        "PERMISSION_SUBJECT",
-        "SELECT PERMISSION.ID, PERMISSION.ROLE_ID, SUBJECT.ID AS SUBJECT_ID, SUBJECT.NAME AS SUBJECT_NAME, SUBJECT.CODE AS SUBJECT_CODE "
-        + "FROM PERMISSION JOIN SUBJECT ON PERMISSION.SUBJECT_ID = SUBJECT.ID"),
         new SentenceQuery(
         "SUBJECT_BYROLE",
-        "SELECT S.CODE, S.NAME FROM SUBJECT S JOIN PERMISSION P ON S.ID = P.SUBJECT_ID WHERE P.ROLE_ID = ?", "ROLE_ID__PARAM"),
-        new SentenceQuery(
-        "USERNAME_BYID",
-        "SELECT U.ID, U.NAME, U.DISPLAYNAME, U.CODECARD, U.ROLE_ID, R.NAME AS ROLE, U.VISIBLE, U.IMAGE "
-        + "FROM USERNAME U JOIN ROLE R ON U.ROLE_ID = R.ID "
-        + "WHERE U.ID = ? AND U.ACTIVE = TRUE", "ID"),
-        new SentenceQuery(
-        "VIEW_PERMISSION",
-        "SELECT PERMISSION.ID, PERMISSION.ROLE_ID, SUBJECT.ID AS SUBJECT_ID, SUBJECT.NAME AS NAME, SUBJECT.CODE AS CODE "
-        + "FROM PERMISSION JOIN SUBJECT ON PERMISSION.SUBJECT_ID = SUBJECT.ID "
-        + "WHERE PERMISSION.ROLE_ID = ?", "ROLE_ID")
+        "SELECT S.NAME, S.DISPLAYNAME FROM PERMISSION P JOIN SUBJECT S ON P.SUBJECT_ID = S.ID JOIN ROLE R ON P.ROLE_ID = R.ID WHERE R.NAME = ?", "ROLE__PARAM"),
+         new SentenceQuery(
+        "USERNAMEIMAGE_BYNAME",
+        "SELECT IMAGE FROM USERNAME WHERE NAME = ? AND ACTIVE = TRUE", "NAME"),
     };
 
     public final static Sentence[] COMMANDS = new Sentence[]{
         new SentenceCommand(
-        "USERNAME_BYID",
-        "UPDATE USERNAME SET DISPLAYNAME = ?, VISIBLE = ?, IMAGE = ? WHERE ID = ?",
-        "DISPLAYNAME", "VISIBLE", "IMAGE", "ID"),
+        "USERNAME_BYNAME",
+        "UPDATE USERNAME SET DISPLAYNAME = ?, VISIBLE = ?, IMAGE = ? WHERE NAME = ?",
+        "DISPLAYNAME", "VISIBLE", "IMAGE", "NAME"),
         new SentenceCommand(
-        "USERNAME_PASSWORD",
-        "UPDATE USERNAME SET PASSWORD = ? WHERE ID = ?",
-        "PASSWORD", "ID"),
-        new Sentence() {
-            private final SentenceCommand delete = new SentenceCommand(
-                    "VIEW_PERMISSION DELETE",
-                    "DELETE FROM PERMISSION WHERE ID = ?",
-                    "ID");
-            private final SentenceCommand insert = new SentenceCommand(
-                    "VIEW_PERMISSION INSERT",
-                    "INSERT INTO PERMISSION(ID, ROLE_ID, SUBJECT_ID) VALUES (?, ?, ?)",
-                    "ID", "ROLE_ID", "SUBJECT_ID");
-
-            @Override
-            public String getName() {
-                return "VIEW_PERMISSION";
-            }
-
-            @Override
-            public void execute(Connection c, SQLEngine engine, Record records) throws DataException {
-                if (SentencePut.isDeleteSentence(records)) {
-                    delete.execute(c, engine, records);
-                } else {
-                    insert.execute(c, engine, records);
-                }
-            }
-        }
+        "USERNAMEPASSWORD_BYNAME",
+        "UPDATE USERNAME SET PASSWORD = ? WHERE NAME = ?",
+        "PASSWORD", "NAME")
     };
 }
