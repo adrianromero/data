@@ -55,7 +55,7 @@ public class SentencePGMerge extends SentenceDML {
         String realname;
         for (String f : record.getNames()) {
             if (!f.contains("__")) {
-                if (f.endsWith("$KEY")) {
+                if (f.endsWith(".KEY")) {
                     realname = f.substring(0, f.length() - 4);                  
                     conflict1.append(filterconflict1 ? ", " : "");
                     conflict1.append(realname);

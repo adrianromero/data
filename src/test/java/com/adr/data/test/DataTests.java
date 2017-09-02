@@ -51,7 +51,7 @@ public class DataTests {
                     new Record[]{
                         new RecordMap(
                                 new Entry("__ENTITY", "USERNAME"),
-                                new Entry("ID$KEY", "newid"),
+                                new Entry("ID.KEY", "newid"),
                                 new Entry("NAME", "newuser"),
                                 new Entry("DISPLAYNAME", "New User"),
                                 new Entry("CODECARD", "123457"),
@@ -69,7 +69,7 @@ public class DataTests {
                     new Record[]{
                         new RecordMap(
                                 new Entry("__ENTITY", "USERNAME"),
-                                new Entry("ID$KEY", "newid"),
+                                new Entry("ID.KEY", "newid"),
                                 new Entry("NAME", "newuser"),
                                 new Entry("DISPLAYNAME", "New User Changed"),
                                 new Entry("CODECARD", "12345"),
@@ -88,7 +88,7 @@ public class DataTests {
                     new Record[]{
                         new RecordMap(
                                 new Entry("__ENTITY", "USERNAME"),
-                                new Entry("ID$KEY", "newid"))});
+                                new Entry("ID.KEY", "newid"))});
 
             r = loadUser(SourceLink.getQueryLink(), header, "newid");
             Assert.assertNull(r);
@@ -102,7 +102,7 @@ public class DataTests {
         return link.find(header,
                 new RecordMap(
                         new Entry("__ENTITY", "USERNAME"),
-                        new Entry("ID$KEY", id),
+                        new Entry("ID.KEY", id),
                         new Entry("NAME", VariantString.NULL),
                         new Entry("DISPLAYNAME", VariantString.NULL),
                         new Entry("CODECARD", VariantString.NULL),

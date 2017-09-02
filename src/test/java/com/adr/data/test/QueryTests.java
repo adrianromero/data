@@ -40,13 +40,13 @@ public class QueryTests {
                 header,
                 new RecordMap(
                         new Entry("__ENTITY", "USERNAME"),
-                        new Entry("ID$KEY", "admin"),
+                        new Entry("ID.KEY", "admin"),
                         new Entry("NAME", VariantString.NULL),
                         new Entry("CODECARD", VariantString.NULL)));
 
         Assert.assertEquals(1, result.size());
         Assert.assertEquals("USERNAME", result.get(0).getString("__ENTITY"));
-        Assert.assertEquals("admin", result.get(0).getString("ID$KEY"));
+        Assert.assertEquals("admin", result.get(0).getString("ID.KEY"));
         Assert.assertEquals("admin", result.get(0).getString("NAME"));
         Assert.assertEquals(null, result.get(0).getString("CODECARD"));
         Assert.assertEquals(VariantVoid.INSTANCE, result.get(0).get("IMAGE"));
@@ -57,7 +57,7 @@ public class QueryTests {
                 new RecordMap(
                         new Entry("__ENTITY", "USERNAME"),
                         new Entry("__ORDERBY", "NAME$DESC"),
-                        new Entry("ID$KEY", VariantString.NULL),
+                        new Entry("ID.KEY", VariantString.NULL),
                         new Entry("NAME", VariantString.NULL),
                         new Entry("CODECARD", VariantString.NULL)));
 
@@ -87,7 +87,7 @@ public class QueryTests {
         Record result = link.find(header,
                 new RecordMap(
                         new Entry("__ENTITY", "TEST_USERNAME_VIEW"),
-                        new Entry("ID$KEY", VariantString.NULL),
+                        new Entry("ID.KEY", VariantString.NULL),
                         new Entry("NAME", "guest"),
                         new Entry("DISPLAYNAME", VariantString.NULL)));
 
@@ -98,7 +98,7 @@ public class QueryTests {
         List<Record> result3 = link.query(header,
                 new RecordMap(
                         new Entry("__ENTITY", "USERNAME"),
-                        new Entry("ID$KEY", VariantString.NULL),
+                        new Entry("ID.KEY", VariantString.NULL),
                         new Entry("NAME", "manager"),
                         new Entry("VISIBLE", VariantBoolean.NULL),
                         new Entry("CODECARD", VariantString.NULL)));
@@ -113,7 +113,7 @@ public class QueryTests {
                 new RecordMap(
                         new Entry("__ENTITY", "USERNAME"),
                         new Entry("__ORDERBY", "NAME"),
-                        new Entry("ID$KEY", VariantString.NULL),
+                        new Entry("ID.KEY", VariantString.NULL),
                         new Entry("NAME", VariantString.NULL),
                         new Entry("NAME__LIKE", "%a%"),
                         new Entry("VISIBLE", VariantBoolean.NULL),

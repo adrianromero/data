@@ -46,7 +46,7 @@ public class SentencePut extends Sentence {
     
     public static boolean isDeleteSentence(Record val) {
         for (String name : val.getNames()) {
-            if (!name.contains("__") && !name.endsWith("$KEY")) {
+            if (!name.contains("__") && !name.endsWith(".KEY")) {
                 return false;
             }
         }

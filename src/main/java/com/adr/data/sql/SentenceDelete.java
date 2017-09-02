@@ -46,7 +46,7 @@ public class SentenceDelete extends SentenceDML {
         String realname;
         for (String f : record.getNames()) {
             if (!f.contains("__")) {            
-                if (f.endsWith("$KEY")) {
+                if (f.endsWith(".KEY")) {
                     realname = f.substring(0, f.length() - 4);
                     sentence.append(filter ? " AND " : " WHERE ");
                     sentence.append(realname);

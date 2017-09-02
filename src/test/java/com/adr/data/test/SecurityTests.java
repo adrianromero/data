@@ -54,7 +54,7 @@ public class SecurityTests {
                     header,
                     new RecordMap(
                             new Entry("__ENTITY", "USERNAME"),
-                            new Entry("ID$KEY", new VariantString("admin")),
+                            new Entry("ID.KEY", new VariantString("admin")),
                             new Entry("NAME", VariantString.NULL),
                             new Entry("CODECARD", VariantString.NULL)));
             Assert.assertEquals(1, result1.size());
@@ -65,7 +65,7 @@ public class SecurityTests {
                         Record.EMPTY,
                         new RecordMap(
                                 new Entry("__ENTITY", "USERNAME"),
-                                new Entry("ID$KEY", new VariantString("admin")),
+                                new Entry("ID.KEY", new VariantString("admin")),
                                 new Entry("NAME", VariantString.NULL),
                                 new Entry("CODECARD", VariantString.NULL)));
                 Assert.fail();
@@ -108,7 +108,7 @@ public class SecurityTests {
                     Record.EMPTY,
                     new RecordMap(
                             new Entry("__ENTITY", "USERNAME_VISIBLE"),
-                            new Entry("ID$KEY", VariantString.NULL),
+                            new Entry("ID.KEY", VariantString.NULL),
                             new Entry("NAME", VariantString.NULL),
                             new Entry("DISPLAYNAME", VariantString.NULL)));
             Assert.assertEquals(3, result1.size());

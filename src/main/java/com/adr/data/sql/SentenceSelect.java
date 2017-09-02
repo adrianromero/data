@@ -92,7 +92,7 @@ public abstract class SentenceSelect extends SentenceQRY {
             } else if (n.endsWith("__LIKE")) {
                 realname = n.substring(0, n.length() - 6);
                 criteria = engine.getLikeExpression();
-            } else  if (n.endsWith("$KEY")) {
+            } else  if (n.endsWith(".KEY")) {
                 realname = n.substring(0, n.length() - 4);
                 criteria = " = ?";
             } else {
