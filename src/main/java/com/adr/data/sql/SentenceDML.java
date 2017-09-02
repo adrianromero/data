@@ -27,7 +27,7 @@ import com.adr.data.record.Record;
  */
 public abstract class SentenceDML extends Sentence {
 
-    protected abstract CommandSQL build(SQLEngine engine, Record val);
+    protected abstract CommandSQL build(SQLEngine engine, Record val) throws DataException;
 
     @Override
     public final void execute(Connection c, SQLEngine engine, Record val) throws DataException {

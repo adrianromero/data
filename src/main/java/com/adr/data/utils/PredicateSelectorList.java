@@ -16,12 +16,15 @@
 //     limitations under the License.
 package com.adr.data.utils;
 
+import com.adr.data.DataException;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.function.Predicate;
 import com.adr.data.record.Record;
 import com.adr.data.record.Records;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -41,6 +44,11 @@ public class PredicateSelectorList implements Predicate<Record> {
 
     @Override
     public boolean test(Record v) {
-        return names.contains(Records.getEntity(v));
+        try {
+            return names.contains(Records.getEntity(v));
+        } catch (DataException ex) {
+            Logger.getLogger(PredicateSelectorList.class.getName()).log(Level.FINE, ex.getMessage());
+            return false;
+        }
     }   
 }

@@ -17,6 +17,7 @@
 
 package com.adr.data.sql;
 
+import com.adr.data.DataException;
 import java.util.ArrayList;
 import java.util.List;
 import com.adr.data.record.Record;
@@ -27,10 +28,10 @@ import com.adr.data.record.Record;
  */
 public abstract class SentenceSelect extends SentenceQRY {
 
-    protected abstract String getViewName(Record record);
+    protected abstract String getViewName(Record record) throws DataException;
 
     @Override
-    public CommandSQL build(SQLEngine engine, Record record) {
+    public CommandSQL build(SQLEngine engine, Record record) throws DataException {
 
         SentenceSelect.SentenceBuilder builder = new SentenceSelect.SentenceBuilder(engine);
         StringBuilder sqlsent = new StringBuilder();

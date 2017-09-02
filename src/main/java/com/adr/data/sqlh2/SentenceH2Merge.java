@@ -17,6 +17,7 @@
 
 package com.adr.data.sqlh2;
 
+import com.adr.data.DataException;
 import com.adr.data.sql.CommandSQL;
 import com.adr.data.sql.SQLEngine;
 import com.adr.data.sql.SentenceDML;
@@ -36,7 +37,7 @@ public class SentenceH2Merge extends SentenceDML {
     }
     
     @Override
-    protected final CommandSQL build(SQLEngine engine, Record record) {
+    protected final CommandSQL build(SQLEngine engine, Record record) throws DataException {
 
         StringBuilder sentence = new StringBuilder();
         StringBuilder keys = new StringBuilder();

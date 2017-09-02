@@ -17,6 +17,8 @@
 
 package com.adr.data.record;
 
+import com.adr.data.DataException;
+import com.adr.data.var.Variant;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,8 +28,12 @@ import java.util.List;
  */
 public class Records {
    
-    public static String getEntity(Record record) {
-        return record.get("__ENTITY").asString();
+    public static String getEntity(Record record) throws DataException {
+        Variant entity = record.get("__ENTITY");
+        if (entity.isNull()) {
+            throw new DataException("__ENTITY does not exists for record.");
+        }
+        return entity.asString();
     }    
     
     public static List<Record> clone(List<Record> records) {

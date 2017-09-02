@@ -28,7 +28,7 @@ import com.adr.data.record.Record;
  */
 public abstract class SentenceQRY extends Sentence {
 
-    protected abstract CommandSQL build(SQLEngine engine, Record record);
+    protected abstract CommandSQL build(SQLEngine engine, Record record) throws DataException;
     
     @Override
     public List<Record> query(Connection c, SQLEngine engine, Record record) throws DataException {

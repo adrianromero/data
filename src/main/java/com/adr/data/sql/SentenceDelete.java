@@ -17,6 +17,7 @@
 
 package com.adr.data.sql;
 
+import com.adr.data.DataException;
 import java.util.ArrayList;
 import com.adr.data.record.Record;
 import com.adr.data.record.Records;
@@ -33,7 +34,7 @@ public class SentenceDelete extends SentenceDML {
     }
     
     @Override
-    protected final CommandSQL build(SQLEngine engine, Record record) {
+    protected final CommandSQL build(SQLEngine engine, Record record) throws DataException {
 
         StringBuilder sentence = new StringBuilder();
         ArrayList<String> keyfields = new ArrayList<>();
