@@ -71,10 +71,10 @@ public class JSON {
         String type = envelope.get("type").getAsString();
         if (RequestQuery.NAME.equals(type)) {
             JsonObject data = envelope.get("data").getAsJsonObject();
-            return new RequestQuery(JSON.this.fromJSONRecord(data.get("headers")), JSON.this.fromJSONRecord(data.get("filter")));
+            return new RequestQuery(fromJSONRecord(data.get("headers")), fromJSONRecord(data.get("filter")));
         } else if (RequestExecute.NAME.equals(type)) {
             JsonObject data2 = envelope.get("data").getAsJsonObject();
-            return new RequestExecute(JSON.this.fromJSONRecord(data2.get("headers")), JSON.this.fromJSONListRecord(data2.get("list")));
+            return new RequestExecute(fromJSONRecord(data2.get("headers")), fromJSONListRecord(data2.get("list")));
         } else {
             throw new IllegalStateException("Envelope type invalid: " + type);
         }
@@ -84,7 +84,7 @@ public class JSON {
         JsonObject envelope = gsonparser.parse(json).getAsJsonObject();
         String type = envelope.get("type").getAsString();
         if (ResponseListRecord.NAME.equals(type)) {
-            return new ResponseListRecord(JSON.this.fromJSONListRecord(envelope.get("data")));
+            return new ResponseListRecord(fromJSONListRecord(envelope.get("data")));
         } else if (ResponseError.NAME.equals(type)) {
             JsonObject jsonex = envelope.get("data").getAsJsonObject();
             String name = jsonex.get("exception").getAsString();
@@ -104,13 +104,13 @@ public class JSON {
     }
 
     public List<Record> fromJSONListRecord(String json) {
-        return JSON.this.fromJSONListRecord(gsonparser.parse(json));
+        return fromJSONListRecord(gsonparser.parse(json));
     }
 
     public List<Record> fromJSONListRecord(JsonElement element) {
         List<Record> l = new ArrayList<>();
         for (JsonElement r : element.getAsJsonArray()) {
-            l.add(JSON.this.fromJSONRecord(r));
+            l.add(fromJSONRecord(r));
         }
         return l;
     }
@@ -123,7 +123,7 @@ public class JSON {
     }
 
     public Record fromJSONRecord(String json) {
-        return JSON.this.fromJSONRecord(gsonparser.parse(json));
+        return fromJSONRecord(gsonparser.parse(json));
     }
 
     private Record fromJSONRecord(JsonElement element) {
