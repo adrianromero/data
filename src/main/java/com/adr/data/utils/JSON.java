@@ -32,7 +32,6 @@ import com.google.gson.JsonParser;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -45,25 +44,39 @@ import com.adr.data.record.Record;
  */
 public class JSON {
 
-    public final static JSON INSTANCE = new JSON();
+    public final static JSON INSTANCE = JSON.create();
+    public final static JSON PRETTY = JSON.createPretty();
 
     private final Gson gson;
     private final Gson gsonsimple;
     private final JsonParser gsonparser;
 
-    private JSON() {
-
+    private JSON(Gson gson, Gson gsonsimple) {
+        this.gson = gson;
+        this.gsonsimple = gsonsimple;
+        gsonparser = new JsonParser();
+    }
+    
+    private static final JSON create() {
         GsonBuilder gsonb = new GsonBuilder();
-//        gsonb.serializeNulls();
-//        gsonb.setPrettyPrinting();
-        gson = gsonb.create();
+        Gson gson = gsonb.create();
 
         gsonb = new GsonBuilder();
         gsonb.serializeNulls();
-//        gsonb.setPrettyPrinting();
-        gsonsimple = gsonb.create();
+        Gson gsonsimple = gsonb.create();        
+        return new JSON(gson, gsonsimple);
+    }
+    
+    private static final JSON createPretty() {
+        GsonBuilder gsonb = new GsonBuilder();
+        gsonb.setPrettyPrinting();
+        Gson gson = gsonb.create();
 
-        gsonparser = new JsonParser();
+        gsonb = new GsonBuilder();
+        gsonb.serializeNulls();
+        gsonb.setPrettyPrinting();
+        Gson gsonsimple = gsonb.create();        
+        return new JSON(gson, gsonsimple);
     }
 
     public EnvelopeRequest fromJSONRequest(String json) {
