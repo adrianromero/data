@@ -30,6 +30,13 @@ public interface Loader {
         while (Character.isWhitespace(getCP())) {
             next();
         }
+        if ('#' == getCP()) {
+            next();
+            while (getCP() != '\n' && !CodePoint.isEOF(getCP())) {
+               next();
+            }
+            skipBlanks();
+        }
     }
     
     public String messageGeneral(String message);

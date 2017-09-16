@@ -47,7 +47,7 @@ public class RecordParsers {
         Kind kind = null;
         States state;
         
-        if (loader.getCP() == '{') {
+        if (loader.getCP() == '(') {
             state = States.RECORD_KEY;
             loader.next();
             loader.skipBlanks();
@@ -139,7 +139,7 @@ public class RecordParsers {
                     loader.next();
                     loader.skipBlanks();
                     state = States.RECORD_KEY;
-                } else if (loader.getCP() == '}') {
+                } else if (loader.getCP() == ')') {
                     loader.next();
                     return new RecordMap(entries);                    
                 } else {

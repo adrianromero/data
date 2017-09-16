@@ -63,7 +63,7 @@ public class RecordsSerializer {
         loader.next();
         loader.skipBlanks(); 
         for (;;) {
-            if (loader.getCP() == '{') {
+            if (loader.getCP() == '(') {
                 recordsList.add(RecordParsers.parseRecord(loader));
                 loader.skipBlanks();
             } else if (CodePoint.isEOF(loader.getCP())) {
@@ -99,7 +99,7 @@ public class RecordsSerializer {
     }
     
     public static final void write(Record r, Writer writer) throws IOException {
-        writer.write('{');
+        writer.write('(');
         String[] names = r.getNames();
         boolean comma = false;
         for (String n : names) {
@@ -132,7 +132,7 @@ public class RecordsSerializer {
                 writer.write(v.getKind().toString());
             }
         }
-        writer.write('}');
+        writer.write(')');
     }
     
     private final static boolean hasQuotes(Kind kind) {
