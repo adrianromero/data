@@ -83,7 +83,7 @@ public abstract class Sentence {
         }
     }
 
-    private static void write(PreparedStatement stmt, String[] params, Record param) throws DataException {
+    protected static void write(PreparedStatement stmt, String[] params, Record param) throws DataException {
         if (param == null) {
             return;
         }
@@ -93,7 +93,7 @@ public abstract class Sentence {
         }
     }
 
-    private static Entry[] read(ResultSet resultset, Record param) throws DataException {
+    protected static Entry[] read(ResultSet resultset, Record param) throws DataException {
         if (param == null) {
             return new Entry[0];
         }
