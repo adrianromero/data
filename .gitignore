@@ -5,3 +5,5 @@ target/
 /.nb-gradle/
 /build/
 /private/
+
+/.idea/

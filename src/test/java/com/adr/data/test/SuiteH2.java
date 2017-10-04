@@ -30,7 +30,9 @@ import org.junit.runners.Suite;
 @Suite.SuiteClasses({
     QueryTests.class, 
     DataTests.class, 
-    SecurityTests.class
+    SecurityTests.class,
+    // Kotlin tests
+    QueryAndExec.class
 })
 public class SuiteH2 {
 

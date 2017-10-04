@@ -1,5 +1,5 @@
 //     Data Access is a Java library to store data
-//     Copyright (C) 2016 Adrián Romero Corchado.
+//     Copyright (C) 2017 Adrián Romero Corchado.
 //
 //     This file is part of Data Access
 //
@@ -20,24 +20,34 @@ import com.adr.data.record.Entry;
 import com.adr.data.record.RecordMap;
 import com.adr.data.utils.JSON;
 import com.adr.data.var.VariantString;
+
 import java.util.Arrays;
 import java.util.List;
-import org.junit.Assert;
+
 import org.junit.Test;
 import com.adr.data.record.Record;
+import com.adr.data.recordparser.RecordsSerializer;
+import com.adr.data.var.VariantInt;
+import com.adr.data.var.VariantLong;
+
+import java.io.IOException;
 
 /**
- *
  * @author adrian
  */
-public class GSONTests {
+public class ParserTests {
 
     @Test
-    public void testJSONSerialization() {
+    public void testJSONSerialization() throws IOException {
 
         Record keval = new RecordMap(
                 new Entry("id", new VariantString("1")),
                 new Entry("field", new VariantString("pepeluis")),
+                new Entry("amount", new VariantInt(32)),
+                new Entry("añejo", 32.0),
+                new Entry("unenter ito", 32),
+                new Entry("usvalid \nCon retorno", 32),
+                new Entry("unlong", new VariantLong(33L)),
                 new Entry("value", VariantString.NULL));
 
         List<Record> dl = Arrays.asList(
@@ -48,17 +58,8 @@ public class GSONTests {
                         new Entry("id", "2"),
                         new Entry("field", "hilario")));
 
-        String sdl = "["
-                + "[{\"name\":\"id\",\"kind\":\"STRING\",\"value\":\"1\"},{\"name\":\"field\",\"kind\":\"STRING\",\"value\":\"pepeluis\"}],"
-                + "[{\"name\":\"id\",\"kind\":\"STRING\",\"value\":\"2\"},{\"name\":\"field\",\"kind\":\"STRING\",\"value\":\"hilario\"}]"
-                + "]";
-        Assert.assertEquals(sdl, JSON.INSTANCE.toJSON(dl));
-        Assert.assertEquals(sdl, JSON.INSTANCE.toJSON(JSON.INSTANCE.fromJSONListRecord(JSON.INSTANCE.toJSON(dl))));
-        Assert.assertEquals("[{\"id\":\"1\",\"field\":\"pepeluis\"},{\"id\":\"2\",\"field\":\"hilario\"}]", JSON.INSTANCE.toSimpleJSON(dl));
-
-        String skeval = "[{\"name\":\"id\",\"kind\":\"STRING\",\"value\":\"1\"},{\"name\":\"field\",\"kind\":\"STRING\",\"value\":\"pepeluis\"},{\"name\":\"value\",\"kind\":\"STRING\"}]";
-        Assert.assertEquals(skeval, JSON.INSTANCE.toJSON(keval));
-        Assert.assertEquals(skeval, JSON.INSTANCE.toJSON(JSON.INSTANCE.fromJSONRecord(JSON.INSTANCE.toJSON(keval))));
-        Assert.assertEquals("{\"id\":\"1\",\"field\":\"pepeluis\",\"value\":null}", JSON.INSTANCE.toSimpleJSON(keval));
+        System.out.println(JSON.INSTANCE.toJSON(RecordsSerializer.read(
+                "(__ENTITY: \"NICA\\\"SO\", NAME.KEY: \"PEPE\":STRING, \"VALUE\": true, AMOUNT: 234.4, TOTAL: 123:INT, CUSTOMER: :DOUBLE, CHUNGGY: NULL:STRING, RARONULL: NUll )")));
+        System.out.println(RecordsSerializer.write(keval));
     }
 }

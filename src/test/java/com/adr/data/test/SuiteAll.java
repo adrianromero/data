@@ -20,24 +20,24 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 
 /**
- *
  * @author adrian
  */
 @RunWith(Suite.class)
 @Suite.SuiteClasses({
     // GSON Suite
     GSONTests.class,
+//    ParserTests.class,
     // Database suites
-    SuiteH2.class, 
-    SuiteMYSQL.class, 
+    SuiteH2.class,
+    SuiteMYSQL.class,
     SuitePostgreSQL.class,
-    
+
     // HTTP suite
     SuiteHTTP.class,
-    
+
     // MQ Sync suite
-    SuiteMQ.class 
+    SuiteMQ.class
 })
 
-public class SuiteAll { 
+public class SuiteAll {
 }

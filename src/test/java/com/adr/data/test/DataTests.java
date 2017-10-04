@@ -23,8 +23,6 @@ import com.adr.data.record.RecordMap;
 import com.adr.data.security.ReducerLogin;
 import com.adr.data.var.VariantBoolean;
 import com.adr.data.var.VariantString;
-import com.adr.data.var.VariantVoid;
-import java.util.List;
 import org.junit.Assert;
 import org.junit.Test;
 import com.adr.data.record.Record;
