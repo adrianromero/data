@@ -32,7 +32,6 @@ import java.util.LinkedHashMap;
 public class RecordParsers {
     
     private static enum States {
-        RECORD_INIT,
         RECORD_KEY,
         RECORD_DOTS,
         RECORD_VALUE,
@@ -94,7 +93,7 @@ public class RecordParsers {
                     state = States.RECORD_DOTSKIND;
                 } else if (CodePoint.isAlpha(loader.getCP())) {
                     String v = CommonParsers.parseWord(loader);
-                    if ("NULL".equals(v) || "null".equals(v)) {
+                    if ("NULL".equalsIgnoreCase(v)) {
                         isovalue = null;
                         kind = Kind.STRING;
                     } else {
