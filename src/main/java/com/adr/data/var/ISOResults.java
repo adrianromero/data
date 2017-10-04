@@ -77,7 +77,16 @@ public final class ISOResults implements Results {
     }
     @Override
     public Boolean getBoolean() throws DataException {
-        return value == null || value.equals("") ? null : Boolean.valueOf(value);
+        if (value == null || value.isEmpty()) {
+            return null;
+        }
+        if (value.equalsIgnoreCase(Boolean.TRUE.toString())) {
+            return Boolean.TRUE;
+        }
+        if (value.equalsIgnoreCase(Boolean.FALSE.toString())) {
+            return Boolean.FALSE;
+        }
+        throw new DataException(String.format("Cannot parse \"%s\" as boolean.", value));
     }
     @Override
     public Instant getInstant() throws DataException {
