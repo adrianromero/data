@@ -23,7 +23,7 @@ import com.adr.data.DataException;
  *
  * @author adrian
  */
-class KindBuilderInt extends Kind {
+class KindInt extends Kind {
     
     @Override
     public Variant read(Results read) throws DataException {

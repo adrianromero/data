@@ -26,7 +26,7 @@ import java.util.Map;
  * @author adrian
  */
 public abstract class Kind {
-    public final static Kind INT = new KindBuilderInt();
+    public final static Kind INT = new KindInt();
     public final static Kind LONG = new KindLong();
     public final static Kind STRING = new KindString(); 
     public final static Kind DOUBLE = new KindDouble(); 
