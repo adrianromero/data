@@ -1,5 +1,5 @@
 //     Data Access is a Java library to store data
-//     Copyright (C) 2016 Adrián Romero Corchado.
+//     Copyright (C) 2017 Adrián Romero Corchado.
 //
 //     This file is part of Data Access
 //
@@ -25,6 +25,6 @@ import com.adr.data.record.Record;
  * @author adrian
  */
 public interface CacheProvider {
-    public void put(Record headers, Record filter, List<Record> records) throws DataException;
-    public List<Record> getIfPresent(Record headers, Record filter) throws DataException;
+    void put(Record headers, Record filter, List<Record> records) throws DataException;
+    List<Record> getIfPresent(Record headers, Record filter) throws DataException;
 }
