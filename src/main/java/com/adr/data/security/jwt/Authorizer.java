@@ -65,7 +65,7 @@ public class Authorizer {
 
         // Valid login, load user details.
         Record subjectsquery = new RecordMap(
-                new Entry("__ENTITY", "SUBJECT_ROLE"),
+                new Entry("COLLECTION.KEY", "SUBJECT_ROLE"),
                 new Entry("ROLE__PARAM", role),
                 new Entry("SUBJECT__PARAM", resource),
                 new Entry("NAME", VariantString.NULL),

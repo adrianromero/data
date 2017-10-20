@@ -49,8 +49,12 @@ public class MQDataLinkServer extends RpcServer {
 
     @Override
     public byte[] handleCall(byte[] requestBody, AMQP.BasicProperties replyProperties) {
-        // the result must be just the result: OK or exception
-        String message = new String(requestBody, StandardCharsets.UTF_8);
-        return ProcessRequest.serverDataProcess(link, message, LOG).getBytes(StandardCharsets.UTF_8);            
+        try {
+            // the result must be just the result: OK or exception
+            String message = new String(requestBody, StandardCharsets.UTF_8);
+            return ProcessRequest.serverDataProcess(link, message, LOG).getBytes(StandardCharsets.UTF_8);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }    
 }

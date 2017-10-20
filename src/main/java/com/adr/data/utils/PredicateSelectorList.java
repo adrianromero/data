@@ -45,7 +45,7 @@ public class PredicateSelectorList implements Predicate<Record> {
     @Override
     public boolean test(Record v) {
         try {
-            return names.contains(Records.getEntity(v));
+            return names.contains(Records.getCollection(v));
         } catch (DataException ex) {
             Logger.getLogger(PredicateSelectorList.class.getName()).log(Level.FINE, ex.getMessage());
             return false;

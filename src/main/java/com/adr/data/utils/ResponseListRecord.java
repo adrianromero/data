@@ -18,7 +18,10 @@
 package com.adr.data.utils;
 
 import com.adr.data.DataException;
-import com.google.gson.JsonElement;
+import com.adr.data.recordparser.RecordsSerializer;
+
+import java.io.IOException;
+import java.io.Writer;
 import java.util.List;
 import com.adr.data.record.Record;
 
@@ -46,9 +49,11 @@ public class ResponseListRecord extends EnvelopeResponse {
     }
 
     @Override
-    public JsonElement dataToJSON() {
-        return JSON.INSTANCE.toJSONElement(result);
-    } 
+    public void write(Writer w) throws IOException {
+        w.append(NAME);
+        w.append('\n');
+        RecordsSerializer.writeList(result, w);
+    }
 
     @Override
     public List<Record> getAsListRecord() throws DataException {

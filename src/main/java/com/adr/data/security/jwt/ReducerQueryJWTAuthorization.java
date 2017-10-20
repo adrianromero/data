@@ -62,12 +62,12 @@ public class ReducerQueryJWTAuthorization implements ReducerQuery {
             displayrole = jwtauthorization.getClaim("displayrole").asString();
         }
         
-        String entity = Records.getEntity(filter);
+        String entity = Records.getCollection(filter);
         if (ReducerLogin.AUTHORIZATION_REQUEST.equals(entity)) {        
             // Request authorizer
             String resource = filter.getString("RESOURCE");
             Record response = new RecordMap(
-                    new Entry("__ENTITY", ReducerLogin.AUTHORIZATION_REQUEST),
+                    new Entry("COLLECTION.KEY", ReducerLogin.AUTHORIZATION_REQUEST),
                     new Entry("RESOURCE", resource),
                     new Entry("ROLE", role),
                     new Entry("RESULT", new VariantBoolean(authorizer.hasAuthorization(querylink, role, resource))));

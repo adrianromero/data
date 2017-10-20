@@ -19,7 +19,6 @@ package com.adr.data.rabbitmq;
 
 import com.adr.data.DataException;
 import com.adr.data.DataLink;
-import com.adr.data.utils.JSON;
 import com.adr.data.utils.RequestExecute;
 import com.rabbitmq.client.RpcClient;
 import com.rabbitmq.client.ShutdownSignalException;
@@ -50,7 +49,7 @@ public class MQDataLinkAsync implements DataLink {
     public void execute(Record headers, List<Record> l) throws DataException {
         
         try {
-            byte[] request = JSON.INSTANCE.toJSON(new RequestExecute(headers, l)).getBytes(StandardCharsets.UTF_8);
+            byte[] request = new RequestExecute(headers, l).write().getBytes(StandardCharsets.UTF_8);
             client.publish(null, request);
         } catch (IOException | ShutdownSignalException ex) {
             throw new DataException(ex);

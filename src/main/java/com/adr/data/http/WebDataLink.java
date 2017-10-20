@@ -19,7 +19,6 @@ package com.adr.data.http;
 import com.adr.data.DataException;
 import com.adr.data.DataLink;
 import com.adr.data.utils.EnvelopeResponse;
-import com.adr.data.utils.JSON;
 import com.adr.data.utils.RequestExecute;
 import java.io.IOException;
 import java.util.List;
@@ -55,7 +54,7 @@ public class WebDataLink implements DataLink {
     @Override
     public void execute(Record headers, List<Record> l) throws DataException {
         try {
-            String message = JSON.INSTANCE.toJSON(new RequestExecute(headers, l));
+            String message = new RequestExecute(headers, l).write();
             
             Request request = new Request.Builder()
                 .url(url)
@@ -68,7 +67,7 @@ public class WebDataLink implements DataLink {
                 throw new DataException("Unexpected result code: " + response);
             }
 
-            EnvelopeResponse envelope = JSON.INSTANCE.fromJSONResponse(response.body().string());
+            EnvelopeResponse envelope = EnvelopeResponse.read(response.body().string());
             envelope.asSuccess();
         } catch (IOException ex) {
             throw new DataException(ex);

@@ -75,7 +75,7 @@ public class SentenceSQLColumns extends Sentence {
         //    NO --- if this not a generated column
         //    empty string --- if it cannot be determined whether this is a generated column        
         
-        // (__ENTITY: "SQLCOLUMNS", TABLE_CAT: NULL, TABLE_SCHEM: null, TABLE_NAME: "username", COLUMN_NAME: NULL, DATA_TYPE: NULL, TYPE_NAME: NULL)
+        // (COLLECTION.KEY: "SQLCOLUMNS", TABLE_CAT: NULL, TABLE_SCHEM: null, TABLE_NAME: "username", COLUMN_NAME: NULL, DATA_TYPE: NULL, TYPE_NAME: NULL)
         
         Variant varcat = val.get("TABLE_CAT");
         String cat = varcat.isNull() ? null : varcat.asString();

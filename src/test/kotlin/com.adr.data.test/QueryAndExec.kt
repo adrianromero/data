@@ -27,19 +27,31 @@ class QueryAndExec {
             // Insert
             SourceLink.getDataLink().execute(
                     header,
-                    arrayOf<Record>(RecordMap(
-                            "__ENTITY" to "USERNAME",
-                            "ID.KEY" to "newid",
-                            "NAME" to "newuser",
-                            "DISPLAYNAME" to "New User",
-                            "CODECARD" to "123457",
-                            "ROLE_ID" to "g",
-                            "VISIBLE" to true,
-                            "ACTIVE" to true)))
+                    arrayOf<Record>(
+                            RecordMap(
+                                    "COLLECTION.KEY" to "USERNAME",
+                                    "ID.KEY" to "newid",
+                                    "NAME" to "newuser",
+                                    "DISPLAYNAME" to "New User",
+                                    "CODECARD" to "123457",
+                                    "ROLE_ID" to "g",
+                                    "VISIBLE" to true,
+                                    "ACTIVE" to true)))
             val r = loadUser(SourceLink.getQueryLink(), header, "newid")
             Assert.assertEquals("newuser", r.getString("NAME"))
             Assert.assertEquals("New User", r.getString("DISPLAYNAME"))
-            Assert.assertEquals(java.lang.Boolean.TRUE, r.getBoolean("VISIBLE"))
+            // Assert.assertEquals(true, r["VISIBLE"].boolean)
+
+            // Delete newid
+            SourceLink.getDataLink().execute(
+                    header,
+                    arrayOf<Record>(
+                            RecordMap(
+                                    "COLLECTION.KEY" to "USERNAME",
+                                    "ID.KEY" to "newid")));
+
+//            val r2 = loadUser(SourceLink.getQueryLink(), header, "newid");
+//            Assert.assertNull(r2);
 
 
         } finally {
@@ -50,14 +62,14 @@ class QueryAndExec {
     private fun loadUser(link: QueryLink, header: Record, id: String): Record {
         return link.find(header,
                 RecordMap(
-                        "__ENTITY" to "USERNAME",
+                        "COLLECTION.KEY" to "USERNAME",
                         "ID.KEY" to id,
-                        "NAME" to NULL,
-                        "DISPLAYNAME" to NULL,
-                        "CODECARD" to NULL,
+                        "NAME" to NULL.STRING,
+                        "DISPLAYNAME" to NULL.STRING,
+                        "CODECARD" to NULL.STRING,
                         "ROLE_ID" to NULL.STRING,
                         "VISIBLE" to NULL.BOOLEAN,
-                        "ACTIVE" to  NULL.BOOLEAN))
+                        "ACTIVE" to NULL.BOOLEAN))
     }
 }
 

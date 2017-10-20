@@ -39,7 +39,7 @@ public class ReducerJWTCurrentUser implements ReducerQuery {
     @Override
     public List<Record> query(Record headers, Record filter) throws DataException {
         
-        String entity = Records.getEntity(filter);
+        String entity = Records.getCollection(filter);
         if (!ReducerLogin.AUTHENTICATION_CURRENT.equals(entity)) {          
             return null;
         }
@@ -52,7 +52,7 @@ public class ReducerJWTCurrentUser implements ReducerQuery {
             JWT jwtauthorizaion = JWT.decode(authorization.asString());
             // Valid login, load user details.
             Record currentuser = new RecordMap(
-                        new Entry("__ENTITY", "USERNAME_BYNAME"),
+                        new Entry("COLLECTION.KEY", "USERNAME_BYNAME"),
                         new Entry("NAME", jwtauthorizaion.getSubject()),
                         new Entry("DISPLAYNAME", jwtauthorizaion.getClaim("displayname").asString()),
                         new Entry("ROLE", jwtauthorizaion.getClaim("role").asString()),

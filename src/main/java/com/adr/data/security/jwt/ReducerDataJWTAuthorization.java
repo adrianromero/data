@@ -18,7 +18,6 @@
 package com.adr.data.security.jwt;
 
 import com.adr.data.DataException;
-import com.adr.data.DataLink;
 import com.adr.data.QueryLink;
 import com.adr.data.route.ReducerData;
 import com.adr.data.security.SecurityDataException;
@@ -59,9 +58,9 @@ public class ReducerDataJWTAuthorization implements ReducerData {
         }
         
         for (Record r: l) {
-            String entity = Records.getEntity(r);
-            if (!authorizer.hasAuthorization(querylink, role, entity + Authorizer.ACTION_EXECUTE)) {
-                throw new SecurityDataException("Role " + displayrole + " does not have authorization to execute the resource: " + entity);
+            String collectionkey = Records.getCollection(r);
+            if (!authorizer.hasAuthorization(querylink, role, collectionkey + Authorizer.ACTION_EXECUTE)) {
+                throw new SecurityDataException("Role " + displayrole + " does not have authorization to execute the resource: " + collectionkey);
             }
         }
         return false;

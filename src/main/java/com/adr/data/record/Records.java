@@ -28,12 +28,12 @@ import java.util.List;
  */
 public class Records {
    
-    public static String getEntity(Record record) throws DataException {
-        Variant entity = record.get("__ENTITY");
-        if (entity.isNull()) {
-            throw new DataException("__ENTITY does not exists for record.");
+    public static String getCollection(Record record) throws DataException {
+        Variant collectionkey = record.get("COLLECTION.KEY");
+        if (collectionkey.isNull()) {
+            throw new DataException("COLLECTION.KEY does not exists for record.");
         }
-        return entity.asString();
+        return collectionkey.asString();
     }    
     
     public static List<Record> clone(List<Record> records) {

@@ -19,7 +19,6 @@ package com.adr.data.http;
 import com.adr.data.DataException;
 import com.adr.data.QueryLink;
 import com.adr.data.utils.EnvelopeResponse;
-import com.adr.data.utils.JSON;
 import com.adr.data.utils.RequestQuery;
 import java.io.IOException;
 import java.util.List;
@@ -56,7 +55,7 @@ public class WebQueryLink implements QueryLink {
     public List<Record> query(Record headers, Record filter) throws DataException {
 
         try {
-            String message = JSON.INSTANCE.toJSON(new RequestQuery(headers, filter));
+            String message = new RequestQuery(headers, filter).write();
 
             Request request = new Request.Builder()
                     .url(url)
@@ -69,7 +68,7 @@ public class WebQueryLink implements QueryLink {
                 throw new DataException("Unexpected result code: " + response);
             }
 
-            EnvelopeResponse envelope = JSON.INSTANCE.fromJSONResponse(response.body().string());
+            EnvelopeResponse envelope = EnvelopeResponse.read(response.body().string());
             return envelope.getAsListRecord();
         } catch (IOException ex) {
             throw new DataException(ex);

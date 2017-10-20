@@ -57,7 +57,7 @@ public class SQLQueryLink implements QueryLink {
     @Override
     public List<Record> query(Record headers, Record filter) throws DataException {
         try (Connection c = ds.getConnection()) {
-            String entity = Records.getEntity(filter);
+            String entity = Records.getCollection(filter);
             Sentence s = queries.get(entity);
             if (s == null) {
                 s = table;

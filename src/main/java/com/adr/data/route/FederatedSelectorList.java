@@ -29,14 +29,10 @@ import com.adr.data.record.Records;
  */
 public class FederatedSelectorList implements FederatedSelector {
     
-    private final FederatedEntry[] entries;
-    
     private final Map<String, QueryLink> links;
     private final QueryLink defaultlink;
 
     public FederatedSelectorList(FederatedEntry ... entries) {
-        
-        this.entries = entries;
         
         links = new HashMap<>();
         for (FederatedEntry e : entries) {
@@ -49,11 +45,11 @@ public class FederatedSelectorList implements FederatedSelector {
 
     @Override
     public QueryLink getQueryLink(Record filter) throws DataException {
-        String entity = Records.getEntity(filter);
-        QueryLink link = links.get(entity);
+        String collectionkey = Records.getCollection(filter);
+        QueryLink link = links.get(collectionkey);
         if (link == null) {
             if (defaultlink == null) {
-                throw new DataException("No filter link found for entity: " + entity);
+                throw new DataException("No filter link found for entity: " + collectionkey);
             } else {
                 return defaultlink;
             }

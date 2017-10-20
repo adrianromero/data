@@ -53,7 +53,7 @@ public class SecurityTests {
             List<Record> result1 = SourceLink.getQueryLink().query(
                     header,
                     new RecordMap(
-                            new Entry("__ENTITY", "USERNAME"),
+                            new Entry("COLLECTION.KEY", "USERNAME"),
                             new Entry("ID.KEY", new VariantString("admin")),
                             new Entry("NAME", VariantString.NULL),
                             new Entry("CODECARD", VariantString.NULL)));
@@ -64,7 +64,7 @@ public class SecurityTests {
                 SourceLink.getQueryLink().query(
                         Record.EMPTY,
                         new RecordMap(
-                                new Entry("__ENTITY", "USERNAME"),
+                                new Entry("COLLECTION.KEY", "USERNAME"),
                                 new Entry("ID.KEY", new VariantString("admin")),
                                 new Entry("NAME", VariantString.NULL),
                                 new Entry("CODECARD", VariantString.NULL)));
@@ -107,7 +107,7 @@ public class SecurityTests {
             List<Record> result1 = SourceLink.getQueryLink().query(
                     Record.EMPTY,
                     new RecordMap(
-                            new Entry("__ENTITY", "USERNAME_VISIBLE"),
+                            new Entry("COLLECTION.KEY", "USERNAME_VISIBLE"),
                             new Entry("ID.KEY", VariantString.NULL),
                             new Entry("NAME", VariantString.NULL),
                             new Entry("DISPLAYNAME", VariantString.NULL)));

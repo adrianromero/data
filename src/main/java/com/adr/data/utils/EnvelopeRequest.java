@@ -17,7 +17,12 @@
 
 package com.adr.data.utils;
 
-import com.google.gson.JsonElement;
+import com.adr.data.record.Record;
+import com.adr.data.recordparser.*;
+
+import java.io.*;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  *
@@ -27,5 +32,47 @@ public abstract class EnvelopeRequest {
 
     public abstract String getType();
     public abstract EnvelopeResponse process(ProcessRequest proc);
-    public abstract JsonElement dataToJSON();
+    public abstract void write(Writer w) throws IOException;
+    public final String write() throws IOException {
+        StringWriter writer = new StringWriter();
+        write(writer);
+        return writer.toString();
+    }
+    public static final EnvelopeRequest read(String value) throws IOException {
+        return read(new StringReader(value));
+    }
+    public static final EnvelopeRequest read(Reader r) throws IOException {
+        Loader loader = new StreamLoader(r);
+        loader.next();
+        String type = CommonParsers.parseWord(loader);
+        loader.skipBlanks();
+        if (RequestExecute.NAME.equals(type)){
+            Record header = RecordParsers.parseRecord(loader);
+            loader.skipBlanks();
+            List<Record> recordsList = new ArrayList<>();
+            for (;;) {
+                if (loader.getCP() == '(') {
+                    recordsList.add(RecordParsers.parseRecord(loader));
+                    loader.skipBlanks();
+                } else if (CodePoint.isEOF(loader.getCP())) {
+                    break;
+                } else {
+                    throw new IOException(loader.messageExpected(-1));
+                }
+            }
+            return new RequestExecute(header, recordsList);
+        } else if (RequestQuery.NAME.equals(type)) {
+            Record header = RecordParsers.parseRecord(loader);
+            loader.skipBlanks();
+            Record filter = RecordParsers.parseRecord(loader);
+            loader.skipBlanks();
+            if (CodePoint.isEOF(loader.getCP())) {
+                return new RequestQuery(header, filter);
+            } else {
+                throw new IOException(loader.messageExpected(-1));
+            }
+        } else {
+            throw new IOException(loader.messageExpected("Request type name"));
+        }
+    }
 }

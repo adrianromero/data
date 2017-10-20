@@ -39,24 +39,19 @@ public interface Record {
     };
     
     public String [] getNames();   
-    public Variant get(String name);   
-    
+    public Variant get(String name);
     public default String getString(String name) {
         return get(name).asString();    
     }
-    
     public default int getInteger(String name) {
         return get(name).asInteger(); 
     }
-    
     public default double getDouble(String name) {
         return get(name).asDouble();
-    }    
-    
+    }
     public default Boolean getBoolean(String name) {
         return get(name).asBoolean();
     }
-    
     public default byte[] getBytes(String name) {
         return get(name).asBytes();
     }      

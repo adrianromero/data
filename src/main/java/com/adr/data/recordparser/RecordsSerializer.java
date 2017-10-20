@@ -103,22 +103,6 @@ public class RecordsSerializer {
         String[] names = r.getNames();
         boolean comma = false;
         for (String n : names) {
-            Variant v = r.get(n);
-            String value;
-            Parameters params = new ISOParameters();
-           
-            // Calculate value
-            try {
-                if (v.isNull()) {
-                    value = "NULL";
-                } else {
-                    v.write(params);
-                    value = params.toString();
-                }
-            } catch (DataException ex) {
-                throw new IOException("Unexpected format error");
-            }           
-            
             if (comma) {
                 writer.write(", ");
             } else {
@@ -126,10 +110,28 @@ public class RecordsSerializer {
             }
             writer.write(CommonParsers.isIdentifier(n) ? n : CommonParsers.quote(n));
             writer.write(": ");
-            writer.write(!v.isNull() && hasQuotes(v.getKind()) ? CommonParsers.quote(value) : value);
-            if (!isDefaulted(v.getKind())) {
-                writer.write(':');
-                writer.write(v.getKind().toString());
+
+            Variant v = r.get(n);
+
+            // Calculate value
+            try {
+                if (v.isNull()) {
+                    writer.write("NULL");
+                    if (v.getKind() != Kind.STRING) {
+                        writer.write(':');
+                        writer.write(v.getKind().toString());
+                    }
+                } else {
+                    Parameters params = new ISOParameters();
+                    v.write(params);
+                    writer.write(hasQuotes(v.getKind()) ? CommonParsers.quote(params.toString()) : params.toString());
+                    if (!isDefaulted(v.getKind())) {
+                        writer.write(':');
+                        writer.write(v.getKind().toString());
+                    }
+                }
+            } catch (DataException ex) {
+                throw new IOException("Unexpected format error");
             }
         }
         writer.write(')');

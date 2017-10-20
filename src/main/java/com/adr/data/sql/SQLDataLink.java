@@ -55,7 +55,7 @@ public class SQLDataLink implements DataLink {
         try (Connection c = ds.getConnection()) {
             c.setAutoCommit(false);
             for (Record r : l) {
-                Sentence s = sentences.get(Records.getEntity(r));
+                Sentence s = sentences.get(Records.getCollection(r));
                 if (s == null) {  
                     s = engine.getPutSentence();
                 }   

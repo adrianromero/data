@@ -44,7 +44,7 @@ public abstract class ReducerLogin implements ReducerQuery {
     @Override
     public List<Record> query(Record headers, Record filter) throws DataException {
 
-        String entity = Records.getEntity(filter);
+        String entity = Records.getCollection(filter);
         if (!AUTHENTICATION_REQUEST.equals(entity)) {
             return null;
         }
@@ -56,14 +56,14 @@ public abstract class ReducerLogin implements ReducerQuery {
         Variant authorization = createAuthorization(username, password);
 
         Record result = new RecordMap(
-                new Entry("__ENTITY", AUTHENTICATION_RESPONSE),
+                new Entry("COLLECTION.KEY", AUTHENTICATION_RESPONSE),
                 new Entry("AUTHORIZATION", authorization));
         return Collections.singletonList(result);
     }
 
     public static String login(QueryLink link, String user, String password) throws DataException {
         Record r = link.find(new RecordMap(
-                    new Entry("__ENTITY", AUTHENTICATION_REQUEST),
+                    new Entry("COLLECTION.KEY", AUTHENTICATION_REQUEST),
                     new Entry("NAME", user),
                     new Entry("PASSWORD", password)));
         return r.getString("AUTHORIZATION");
@@ -72,13 +72,13 @@ public abstract class ReducerLogin implements ReducerQuery {
     public static Record current(QueryLink link, Record headers) throws DataException {
         return link.find(headers,
                 new RecordMap(
-                            new Entry("__ENTITY", AUTHENTICATION_CURRENT)));
+                            new Entry("COLLECTION.KEY", AUTHENTICATION_CURRENT)));
     }
 
     public static boolean hasAuthorization(QueryLink link, Record headers, String resource) throws DataException {
         Record result = link.find(headers,
                 new RecordMap(
-                        new Entry("__ENTITY", AUTHORIZATION_REQUEST),
+                        new Entry("COLLECTION.KEY", AUTHORIZATION_REQUEST),
                             new Entry("RESOURCE", resource)));
 
         return result.getBoolean("RESULT");

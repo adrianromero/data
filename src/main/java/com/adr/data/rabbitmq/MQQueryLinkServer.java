@@ -18,7 +18,6 @@ package com.adr.data.rabbitmq;
 
 import com.adr.data.QueryLink;
 import com.adr.data.utils.EnvelopeRequest;
-import com.adr.data.utils.JSON;
 import com.adr.data.utils.ProcessRequest;
 import com.rabbitmq.client.AMQP;
 import com.rabbitmq.client.Channel;
@@ -44,15 +43,23 @@ public class MQQueryLinkServer extends RpcServer {
     }
 
     @Override
-    public void handleCast(byte[] requestBody) {    
-        String message = new String(requestBody, StandardCharsets.UTF_8);
-        EnvelopeRequest request = JSON.INSTANCE.fromJSONRequest(message);
-        LOG.log(Level.SEVERE, "There is no correlation or destination in the request {0} : {1}.", new Object[]{request.getType(), message});
+    public void handleCast(byte[] requestBody) {
+        try {
+            String message = new String(requestBody, StandardCharsets.UTF_8);
+            EnvelopeRequest request = EnvelopeRequest.read(message);
+            LOG.log(Level.SEVERE, "There is no correlation or destination in the request {0} : {1}.", new Object[]{request.getType(), message});
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
-    public byte[] handleCall(byte[] requestBody, AMQP.BasicProperties replyProperties) {  
-        String message = new String(requestBody, StandardCharsets.UTF_8);
-        return ProcessRequest.serverQueryProcess(link, message, LOG).getBytes(StandardCharsets.UTF_8);
+    public byte[] handleCall(byte[] requestBody, AMQP.BasicProperties replyProperties) {
+        try {
+            String message = new String(requestBody, StandardCharsets.UTF_8);
+            return ProcessRequest.serverQueryProcess(link, message, LOG).getBytes(StandardCharsets.UTF_8);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

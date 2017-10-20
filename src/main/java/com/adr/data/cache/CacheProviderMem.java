@@ -1,5 +1,5 @@
 //     Data Access is a Java library to store data
-//     Copyright (C) 2016 Adrián Romero Corchado.
+//     Copyright (C) 2017 Adrián Romero Corchado.
 //
 //     This file is part of Data Access
 //
@@ -17,11 +17,12 @@
 package com.adr.data.cache;
 
 import com.adr.data.DataException;
-import com.adr.data.utils.JSON;
+import com.adr.data.utils.EnvelopeResponse;
 import com.adr.data.utils.RequestQuery;
 import com.adr.data.utils.ResponseListRecord;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
+import java.io.IOException;
 import java.util.List;
 import com.adr.data.record.Record;
 
@@ -30,28 +31,36 @@ import com.adr.data.record.Record;
  * @author adrian
  */
 public class CacheProviderMem implements CacheProvider {
-    
+
     private final Cache<String, String> cache;
 
     public CacheProviderMem() {
         cache = CacheBuilder.newBuilder()
-            .maximumSize(1000)
-            .build();
+                .maximumSize(1000)
+                .build();
     }
-    
+
     @Override
-    public void put(Record headers, Record filter, List<Record> records) {
-        cache.put(JSON.INSTANCE.toJSON(new RequestQuery(Record.EMPTY, filter)), 
-                JSON.INSTANCE.toJSON(new ResponseListRecord(records)));
+    public void put(Record headers, Record filter, List<Record> records) throws DataException {
+        try {
+            cache.put(new RequestQuery(Record.EMPTY, filter).write(),
+                    new ResponseListRecord(records).write());
+        } catch (IOException e) {
+            throw new DataException(e);
+        }
     }
 
     @Override
     public List<Record> getIfPresent(Record headers, Record filter) throws DataException {
-        String cachedresult = cache.getIfPresent(JSON.INSTANCE.toJSON(new RequestQuery(Record.EMPTY, filter)));
-        if (cachedresult == null) {
-            return null;
-        } else {
-            return JSON.INSTANCE.fromJSONResponse(cachedresult).getAsListRecord();
+        try {
+            String cachedresult = cache.getIfPresent(new RequestQuery(Record.EMPTY, filter).write());
+            if (cachedresult == null) {
+                return null;
+            } else {
+                return EnvelopeResponse.read(cachedresult).getAsListRecord();
+            }
+        } catch (IOException e) {
+            throw new DataException(e);
         }
-    } 
+    }
 }

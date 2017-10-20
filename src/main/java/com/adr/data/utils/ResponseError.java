@@ -18,8 +18,12 @@
 package com.adr.data.utils;
 
 import com.adr.data.DataException;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
+import com.adr.data.record.Entry;
+import com.adr.data.record.RecordMap;
+import com.adr.data.recordparser.RecordsSerializer;
+
+import java.io.IOException;
+import java.io.Writer;
 import java.util.List;
 import com.adr.data.record.Record;
 
@@ -47,13 +51,14 @@ public class ResponseError extends EnvelopeResponse {
     }
 
     @Override
-    public JsonElement dataToJSON() {
-        JsonObject jsonex = new JsonObject();
-        jsonex.addProperty("exception", ex.getClass().getName());
-        jsonex.addProperty("message", ex.getMessage());
-        return jsonex;
+    public void write(Writer w) throws IOException {
+        w.append(NAME);
+        w.append('\n');
+        RecordsSerializer.write(new RecordMap(
+                new Entry("EXCEPTION", ex.getClass().getName()),
+                new Entry("MESSAGE", ex.getMessage())), w);
     }
-    
+
     @Override
     public List<Record> getAsListRecord() throws DataException {
         if (ex instanceof DataException) {
@@ -63,10 +68,5 @@ public class ResponseError extends EnvelopeResponse {
         } else {
             throw new DataException(ex.toString());
         } 
-    }  
-    
-    @Override
-    public void asSuccess() throws DataException {
-        throw new DataException(ex);
-    }     
+    }
 }

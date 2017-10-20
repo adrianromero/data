@@ -19,6 +19,8 @@ package com.adr.data.utils;
 import com.adr.data.DataException;
 import com.adr.data.DataLink;
 import com.adr.data.QueryLink;
+
+import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -29,24 +31,20 @@ import java.util.logging.Logger;
 public abstract class ProcessRequest {
 
     public EnvelopeResponse query(RequestQuery req) {
-        return other(req);
+        throw new UnsupportedOperationException("RequestQuery not supported.");
     }
 
     public EnvelopeResponse execute(RequestExecute req) {
-        return other(req);
+        throw new UnsupportedOperationException("RequestExecute not supported.");
     }
 
-    public EnvelopeResponse other(EnvelopeRequest env) {
-        throw new UnsupportedOperationException("Request type not supported: " + env.getType());
-    }
+    public static String serverQueryProcess(QueryLink link, String message, Logger logger) throws IOException {
 
-    public static String serverQueryProcess(QueryLink link, String message, Logger logger) {
-
-        EnvelopeRequest envrequest = JSON.INSTANCE.fromJSONRequest(message);
+        EnvelopeRequest envrequest = EnvelopeRequest.read(message);
 
         logger.log(Level.CONFIG, "Processing {0} : {1}.", new Object[]{envrequest.getType(), message});
 
-        EnvelopeResponse envresponse = envrequest.process(new ProcessRequest() {
+        EnvelopeResponse response = envrequest.process(new ProcessRequest() {
 
             @Override
             public EnvelopeResponse query(RequestQuery req) {
@@ -59,18 +57,18 @@ public abstract class ProcessRequest {
             }
 
             @Override
-            public EnvelopeResponse other(EnvelopeRequest req) {
+            public EnvelopeResponse execute(RequestExecute req) {
                 logger.log(Level.SEVERE, "Request type not supported :", new Object[]{req.getType()});
                 return new ResponseError(new UnsupportedOperationException("Request type not supported : " + req.getType()));
             }
         });
 
-        return JSON.INSTANCE.toJSON(envresponse);
+        return response.write();
     }
 
-    public static String serverDataProcess(DataLink link, String message, Logger logger) {
+    public static String serverDataProcess(DataLink link, String message, Logger logger) throws IOException {
         
-        EnvelopeRequest request = JSON.INSTANCE.fromJSONRequest(message);
+        EnvelopeRequest request = EnvelopeRequest.read(message);
 
         logger.log(Level.CONFIG, "Processing {0} : {1}.", new Object[]{request.getType(), message});
 
@@ -87,12 +85,12 @@ public abstract class ProcessRequest {
             }
 
             @Override
-            public EnvelopeResponse other(EnvelopeRequest req) {
+            public EnvelopeResponse query(RequestQuery req) {
                 logger.log(Level.SEVERE, "Request type not supported :", new Object[]{req.getType()});
                 return new ResponseError(new UnsupportedOperationException("Request type not supported : " + req.getType()));
             }
         });
 
-        return JSON.INSTANCE.toJSON(response);
+        return response.write();
     }
 }

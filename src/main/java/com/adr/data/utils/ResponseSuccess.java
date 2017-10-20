@@ -18,8 +18,9 @@
 package com.adr.data.utils;
 
 import com.adr.data.DataException;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonNull;
+
+import java.io.IOException;
+import java.io.Writer;
 
 /**
  *
@@ -35,9 +36,9 @@ public class ResponseSuccess extends EnvelopeResponse {
     }
 
     @Override
-    public JsonElement dataToJSON() {
-        return JsonNull.INSTANCE;
-    }    
+    public void write(Writer w) throws IOException {
+        w.append(NAME);
+    }
     
     @Override
     public void asSuccess() throws DataException {

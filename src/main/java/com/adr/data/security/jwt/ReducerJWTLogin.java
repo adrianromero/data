@@ -55,7 +55,7 @@ public class ReducerJWTLogin extends ReducerLogin {
     @Override
     protected Variant createAuthorization(String username, String password) throws DataException {
         Record userauthenticationquery = new RecordMap(
-                new Entry("__ENTITY", "USERNAME_BYNAME"),
+                new Entry("COLLECTION.KEY", "USERNAME_BYNAME"),
                 new Entry("NAME", username),
                 new Entry("DISPLAYNAME", VariantString.NULL),
                 new Entry("ROLE", VariantString.NULL),

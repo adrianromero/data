@@ -51,7 +51,7 @@ public class SentenceSQLTables extends Sentence {
         //    SELF_REFERENCING_COL_NAME String => name of the designated "identifier" column of a typed table (may be null)
         //    REF_GENERATION String => specifies how values in SELF_REFERENCING_COL_NAME are created. Values are "SYSTEM", "USER", "DERIVED". (may be null)   
         
-        // (__ENTITY: "SQLTABLES", TABLE_CAT: NULL, TABLE_SCHEM: null, TABLE_NAME: NULL, TABLE_TYPE: NULL)
+        // (COLLECTION.KEY: "SQLTABLES", TABLE_CAT: NULL, TABLE_SCHEM: null, TABLE_NAME: NULL, TABLE_TYPE: NULL)
         
         Variant varcat = val.get("TABLE_CAT");
         String cat = varcat.isNull() ? null : varcat.asString();

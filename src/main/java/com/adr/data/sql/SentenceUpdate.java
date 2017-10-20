@@ -42,13 +42,13 @@ public class SentenceUpdate extends SentenceDML {
         ArrayList<String> namefilters = new ArrayList<>();
 
         sentencefields.append("UPDATE ");
-        sentencefields.append(Records.getEntity(record));
+        sentencefields.append(Records.getCollection(record));
         
         boolean fields = false;
         boolean filters = false;
         String realname;
         for (String f : record.getNames()) {
-            if (!f.contains("__")) {
+            if (!f.equals("COLLECTION.KEY") && !f.contains("__")) {
                 if (f.endsWith(".KEY")) {
                     realname = f.substring(0, f.length() - 4);
                     sentencefilters.append(filters ? " AND " : " WHERE ");

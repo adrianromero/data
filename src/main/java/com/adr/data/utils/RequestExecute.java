@@ -17,8 +17,10 @@
 
 package com.adr.data.utils;
 
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
+import com.adr.data.recordparser.RecordsSerializer;
+
+import java.io.IOException;
+import java.io.Writer;
 import java.util.List;
 import com.adr.data.record.Record;
 
@@ -54,13 +56,14 @@ public class RequestExecute extends EnvelopeRequest {
     @Override
     public EnvelopeResponse process(ProcessRequest proc) {
         return proc.execute(this);
-    }  
+    }
 
     @Override
-    public JsonElement dataToJSON() {
-        JsonObject obj = new JsonObject();
-        obj.add("headers", JSON.INSTANCE.toJSONElement(headers));        
-        obj.add("list", JSON.INSTANCE.toJSONElement(list));        
-        return obj;
-    }     
+    public void write(Writer w) throws IOException {
+        w.append(NAME);
+        w.append('\n');
+        RecordsSerializer.write(headers, w);
+        w.append('\n');
+        RecordsSerializer.writeList(list, w);
+    }
 }

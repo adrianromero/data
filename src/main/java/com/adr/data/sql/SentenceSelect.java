@@ -71,6 +71,10 @@ public abstract class SentenceSelect extends SentenceQRY {
             String realname;
             String criteria;
 
+            if (n.equals("COLLECTION.KEY")) {
+                return;
+            }
+
             if (n.endsWith("__EQUAL")) {
                 realname = n.substring(0, n.length() - 7);
                 criteria = " = ?";
@@ -78,51 +82,51 @@ public abstract class SentenceSelect extends SentenceQRY {
                 realname = n.substring(0, n.length() - 10);
                 criteria = " <> ?";
            } else if (n.endsWith("__GREATER")) {
-                realname = n.substring(0, n.length() - 9);
-                criteria = " > ?";
-            } else if (n.endsWith("__GREATEROREQUAL")) {
-                realname = n.substring(0, n.length() - 16);
-                criteria = " >= ?";
+               realname = n.substring(0, n.length() - 9);
+               criteria = " > ?";
+           } else if (n.endsWith("__GREATEROREQUAL")) {
+               realname = n.substring(0, n.length() - 16);
+               criteria = " >= ?";
            } else if (n.endsWith("__LESS")) {
-                realname = n.substring(0, n.length() - 6);
-                criteria = " < ?";
-            } else if (n.endsWith("__LESSOREQUAL")) {
-                realname = n.substring(0, n.length() - 13);
-                criteria = " <= ?";
+               realname = n.substring(0, n.length() - 6);
+               criteria = " < ?";
+           } else if (n.endsWith("__LESSOREQUAL")) {
+               realname = n.substring(0, n.length() - 13);
+               criteria = " <= ?";
             } else if (n.endsWith("__LIKE")) {
-                realname = n.substring(0, n.length() - 6);
-                criteria = engine.getLikeExpression();
-            } else  if (n.endsWith(".KEY")) {
-                realname = n.substring(0, n.length() - 4);
-                criteria = " = ?";
-            } else {
-                realname = n;
-                criteria = " = ?";
-            }
-            // PROJECTION
-            if (!n.contains("__")) {
-                if (comma) {
-                    sqlsent.append(", ");
-                } else {
-                    comma = true;
-                }
-                sqlsent.append(realname);
-                sqlsent.append(" AS \"");
-                sqlsent.append(n);
-                sqlsent.append("\"");
-            }
-            // FILTER
-            if (!realname.contains("__") && !v.get(n).isNull()) {
-                if (commafilter) {
-                    sqlfilter.append(" AND ");
-                } else {
-                    sqlfilter.append(" WHERE ");
-                    commafilter = true;
-                }
-                sqlfilter.append(realname);
-                sqlfilter.append(criteria);
-                fieldslist.add(n);
-            }
+               realname = n.substring(0, n.length() - 6);
+               criteria = engine.getLikeExpression();
+           } else if (n.endsWith(".KEY")) {
+               realname = n.substring(0, n.length() - 4);
+               criteria = " = ?";
+           } else {
+               realname = n;
+               criteria = " = ?";
+           }
+           // PROJECTION
+           if (!n.contains("__")) {
+               if (comma) {
+                   sqlsent.append(", ");
+               } else {
+                   comma = true;
+               }
+               sqlsent.append(realname);
+               sqlsent.append(" AS \"");
+               sqlsent.append(n);
+               sqlsent.append("\"");
+           }
+           // FILTER
+           if (!realname.contains("__") && !v.get(n).isNull()) {
+               if (commafilter) {
+                   sqlfilter.append(" AND ");
+               } else {
+                   sqlfilter.append(" WHERE ");
+                   commafilter = true;
+               }
+               sqlfilter.append(realname);
+               sqlfilter.append(criteria);
+               fieldslist.add(n);
+           }
         }
 
         public StringBuilder getSqlsent() {

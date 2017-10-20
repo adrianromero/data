@@ -100,7 +100,7 @@ public abstract class Sentence {
         List<Entry> l = new ArrayList<>();
         for (String name : param.getNames()) {
             Variant p = param.get(name);
-            if ("__ENTITY".equals(name)) {
+            if ("COLLECTION.KEY".equals(name)) {
                 l.add(new Entry(name, p));
             } else if (!name.contains("__")) { // Is a field
                 SQLResults sqlresults = new SQLResults(resultset, name);

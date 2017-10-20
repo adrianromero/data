@@ -34,6 +34,6 @@ public class SentenceTable extends SentenceSelect {
 
     @Override
     protected String getViewName(Record record) throws DataException {
-        return Records.getEntity(record);
+        return Records.getCollection(record);
     }
 }

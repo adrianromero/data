@@ -32,6 +32,7 @@ import java.util.LinkedHashMap;
 public class RecordParsers {
     
     private static enum States {
+        RECORD_START,
         RECORD_KEY,
         RECORD_DOTS,
         RECORD_VALUE,
@@ -47,7 +48,7 @@ public class RecordParsers {
         States state;
         
         if (loader.getCP() == '(') {
-            state = States.RECORD_KEY;
+            state = States.RECORD_START;
             loader.next();
             loader.skipBlanks();
         } else {
@@ -55,7 +56,14 @@ public class RecordParsers {
         }
         
         for(;;) {
-            if (state == States.RECORD_KEY) {
+            if (state == States.RECORD_START) {
+                if (loader.getCP() == ')') {
+                    loader.next();
+                    return Record.EMPTY;
+                } else {
+                    state = States.RECORD_KEY;
+                }
+            } else if (state == States.RECORD_KEY) {
                 if (loader.getCP() == '\"') {
                     name = CommonParsers.parseString(loader);
                     loader.skipBlanks();

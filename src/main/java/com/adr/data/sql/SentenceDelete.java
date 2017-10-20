@@ -40,12 +40,12 @@ public class SentenceDelete extends SentenceDML {
         ArrayList<String> keyfields = new ArrayList<>();
 
         sentence.append("DELETE FROM ");
-        sentence.append(Records.getEntity(record));
+        sentence.append(Records.getCollection(record));
 
         boolean filter = false;
         String realname;
         for (String f : record.getNames()) {
-            if (!f.contains("__")) {            
+            if (!f.equals("COLLECTION.KEY") && !f.contains("__")) {
                 if (f.endsWith(".KEY")) {
                     realname = f.substring(0, f.length() - 4);
                     sentence.append(filter ? " AND " : " WHERE ");

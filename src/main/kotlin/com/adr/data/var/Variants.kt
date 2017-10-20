@@ -42,8 +42,6 @@ infix fun String.to(x: Int): Entry = Entry(this, x)
 infix fun String.to(x: Double): Entry = Entry(this, x)
 infix fun String.to(x: Boolean): Entry = Entry(this, x)
 
-infix fun String.to(x: NULL): Entry = Entry(this, VariantString.NULL)
-
 val String.INT: VariantInt
     get() = VariantInt(ISOResults(this).int)
 val String.LONG: VariantLong

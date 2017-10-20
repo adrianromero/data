@@ -45,14 +45,14 @@ public class SentenceH2Merge extends SentenceDML {
         ArrayList<String> fieldslist = new ArrayList<>();
 
         sentence.append("MERGE INTO ");
-        sentence.append(Records.getEntity(record));
+        sentence.append(Records.getCollection(record));
         sentence.append(" (");
         
         boolean filter = false;
         boolean filterkeys = false;
         String realname;
         for (String f : record.getNames()) {
-            if (!f.contains("__")) {
+            if (!f.equals("COLLECTION.KEY") && !f.contains("__")) {
                 if (f.endsWith(".KEY")) {
                     realname = f.substring(0, f.length() - 4);  
                     keys.append(filterkeys ? ", " : "");

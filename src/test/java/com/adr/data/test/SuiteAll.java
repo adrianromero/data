@@ -24,9 +24,7 @@ import org.junit.runners.Suite;
  */
 @RunWith(Suite.class)
 @Suite.SuiteClasses({
-    // GSON Suite
-    GSONTests.class,
-//    ParserTests.class,
+    ParserTests.class,
     // Database suites
     SuiteH2.class,
     SuiteMYSQL.class,

@@ -18,7 +18,6 @@ package com.adr.data.test;
 
 import com.adr.data.record.Entry;
 import com.adr.data.record.RecordMap;
-import com.adr.data.utils.JSON;
 import com.adr.data.var.VariantString;
 
 import java.util.Arrays;
@@ -27,10 +26,12 @@ import java.util.List;
 import org.junit.Test;
 import com.adr.data.record.Record;
 import com.adr.data.recordparser.RecordsSerializer;
+import com.adr.data.var.Kind;
 import com.adr.data.var.VariantInt;
 import com.adr.data.var.VariantLong;
 
 import java.io.IOException;
+import org.junit.Assert;
 
 /**
  * @author adrian
@@ -38,9 +39,9 @@ import java.io.IOException;
 public class ParserTests {
 
     @Test
-    public void testJSONSerialization() throws IOException {
+    public void recordsSerialization1() throws IOException {
 
-        Record keval = new RecordMap(
+        Record record = new RecordMap(
                 new Entry("id", new VariantString("1")),
                 new Entry("field", new VariantString("pepeluis")),
                 new Entry("amount", new VariantInt(32)),
@@ -49,17 +50,57 @@ public class ParserTests {
                 new Entry("usvalid \nCon retorno", 32),
                 new Entry("unlong", new VariantLong(33L)),
                 new Entry("value", VariantString.NULL));
+        String recordstr = "(id: \"1\", field: \"pepeluis\", amount: 32, añejo: 32.0, \"unenter ito\": 32, \"usvalid \\nCon retorno\": 32, unlong: 33:LONG, value: NULL)";
 
-        List<Record> dl = Arrays.asList(
+        Assert.assertEquals(recordstr, RecordsSerializer.write(record));
+    }
+
+    @Test
+    public void recordsParseNumber() throws IOException {
+        Record r = RecordsSerializer.read("(field : TRUE)");
+        Assert.assertTrue(r.getBoolean("field"));
+
+        r = RecordsSerializer.read("( \"field\" : 123.4  ) ");
+        Assert.assertTrue(123.4 == r.getDouble("field"));
+
+        r = RecordsSerializer.read("( \"field\" : \"123\":INT  ) ");
+        Assert.assertTrue(123 == r.getInteger("field"));
+
+        r = RecordsSerializer.read("( \"field\" : NULL : INT  ) ");
+        Assert.assertEquals(Kind.INT, r.get("field").getKind());
+        Assert.assertTrue(r.get("field").isNull());
+
+        r = RecordsSerializer.read("( \"field\" : NULL   ) ");
+        Assert.assertEquals(Kind.STRING, r.get("field").getKind());
+        Assert.assertTrue(r.get("field").isNull());
+
+        r = RecordsSerializer.read("( \"field\" : \"\"   ) ");
+        Assert.assertEquals(Kind.STRING, r.get("field").getKind());
+        Assert.assertEquals("", r.get("field").asString());
+    }
+
+    @Test
+    public void recordsSerializationEmpty() throws IOException {
+        Assert.assertEquals("()", RecordsSerializer.write(Record.EMPTY));
+    }
+
+    @Test
+    public void recordsParseEmpty() throws IOException {
+        Assert.assertArrayEquals(new String[0], RecordsSerializer.read("()").getNames());
+    }
+
+    @Test
+    public void recordsSerializationList() throws IOException {
+
+        List<Record> records = Arrays.asList(
                 new RecordMap(
                         new Entry("id", "1"),
                         new Entry("field", "pepeluis")),
                 new RecordMap(
                         new Entry("id", "2"),
                         new Entry("field", "hilario")));
+        String recordsstr = "(id: \"1\", field: \"pepeluis\")\n(id: \"2\", field: \"hilario\")";
 
-        System.out.println(JSON.INSTANCE.toJSON(RecordsSerializer.read(
-                "(__ENTITY: \"NICA\\\"SO\", NAME.KEY: \"PEPE\":STRING, \"VALUE\": true, AMOUNT: 234.4, TOTAL: 123:INT, CUSTOMER: :DOUBLE, CHUNGGY: NULL:STRING, RARONULL: NUll )")));
-        System.out.println(RecordsSerializer.write(keval));
+        Assert.assertEquals(recordsstr, RecordsSerializer.writeList(records));
     }
 }

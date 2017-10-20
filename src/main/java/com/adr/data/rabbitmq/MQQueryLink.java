@@ -20,7 +20,6 @@ package com.adr.data.rabbitmq;
 import com.adr.data.DataException;
 import com.adr.data.QueryLink;
 import com.adr.data.utils.EnvelopeResponse;
-import com.adr.data.utils.JSON;
 import com.adr.data.utils.RequestQuery;
 import com.rabbitmq.client.RpcClient;
 import com.rabbitmq.client.ShutdownSignalException;
@@ -52,9 +51,9 @@ public class MQQueryLink implements QueryLink {
     public List<Record> query(Record headers, Record filter) throws DataException {
         
         try {
-            byte[] request = JSON.INSTANCE.toJSON(new RequestQuery(headers, filter)).getBytes(StandardCharsets.UTF_8);
+            byte[] request = new RequestQuery(headers, filter).write().getBytes(StandardCharsets.UTF_8);
             byte[] response = client.primitiveCall(request);
-            EnvelopeResponse envelope = JSON.INSTANCE.fromJSONResponse(new String(response, StandardCharsets.UTF_8));
+            EnvelopeResponse envelope = EnvelopeResponse.read(new String(response, StandardCharsets.UTF_8));
             return envelope.getAsListRecord();
         } catch (IOException | ShutdownSignalException | TimeoutException ex) {
             throw new DataException(ex);

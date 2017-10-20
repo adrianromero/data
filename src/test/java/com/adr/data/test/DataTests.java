@@ -48,7 +48,7 @@ public class DataTests {
                     header,
                     new Record[]{
                         new RecordMap(
-                                new Entry("__ENTITY", "USERNAME"),
+                                new Entry("COLLECTION.KEY", "USERNAME"),
                                 new Entry("ID.KEY", "newid"),
                                 new Entry("NAME", "newuser"),
                                 new Entry("DISPLAYNAME", "New User"),
@@ -66,7 +66,7 @@ public class DataTests {
                     header,
                     new Record[]{
                         new RecordMap(
-                                new Entry("__ENTITY", "USERNAME"),
+                                new Entry("COLLECTION.KEY", "USERNAME"),
                                 new Entry("ID.KEY", "newid"),
                                 new Entry("NAME", "newuser"),
                                 new Entry("DISPLAYNAME", "New User Changed"),
@@ -85,7 +85,7 @@ public class DataTests {
                     header,
                     new Record[]{
                         new RecordMap(
-                                new Entry("__ENTITY", "USERNAME"),
+                                new Entry("COLLECTION.KEY", "USERNAME"),
                                 new Entry("ID.KEY", "newid"))});
 
             r = loadUser(SourceLink.getQueryLink(), header, "newid");
@@ -99,7 +99,7 @@ public class DataTests {
     private Record loadUser(QueryLink link, Record header, String id) throws DataException {
         return link.find(header,
                 new RecordMap(
-                        new Entry("__ENTITY", "USERNAME"),
+                        new Entry("COLLECTION.KEY", "USERNAME"),
                         new Entry("ID.KEY", id),
                         new Entry("NAME", VariantString.NULL),
                         new Entry("DISPLAYNAME", VariantString.NULL),
