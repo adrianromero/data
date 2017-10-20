@@ -18,7 +18,7 @@
 package com.adr.data.rabbitmq;
 
 import com.adr.data.DataLink;
-import com.adr.data.utils.ProcessRequest;
+import com.adr.data.utils.RequestExecute;
 import com.rabbitmq.client.AMQP;
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.RpcServer;
@@ -52,7 +52,7 @@ public class MQDataLinkServer extends RpcServer {
         try {
             // the result must be just the result: OK or exception
             String message = new String(requestBody, StandardCharsets.UTF_8);
-            return ProcessRequest.serverDataProcess(link, message, LOG).getBytes(StandardCharsets.UTF_8);
+            return RequestExecute.serverDataProcess(link, message, LOG).getBytes(StandardCharsets.UTF_8);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

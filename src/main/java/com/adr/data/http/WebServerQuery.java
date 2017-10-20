@@ -17,7 +17,7 @@
 package com.adr.data.http;
 
 import com.adr.data.QueryLink;
-import com.adr.data.utils.ProcessRequest;
+import com.adr.data.utils.RequestQuery;
 import java.util.logging.Logger;
 import spark.Service;
 
@@ -42,7 +42,7 @@ public class WebServerQuery {
     public void start() {
         http.post(context, (request, response) -> {
             response.type("application/json; charset=utf-8");
-            return ProcessRequest.serverQueryProcess(link, request.body(), LOG);
+            return RequestQuery.serverQueryProcess(link, request.body(), LOG);
         });
         LOG.info("Web Query Server started.");
     }

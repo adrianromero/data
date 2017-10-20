@@ -17,20 +17,30 @@
 
 package com.adr.data.utils;
 
+import com.adr.data.DataException;
+import com.adr.data.DataLink;
 import com.adr.data.recordparser.RecordsSerializer;
 
 import java.io.IOException;
 import java.io.Writer;
 import java.util.List;
 import com.adr.data.record.Record;
+import com.adr.data.recordparser.CodePoint;
+import com.adr.data.recordparser.Loader;
+import com.adr.data.recordparser.RecordParsers;
+import com.adr.data.recordparser.StreamLoader;
+import java.io.Reader;
+import java.io.StringReader;
+import java.io.StringWriter;
+import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
  * @author adrian
  */
-public class RequestExecute extends EnvelopeRequest {
-    
-    public static final String NAME = "EXECUTE";
+public class RequestExecute {
     
     private final Record headers;
     private final List<Record> list;
@@ -47,23 +57,55 @@ public class RequestExecute extends EnvelopeRequest {
     public List<Record> getListRecord() {
         return list;
     }
-
-    @Override
-    public String getType() {
-        return NAME;
+    
+    public String write() throws IOException {
+        StringWriter writer = new StringWriter();
+        write(writer);
+        return writer.toString();
     }
-
-    @Override
-    public EnvelopeResponse process(ProcessRequest proc) {
-        return proc.execute(this);
-    }
-
-    @Override
+    
     public void write(Writer w) throws IOException {
-        w.append(NAME);
-        w.append('\n');
         RecordsSerializer.write(headers, w);
         w.append('\n');
         RecordsSerializer.writeList(list, w);
     }
+    
+    public static RequestExecute read(String value) throws IOException {
+        return read(new StringReader(value));
+    }
+    
+    public static RequestExecute read(Reader r) throws IOException {
+        Loader loader = new StreamLoader(r);
+        loader.next();
+        loader.skipBlanks();
+        Record header = RecordParsers.parseRecord(loader);
+        loader.skipBlanks();
+        List<Record> recordsList = new ArrayList<>();
+        for (;;) {
+            if (loader.getCP() == '(') {
+                recordsList.add(RecordParsers.parseRecord(loader));
+                loader.skipBlanks();
+            } else if (CodePoint.isEOF(loader.getCP())) {
+                break;
+            } else {
+                throw new IOException(loader.messageExpected(-1));
+            }
+        }
+        return new RequestExecute(header, recordsList);
+    }
+    
+    public static String serverDataProcess(DataLink link, String message, Logger logger) throws IOException {
+
+        RequestExecute request = RequestExecute.read(message);
+
+        logger.log(Level.CONFIG, "Processing Execute: {0}.", new Object[]{message});
+
+        try {
+            link.execute(request.getHeaders(), request.getListRecord());
+            return new ResponseSuccess().write();
+        } catch (DataException ex) {
+            logger.log(Level.SEVERE, "Cannot execute request.", ex);
+            return new ResponseError(ex).write();
+        }
+    }    
 }

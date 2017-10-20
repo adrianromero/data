@@ -17,7 +17,7 @@
 package com.adr.data.http;
 
 import com.adr.data.DataLink;
-import com.adr.data.utils.ProcessRequest;
+import com.adr.data.utils.RequestExecute;
 import java.util.logging.Logger;
 import spark.Service;
 
@@ -42,7 +42,7 @@ public class WebServerData {
     public void start() {
         http.post(context, (request, response) -> {
             response.type("application/json; charset=utf-8");
-            return ProcessRequest.serverDataProcess(link, request.body(), LOG);
+            return RequestExecute.serverDataProcess(link, request.body(), LOG);
         });
         LOG.info("Web Data Server started.");
     }
