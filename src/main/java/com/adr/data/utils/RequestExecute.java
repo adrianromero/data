@@ -1,5 +1,5 @@
 //     Data Access is a Java library to store data
-//     Copyright (C) 2016 Adrián Romero Corchado.
+//     Copyright (C) 2016-2017 Adrián Romero Corchado.
 //
 //     This file is part of Data Access
 //
@@ -102,10 +102,10 @@ public class RequestExecute {
 
         try {
             link.execute(request.getHeaders(), request.getListRecord());
-            return new ResponseSuccess().write();
+            return new ResponseExecuteSuccess().write();
         } catch (DataException ex) {
             logger.log(Level.SEVERE, "Cannot execute request.", ex);
-            return new ResponseError(ex).write();
+            return new ResponseExecuteError(ex).write();
         }
     }    
 }

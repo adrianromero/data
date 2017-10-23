@@ -17,9 +17,9 @@
 package com.adr.data.cache;
 
 import com.adr.data.DataException;
-import com.adr.data.utils.EnvelopeResponse;
+import com.adr.data.utils.ResponseQuery;
 import com.adr.data.utils.RequestQuery;
-import com.adr.data.utils.ResponseListRecord;
+import com.adr.data.utils.ResponseQueryListRecord;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import java.io.IOException;
@@ -44,7 +44,7 @@ public class CacheProviderMem implements CacheProvider {
     public void put(Record headers, Record filter, List<Record> records) throws DataException {
         try {
             cache.put(new RequestQuery(Record.EMPTY, filter).write(),
-                    new ResponseListRecord(records).write());
+                    new ResponseQueryListRecord(records).write());
         } catch (IOException e) {
             throw new DataException(e);
         }
@@ -57,7 +57,7 @@ public class CacheProviderMem implements CacheProvider {
             if (cachedresult == null) {
                 return null;
             } else {
-                return EnvelopeResponse.read(cachedresult).getAsListRecord();
+                return ResponseQuery.read(cachedresult).getAsListRecord();
             }
         } catch (IOException e) {
             throw new DataException(e);

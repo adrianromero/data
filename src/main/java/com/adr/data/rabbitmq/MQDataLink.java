@@ -19,7 +19,6 @@ package com.adr.data.rabbitmq;
 
 import com.adr.data.DataException;
 import com.adr.data.DataLink;
-import com.adr.data.utils.EnvelopeResponse;
 import com.adr.data.utils.RequestExecute;
 import com.rabbitmq.client.RpcClient;
 import com.rabbitmq.client.ShutdownSignalException;
@@ -28,6 +27,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.concurrent.TimeoutException;
 import com.adr.data.record.Record;
+import com.adr.data.utils.ResponseExecute;
 
 /**
  *
@@ -53,8 +53,8 @@ public class MQDataLink implements DataLink {
         try {
             byte[] request = new RequestExecute(headers, l).write().getBytes(StandardCharsets.UTF_8);
             byte[] response = client.primitiveCall(request);
-            EnvelopeResponse envelope = EnvelopeResponse.read(new String(response, StandardCharsets.UTF_8));
-            envelope.asSuccess();
+            
+            ResponseExecute.read(new String(response, StandardCharsets.UTF_8));
         } catch (IOException | ShutdownSignalException | TimeoutException ex) {
             throw new DataException(ex);
         }

@@ -1,5 +1,5 @@
 //     Data Access is a Java library to store data
-//     Copyright (C) 2016 Adrián Romero Corchado.
+//     Copyright (C) 2017 Adrián Romero Corchado.
 //
 //     This file is part of Data Access
 //
@@ -19,25 +19,28 @@ package com.adr.data.utils;
 
 import com.adr.data.DataException;
 import com.adr.data.record.Entry;
+import com.adr.data.record.Record;
 import com.adr.data.record.RecordMap;
+import com.adr.data.recordparser.CodePoint;
+import com.adr.data.recordparser.Loader;
+import com.adr.data.recordparser.RecordParsers;
 import com.adr.data.recordparser.RecordsSerializer;
 
 import java.io.IOException;
 import java.io.Writer;
-import java.util.List;
-import com.adr.data.record.Record;
+import java.lang.reflect.InvocationTargetException;
 
 /**
  *
  * @author adrian
  */
-public class ResponseError extends EnvelopeResponse {
+public class ResponseExecuteError extends ResponseExecute {
      
     public static final String NAME = "ERROR";
     
     private final Throwable ex;
     
-    public ResponseError(Throwable ex) {
+    public ResponseExecuteError(Throwable ex) {
         this.ex = ex;
     }
     
@@ -60,7 +63,7 @@ public class ResponseError extends EnvelopeResponse {
     }
 
     @Override
-    public List<Record> getAsListRecord() throws DataException {
+    public void asSuccess() throws DataException {
         if (ex instanceof DataException) {
             throw (DataException) ex;
         } else if (ex instanceof RuntimeException) {
@@ -69,4 +72,22 @@ public class ResponseError extends EnvelopeResponse {
             throw new DataException(ex.toString());
         } 
     }
+    
+    public static ResponseExecute readData(Loader loader) throws IOException {
+        Record error = RecordParsers.parseRecord(loader);
+        loader.skipBlanks();
+        if (CodePoint.isEOF(loader.getCP())) {
+            String name = error.getString("EXCEPTION");
+            String message = error.getString("MESSAGE");
+            Throwable t;
+            try {
+                t = (Throwable) Class.forName(name).getConstructor(String.class).newInstance(message);
+            } catch (ClassCastException | ClassNotFoundException | NoSuchMethodException | SecurityException | InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException ex) {
+                t = new DataException("Exception name: " + name + ", with message: " + message);
+            }
+            return new ResponseExecuteError(t);
+        } else {
+            throw new IOException(loader.messageExpected(-1));
+        }   
+    }    
 }

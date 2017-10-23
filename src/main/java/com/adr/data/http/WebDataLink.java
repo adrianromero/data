@@ -18,7 +18,6 @@ package com.adr.data.http;
 
 import com.adr.data.DataException;
 import com.adr.data.DataLink;
-import com.adr.data.utils.EnvelopeResponse;
 import com.adr.data.utils.RequestExecute;
 import java.io.IOException;
 import java.util.List;
@@ -29,6 +28,7 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 import com.adr.data.record.Record;
+import com.adr.data.utils.ResponseExecute;
 
 /**
  *
@@ -67,8 +67,7 @@ public class WebDataLink implements DataLink {
                 throw new DataException("Unexpected result code: " + response);
             }
 
-            EnvelopeResponse envelope = EnvelopeResponse.read(response.body().string());
-            envelope.asSuccess();
+            ResponseExecute.read(response.body().string());
         } catch (IOException ex) {
             throw new DataException(ex);
         }
