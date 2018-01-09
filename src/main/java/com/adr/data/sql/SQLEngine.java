@@ -1,5 +1,5 @@
 //     Data Access is a Java library to store data
-//     Copyright (C) 2016 Adrián Romero Corchado.
+//     Copyright (C) 2018 Adrián Romero Corchado.
 //
 //     This file is part of Data Access
 //
@@ -18,6 +18,7 @@
 package com.adr.data.sql;
 
 import com.adr.data.sqlh2.SentenceH2Put;
+import com.adr.data.sqlpg.SentencePGPut;
 
 /**
  *
@@ -29,7 +30,7 @@ public enum SQLEngine {
             new SentencePut(),
             " LIKE ? {escape '$'}"),
     POSTGRESQL(
-            new SentencePut(), 
+            new SentencePGPut(), 
             " LIKE ? {escape '$'}"),
     MYSQL(
             new SentencePut(), 
