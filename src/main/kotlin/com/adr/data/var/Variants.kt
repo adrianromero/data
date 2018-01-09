@@ -50,6 +50,18 @@ val String.STRING: VariantString
     get() = VariantString(ISOResults(this).string)
 val String.DOUBLE: VariantDouble
     get() = VariantDouble(ISOResults(this).double)
+val String.DECIMAL: VariantDecimal
+    get() = VariantDecimal(ISOResults(this).bigDecimal)
+val String.BOOLEAN: VariantBoolean
+    get() = VariantBoolean(ISOResults(this).boolean)
+val String.INSTANT: VariantInstant
+    get() = VariantInstant(ISOResults(this).instant)
+val String.LOCALDATETIME: VariantLocalDateTime
+    get() = VariantLocalDateTime(ISOResults(this).localDateTime)
+val String.LOCALDATE: VariantLocalDate
+    get() = VariantLocalDate(ISOResults(this).localDate)
+val String.LOCALTIME: Variant
+    get() = VariantLocalTime(ISOResults(this).localTime)
 
 val Number.INT: VariantInt
     get() = VariantInt(this.toInt())
