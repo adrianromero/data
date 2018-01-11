@@ -22,7 +22,7 @@ class QueryAndExec {
             // Login
             val authorization = ReducerLogin.login(SourceLink.getQueryLink(), "admin", "admin")
             val header = RecordMap(
-                    "Authorization" to authorization)
+                    "AUTHORIZATION" to authorization)
 
             // Insert
             SourceLink.getDataLink().execute(
