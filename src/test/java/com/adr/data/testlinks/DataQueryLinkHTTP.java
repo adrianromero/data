@@ -28,24 +28,22 @@ import okhttp3.OkHttpClient;
  */
 public class DataQueryLinkHTTP implements DataQueryLinkBuilder {
     
-    private final String url;
-    private final String contextdata;
-    private final String contextquery;
+    private final String urldata;
+    private final String urlquery;
     
     private QueryLink querylink;
     private DataLink datalink;
     
-    public DataQueryLinkHTTP(String url, String contextdata, String contextquery) {
-        this.url = url;
-        this.contextdata = contextdata;
-        this.contextquery = contextquery;
+    public DataQueryLinkHTTP(String urldata, String urlquery) {
+        this.urldata = urldata;
+        this.urlquery = urlquery;
     }
 
     @Override
     public void create() {
         OkHttpClient client = new OkHttpClient.Builder().build();      
-        querylink = new WebQueryLink(url + contextquery, client);
-        datalink = new WebDataLink(url + contextdata, client);
+        querylink = new WebQueryLink(urlquery, client);
+        datalink = new WebDataLink(urldata, client);
     }
 
     @Override

@@ -50,7 +50,7 @@ public class SuiteHTTP {
         builder.create();
         myserver = new WebServer(PORT, CONTEXTDATA, CONTEXTQUERY, builder.getDataLink(), builder.getQueryLink());
         myserver.start();                
-        SourceLink.setBuilder(new DataQueryLinkHTTP(url, CONTEXTDATA, CONTEXTQUERY));
+        SourceLink.setBuilder(new DataQueryLinkHTTP(url + CONTEXTDATA, url + CONTEXTQUERY));
     }
 
     @AfterClass

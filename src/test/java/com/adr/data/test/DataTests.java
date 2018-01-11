@@ -41,7 +41,7 @@ public class DataTests {
 
             // Login
             String authorization = ReducerLogin.login(SourceLink.getQueryLink(), "admin", "admin");
-            Record header = new RecordMap(new Entry("Authorization", authorization));
+            Record header = new RecordMap(new Entry("AUTHORIZATION", authorization));
 
             // Insert
             SourceLink.getDataLink().execute(

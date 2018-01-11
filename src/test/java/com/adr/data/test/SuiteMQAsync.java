@@ -1,5 +1,5 @@
 //     Data Access is a Java library to store data
-//     Copyright (C) 2016-2017 Adrián Romero Corchado.
+//     Copyright (C) 2016-2018 Adrián Romero Corchado.
 //
 //     This file is part of Data Access
 //
@@ -37,6 +37,7 @@ import org.junit.runners.Suite;
 public class SuiteMQAsync {
     
     private static final String HOST = "localhost";
+    private static final int PORT = 5672;    
     private static final String EXCHANGEQUERY ="exquerylink";
     private static final String EXCHANGEDATA = "exdatalink";
     private static final String QUEUEQUERY ="mqquerylink";
@@ -49,7 +50,7 @@ public class SuiteMQAsync {
     @BeforeClass
     public static void setUpClass() throws Exception {
         builder.create();
-        myserver = new RabbitServer(HOST, QUEUEDATA, QUEUEQUERY, builder.getDataLink(), builder.getQueryLink());
+        myserver = new RabbitServer(HOST, PORT, QUEUEDATA, QUEUEQUERY, builder.getDataLink(), builder.getQueryLink());
         myserver.start();
         SourceLink.setBuilder(new DataQueryLinkMQAsync(HOST, EXCHANGEDATA, EXCHANGEQUERY));
     }

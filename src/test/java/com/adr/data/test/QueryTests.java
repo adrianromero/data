@@ -130,7 +130,7 @@ public class QueryTests {
         try {
             // Login
             String authorization = ReducerLogin.login(SourceLink.getQueryLink(), "admin", "admin");
-            Record header = new RecordMap(new Entry("Authorization", authorization));
+            Record header = new RecordMap(new Entry("AUTHORIZATION", authorization));
 
             testQueryByKey(SourceLink.getQueryLink(), header);
             testQueryOrder(SourceLink.getQueryLink(), header);
