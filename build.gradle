@@ -34,7 +34,7 @@ apply plugin: 'kotlin'
 apply plugin: 'maven'
 
 group = 'com.github.adrianromero'
-version = '1.0.25'
+version = '1.0.27'
 
 description = """"""
 
