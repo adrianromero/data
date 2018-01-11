@@ -40,7 +40,7 @@ public class TokenVerifier {
 
     public void verify(Record headers) throws DataException {
 
-        Variant authorization = headers.get("Authorization");        
+        Variant authorization = headers.get("AUTHORIZATION");        
         
         if (authorization.isNull()) {
             return; // anonymous;

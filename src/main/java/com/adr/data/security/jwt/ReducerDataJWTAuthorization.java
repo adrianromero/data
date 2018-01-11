@@ -45,7 +45,7 @@ public class ReducerDataJWTAuthorization implements ReducerData {
     @Override
     public boolean execute(Record headers, List<Record> l) throws DataException {
 
-        Variant authorization = headers.get("Authorization");        
+        Variant authorization = headers.get("AUTHORIZATION");        
         String role;
         String displayrole;
         if (authorization.isNull()) {

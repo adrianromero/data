@@ -44,7 +44,7 @@ public class ReducerJWTCurrentUser implements ReducerQuery {
             return null;
         }
         
-        Variant authorization = headers.get("Authorization");        
+        Variant authorization = headers.get("AUTHORIZATION");        
         
         if (authorization.isNull()) {
             return Collections.emptyList(); // anonymous

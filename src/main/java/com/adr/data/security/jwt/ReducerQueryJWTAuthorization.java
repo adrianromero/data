@@ -50,7 +50,7 @@ public class ReducerQueryJWTAuthorization implements ReducerQuery {
     @Override
     public List<Record> query(Record headers, Record filter) throws DataException {
             
-        Variant authorization = headers.get("Authorization");        
+        Variant authorization = headers.get("AUTHORIZATION");        
         String role;
         String displayrole;
         if (authorization.isNull()) {
