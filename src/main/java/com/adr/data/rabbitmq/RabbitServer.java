@@ -1,5 +1,5 @@
 //     Data Access is a Java library to store data
-//     Copyright (C) 2016-2017 Adrián Romero Corchado.
+//     Copyright (C) 2016-2018 Adrián Romero Corchado.
 //
 //     This file is part of Data Access
 //
@@ -32,6 +32,7 @@ import java.util.concurrent.TimeoutException;
 public class RabbitServer {
     
     private final String host;
+    private final int port;
     private final String queryqueue;
     private final String dataqueue;    
     private final DataLink datalink;
@@ -41,22 +42,33 @@ public class RabbitServer {
     private RabbitServerQuery serverquery;
     private RabbitServerData serverdata;   
     
-    public RabbitServer(String host, String dataqueue, String queryqueue, DataLink datalink, QueryLink querylink) {
+    public RabbitServer(String host, int port, String dataqueue, String queryqueue, DataLink datalink, QueryLink querylink) {
         this.host = host;
+        this.port = port;
+        this.queryqueue = queryqueue;
+        this.dataqueue = dataqueue;
+        this.datalink = datalink;
+        this.querylink = querylink;
+    }    
+    
+    public RabbitServer(String dataqueue, String queryqueue, DataLink datalink, QueryLink querylink) {
+        this.host = ConnectionFactory.DEFAULT_HOST; // localhost
+        this.port = ConnectionFactory.DEFAULT_AMQP_PORT; // 5672
         this.queryqueue = queryqueue;
         this.dataqueue = dataqueue;
         this.datalink = datalink;
         this.querylink = querylink;
     }    
      
-    protected Connection connect(String host) throws IOException, TimeoutException {        
+    protected Connection connect() throws IOException, TimeoutException {        
         ConnectionFactory factory = new ConnectionFactory();
-        factory.setHost(host);            
+        factory.setHost(host);     
+        factory.setPort(port);
         return factory.newConnection();
     } 
     
     public void start() throws IOException, TimeoutException {
-        connection = connect(host);
+        connection = connect();
         
         serverquery = new RabbitServerQuery(connection, queryqueue, querylink);
         serverquery.start();
