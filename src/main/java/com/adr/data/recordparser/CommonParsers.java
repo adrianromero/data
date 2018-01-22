@@ -1,5 +1,5 @@
 //     Data Access is a Java library to store data
-//     Copyright (C) 2017 Adrián Romero Corchado.
+//     Copyright (C) 2017-2018 Adrián Romero Corchado.
 //
 //     This file is part of Data Access
 //
@@ -180,6 +180,8 @@ public class CommonParsers {
                     unicodeBuffer = new StringBuilder();
                     loader.next();
                     state = STRING_UNICODE1;
+                } else {
+                    throw new IOException(loader.messageExpected("Escape sequence"));                    
                 }
             } else if (state == STRING_UNICODE1) {
                 if (CodePoint.isHex(loader.getCP())) {
@@ -248,17 +250,13 @@ public class CommonParsers {
                 b.append("\\f");
             } else if (c == '\'') {
                 b.append("\\\'");
-            } else if (c == '\"') {
-                b.append("\\");
             } else if (c == '\\') {
                 b.append("\\\\");
+            } else if (CodePoint.isControl(c) || c > 0xFF) {
+                b.append("\\u");
+                b.append(String.format("%04X", (int) c));
             } else {
-                if (CodePoint.isControl(c) || c > 0xFF) {
-                    b.append("\\u");
-                    b.append(String.format("%04X", (int) c));
-                } else {
-                    b.append(c);
-                }
+                b.append(c);
             }
         }
         b.append('\"');
