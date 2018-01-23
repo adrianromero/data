@@ -31,8 +31,6 @@ import org.junit.runners.Suite;
     QueryTests.class, 
     DataTests.class, 
     SecurityTests.class,
-    // Kotlin tests
-    QueryAndExec.class
 })
 public class SuiteH2 {
 
