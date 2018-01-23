@@ -1,5 +1,5 @@
 //     Data Access is a Java library to store data
-//     Copyright (C) 2016 Adrián Romero Corchado.
+//     Copyright (C) 2016-2018 Adrián Romero Corchado.
 //
 //     This file is part of Data Access
 //
@@ -19,7 +19,6 @@ package com.adr.data.test;
 import com.adr.data.DataException;
 import com.adr.data.record.Entry;
 import com.adr.data.security.SecurityDataException;
-import com.adr.data.record.RecordMap;
 import com.adr.data.security.ReducerLogin;
 import com.adr.data.var.VariantString;
 import java.util.List;
@@ -41,7 +40,7 @@ public class SecurityTests {
         try {
             // Login
             String authorization = ReducerLogin.login(SourceLink.getQueryLink(), "admin", "admin");
-            Record header = new RecordMap(new Entry("AUTHORIZATION", authorization));
+            Record header = new Record(new Entry("AUTHORIZATION", authorization));
 
             Record current = ReducerLogin.current(SourceLink.getQueryLink(), header);
 
@@ -52,7 +51,7 @@ public class SecurityTests {
             // this query succeds because admin has permissions to all resources
             List<Record> result1 = SourceLink.getQueryLink().query(
                     header,
-                    new RecordMap(
+                    new Record(
                             new Entry("COLLECTION.KEY", "USERNAME"),
                             new Entry("ID.KEY", new VariantString("admin")),
                             new Entry("NAME", VariantString.NULL),
@@ -63,7 +62,7 @@ public class SecurityTests {
                 // This query fails because not logged users
                 SourceLink.getQueryLink().query(
                         Record.EMPTY,
-                        new RecordMap(
+                        new Record(
                                 new Entry("COLLECTION.KEY", "USERNAME"),
                                 new Entry("ID.KEY", new VariantString("admin")),
                                 new Entry("NAME", VariantString.NULL),
@@ -85,7 +84,7 @@ public class SecurityTests {
         try {
             // Login
             String authorization = ReducerLogin.login(SourceLink.getQueryLink(), "manager", "");
-            Record header = new RecordMap(new Entry("AUTHORIZATION", authorization));
+            Record header = new Record(new Entry("AUTHORIZATION", authorization));
 
             Record current = ReducerLogin.current(SourceLink.getQueryLink(), header);
             Assert.assertEquals("Manager", current.getString("DISPLAYNAME"));
@@ -106,7 +105,7 @@ public class SecurityTests {
             // this query succeds because anonymous has permissions to USERNAME_VISIBLE
             List<Record> result1 = SourceLink.getQueryLink().query(
                     Record.EMPTY,
-                    new RecordMap(
+                    new Record(
                             new Entry("COLLECTION.KEY", "USERNAME_VISIBLE"),
                             new Entry("ID.KEY", VariantString.NULL),
                             new Entry("NAME", VariantString.NULL),
@@ -133,21 +132,21 @@ public class SecurityTests {
             Assert.assertFalse(ReducerLogin.hasAuthorization(SourceLink.getQueryLink(), header, "anyotherresource"));
 
             authorization = ReducerLogin.login(SourceLink.getQueryLink(), "manager", "");
-            header = new RecordMap(new Entry("AUTHORIZATION", authorization));
+            header = new Record(new Entry("AUTHORIZATION", authorization));
             Assert.assertTrue(ReducerLogin.hasAuthorization(SourceLink.getQueryLink(), header, "USERNAME_VISIBLE_QUERY"));
             Assert.assertTrue(ReducerLogin.hasAuthorization(SourceLink.getQueryLink(), header, "authenticatedres"));
             Assert.assertTrue(ReducerLogin.hasAuthorization(SourceLink.getQueryLink(), header, "com/adr/hellocore/fxml/datalist?datatable=com/adr/hellocore/security/role"));
             Assert.assertFalse(ReducerLogin.hasAuthorization(SourceLink.getQueryLink(), header, "anyotherresource"));
 
             authorization = ReducerLogin.login(SourceLink.getQueryLink(), "guest", "");
-            header = new RecordMap(new Entry("AUTHORIZATION", authorization));
+            header = new Record(new Entry("AUTHORIZATION", authorization));
             Assert.assertTrue(ReducerLogin.hasAuthorization(SourceLink.getQueryLink(), header, "USERNAME_VISIBLE_QUERY"));
             Assert.assertTrue(ReducerLogin.hasAuthorization(SourceLink.getQueryLink(), header, "authenticatedres"));
             Assert.assertFalse(ReducerLogin.hasAuthorization(SourceLink.getQueryLink(), header, "com/adr/hellocore/fxml/datalist?datatable=com/adr/hellocore/security/role"));
             Assert.assertFalse(ReducerLogin.hasAuthorization(SourceLink.getQueryLink(), header, "anyotherresource"));
 
             authorization = ReducerLogin.login(SourceLink.getQueryLink(), "admin", "admin");
-            header = new RecordMap(new Entry("AUTHORIZATION", authorization));
+            header = new Record(new Entry("AUTHORIZATION", authorization));
             Assert.assertTrue(ReducerLogin.hasAuthorization(SourceLink.getQueryLink(), header, "USERNAME_VISIBLE_QUERY"));
             Assert.assertTrue(ReducerLogin.hasAuthorization(SourceLink.getQueryLink(), header, "authenticatedres"));
             Assert.assertTrue(ReducerLogin.hasAuthorization(SourceLink.getQueryLink(), header, "com/adr/hellocore/fxml/datalist?datatable=com/adr/hellocore/security/role"));

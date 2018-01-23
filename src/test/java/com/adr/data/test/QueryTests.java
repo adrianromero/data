@@ -1,5 +1,5 @@
 //     Data Access is a Java library to store data
-//     Copyright (C) 2016-2017 Adrián Romero Corchado.
+//     Copyright (C) 2016-2018 Adrián Romero Corchado.
 //
 //     This file is part of Data Access
 //
@@ -19,7 +19,6 @@ package com.adr.data.test;
 import com.adr.data.DataException;
 import com.adr.data.QueryLink;
 import com.adr.data.record.Entry;
-import com.adr.data.record.RecordMap;
 import com.adr.data.security.ReducerLogin;
 import com.adr.data.var.VariantBoolean;
 import com.adr.data.var.VariantString;
@@ -38,7 +37,7 @@ public class QueryTests {
     private void testQueryByKey(QueryLink link, Record header) throws DataException {
         List<Record> result = link.query(
                 header,
-                new RecordMap(
+                new Record(
                         new Entry("COLLECTION.KEY", "USERNAME"),
                         new Entry("ID.KEY", "admin"),
                         new Entry("NAME", VariantString.NULL),
@@ -54,7 +53,7 @@ public class QueryTests {
 
     private void testQueryOrder(QueryLink link, Record header) throws DataException {
         List<Record> result = link.query(header,
-                new RecordMap(
+                new Record(
                         new Entry("COLLECTION.KEY", "USERNAME"),
                         new Entry("ID.KEY", VariantString.NULL),
                         new Entry("NAME", VariantString.NULL),
@@ -69,7 +68,7 @@ public class QueryTests {
 
     private void testSentenceQuery(QueryLink link, Record header) throws DataException {
         Record result = link.find(header,
-                new RecordMap(
+                new Record(
                         new Entry("COLLECTION.KEY", "USERNAME_BYNAME"),
                         new Entry("NAME", "guest"),
                         new Entry("DISPLAYNAME", VariantString.NULL),
@@ -85,7 +84,7 @@ public class QueryTests {
 
     private void testSentenceView(QueryLink link, Record header) throws DataException {
         Record result = link.find(header,
-                new RecordMap(
+                new Record(
                         new Entry("COLLECTION.KEY", "TEST_USERNAME_VIEW"),
                         new Entry("ID.KEY", VariantString.NULL),
                         new Entry("NAME", "guest"),
@@ -96,7 +95,7 @@ public class QueryTests {
 
     private void testSentenceTable(QueryLink link, Record header) throws DataException {
         List<Record> result3 = link.query(header,
-                new RecordMap(
+                new Record(
                         new Entry("COLLECTION.KEY", "USERNAME"),
                         new Entry("ID.KEY", VariantString.NULL),
                         new Entry("NAME", "manager"),
@@ -110,7 +109,7 @@ public class QueryTests {
 
     private void testSentenceTableLike(QueryLink link, Record header) throws DataException {
         List<Record> result4 = SourceLink.getQueryLink().query(header,
-                new RecordMap(
+                new Record(
                         new Entry("COLLECTION.KEY", "USERNAME"),
                         new Entry("ID.KEY", VariantString.NULL),
                         new Entry("NAME", VariantString.NULL),
@@ -130,7 +129,7 @@ public class QueryTests {
         try {
             // Login
             String authorization = ReducerLogin.login(SourceLink.getQueryLink(), "admin", "admin");
-            Record header = new RecordMap(new Entry("AUTHORIZATION", authorization));
+            Record header = new Record(new Entry("AUTHORIZATION", authorization));
 
             testQueryByKey(SourceLink.getQueryLink(), header);
             testQueryOrder(SourceLink.getQueryLink(), header);

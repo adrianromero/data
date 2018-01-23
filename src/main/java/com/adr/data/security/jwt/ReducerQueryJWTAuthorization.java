@@ -1,5 +1,5 @@
 //     Data Access is a Java library to store data
-//     Copyright (C) 2017 Adrián Romero Corchado.
+//     Copyright (C) 2017-2018 Adrián Romero Corchado.
 //
 //     This file is part of Data Access
 //
@@ -20,7 +20,6 @@ package com.adr.data.security.jwt;
 import com.adr.data.DataException;
 import com.adr.data.QueryLink;
 import com.adr.data.record.Entry;
-import com.adr.data.record.RecordMap;
 import com.adr.data.route.ReducerQuery;
 import com.adr.data.security.ReducerLogin;
 import com.adr.data.security.SecurityDataException;
@@ -66,7 +65,7 @@ public class ReducerQueryJWTAuthorization implements ReducerQuery {
         if (ReducerLogin.AUTHORIZATION_REQUEST.equals(entity)) {        
             // Request authorizer
             String resource = filter.getString("RESOURCE");
-            Record response = new RecordMap(
+            Record response = new Record(
                     new Entry("COLLECTION.KEY", ReducerLogin.AUTHORIZATION_REQUEST),
                     new Entry("RESOURCE", resource),
                     new Entry("ROLE", role),

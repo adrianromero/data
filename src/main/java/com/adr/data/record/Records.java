@@ -1,5 +1,5 @@
 //     Data Access is a Java library to store data
-//     Copyright (C) 2016 Adrián Romero Corchado.
+//     Copyright (C) 2016-2018 Adrián Romero Corchado.
 //
 //     This file is part of Data Access
 //
@@ -49,14 +49,14 @@ public class Records {
     public static Record clone(Record record) {
         assert record != null;
         
-        return new RecordMap(getEntries(record));  
+        return new Record(getEntries(record));  
     }
     
     public static Record merge(Record base, Record record) {
         assert base != null;
         assert record != null;
         
-        return new RecordMap(
+        return new Record(
                 mergeEntries(getEntries(base), getEntries(record)));
     }
     
@@ -64,7 +64,7 @@ public class Records {
         assert base != null;
         assert records != null;
         
-        return new RecordMap(mergeEntries(getEntries(base), records));
+        return new Record(mergeEntries(getEntries(base), records));
     }
     
     public static Entry[] mergeEntries(Entry[] base, Entry... records) {

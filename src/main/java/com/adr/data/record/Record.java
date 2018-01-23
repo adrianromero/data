@@ -1,5 +1,5 @@
 //     Data Access is a Java library to store data
-//     Copyright (C) 2016 Adrián Romero Corchado.
+//     Copyright (C) 2016-2018 Adrián Romero Corchado.
 //
 //     This file is part of Data Access
 //
@@ -19,12 +19,15 @@ package com.adr.data.record;
 
 import com.adr.data.var.Variant;
 import com.adr.data.var.VariantVoid;
+import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 /**
  *
  * @author adrian
  */
-public interface Record {
+public class Record {
 
     public final static Record EMPTY = new Record() {
         private String [] NONAMES = {};
@@ -38,21 +41,36 @@ public interface Record {
         }
     };
     
-    public String [] getNames();   
-    public Variant get(String name);
-    public default String getString(String name) {
+    private final String[] names;
+    private final Map<String, Variant> entries;   
+      
+    public Record(Entry... record) {
+        LinkedHashMap<String, Variant> entriesmap = new LinkedHashMap<>();
+        for (Entry e: record) {
+            entriesmap.put(e.getName(), e.getValue());
+        }     
+        this.names = entriesmap.keySet().stream().toArray(String[]::new);      
+        this.entries = Collections.unmodifiableMap(entriesmap);
+    }
+    public String[] getNames() {
+        return names;
+    }
+    public Variant get(String name) {
+        return entries.getOrDefault(name, VariantVoid.INSTANCE);
+    }
+    public String getString(String name) {
         return get(name).asString();    
     }
-    public default int getInteger(String name) {
+    public int getInteger(String name) {
         return get(name).asInteger(); 
     }
-    public default double getDouble(String name) {
+    public double getDouble(String name) {
         return get(name).asDouble();
     }
-    public default Boolean getBoolean(String name) {
+    public Boolean getBoolean(String name) {
         return get(name).asBoolean();
     }
-    public default byte[] getBytes(String name) {
+    public byte[] getBytes(String name) {
         return get(name).asBytes();
     }      
 }

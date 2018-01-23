@@ -1,5 +1,5 @@
 //     Data Access is a Java library to store data
-//     Copyright (C) 2017 Adrián Romero Corchado.
+//     Copyright (C) 2017-2018 Adrián Romero Corchado.
 //
 //     This file is part of Data Access
 //
@@ -19,7 +19,6 @@ package com.adr.data.security.jwt;
 import com.adr.data.DataException;
 import com.adr.data.QueryLink;
 import com.adr.data.record.Entry;
-import com.adr.data.record.RecordMap;
 import com.adr.data.var.VariantString;
 import java.util.Set;
 import com.adr.data.record.Record;
@@ -64,7 +63,7 @@ public class Authorizer {
         }
 
         // Valid login, load user details.
-        Record subjectsquery = new RecordMap(
+        Record subjectsquery = new Record(
                 new Entry("COLLECTION.KEY", "SUBJECT_ROLE"),
                 new Entry("ROLE__PARAM", role),
                 new Entry("SUBJECT__PARAM", resource),

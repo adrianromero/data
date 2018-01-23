@@ -1,5 +1,5 @@
 //     Data Access is a Java library to store data
-//     Copyright (C) 2017 Adrián Romero Corchado.
+//     Copyright (C) 2017-2018 Adrián Romero Corchado.
 //
 //     This file is part of Data Access
 //
@@ -17,7 +17,6 @@
 package com.adr.data.test;
 
 import com.adr.data.record.Entry;
-import com.adr.data.record.RecordMap;
 import com.adr.data.var.VariantString;
 
 import java.util.Arrays;
@@ -41,7 +40,7 @@ public class ParserTests {
     @Test
     public void recordsSerialization1() throws IOException {
 
-        Record record = new RecordMap(
+        Record record = new Record(
                 new Entry("id", new VariantString("1")),
                 new Entry("field", new VariantString("pepeluis")),
                 new Entry("amount", new VariantInt(32)),
@@ -93,10 +92,10 @@ public class ParserTests {
     public void recordsSerializationList() throws IOException {
 
         List<Record> records = Arrays.asList(
-                new RecordMap(
+                new Record(
                         new Entry("id", "1"),
                         new Entry("field", "pepeluis")),
-                new RecordMap(
+                new Record(
                         new Entry("id", "2"),
                         new Entry("field", "hilario")));
         String recordsstr = "(id: \"1\", field: \"pepeluis\")\n(id: \"2\", field: \"hilario\")";

@@ -1,5 +1,5 @@
 //     Data Access is a Java library to store data
-//     Copyright (C) 2016-2017 Adrián Romero Corchado.
+//     Copyright (C) 2016-2018 Adrián Romero Corchado.
 //
 //     This file is part of Data Access
 //
@@ -19,7 +19,6 @@ package com.adr.data.test;
 import com.adr.data.DataException;
 import com.adr.data.QueryLink;
 import com.adr.data.record.Entry;
-import com.adr.data.record.RecordMap;
 import com.adr.data.security.ReducerLogin;
 import com.adr.data.var.VariantBoolean;
 import com.adr.data.var.VariantString;
@@ -41,13 +40,13 @@ public class DataTests {
 
             // Login
             String authorization = ReducerLogin.login(SourceLink.getQueryLink(), "admin", "admin");
-            Record header = new RecordMap(new Entry("AUTHORIZATION", authorization));
+            Record header = new Record(new Entry("AUTHORIZATION", authorization));
 
             // Insert
             SourceLink.getDataLink().execute(
                     header,
                     new Record[]{
-                        new RecordMap(
+                        new Record(
                                 new Entry("COLLECTION.KEY", "USERNAME"),
                                 new Entry("ID.KEY", "newid"),
                                 new Entry("NAME", "newuser"),
@@ -65,7 +64,7 @@ public class DataTests {
             SourceLink.getDataLink().execute(
                     header,
                     new Record[]{
-                        new RecordMap(
+                        new Record(
                                 new Entry("COLLECTION.KEY", "USERNAME"),
                                 new Entry("ID.KEY", "newid"),
                                 new Entry("NAME", "newuser"),
@@ -84,7 +83,7 @@ public class DataTests {
             SourceLink.getDataLink().execute(
                     header,
                     new Record[]{
-                        new RecordMap(
+                        new Record(
                                 new Entry("COLLECTION.KEY", "USERNAME"),
                                 new Entry("ID.KEY", "newid"))});
 
@@ -98,7 +97,7 @@ public class DataTests {
 
     private Record loadUser(QueryLink link, Record header, String id) throws DataException {
         return link.find(header,
-                new RecordMap(
+                new Record(
                         new Entry("COLLECTION.KEY", "USERNAME"),
                         new Entry("ID.KEY", id),
                         new Entry("NAME", VariantString.NULL),

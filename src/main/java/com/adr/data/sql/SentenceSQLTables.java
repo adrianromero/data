@@ -1,5 +1,5 @@
 //     Data Access is a Java library to store data
-//     Copyright (C) 2017 Adrián Romero Corchado.
+//     Copyright (C) 2017-2018 Adrián Romero Corchado.
 //
 //     This file is part of Data Access
 //
@@ -18,7 +18,6 @@ package com.adr.data.sql;
 
 import com.adr.data.DataException;
 import com.adr.data.record.Record;
-import com.adr.data.record.RecordMap;
 import com.adr.data.var.Variant;
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -68,7 +67,7 @@ public class SentenceSQLTables extends Sentence {
         try (ResultSet resultset = c.getMetaData().getTables(cat, schem, name, tabletypes)) {
             List<Record> r = new ArrayList<>();
             while (resultset.next()) {
-                r.add(new RecordMap(read(resultset, val)));
+                r.add(new Record(read(resultset, val)));
             }
             return r;      
         } catch (SQLException ex) {

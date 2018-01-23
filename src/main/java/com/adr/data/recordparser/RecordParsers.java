@@ -1,5 +1,5 @@
 //     Data Access is a Java library to store data
-//     Copyright (C) 2017 Adrián Romero Corchado.
+//     Copyright (C) 2017-2018 Adrián Romero Corchado.
 //
 //     This file is part of Data Access
 //
@@ -17,13 +17,13 @@
 package com.adr.data.recordparser;
 
 import com.adr.data.DataException;
+import com.adr.data.record.Entry;
 import com.adr.data.record.Record;
-import com.adr.data.record.RecordMap;
 import com.adr.data.var.ISOResults;
 import com.adr.data.var.Kind;
-import com.adr.data.var.Variant;
 import java.io.IOException;
-import java.util.LinkedHashMap;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  *
@@ -41,7 +41,7 @@ public class RecordParsers {
     }
     
     public static Record parseRecord(Loader loader) throws IOException {
-        LinkedHashMap<String, Variant> entries = new LinkedHashMap<>();
+        List<Entry> entries = new ArrayList<>();
         String name = null;
         String isovalue = null;
         Kind kind = null;
@@ -127,7 +127,7 @@ public class RecordParsers {
                         throw new IOException(loader.messageExpected("Kind"), ex); 
                     }
                     try {
-                        entries.put(name, kind.read(new ISOResults(isovalue)));
+                        entries.add(new Entry(name, kind.read(new ISOResults(isovalue))));
                     } catch (DataException ex) {                    
                         throw new IOException(loader.messageGeneral("Error parsing ISO value"));  
                     }
@@ -135,7 +135,7 @@ public class RecordParsers {
                     state = States.RECORD_END;         
                 } else {
                     try {
-                        entries.put(name, kind.read(new ISOResults(isovalue)));
+                        entries.add(new Entry(name, kind.read(new ISOResults(isovalue))));
                     } catch (DataException ex) {
                         throw new IOException(loader.messageExpected("Error parsing ISO value"), ex);  
                     }
@@ -148,7 +148,7 @@ public class RecordParsers {
                     state = States.RECORD_KEY;
                 } else if (loader.getCP() == ')') {
                     loader.next();
-                    return new RecordMap(entries);                    
+                    return new Record(entries.stream().toArray(Entry[]::new));                    
                 } else {
                     throw new IOException(loader.messageExpected(','));  
                 }           
