@@ -1,5 +1,5 @@
 //     Data Access is a Java library to store data
-//     Copyright (C) 2016 Adrián Romero Corchado.
+//     Copyright (C) 2016-2018 Adrián Romero Corchado.
 //
 //     This file is part of Data Access
 //
@@ -20,6 +20,7 @@ package com.adr.data.sql;
 import com.adr.data.DataException;
 import java.sql.Connection;
 import com.adr.data.record.Record;
+import com.adr.data.record.Records;
 
 /**
  *
@@ -37,19 +38,10 @@ public class SentencePut extends Sentence {
 
     @Override
     public void execute(Connection c, SQLEngine engine, Record val) throws DataException {
-        if (isDeleteSentence(val)) {
+        if (Records.isDeleteSentence(val)) {
             delete.execute(c, engine, val);
         } else {
             updateinsert.execute(c, engine, val);
         }
-    }
-    
-    public static boolean isDeleteSentence(Record val) {
-        for (String name : val.getNames()) {
-            if (!name.contains("__") && !name.endsWith(".KEY")) {
-                return false;
-            }
-        }
-        return true;
     }
 }

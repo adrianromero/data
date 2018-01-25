@@ -148,7 +148,7 @@ public class RecordParsers {
                     state = States.RECORD_KEY;
                 } else if (loader.getCP() == ')') {
                     loader.next();
-                    return new Record(entries.stream().toArray(Entry[]::new));                    
+                    return new Record(entries);                    
                 } else {
                     throw new IOException(loader.messageExpected(','));  
                 }           

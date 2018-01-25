@@ -28,6 +28,8 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import com.adr.data.record.Record;
+import com.adr.data.record.Records;
+import java.util.Collections;
 
 /**
  *
@@ -64,7 +66,7 @@ public abstract class Sentence {
         try (PreparedStatement stmt = c.prepareStatement(sql)) {
             write(stmt, command.getParamNames(), filter);
 
-            int limit = getLimit(filter);
+            int limit = Records.getLimit(filter);
             // int offset = options.getOffset(); // offset is applied in the CommandSQL
 
             try (ResultSet resultset = stmt.executeQuery()) {
@@ -92,9 +94,9 @@ public abstract class Sentence {
         }
     }
 
-    protected static Entry[] read(ResultSet resultset, Record param) throws DataException {
+    protected static List<Entry> read(ResultSet resultset, Record param) throws DataException {
         if (param == null) {
-            return new Entry[0];
+            return Collections.emptyList();
         }
         List<Entry> l = new ArrayList<>();
         for (String name : param.getNames()) {
@@ -107,21 +109,6 @@ public abstract class Sentence {
                 l.add(new Entry(name, newv));
             }
         }
-        return l.stream().toArray(Entry[]::new);
-    }
-       
-    public static int getLimit(Record record) {
-        Variant v = record.get("__LIMIT");
-        return v.isNull() ? Integer.MAX_VALUE : v.asInteger();
-    }
-    
-    public static int getOffset(Record record) {
-        Variant v = record.get("__OFFSET");
-        return v.isNull() ? 0 : v.asInteger();
-    }
-    
-    public static String[] getOrderBy(Record record) {
-        Variant v = record.get("__ORDERBY");
-        return v.isNull() ? new String[0] : v.asString().split("\\s+");
-    }    
+        return l;
+    }   
 }

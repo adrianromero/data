@@ -1,5 +1,5 @@
 //     Data Access is a Java library to store data
-//     Copyright (C) 2016 Adrián Romero Corchado.
+//     Copyright (C) 2016-2018 Adrián Romero Corchado.
 //
 //     This file is part of Data Access
 //
@@ -21,6 +21,7 @@ import com.adr.data.DataException;
 import java.sql.Connection;
 import java.util.List;
 import com.adr.data.record.Record;
+import com.adr.data.record.Records;
 
 /**
  *
@@ -38,7 +39,7 @@ public abstract class SentenceQRY extends Sentence {
     public static void addQueryOptions(StringBuilder sqlsent, SQLEngine engine, Record record) {
         
         // order by       
-        String[] orderby = getOrderBy(record);
+        String[] orderby = Records.getOrderBy(record);
         if (orderby.length > 0) {
             for (int i = 0; i < orderby.length; i++) {
                 sqlsent.append(i == 0 ? " ORDER BY " : ", ");
@@ -57,14 +58,14 @@ public abstract class SentenceQRY extends Sentence {
         }
         
         // limit
-        int limit = getLimit(record);
+        int limit = Records.getLimit(record);
         if (limit < Integer.MAX_VALUE) {
             sqlsent.append(" LIMIT ");
             sqlsent.append(limit);
         }
         
         // offset
-        int offset = getOffset(record);
+        int offset = Records.getOffset(record);
         if (offset > 0) {
             sqlsent.append(" OFFSET ");
             sqlsent.append(offset);

@@ -1,5 +1,5 @@
 //     Data Access is a Java library to store data
-//     Copyright (C) 2016 Adrián Romero Corchado.
+//     Copyright (C) 2016-2018 Adrián Romero Corchado.
 //
 //     This file is part of Data Access
 //
@@ -21,9 +21,9 @@ import com.adr.data.DataException;
 import com.adr.data.sql.SQLEngine;
 import com.adr.data.sql.Sentence;
 import com.adr.data.sql.SentenceDelete;
-import com.adr.data.sql.SentencePut;
 import java.sql.Connection;
 import com.adr.data.record.Record;
+import com.adr.data.record.Records;
 
 /**
  *
@@ -41,7 +41,7 @@ public class SentencePGPut extends Sentence {
 
     @Override
     public void execute(Connection c, SQLEngine engine, Record keyval) throws DataException {        
-        if (SentencePut.isDeleteSentence(keyval)) {
+        if (Records.isDeleteSentence(keyval)) {
             delete.execute(c, engine, keyval);
         } else {
             pgmerge.execute(c, engine, keyval);

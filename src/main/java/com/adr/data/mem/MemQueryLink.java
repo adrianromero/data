@@ -1,5 +1,5 @@
 //     Data Access is a Java library to store data
-//     Copyright (C) 2016-2018 Adrián Romero Corchado.
+//     Copyright (C) 2018 Adrián Romero Corchado.
 //
 //     This file is part of Data Access
 //
@@ -15,36 +15,31 @@
 //     See the License for the specific language governing permissions and
 //     limitations under the License.
 
-package com.adr.data.sqlh2;
+package com.adr.data.mem;
 
 import com.adr.data.DataException;
-import com.adr.data.sql.SQLEngine;
-import com.adr.data.sql.Sentence;
-import com.adr.data.sql.SentenceDelete;
-import java.sql.Connection;
+import com.adr.data.QueryLink;
 import com.adr.data.record.Record;
-import com.adr.data.record.Records;
+import java.io.IOException;
+import java.util.List;
 
 /**
  *
  * @author adrian
  */
-public class SentenceH2Put extends Sentence {
-    
-    private final SentenceDelete delete = new SentenceDelete();
-    private final SentenceH2Merge h2merge = new SentenceH2Merge();
+public class MemQueryLink implements QueryLink {
+    private final Storage storage;
 
-    @Override
-    public String getName() {
-        return "H2-PUT";
+    public MemQueryLink(Storage storage) {
+        this.storage = storage;
     }
 
     @Override
-    public void execute(Connection c, SQLEngine engine, Record record) throws DataException {        
-        if (Records.isDeleteSentence(record)) {
-            delete.execute(c, engine, record);
-        } else {
-            h2merge.execute(c, engine, record);
+    public List<Record> query(Record headers, Record filter) throws DataException {
+        try {
+            return storage.query(filter);
+        } catch (IOException ex) {
+            throw new DataException(ex);
         }
     }
 }

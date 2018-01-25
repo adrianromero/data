@@ -20,7 +20,8 @@ package com.adr.data.record;
 import com.adr.data.var.Variant;
 import com.adr.data.var.VariantVoid;
 import java.util.Collections;
-import java.util.LinkedHashMap;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -42,15 +43,29 @@ public class Record {
     };
     
     private final String[] names;
-    private final Map<String, Variant> entries;   
+    private final Map<String, Variant> entries;  
+    
+    
+    public Record(List<Entry> record) {
+        Map<String, Variant> entriesmap = new HashMap<>();
+        this.names = new String[record.size()];
+        this.entries = Collections.unmodifiableMap(entriesmap);
+        int i = 0;
+        for (Entry e : record) {
+            names[i++] = e.getName();
+            entriesmap.put(e.getName(), e.getValue());
+        } 
+    }
       
     public Record(Entry... record) {
-        LinkedHashMap<String, Variant> entriesmap = new LinkedHashMap<>();
-        for (Entry e: record) {
-            entriesmap.put(e.getName(), e.getValue());
-        }     
-        this.names = entriesmap.keySet().stream().toArray(String[]::new);      
+        Map<String, Variant> entriesmap = new HashMap<>();
+        this.names = new String[record.length];
         this.entries = Collections.unmodifiableMap(entriesmap);
+        int i = 0;
+        for (Entry e : record) {
+            names[i++] = e.getName();
+            entriesmap.put(e.getName(), e.getValue());
+        }    
     }
     public String[] getNames() {
         return names;

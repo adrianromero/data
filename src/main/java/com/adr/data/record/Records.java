@@ -90,4 +90,28 @@ public class Records {
         }
         return result;
     }
+    
+    public static boolean isDeleteSentence(Record val) {
+        for (String name : val.getNames()) {
+            if (!name.contains("__") && !name.endsWith(".KEY")) {
+                return false;
+            }
+        }
+        return true;
+    }  
+    
+    public static int getLimit(Record record) {
+        Variant v = record.get("__LIMIT");
+        return v.isNull() ? Integer.MAX_VALUE : v.asInteger();
+    }
+    
+    public static int getOffset(Record record) {
+        Variant v = record.get("__OFFSET");
+        return v.isNull() ? 0 : v.asInteger();
+    }
+    
+    public static String[] getOrderBy(Record record) {
+        Variant v = record.get("__ORDERBY");
+        return v.isNull() ? new String[0] : v.asString().split("\\s+");
+    }
 }
