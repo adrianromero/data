@@ -38,6 +38,7 @@ public class SentenceSQLTables extends Sentence {
         return "SQLTABLES";
     }
     
+    @Override
     public List<Record> query(Connection c, SQLEngine engine, Record val) throws DataException {
         //    TABLE_CAT String => table catalog (may be null)
         //    TABLE_SCHEM String => table schema (may be null)

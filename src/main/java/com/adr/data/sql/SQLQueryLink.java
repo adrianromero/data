@@ -46,8 +46,8 @@ public class SQLQueryLink implements QueryLink {
         for (Sentence v : queries) {
             this.queries.put(v.getName(), v);
         }
-        this.queries.put("SQLTABLES", new SentenceSQLTables());
-        this.queries.put("SQLCOLUMNS", new SentenceSQLColumns());
+//        this.queries.put("SQLTABLES", new SentenceSQLTables());
+//        this.queries.put("SQLCOLUMNS", new SentenceSQLColumns());
     }
     
     public SQLQueryLink(DataSource ds, Sentence... queries) {

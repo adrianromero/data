@@ -35,6 +35,7 @@ public class SentenceSQLColumns extends Sentence {
         return "SQLCOLUMNS";
     }
     
+    @Override
     public List<Record> query(Connection c, SQLEngine engine, Record val) throws DataException {
         
         //    TABLE_CAT String => table catalog (may be null)
