@@ -1,5 +1,5 @@
 //     Data Access is a Java library to store data
-//     Copyright (C) 2016 Adrián Romero Corchado.
+//     Copyright (C) 2016-2018 Adrián Romero Corchado.
 //
 //     This file is part of Data Access
 //
@@ -44,6 +44,8 @@ public class SQLDataLink implements DataLink {
         for (Sentence s : sentences) {
             this.sentences.put(s.getName(), s);
         }
+        
+        this.sentences.put("SQLDDL", new SentenceDDL());        
     }
 
     public SQLDataLink(DataSource ds, Sentence... sentences) {
