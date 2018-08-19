@@ -1,5 +1,5 @@
 //     Data Access is a Java library to store data
-//     Copyright (C) 2016-2017 Adrián Romero Corchado.
+//     Copyright (C) 2017-2018 Adrián Romero Corchado.
 //
 //     This file is part of Data Access
 //
@@ -14,43 +14,41 @@
 //     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //     See the License for the specific language governing permissions and
 //     limitations under the License.
-package com.adr.data.route;
+package com.adr.data.elasticsearch;
 
 import com.adr.data.DataException;
 import com.adr.data.DataLink;
 import com.adr.data.record.Header;
 import java.util.List;
-import java.util.function.Predicate;
+import org.elasticsearch.client.transport.TransportClient;
 import com.adr.data.record.Record;
 
 /**
  *
  * @author adrian
  */
-public class AnyMatchDataLink implements DataLink {
-    
-    private final DataLink datalink;
-    private final Predicate<? super Record> p;
-    private final boolean iffailex;
+public class ElasticDataLink implements DataLink {
 
-    public AnyMatchDataLink(DataLink datalink,  Predicate<? super Record> p, boolean iffailex) {
-        this.datalink = datalink;
-        this.p = p;
-        this.iffailex = iffailex;
+    private final TransportClient client;
+
+//        client = new PreBuiltTransportClient(Settings.EMPTY)
+//                .addTransportAddress(new InetSocketTransportAddress(InetAddress.getByName(host), port));
+// DO STUFF
+//        client.close()
+    
+    public ElasticDataLink(TransportClient client) {
+        this.client = client;
     }
 
-    public AnyMatchDataLink(DataLink datalink,  Predicate<? super Record> p) {
-        this.datalink = datalink;
-        this.p = p;
-        this.iffailex = false;
-    }
-    
+
     @Override
     public void execute(Header headers, List<Record> l) throws DataException {
-        if (l.stream().anyMatch(p)) {
-            datalink.execute(headers, l);
-        } else if (iffailex) {
-            throw new DataException("Not matched condition");
-        }
+        
+//        Map<String, Object> jsonDocument = new HashMap<>();       
+//        
+//        UpdateRequest updateRequest = new UpdateRequest("index", "type", "1")
+//                .doc(jsonDocument)
+//                .docAsUpsert(true);
+//        client.update(updateRequest).get();        
     }
 }

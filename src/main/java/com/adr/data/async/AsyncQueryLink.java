@@ -1,5 +1,5 @@
 //     Data Access is a Java library to store data
-//     Copyright (C) 2017 Adrián Romero Corchado.
+//     Copyright (C) 2017-2018 Adrián Romero Corchado.
 //
 //     This file is part of Data Access
 //
@@ -18,6 +18,7 @@ package com.adr.data.async;
 
 import com.adr.data.DataException;
 import com.adr.data.QueryLink;
+import com.adr.data.record.Header;
 import com.adr.data.record.Record;
 
 import java.util.List;
@@ -43,7 +44,7 @@ public class AsyncQueryLink {
         this(querylink, ForkJoinPool.commonPool());
     }
 
-    public CompletableFuture<List<Record>> query(Record headers, Record filter) {
+    public CompletableFuture<List<Record>> query(Header headers, Record filter) {
         return CompletableFuture.supplyAsync(() -> {
             try {
                 return querylink.query(headers, filter);
@@ -63,7 +64,7 @@ public class AsyncQueryLink {
         }, executor);
     }
 
-    public CompletableFuture<Record> find(Record headers, Record filter) {
+    public CompletableFuture<Record> find(Header headers, Record filter) {
         return CompletableFuture.supplyAsync(() -> {
             try {
                 return querylink.find(headers, filter);

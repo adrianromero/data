@@ -1,5 +1,5 @@
 //     Data Access is a Java library to store data
-//     Copyright (C) 2016-2017 Adrián Romero Corchado.
+//     Copyright (C) 2016-2018 Adrián Romero Corchado.
 //
 //     This file is part of Data Access
 //
@@ -19,6 +19,7 @@ package com.adr.data.utils;
 
 import com.adr.data.DataException;
 import com.adr.data.QueryLink;
+import com.adr.data.record.Header;
 import com.adr.data.recordparser.RecordsSerializer;
 import com.adr.data.record.Record;
 import com.adr.data.recordparser.CodePoint;
@@ -39,10 +40,10 @@ import java.util.logging.Logger;
  */
 public class RequestQuery {
     
-    private final Record headers;
+    private final Header headers;
     private final Record filter;
     
-    public RequestQuery(Record headers, Record filter) {
+    public RequestQuery(Header headers, Record filter) {
         this.headers = headers;
         this.filter = filter;
     }
@@ -51,7 +52,7 @@ public class RequestQuery {
         return filter;
     }
     
-    public Record getHeaders() {
+    public Header getHeaders() {
         return headers;
     }
     
@@ -62,7 +63,7 @@ public class RequestQuery {
     }
     
     public void write(Writer w) throws IOException {
-        RecordsSerializer.write(headers, w);
+        RecordsSerializer.write(headers.getRecord(), w);
         w.append('\n');
         RecordsSerializer.write(filter, w);
     }
@@ -75,7 +76,7 @@ public class RequestQuery {
         Loader loader = new StreamLoader(r);
         loader.next();
         loader.skipBlanks();
-        Record header = RecordParsers.parseRecord(loader);
+        Header header = new Header(RecordParsers.parseRecord(loader));
         loader.skipBlanks();
         Record filter = RecordParsers.parseRecord(loader);
         loader.skipBlanks();

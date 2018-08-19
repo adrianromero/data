@@ -19,7 +19,7 @@ package com.adr.data.test;
 import com.adr.data.http.WebServer;
 import com.adr.data.testlinks.DataQueryLinkBuilder;
 import com.adr.data.testlinks.DataQueryLinkHTTP;
-import com.adr.data.testlinks.DataQueryLinkSQL;
+import com.adr.data.testlinks.DataQueryLinkMem;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.runner.RunWith;
@@ -38,11 +38,10 @@ public class SuiteHTTP {
     
     private static final int PORT = 4567;
     private static final String CONTEXTDATA = "/data/execute";
-    private static final String CONTEXTQUERY = "/data/query";
-    private static final String SQLNAME = "h2";    
+    private static final String CONTEXTQUERY = "/data/query"; 
     private static final String url = "http://localhost:" + Integer.toString(PORT);
     
-    private static final DataQueryLinkBuilder builder= new DataQueryLinkSQL(SQLNAME);
+    private static final DataQueryLinkBuilder builder= new DataQueryLinkMem();
     private static WebServer myserver;    
 
     @BeforeClass

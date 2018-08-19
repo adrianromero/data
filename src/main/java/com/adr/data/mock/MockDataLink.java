@@ -1,5 +1,5 @@
 //     Data Access is a Java library to store data
-//     Copyright (C) 2016-2017 Adrián Romero Corchado.
+//     Copyright (C) 2017-2018 Adrián Romero Corchado.
 //
 //     This file is part of Data Access
 //
@@ -14,7 +14,7 @@
 //     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //     See the License for the specific language governing permissions and
 //     limitations under the License.
-package com.adr.data.route;
+package com.adr.data.mock;
 
 import com.adr.data.DataException;
 import com.adr.data.DataLink;
@@ -27,30 +27,18 @@ import com.adr.data.record.Record;
  *
  * @author adrian
  */
-public class AnyMatchDataLink implements DataLink {
-    
-    private final DataLink datalink;
-    private final Predicate<? super Record> p;
-    private final boolean iffailex;
+public class MockDataLink implements DataLink {
 
-    public AnyMatchDataLink(DataLink datalink,  Predicate<? super Record> p, boolean iffailex) {
-        this.datalink = datalink;
-        this.p = p;
-        this.iffailex = iffailex;
+    private final Predicate<? super Record> fail;
+
+    public MockDataLink(Predicate<? super Record> fail) {
+        this.fail = fail;
     }
 
-    public AnyMatchDataLink(DataLink datalink,  Predicate<? super Record> p) {
-        this.datalink = datalink;
-        this.p = p;
-        this.iffailex = false;
-    }
-    
     @Override
     public void execute(Header headers, List<Record> l) throws DataException {
-        if (l.stream().anyMatch(p)) {
-            datalink.execute(headers, l);
-        } else if (iffailex) {
-            throw new DataException("Not matched condition");
+        if (l.stream().anyMatch(fail)) {
+            throw new DataException("Fail condition reached");
         }
     }
 }

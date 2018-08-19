@@ -1,5 +1,5 @@
 //     Data Access is a Java library to store data
-//     Copyright (C) 2017 Adrián Romero Corchado.
+//     Copyright (C) 2017-2018 Adrián Romero Corchado.
 //
 //     This file is part of Data Access
 //
@@ -123,7 +123,7 @@ public class RecordsSerializer {
                     }
                 } else {
                     Parameters params = new ISOParameters();
-                    v.write(params);
+                    v.getKind().write(params, v);
                     writer.write(hasQuotes(v.getKind()) ? CommonParsers.quote(params.toString()) : params.toString());
                     if (!isDefaulted(v.getKind())) {
                         writer.write(':');

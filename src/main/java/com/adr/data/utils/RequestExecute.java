@@ -1,5 +1,5 @@
 //     Data Access is a Java library to store data
-//     Copyright (C) 2016-2017 Adrián Romero Corchado.
+//     Copyright (C) 2016-2018 Adrián Romero Corchado.
 //
 //     This file is part of Data Access
 //
@@ -19,6 +19,7 @@ package com.adr.data.utils;
 
 import com.adr.data.DataException;
 import com.adr.data.DataLink;
+import com.adr.data.record.Header;
 import com.adr.data.recordparser.RecordsSerializer;
 
 import java.io.IOException;
@@ -42,15 +43,15 @@ import java.util.logging.Logger;
  */
 public class RequestExecute {
     
-    private final Record headers;
+    private final Header headers;
     private final List<Record> list;
     
-    public RequestExecute(Record headers, List<Record> list) {
+    public RequestExecute(Header headers, List<Record> list) {
         this.headers = headers;
         this.list = list;
     }
     
-    public Record getHeaders() {
+    public Header getHeaders() {
         return headers;
     }
     
@@ -65,7 +66,7 @@ public class RequestExecute {
     }
     
     public void write(Writer w) throws IOException {
-        RecordsSerializer.write(headers, w);
+        RecordsSerializer.write(headers.getRecord(), w);
         w.append('\n');
         RecordsSerializer.writeList(list, w);
     }
@@ -78,7 +79,7 @@ public class RequestExecute {
         Loader loader = new StreamLoader(r);
         loader.next();
         loader.skipBlanks();
-        Record header = RecordParsers.parseRecord(loader);
+        Header header = new Header(RecordParsers.parseRecord(loader));
         loader.skipBlanks();
         List<Record> recordsList = new ArrayList<>();
         for (;;) {

@@ -19,6 +19,7 @@ package com.adr.data.mem;
 
 import com.adr.data.DataException;
 import com.adr.data.QueryLink;
+import com.adr.data.record.Header;
 import com.adr.data.record.Record;
 import java.io.IOException;
 import java.util.List;
@@ -35,7 +36,7 @@ public class MemQueryLink implements QueryLink {
     }
 
     @Override
-    public List<Record> query(Record headers, Record filter) throws DataException {
+    public List<Record> query(Header headers, Record filter) throws DataException {
         try {
             return storage.query(filter);
         } catch (IOException ex) {

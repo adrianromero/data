@@ -19,6 +19,7 @@ package com.adr.data.security;
 import com.adr.data.DataException;
 import com.adr.data.QueryLink;
 import com.adr.data.record.Entry;
+import com.adr.data.record.Header;
 import com.adr.data.route.ReducerQuery;
 import com.adr.data.var.Variant;
 import java.util.Collections;
@@ -41,7 +42,7 @@ public abstract class ReducerLogin implements ReducerQuery {
     protected abstract Variant createAuthorization(String user, String password) throws DataException;
     
     @Override
-    public List<Record> query(Record headers, Record filter) throws DataException {
+    public List<Record> query(Header headers, Record filter) throws DataException {
 
         String entity = Records.getCollection(filter);
         if (!AUTHENTICATION_REQUEST.equals(entity)) {
@@ -68,13 +69,13 @@ public abstract class ReducerLogin implements ReducerQuery {
         return r.getString("AUTHORIZATION");
     }
 
-    public static Record current(QueryLink link, Record headers) throws DataException {
+    public static Record current(QueryLink link, Header headers) throws DataException {
         return link.find(headers,
                 new Record(
                             new Entry("COLLECTION.KEY", AUTHENTICATION_CURRENT)));
     }
 
-    public static boolean hasAuthorization(QueryLink link, Record headers, String resource) throws DataException {
+    public static boolean hasAuthorization(QueryLink link, Header headers, String resource) throws DataException {
         Record result = link.find(headers,
                 new Record(
                         new Entry("COLLECTION.KEY", AUTHORIZATION_REQUEST),

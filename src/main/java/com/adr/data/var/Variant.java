@@ -1,5 +1,5 @@
 //     Data Access is a Java library to store data
-//     Copyright (C) 2016-2017 Adrián Romero Corchado.
+//     Copyright (C) 2016-2018 Adrián Romero Corchado.
 //
 //     This file is part of Data Access
 //
@@ -17,7 +17,6 @@
 
 package com.adr.data.var;
 
-import com.adr.data.DataException;
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.time.LocalDate;
@@ -31,8 +30,6 @@ import java.time.LocalTime;
 public abstract class Variant {
     
     public abstract Kind getKind();
-    
-    public abstract void write(Parameters write) throws DataException;
 
     public abstract boolean isNull();
     

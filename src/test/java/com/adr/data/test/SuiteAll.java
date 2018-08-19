@@ -1,5 +1,5 @@
 //     Data Access is a Java library to store data
-//     Copyright (C) 2016 Adrián Romero Corchado.
+//     Copyright (C) 2016-2018 Adrián Romero Corchado.
 //
 //     This file is part of Data Access
 //
@@ -26,15 +26,16 @@ import org.junit.runners.Suite;
 @Suite.SuiteClasses({
     ParserTests.class,
     // Database suites
-    SuiteH2.class,
-    SuiteMYSQL.class,
-    SuitePostgreSQL.class,
+    SuiteMem.class,
+//    SuiteH2.class,
+//    SuiteMYSQL.class,
+//    SuitePostgreSQL.class,
 
-    // HTTP suite
-    SuiteHTTP.class,
-
-    // MQ Sync suite
-    SuiteMQ.class
+//    // HTTP suite
+      SuiteHTTP.class,
+//
+//    // MQ Sync suite
+//    SuiteMQ.class
 })
 
 public class SuiteAll {

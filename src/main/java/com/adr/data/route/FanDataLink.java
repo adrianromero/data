@@ -1,5 +1,5 @@
 //     Data Access is a Java library to store data
-//     Copyright (C) 2016 Adrián Romero Corchado.
+//     Copyright (C) 2016-2018 Adrián Romero Corchado.
 //
 //     This file is part of Data Access
 //
@@ -18,6 +18,7 @@ package com.adr.data.route;
 
 import com.adr.data.DataException;
 import com.adr.data.DataLink;
+import com.adr.data.record.Header;
 import java.util.List;
 import com.adr.data.record.Record;
 
@@ -34,7 +35,7 @@ public class FanDataLink implements DataLink {
     }
     
     @Override
-    public void execute(Record headers, List<Record> l) throws DataException {
+    public void execute(Header headers, List<Record> l) throws DataException {
         for(DataLink d : datalinks) {
             d.execute(headers, l);
         }

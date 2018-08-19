@@ -14,29 +14,23 @@
 //     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //     See the License for the specific language governing permissions and
 //     limitations under the License.
-
-package com.adr.data.var;
-
-import com.adr.data.DataException;
+package com.adr.data.record;
 
 /**
  *
  * @author adrian
  */
-class KindString extends Kind {
-
-    @Override
-    public Variant read(Results read) throws DataException {
-        return new VariantString(read.getString());
-    }   
+public final class Header {
     
-    @Override
-    public void write(Parameters write, Variant v) throws DataException {
-        write.setString(v.asString());
+    public final static Header EMPTY = new Header(Record.EMPTY);
+    
+    private final Record record;
+    
+    public Header(Record record) {
+        this.record = record;
     }
     
-    @Override
-    public String toString() {
-        return "STRING";
-    }
+    public Record getRecord() {
+        return record;
+    } 
 }

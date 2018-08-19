@@ -19,8 +19,6 @@ package com.adr.data.record;
 
 import com.adr.data.DataException;
 import com.adr.data.var.Variant;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  *
@@ -35,61 +33,6 @@ public class Records {
         }
         return collectionkey.asString();
     }    
-    
-    public static List<Record> clone(List<Record> records) {
-        assert records != null;
-        
-        List<Record> clone = new ArrayList<>(records.size());
-        for (Record r: records) {
-            clone.add(clone(r));
-        }        
-        return clone;  
-    }
-    
-    public static Record clone(Record record) {
-        assert record != null;
-        
-        return new Record(getEntries(record));  
-    }
-    
-    public static Record merge(Record base, Record record) {
-        assert base != null;
-        assert record != null;
-        
-        return new Record(
-                mergeEntries(getEntries(base), getEntries(record)));
-    }
-    
-    public static Record merge(Record base, Entry... records) {
-        assert base != null;
-        assert records != null;
-        
-        return new Record(mergeEntries(getEntries(base), records));
-    }
-    
-    public static Entry[] mergeEntries(Entry[] base, Entry... records) {
-        assert records != null;
-        if (base == null) {
-            return records;
-        } else {
-            Entry[] recordmerged = new Entry[base.length + records.length];
-            System.arraycopy(base, 0, recordmerged, 0, base.length);
-            System.arraycopy(records, 0, recordmerged, base.length, records.length); 
-            return recordmerged;
-        }
-    }
-
-    public static Entry[] getEntries(Record record) {
-        if (record == null) {
-            return null;
-        }        
-        String[] names = record.getNames();
-        Entry[] result = new Entry[names.length];
-        for (int i = 0; i < result.length; i++) {
-            result[i] = new Entry(names[i], record.get(names[i]));
-        }
-        return result;
-    }
     
     public static boolean isDeleteSentence(Record val) {
         for (String name : val.getNames()) {

@@ -1,5 +1,5 @@
 //     Data Access is a Java library to store data
-//     Copyright (C) 2016-2017 Adrián Romero Corchado.
+//     Copyright (C) 2016-2018 Adrián Romero Corchado.
 //
 //     This file is part of Data Access
 //
@@ -17,7 +17,6 @@
 
 package com.adr.data.var;
 
-import com.adr.data.DataException;
 import java.math.BigDecimal;
 import java.util.Objects;
 
@@ -38,11 +37,6 @@ public class VariantLong extends Variant {
     @Override
     public Kind getKind() {
         return Kind.LONG;
-    }
-    
-    @Override
-    public void write(Parameters write) throws DataException {
-        write.setLong(value);
     }
     
     @Override

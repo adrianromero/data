@@ -1,5 +1,5 @@
 //     Data Access is a Java library to store data
-//     Copyright (C) 2016-2017 Adrián Romero Corchado.
+//     Copyright (C) 2016-2018 Adrián Romero Corchado.
 //
 //     This file is part of Data Access
 //
@@ -28,7 +28,12 @@ class KindBytes extends Kind {
     @Override
     public Variant read(Results read) throws DataException {
         return new VariantBytes(read.getBytes());
-    }    
+    }   
+    
+    @Override
+    public void write(Parameters write, Variant v) throws DataException {
+        write.setBytes(v.asBytes());
+    }
     
     @Override
     public String toString() {

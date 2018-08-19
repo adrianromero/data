@@ -19,6 +19,7 @@ package com.adr.data.test;
 import com.adr.data.DataException;
 import com.adr.data.QueryLink;
 import com.adr.data.record.Entry;
+import com.adr.data.record.Header;
 import com.adr.data.security.ReducerLogin;
 import com.adr.data.var.VariantBoolean;
 import com.adr.data.var.VariantString;
@@ -40,7 +41,7 @@ public class DataTests {
 
             // Login
             String authorization = ReducerLogin.login(SourceLink.getQueryLink(), "admin", "admin");
-            Record header = new Record(new Entry("AUTHORIZATION", authorization));
+            Header header = new Header(new Record(new Entry("AUTHORIZATION", authorization)));
 
             // Insert
             SourceLink.getDataLink().execute(
@@ -95,7 +96,7 @@ public class DataTests {
         }
     }
 
-    private Record loadUser(QueryLink link, Record header, String id) throws DataException {
+    private Record loadUser(QueryLink link, Header header, String id) throws DataException {
         return link.find(header,
                 new Record(
                         new Entry("COLLECTION.KEY", "USERNAME"),

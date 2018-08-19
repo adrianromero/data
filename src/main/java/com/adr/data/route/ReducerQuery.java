@@ -1,5 +1,5 @@
 //     Data Access is a Java library to store data
-//     Copyright (C) 2017 Adrián Romero Corchado.
+//     Copyright (C) 2017-2018 Adrián Romero Corchado.
 //
 //     This file is part of Data Access
 //
@@ -17,6 +17,7 @@
 package com.adr.data.route;
 
 import com.adr.data.DataException;
+import com.adr.data.record.Header;
 import java.util.List;
 import com.adr.data.record.Record;
 
@@ -26,5 +27,5 @@ import com.adr.data.record.Record;
  */
 public interface ReducerQuery {
     // returns null to go to next reducer
-    public List<Record> query(Record headers, Record filter) throws DataException;  
+    public List<Record> query(Header headers, Record filter) throws DataException;  
 }

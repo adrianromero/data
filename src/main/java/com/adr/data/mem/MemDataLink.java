@@ -19,6 +19,7 @@ package com.adr.data.mem;
 
 import com.adr.data.DataException;
 import com.adr.data.DataLink;
+import com.adr.data.record.Header;
 import com.adr.data.record.Record;
 import java.io.IOException;
 import java.util.List;
@@ -35,7 +36,7 @@ public class MemDataLink implements DataLink {
     }
 
     @Override
-    public void execute(Record headers, List<Record> records) throws DataException {
+    public void execute(Header headers, List<Record> records) throws DataException {
         try {
             storage.put(records);
         } catch (IOException ex) {

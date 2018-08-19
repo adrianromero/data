@@ -20,6 +20,7 @@ package com.adr.data.security.jwt;
 import com.adr.data.DataException;
 import com.adr.data.QueryLink;
 import com.adr.data.record.Entry;
+import com.adr.data.record.Header;
 import com.adr.data.route.ReducerQuery;
 import com.adr.data.security.ReducerLogin;
 import com.adr.data.security.SecurityDataException;
@@ -47,9 +48,9 @@ public class ReducerQueryJWTAuthorization implements ReducerQuery {
     }
         
     @Override
-    public List<Record> query(Record headers, Record filter) throws DataException {
+    public List<Record> query(Header headers, Record filter) throws DataException {
             
-        Variant authorization = headers.get("AUTHORIZATION");        
+        Variant authorization = headers.getRecord().get("AUTHORIZATION");        
         String role;
         String displayrole;
         if (authorization.isNull()) {

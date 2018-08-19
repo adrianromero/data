@@ -28,19 +28,9 @@ import java.util.Map;
  *
  * @author adrian
  */
-public class Record {
+public final class Record {
 
-    public final static Record EMPTY = new Record() {
-        private String [] NONAMES = {};
-        @Override
-        public String[] getNames() { 
-            return NONAMES;
-        }
-        @Override
-        public Variant get(String name) {
-            return VariantVoid.INSTANCE;
-        }
-    };
+    public final static Record EMPTY = new Record();
     
     private final String[] names;
     private final Map<String, Variant> entries;  

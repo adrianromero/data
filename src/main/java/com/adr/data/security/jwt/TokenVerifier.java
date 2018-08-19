@@ -1,5 +1,5 @@
 //     Data Access is a Java library to store data
-//     Copyright (C) 2017 Adrián Romero Corchado.
+//     Copyright (C) 2017-2018 Adrián Romero Corchado.
 //
 //     This file is part of Data Access
 //
@@ -17,13 +17,13 @@
 package com.adr.data.security.jwt;
 
 import com.adr.data.DataException;
+import com.adr.data.record.Header;
 import com.adr.data.security.SecurityDataException;
 import com.adr.data.var.Variant;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTVerificationException;
-import com.adr.data.record.Record;
 
 /**
  *
@@ -38,9 +38,9 @@ public class TokenVerifier {
         verifier = JWT.require(algorithm).build();
     }
 
-    public void verify(Record headers) throws DataException {
+    public void verify(Header headers) throws DataException {
 
-        Variant authorization = headers.get("AUTHORIZATION");        
+        Variant authorization = headers.getRecord().get("AUTHORIZATION");        
         
         if (authorization.isNull()) {
             return; // anonymous;

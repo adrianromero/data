@@ -19,6 +19,7 @@ package com.adr.data.security.jwt;
 
 import com.adr.data.DataException;
 import com.adr.data.record.Entry;
+import com.adr.data.record.Header;
 import com.adr.data.route.ReducerQuery;
 import com.adr.data.security.ReducerLogin;
 import com.adr.data.var.Variant;
@@ -36,14 +37,14 @@ public class ReducerJWTCurrentUser implements ReducerQuery {
 
     
     @Override
-    public List<Record> query(Record headers, Record filter) throws DataException {
+    public List<Record> query(Header headers, Record filter) throws DataException {
         
         String entity = Records.getCollection(filter);
         if (!ReducerLogin.AUTHENTICATION_CURRENT.equals(entity)) {          
             return null;
         }
         
-        Variant authorization = headers.get("AUTHORIZATION");        
+        Variant authorization = headers.getRecord().get("AUTHORIZATION");        
         
         if (authorization.isNull()) {
             return Collections.emptyList(); // anonymous

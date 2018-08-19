@@ -19,6 +19,7 @@ package com.adr.data.test;
 import com.adr.data.DataException;
 import com.adr.data.QueryLink;
 import com.adr.data.record.Entry;
+import com.adr.data.record.Header;
 import com.adr.data.security.ReducerLogin;
 import com.adr.data.var.VariantBoolean;
 import com.adr.data.var.VariantString;
@@ -34,7 +35,7 @@ import com.adr.data.record.Record;
  */
 public class QueryTests {
 
-    private void testQueryByKey(QueryLink link, Record header) throws DataException {
+    private void testQueryByKey(QueryLink link, Header header) throws DataException {
         List<Record> result = link.query(
                 header,
                 new Record(
@@ -51,7 +52,7 @@ public class QueryTests {
         Assert.assertEquals(VariantVoid.INSTANCE, result.get(0).get("IMAGE"));
     }
 
-    private void testQueryOrder(QueryLink link, Record header) throws DataException {
+    private void testQueryOrder(QueryLink link, Header header) throws DataException {
         List<Record> result = link.query(header,
                 new Record(
                         new Entry("COLLECTION.KEY", "USERNAME"),
@@ -66,7 +67,7 @@ public class QueryTests {
         Assert.assertEquals("admin", result.get(2).getString("NAME"));
     }
 
-    private void testSentenceQuery(QueryLink link, Record header) throws DataException {
+    private void testSentenceQuery(QueryLink link, Header header) throws DataException {
         Record result = link.find(header,
                 new Record(
                         new Entry("COLLECTION.KEY", "USERNAME_BYNAME"),
@@ -82,7 +83,7 @@ public class QueryTests {
         Assert.assertEquals("Guest", result.getString("DISPLAYROLE"));
     }
 
-    private void testSentenceView(QueryLink link, Record header) throws DataException {
+    private void testSentenceView(QueryLink link, Header header) throws DataException {
         Record result = link.find(header,
                 new Record(
                         new Entry("COLLECTION.KEY", "TEST_USERNAME_VIEW"),
@@ -93,7 +94,7 @@ public class QueryTests {
         Assert.assertEquals("Guest", result.getString("DISPLAYNAME"));
     }
 
-    private void testSentenceTable(QueryLink link, Record header) throws DataException {
+    private void testSentenceTable(QueryLink link, Header header) throws DataException {
         List<Record> result3 = link.query(header,
                 new Record(
                         new Entry("COLLECTION.KEY", "USERNAME"),
@@ -107,7 +108,7 @@ public class QueryTests {
         Assert.assertEquals(VariantVoid.INSTANCE, result3.get(0).get("IMAGE"));
     }
 
-    private void testSentenceTableLike(QueryLink link, Record header) throws DataException {
+    private void testSentenceTableLike(QueryLink link, Header header) throws DataException {
         List<Record> result4 = SourceLink.getQueryLink().query(header,
                 new Record(
                         new Entry("COLLECTION.KEY", "USERNAME"),
@@ -129,7 +130,7 @@ public class QueryTests {
         try {
             // Login
             String authorization = ReducerLogin.login(SourceLink.getQueryLink(), "admin", "admin");
-            Record header = new Record(new Entry("AUTHORIZATION", authorization));
+            Header header = new Header(new Record(new Entry("AUTHORIZATION", authorization)));
 
             testQueryByKey(SourceLink.getQueryLink(), header);
             testQueryOrder(SourceLink.getQueryLink(), header);

@@ -1,5 +1,5 @@
 //     Data Access is a Java library to store data
-//     Copyright (C) 2016-2017 Adrián Romero Corchado.
+//     Copyright (C) 2016-2018 Adrián Romero Corchado.
 //
 //     This file is part of Data Access
 //
@@ -41,6 +41,7 @@ public abstract class Kind {
     public final static Kind VOID = new KindVoid();
    
     public abstract Variant read(Results read) throws DataException;
+    public abstract void write(Parameters write, Variant v) throws DataException;
      
     private static final Map<String, Kind> valuesof = new HashMap<>();
     

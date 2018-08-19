@@ -90,7 +90,8 @@ public abstract class Sentence {
         }
         for (String name : param.getNames()) {
             SQLParameters sqlparams = new SQLParameters(stmt, params, name);
-            param.get(name).write(sqlparams);
+            Variant v = param.get(name);
+            v.getKind().write(sqlparams, v);
         }
     }
 

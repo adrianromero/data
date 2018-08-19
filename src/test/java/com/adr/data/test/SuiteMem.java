@@ -14,29 +14,31 @@
 //     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //     See the License for the specific language governing permissions and
 //     limitations under the License.
+package com.adr.data.test;
 
-package com.adr.data.var;
-
-import com.adr.data.DataException;
+import com.adr.data.testlinks.DataQueryLinkMem;
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
+import org.junit.runner.RunWith;
+import org.junit.runners.Suite;
 
 /**
  *
  * @author adrian
  */
-class KindString extends Kind {
+@RunWith(Suite.class)
+@Suite.SuiteClasses({
+    RecordsTests.class
+})
+public class SuiteMem {
 
-    @Override
-    public Variant read(Results read) throws DataException {
-        return new VariantString(read.getString());
-    }   
-    
-    @Override
-    public void write(Parameters write, Variant v) throws DataException {
-        write.setString(v.asString());
+    @BeforeClass
+    public static void setUpClass() throws Exception {      
+        SourceLink.setBuilder(new DataQueryLinkMem());
     }
-    
-    @Override
-    public String toString() {
-        return "STRING";
-    }
+
+    @AfterClass
+    public static void tearDownClass() throws Exception {
+        SourceLink.setBuilder(null);    
+    }    
 }

@@ -1,5 +1,5 @@
 //     Data Access is a Java library to store data
-//     Copyright (C) 2016-2017 Adrián Romero Corchado.
+//     Copyright (C) 2016-2018 Adrián Romero Corchado.
 //
 //     This file is part of Data Access
 //
@@ -16,7 +16,6 @@
 //     limitations under the License.
 package com.adr.data.var;
 
-import com.adr.data.DataException;
 import java.time.LocalTime;
 import java.util.Objects;
 
@@ -38,12 +37,7 @@ public class VariantLocalTime extends Variant {
     public Kind getKind() {
         return Kind.LOCALTIME;
     }
-    
-    @Override
-    public void write(Parameters write) throws DataException {
-        write.setLocalTime(value);
-    }
-    
+
     @Override
     public boolean isNull() {
         return value == null;

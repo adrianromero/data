@@ -1,5 +1,5 @@
 //     Data Access is a Java library to store data
-//     Copyright (C) 2017 Adrián Romero Corchado.
+//     Copyright (C) 2017-2018 Adrián Romero Corchado.
 //
 //     This file is part of Data Access
 //
@@ -19,6 +19,7 @@ package com.adr.data.async;
 import com.adr.data.DataException;
 import com.adr.data.DataLink;
 import com.adr.data.QueryLink;
+import com.adr.data.record.Header;
 import com.adr.data.record.Record;
 
 import java.util.List;
@@ -27,9 +28,6 @@ import java.util.concurrent.CompletionException;
 import java.util.concurrent.Executor;
 import java.util.concurrent.ForkJoinPool;
 
-/**
- * Created by adrian on 4/10/17.
- */
 public class AsyncLink {
 
     private final DataLink datalink;
@@ -46,7 +44,7 @@ public class AsyncLink {
         this(datalink, querylink, ForkJoinPool.commonPool());
     }
 
-    public CompletableFuture<Void> execute(Record headers, List<Record> records) {
+    public CompletableFuture<Void> execute(Header headers, List<Record> records) {
         return CompletableFuture.runAsync(() -> {
             try {
                 datalink.execute(headers, records);
@@ -66,7 +64,7 @@ public class AsyncLink {
         }, executor);
     }
 
-    public CompletableFuture<Void> execute(Record headers, Record[] records) {
+    public CompletableFuture<Void> execute(Header headers, Record... records) {
         return CompletableFuture.runAsync(() -> {
             try {
                 datalink.execute(headers, records);
@@ -76,7 +74,7 @@ public class AsyncLink {
         }, executor);
     }
 
-    public CompletableFuture<List<Record>> query(Record headers, Record filter) {
+    public CompletableFuture<List<Record>> query(Header headers, Record filter) {
         return CompletableFuture.supplyAsync(() -> {
             try {
                 return querylink.query(headers, filter);
@@ -96,7 +94,7 @@ public class AsyncLink {
         }, executor);
     }
 
-    public CompletableFuture<Record> find(Record headers, Record filter) {
+    public CompletableFuture<Record> find(Header headers, Record filter) {
         return CompletableFuture.supplyAsync(() -> {
             try {
                 return querylink.find(headers, filter);

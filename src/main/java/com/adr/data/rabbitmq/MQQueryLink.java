@@ -1,5 +1,5 @@
 //     Data Access is a Java library to store data
-//     Copyright (C) 2016-2017 Adrián Romero Corchado.
+//     Copyright (C) 2016-2018 Adrián Romero Corchado.
 //
 //     This file is part of Data Access
 //
@@ -19,6 +19,7 @@ package com.adr.data.rabbitmq;
 
 import com.adr.data.DataException;
 import com.adr.data.QueryLink;
+import com.adr.data.record.Header;
 import com.adr.data.utils.ResponseQuery;
 import com.adr.data.utils.RequestQuery;
 import com.rabbitmq.client.RpcClient;
@@ -48,7 +49,7 @@ public class MQQueryLink implements QueryLink {
     }
 
     @Override
-    public List<Record> query(Record headers, Record filter) throws DataException {
+    public List<Record> query(Header headers, Record filter) throws DataException {
         
         try {
             byte[] request = new RequestQuery(headers, filter).write().getBytes(StandardCharsets.UTF_8);
