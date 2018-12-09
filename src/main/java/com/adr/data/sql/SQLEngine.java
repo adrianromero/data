@@ -28,30 +28,50 @@ public enum SQLEngine {
     
     GENERIC(
             new SentencePut(),
-            " LIKE ? {escape '$'}"),
+            " LIKE CONCAT('%', REPLACE(REPLACE(?, '%', '$%'), '_', '$_'), '%') {escape '$'}",
+            " LIKE CONCAT(REPLACE(REPLACE(?, '%', '$%'), '_', '$_'), '%') {escape '$'}",
+            " LIKE CONCAT('%', REPLACE(REPLACE(?, '%', '$%'), '_', '$_')) {escape '$'}"),
     POSTGRESQL(
             new SentencePGPut(), 
-            " LIKE ? {escape '$'}"),
+            " LIKE CONCAT('%', REPLACE(REPLACE(?, '%', '$%'), '_', '$_'), '%') {escape '$'}",
+            " LIKE CONCAT(REPLACE(REPLACE(?, '%', '$%'), '_', '$_'), '%') {escape '$'}",
+            " LIKE CONCAT('%', REPLACE(REPLACE(?, '%', '$%'), '_', '$_')) {escape '$'}"),
     MYSQL(
             new SentencePut(), 
-            " LIKE ? escape '$'"),
+            " LIKE CONCAT('%', REPLACE(REPLACE(?, '%', '$%'), '_', '$_'), '%') escape '$'",
+            " LIKE CONCAT(REPLACE(REPLACE(?, '%', '$%'), '_', '$_'), '%') escape '$'",
+            " LIKE CONCAT('%', REPLACE(REPLACE(?, '%', '$%'), '_', '$_')) escape '$'"),
     H2(
             new SentenceH2Put(), 
-            " LIKE ? {escape '$'}");
+            " LIKE CONCAT('%', REPLACE(REPLACE(?, '%', '$%'), '_', '$_'), '%') {escape '$'}",
+            " LIKE CONCAT(REPLACE(REPLACE(?, '%', '$%'), '_', '$_'), '%') {escape '$'}",
+            " LIKE CONCAT('%', REPLACE(REPLACE(?, '%', '$%'), '_', '$_')) {escape '$'}");
     
     private final Sentence putsent;
-    private final String likeexpression;
+    private final String containsexpression;
+    private final String startsexpression;
+    private final String endsexpression;
     
-    private SQLEngine(Sentence putsent, String likeexpression) {
+    private SQLEngine(Sentence putsent, String containsexpression, String startsexpression, String endsexpression) {
         this.putsent = putsent;
-        this.likeexpression = likeexpression;
+        this.containsexpression = containsexpression;
+        this.startsexpression = startsexpression;
+        this.endsexpression = endsexpression;
     }
     
     public Sentence getPutSentence() {
         return putsent;
     }
     
-    public String getLikeExpression() {
-        return likeexpression;
+    public String getContainsExpression() {
+        return containsexpression;
+    }
+    
+    public String getStartsExpression() {
+        return startsexpression;
+    }
+    
+    public String getEndsExpression() {
+        return endsexpression;
     }
 }

@@ -93,9 +93,15 @@ public abstract class SentenceSelect extends SentenceQRY {
            } else if (n.endsWith("__LESSOREQUAL")) {
                realname = n.substring(0, n.length() - 13);
                criteria = " <= ?";
-            } else if (n.endsWith("__LIKE")) {
+            } else if (n.endsWith("__CONTAINS")) {
+               realname = n.substring(0, n.length() - 10);
+               criteria = engine.getContainsExpression();
+            } else if (n.endsWith("__STARTS")) {
+               realname = n.substring(0, n.length() - 8);
+               criteria = engine.getStartsExpression();
+            } else if (n.endsWith("__ENDS")) {
                realname = n.substring(0, n.length() - 6);
-               criteria = engine.getLikeExpression();
+               criteria = engine.getEndsExpression();
            } else if (n.endsWith(".KEY")) {
                realname = n.substring(0, n.length() - 4);
                criteria = " = ?";

@@ -121,24 +121,30 @@ public class Storage {
             } else if (n.endsWith("__DISTINCT")) {
                 realname = n.substring(0, n.length() - 10);
                 criteria = x -> !x.equals(v);
-           } else if (n.endsWith("__GREATER")) { // TODO
-               realname = n.substring(0, n.length() - 9);
-               criteria = x -> x.asDouble() > v.asDouble();
-           } else if (n.endsWith("__GREATEROREQUAL")) { // TODO
-               realname = n.substring(0, n.length() - 16);
-               criteria = x -> x.asDouble() >= v.asDouble();
-           } else if (n.endsWith("__LESS")) { // TODO
-               realname = n.substring(0, n.length() - 6);
-               criteria = x -> x.asDouble() < v.asDouble();
-           } else if (n.endsWith("__LESSOREQUAL")) { // TODO
-               realname = n.substring(0, n.length() - 13);
-               criteria = x -> x.asDouble() <=v.asDouble();
-            } else if (n.endsWith("__LIKE")) { // TODO
-               realname = n.substring(0, n.length() - 6);
-               criteria = x -> x.asString().matches(v.asString());
+           } else if (n.endsWith("__GREATER")) {
+                realname = n.substring(0, n.length() - 9);
+                criteria = x -> !x.isNull() && x.asDouble() > v.asDouble();
+           } else if (n.endsWith("__GREATEROREQUAL")) {
+                realname = n.substring(0, n.length() - 16);
+                criteria = x -> !x.isNull() && x.asDouble() >= v.asDouble();
+           } else if (n.endsWith("__LESS")) {
+                realname = n.substring(0, n.length() - 6);
+                criteria = x -> !x.isNull() && x.asDouble() < v.asDouble();
+           } else if (n.endsWith("__LESSOREQUAL")) {
+                realname = n.substring(0, n.length() - 13);
+                criteria = x -> !x.isNull() && x.asDouble() <= v.asDouble();
+            } else if (n.endsWith("__CONTAINS")) {
+                realname = n.substring(0, n.length() - 10);
+                criteria = x -> !x.isNull() && x.asString().contains((v.asString()));
+            } else if (n.endsWith("__STARTS")) {
+                realname = n.substring(0, n.length() - 8);
+                criteria = x -> !x.isNull() && x.asString().startsWith((v.asString()));
+            } else if (n.endsWith("__ENDS")) {
+                realname = n.substring(0, n.length() - 6);
+                criteria = x -> !x.isNull() && x.asString().endsWith((v.asString()));
            } else if (n.endsWith(".KEY")) {
-               realname = n.substring(0, n.length() - 4);
-               criteria = x -> x.equals(v);
+                realname = n.substring(0, n.length() - 4);
+                criteria = x -> x.equals(v);
             } else {
                 realname = n;
                 criteria = x -> v.equals(x);
