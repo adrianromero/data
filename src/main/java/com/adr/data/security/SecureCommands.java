@@ -17,7 +17,6 @@
 package com.adr.data.security;
 
 import com.adr.data.sql.Sentence;
-import com.adr.data.sql.SentenceCommand;
 import com.adr.data.sql.SentenceQuery;
 
 /**
@@ -28,32 +27,15 @@ public class SecureCommands {
 
     public final static Sentence[] QUERIES = new Sentence[]{
         new SentenceQuery(
-        "SUBJECT_ROLE",
+        "SUBJECT_ROLE", //OK
         "SELECT S.NAME, S.DISPLAYNAME FROM PERMISSION P JOIN SUBJECT S ON P.SUBJECT_ID = S.ID JOIN ROLE R ON P.ROLE_ID = R.ID WHERE R.NAME = ? AND S.NAME = ?", "ROLE__PARAM", "SUBJECT__PARAM"),
         new SentenceQuery(
-        "USERNAME_BYNAME",
+        "USERNAME_BYNAME", // OK
         "SELECT U.NAME, U.DISPLAYNAME, R.NAME AS ROLE, R.DISPLAYNAME AS DISPLAYROLE, U.PASSWORD "
         + "FROM USERNAME U JOIN ROLE R ON U.ROLE_ID = R.ID "
-        + "WHERE U.NAME = ? AND U.ACTIVE = TRUE", "NAME"),
-        new SentenceQuery(
-        "USERNAME_VISIBLE",
-        "SELECT ID AS \"ID.KEY\", NAME, DISPLAYNAME, IMAGE FROM USERNAME WHERE VISIBLE = TRUE AND ACTIVE = TRUE ORDER BY NAME"),
-        new SentenceQuery(
-        "SUBJECT_BYROLE",
-        "SELECT S.NAME, S.DISPLAYNAME FROM PERMISSION P JOIN SUBJECT S ON P.SUBJECT_ID = S.ID JOIN ROLE R ON P.ROLE_ID = R.ID WHERE R.NAME = ?", "ROLE__PARAM"),
-         new SentenceQuery(
-        "USERNAMEIMAGE_BYNAME",
-        "SELECT IMAGE FROM USERNAME WHERE NAME = ? AND ACTIVE = TRUE", "NAME"),
+        + "WHERE U.NAME = ? AND U.ACTIVE = TRUE", "NAME")
     };
 
     public final static Sentence[] COMMANDS = new Sentence[]{
-        new SentenceCommand(
-        "USERNAME_BYNAME",
-        "UPDATE USERNAME SET DISPLAYNAME = ?, VISIBLE = ?, IMAGE = ? WHERE NAME = ?",
-        "DISPLAYNAME", "VISIBLE", "IMAGE", "NAME"),
-        new SentenceCommand(
-        "USERNAMEPASSWORD_BYNAME",
-        "UPDATE USERNAME SET PASSWORD = ? WHERE NAME = ?",
-        "PASSWORD", "NAME")
     };
 }
