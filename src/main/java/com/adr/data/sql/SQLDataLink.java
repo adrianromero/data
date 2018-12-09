@@ -44,9 +44,7 @@ public class SQLDataLink implements DataLink {
         this.engine = engine;
         for (Sentence s : sentences) {
             this.sentences.put(s.getName(), s);
-        }
-        
-        this.sentences.put("SQLDDL", new SentenceDDL());        
+        }      
     }
 
     public SQLDataLink(DataSource ds, Sentence... sentences) {
