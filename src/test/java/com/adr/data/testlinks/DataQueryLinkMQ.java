@@ -1,5 +1,5 @@
 //     Data Access is a Java library to store data
-//     Copyright (C) 2016-2017 Adrián Romero Corchado.
+//     Copyright (C) 2016-2018 Adrián Romero Corchado.
 //
 //     This file is part of Data Access
 //
@@ -48,7 +48,7 @@ public class DataQueryLinkMQ implements DataQueryLinkBuilder {
     private RpcClient clientdata = null;
     private DataLink datalink;
     
-    public DataQueryLinkMQ(String host, String dataexchange, String queryexchange) {
+    public DataQueryLinkMQ(String host, int port, String username, String password, String dataexchange, String queryexchange) {
 
         this.dataexchange = dataexchange;
         this.queryexchange = queryexchange;
@@ -56,6 +56,9 @@ public class DataQueryLinkMQ implements DataQueryLinkBuilder {
         try {
             ConnectionFactory factory = new ConnectionFactory();
             factory.setHost(host);
+            factory.setPort(port);
+            factory.setUsername(username);
+            factory.setPassword(password);
             connection = factory.newConnection();
         } catch (IOException | TimeoutException ex) {
             LOG.log(Level.SEVERE, null, ex);

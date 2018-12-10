@@ -37,7 +37,9 @@ import org.junit.runners.Suite;
 public class SuiteMQAsync {
     
     private static final String HOST = "localhost";
-    private static final int PORT = 5672;    
+    private static final int PORT = 5672;
+    private static final String USERNAME = "admin";
+    private static final String PASSWORD = "admin";   
     private static final String EXCHANGEQUERY ="exquerylink";
     private static final String EXCHANGEDATA = "exdatalink";
     private static final String QUEUEQUERY ="mqquerylink";
@@ -50,9 +52,9 @@ public class SuiteMQAsync {
     @BeforeClass
     public static void setUpClass() throws Exception {
         builder.create();
-        myserver = new RabbitServer(HOST, PORT, QUEUEDATA, QUEUEQUERY, builder.getDataLink(), builder.getQueryLink());
+        myserver = new RabbitServer(HOST, PORT, USERNAME, PASSWORD, QUEUEDATA, QUEUEQUERY, builder.getDataLink(), builder.getQueryLink());
         myserver.start();
-        SourceLink.setBuilder(new DataQueryLinkMQAsync(HOST, EXCHANGEDATA, EXCHANGEQUERY));
+        SourceLink.setBuilder(new DataQueryLinkMQAsync(HOST, PORT, USERNAME, PASSWORD, EXCHANGEDATA, EXCHANGEQUERY));
     }
 
     @AfterClass
