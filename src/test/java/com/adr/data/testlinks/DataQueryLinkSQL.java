@@ -33,6 +33,7 @@ import com.adr.data.security.jwt.ReducerQueryJWTVerify;
 import com.adr.data.sql.SQLDataLink;
 import com.adr.data.sql.SQLEngine;
 import com.adr.data.sql.Sentence;
+import com.adr.data.sql.SentenceDDL;
 import com.adr.data.sql.SentenceView;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
@@ -76,7 +77,10 @@ public class DataQueryLinkSQL implements DataQueryLinkBuilder {
         Sentence[] morequeries = new Sentence[]{
             new SentenceView(
             "TEST_USERNAME_VIEW",
-            "SELECT ID, NAME, DISPLAYNAME, IMAGE FROM USERNAME WHERE VISIBLE = TRUE AND ACTIVE = TRUE ORDER BY NAME")
+            "SELECT ID, NAME, DISPLAYNAME, IMAGE FROM USERNAME WHERE VISIBLE = TRUE AND ACTIVE = TRUE ORDER BY NAME"),
+            new SentenceView(
+            "ANONYMOUS_VISIBLE",
+            "SELECT ID, NAME, DISPLAYNAME FROM USERNAME WHERE VISIBLE = TRUE AND ACTIVE = TRUE"),
         };
         QueryLink querylink = new SQLQueryLink(cpds, engine, concatenate(SecureCommands.QUERIES, morequeries));   
 
@@ -84,17 +88,22 @@ public class DataQueryLinkSQL implements DataQueryLinkBuilder {
                 new ReducerQueryJWTVerify("secret".getBytes(StandardCharsets.UTF_8)),
                 new ReducerJWTLogin(querylink, "secret".getBytes(StandardCharsets.UTF_8), 5000),
                 new ReducerJWTCurrentUser(),
-                new ReducerQueryJWTAuthorization(querylink, new HashSet<>(Arrays.asList("USERNAME_VISIBLE_QUERY")), new HashSet<>(Arrays.asList("authenticatedres"))),
+                new ReducerQueryJWTAuthorization(querylink, new HashSet<>(Arrays.asList("ANONYMOUS_VISIBLE_QUERY")), new HashSet<>(Arrays.asList("AUTHENTICATED_VISIBLE_QUERY"))),
                 new ReducerQueryIdentity(querylink));
     }
 
     private DataLink createDataLink() {
-        QueryLink querylink = new SQLQueryLink(cpds, engine, SecureCommands.QUERIES);
-        DataLink datalink = new SQLDataLink(cpds, engine, SecureCommands.COMMANDS);
+                                   
+        QueryLink querylink = new SQLQueryLink(cpds, engine, 
+                SecureCommands.QUERIES);
+        DataLink datalink = new SQLDataLink(cpds, engine, concatenate(
+                SecureCommands.COMMANDS, 
+                new Sentence[] {
+                    new SentenceDDL()}));
         
         return new ReducerDataLink(
                 new ReducerDataJWTVerify("secret".getBytes(StandardCharsets.UTF_8)),
-                new ReducerDataJWTAuthorization(querylink, new HashSet<>(Arrays.asList("USERNAME_VISIBLE_QUERY")), new HashSet<>(Arrays.asList("authenticatedres"))),
+                new ReducerDataJWTAuthorization(querylink, new HashSet<>(Arrays.asList("ANONYMOUS_VISIBLE_QUERY")), new HashSet<>(Arrays.asList("AUTHENTICATED_VISIBLE_QUERY"))),
                 new ReducerDataIdentity(datalink));
     }
 

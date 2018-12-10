@@ -108,13 +108,13 @@ public class QueryTests {
         Assert.assertEquals(VariantVoid.INSTANCE, result3.get(0).get("IMAGE"));
     }
 
-    private void testSentenceTableLike(QueryLink link, Header header) throws DataException {
+    private void testSentenceTableContains(QueryLink link, Header header) throws DataException {
         List<Record> result4 = SourceLink.getQueryLink().query(header,
                 new Record(
                         new Entry("COLLECTION.KEY", "USERNAME"),
                         new Entry("ID.KEY", VariantString.NULL),
                         new Entry("NAME", VariantString.NULL),
-                        new Entry("NAME__LIKE", "%a%"),
+                        new Entry("NAME__CONTAINS", "a"),
                         new Entry("VISIBLE", VariantBoolean.NULL),
                         new Entry("CODECARD", VariantString.NULL),
                         new Entry("__ORDERBY", "NAME")));
@@ -137,7 +137,7 @@ public class QueryTests {
             testSentenceQuery(SourceLink.getQueryLink(), header);
             testSentenceView(SourceLink.getQueryLink(), header);
             testSentenceTable(SourceLink.getQueryLink(), header);
-            testSentenceTableLike(SourceLink.getQueryLink(), header);
+            testSentenceTableContains(SourceLink.getQueryLink(), header);
         } finally {
             SourceLink.destroyDataQueryLink();
         }
