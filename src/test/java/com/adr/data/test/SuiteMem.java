@@ -33,12 +33,12 @@ import org.junit.runners.Suite;
 public class SuiteMem {
 
     @BeforeClass
-    public static void setUpClass() throws Exception {      
+    public static void setUpClass() throws Exception {
         SourceLink.setBuilder(new DataQueryLinkMem());
     }
 
     @AfterClass
     public static void tearDownClass() throws Exception {
-        SourceLink.setBuilder(null);    
-    }    
+        SourceLink.setBuilder(null);
+    }
 }

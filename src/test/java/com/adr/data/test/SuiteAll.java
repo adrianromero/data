@@ -29,13 +29,13 @@ import org.junit.runners.Suite;
     SuiteMem.class,
 //    SuiteH2.class,
 //    SuiteMYSQL.class,
-//    SuitePostgreSQL.class,
+    SuitePostgreSQL.class,
 
 //    // HTTP suite
-      SuiteHTTP.class,
+//      SuiteHTTP.class,
 //
 //    // MQ Sync suite
-//    SuiteMQ.class
+    SuiteMQ.class
 })
 
 public class SuiteAll {
