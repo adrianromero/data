@@ -39,11 +39,13 @@ public class SuiteMQ {
     
     private static final String HOST = "localhost";
     private static final int PORT = 5672;
+    private static final String USERNAME = "admin";
+    private static final String PASSWORD = "admin";
     private static final String EXCHANGEQUERY ="exquerylink";
     private static final String EXCHANGEDATA = "exdatalink";
     private static final String QUEUEQUERY ="mqquerylink";
     private static final String QUEUEDATA = "mqdatalink";
-    private static final String SQLNAME = "h2";
+    private static final String SQLNAME = "postgresql";
     
     private static final DataQueryLinkBuilder builder= new DataQueryLinkSQL(SQLNAME);;
     private static RabbitServer myserver;
@@ -51,9 +53,9 @@ public class SuiteMQ {
     @BeforeClass
     public static void setUpClass() throws Exception {
         builder.create();
-        myserver = new RabbitServer(HOST, PORT, QUEUEDATA, QUEUEQUERY, builder.getDataLink(), builder.getQueryLink());
+        myserver = new RabbitServer(HOST, PORT, USERNAME, PASSWORD, QUEUEDATA, QUEUEQUERY, builder.getDataLink(), builder.getQueryLink());
         myserver.start();
-        SourceLink.setBuilder(new DataQueryLinkMQ(HOST, EXCHANGEDATA, EXCHANGEQUERY));
+        SourceLink.setBuilder(new DataQueryLinkMQ(HOST, PORT, USERNAME, PASSWORD, EXCHANGEDATA, EXCHANGEQUERY));
     }
 
     @AfterClass
