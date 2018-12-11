@@ -47,7 +47,7 @@ public class SuiteMQ {
     private static final String QUEUEDATA = "mqdatalink";
     private static final String SQLNAME = "postgresql";
     
-    private static final DataQueryLinkBuilder builder= new DataQueryLinkSQL(SQLNAME);;
+    private static final DataQueryLinkBuilder builder= new DataQueryLinkSQL(SQLNAME);
     private static RabbitServer myserver;
 
     @BeforeClass

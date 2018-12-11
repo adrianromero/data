@@ -28,13 +28,13 @@ import org.junit.runners.Suite;
     // Database suites
     SuiteMem.class,
 //    SuiteH2.class,
-//    SuiteMYSQL.class,
+    SuiteMYSQL.class,
     SuitePostgreSQL.class,
 
-//    // HTTP suite
-//      SuiteHTTP.class,
-//
-//    // MQ Sync suite
+    // HTTP suite
+    SuiteHTTP.class,
+
+    // MQ Sync suite
     SuiteMQ.class
 })
 
