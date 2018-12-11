@@ -66,7 +66,10 @@ public abstract class ReducerLogin implements ReducerQuery {
                     new Entry("COLLECTION.KEY", AUTHENTICATION_REQUEST),
                     new Entry("NAME", user),
                     new Entry("PASSWORD", password)));
-        return r.getString("AUTHORIZATION");
+        if (r == null) {
+            throw new SecurityDataException("Invalid security request.");
+        }
+        return r.getString("AUTHORIZATION"); // Throw SecurityDataException if null
     }
 
     public static Record current(QueryLink link, Header headers) throws DataException {
@@ -80,7 +83,9 @@ public abstract class ReducerLogin implements ReducerQuery {
                 new Record(
                         new Entry("COLLECTION.KEY", AUTHORIZATION_REQUEST),
                         new Entry("RESOURCE", resource)));
-
+        if (result == null) {
+            throw new SecurityDataException("Invalid security request.");
+        }
         return result.getBoolean("RESULT");
     }
 }
