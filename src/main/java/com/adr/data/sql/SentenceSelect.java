@@ -75,31 +75,31 @@ public abstract class SentenceSelect extends SentenceQRY {
                 return;
             }
 
-            if (n.endsWith("__EQUAL")) {
+            if (n.endsWith("..EQUAL")) {
                 realname = n.substring(0, n.length() - 7);
                 criteria = " = ?";
-            } else if (n.endsWith("__DISTINCT")) {
+            } else if (n.endsWith("..DISTINCT")) {
                 realname = n.substring(0, n.length() - 10);
                 criteria = " <> ?";
-           } else if (n.endsWith("__GREATER")) {
+           } else if (n.endsWith("..GREATER")) {
                realname = n.substring(0, n.length() - 9);
                criteria = " > ?";
-           } else if (n.endsWith("__GREATEROREQUAL")) {
+           } else if (n.endsWith("..GREATEROREQUAL")) {
                realname = n.substring(0, n.length() - 16);
                criteria = " >= ?";
-           } else if (n.endsWith("__LESS")) {
+           } else if (n.endsWith("..LESS")) {
                realname = n.substring(0, n.length() - 6);
                criteria = " < ?";
-           } else if (n.endsWith("__LESSOREQUAL")) {
+           } else if (n.endsWith("..LESSOREQUAL")) {
                realname = n.substring(0, n.length() - 13);
                criteria = " <= ?";
-            } else if (n.endsWith("__CONTAINS")) {
+            } else if (n.endsWith("..CONTAINS")) {
                realname = n.substring(0, n.length() - 10);
                criteria = engine.getContainsExpression();
-            } else if (n.endsWith("__STARTS")) {
+            } else if (n.endsWith("..STARTS")) {
                realname = n.substring(0, n.length() - 8);
                criteria = engine.getStartsExpression();
-            } else if (n.endsWith("__ENDS")) {
+            } else if (n.endsWith("..ENDS")) {
                realname = n.substring(0, n.length() - 6);
                criteria = engine.getEndsExpression();
            } else if (n.endsWith(".KEY")) {
@@ -110,7 +110,7 @@ public abstract class SentenceSelect extends SentenceQRY {
                criteria = " = ?";
            }
            // PROJECTION
-           if (!n.contains("__")) {
+           if (!n.contains("..")) {
                if (comma) {
                    sqlsent.append(", ");
                } else {
@@ -122,7 +122,7 @@ public abstract class SentenceSelect extends SentenceQRY {
                sqlsent.append("\"");
            }
            // FILTER
-           if (!realname.contains("__") && !v.get(n).isNull()) {
+           if (!realname.contains("..") && !v.get(n).isNull()) {
                if (commafilter) {
                    sqlfilter.append(" AND ");
                } else {

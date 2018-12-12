@@ -26,6 +26,7 @@ import org.junit.Test;
 import com.adr.data.record.Record;
 import com.adr.data.recordparser.RecordsSerializer;
 import com.adr.data.var.Kind;
+import com.adr.data.var.VariantBoolean;
 import com.adr.data.var.VariantInt;
 import com.adr.data.var.VariantLong;
 
@@ -101,5 +102,22 @@ public class ParserTests {
         String recordsstr = "(id: \"1\", field: \"pepeluis\")\n(id: \"2\", field: \"hilario\")";
 
         Assert.assertEquals(recordsstr, RecordsSerializer.writeList(records));
+    }
+    
+    @Test
+    public void recordsWithIdentifiers() throws IOException {
+        Record r = new Record(
+                new Entry("COLLECTION.KEY", "USERNAME"),
+                new Entry("ID.KEY", VariantString.NULL),
+                new Entry("NAME", VariantString.NULL),
+                new Entry("NAME..CONTAINS", "a"),
+                new Entry("VISIBLE", VariantBoolean.NULL),
+                new Entry("CODECARD", VariantString.NULL),
+                new Entry("..ORDERBY", "NAME"));   
+        
+        String s = RecordsSerializer.write(r);    
+        Record r2 = RecordsSerializer.read(s);
+        String s2 = RecordsSerializer.write(r2);
+        Assert.assertEquals(s, s2);
     }
 }

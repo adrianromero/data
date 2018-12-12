@@ -52,7 +52,7 @@ public class SentenceH2Merge extends SentenceDML {
         boolean filterkeys = false;
         String realname;
         for (String f : record.getNames()) {
-            if (!f.equals("COLLECTION.KEY") && !f.contains("__")) {
+            if (!f.equals("COLLECTION.KEY") && !f.contains("..")) {
                 if (f.endsWith(".KEY")) {
                     realname = f.substring(0, f.length() - 4);  
                     keys.append(filterkeys ? ", " : "");

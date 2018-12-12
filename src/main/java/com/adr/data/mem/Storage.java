@@ -47,7 +47,7 @@ public class Storage {
         String realname;
         boolean isDelete = true;
         for (String n : record.getNames()) {
-            if (!n.contains("__")) {
+            if (!n.contains("..")) {
                 Variant v = record.get(n);
                 if (n.endsWith(".KEY")) {
                     realname = n.substring(0, n.length() - 4);
@@ -115,31 +115,31 @@ public class Storage {
         for (String n : filter.getNames()) {
             Variant v = filter.get(n);
             
-            if (n.endsWith("__EQUAL")) {
+            if (n.endsWith("..EQUAL")) {
                 realname = n.substring(0, n.length() - 7);
                 criteria = x -> x.equals(v);
-            } else if (n.endsWith("__DISTINCT")) {
+            } else if (n.endsWith("..DISTINCT")) {
                 realname = n.substring(0, n.length() - 10);
                 criteria = x -> !x.equals(v);
-           } else if (n.endsWith("__GREATER")) {
+           } else if (n.endsWith("..GREATER")) {
                 realname = n.substring(0, n.length() - 9);
                 criteria = x -> !x.isNull() && x.asDouble() > v.asDouble();
-           } else if (n.endsWith("__GREATEROREQUAL")) {
+           } else if (n.endsWith("..GREATEROREQUAL")) {
                 realname = n.substring(0, n.length() - 16);
                 criteria = x -> !x.isNull() && x.asDouble() >= v.asDouble();
-           } else if (n.endsWith("__LESS")) {
+           } else if (n.endsWith("..LESS")) {
                 realname = n.substring(0, n.length() - 6);
                 criteria = x -> !x.isNull() && x.asDouble() < v.asDouble();
-           } else if (n.endsWith("__LESSOREQUAL")) {
+           } else if (n.endsWith("..LESSOREQUAL")) {
                 realname = n.substring(0, n.length() - 13);
                 criteria = x -> !x.isNull() && x.asDouble() <= v.asDouble();
-            } else if (n.endsWith("__CONTAINS")) {
+            } else if (n.endsWith("..CONTAINS")) {
                 realname = n.substring(0, n.length() - 10);
                 criteria = x -> !x.isNull() && x.asString().contains((v.asString()));
-            } else if (n.endsWith("__STARTS")) {
+            } else if (n.endsWith("..STARTS")) {
                 realname = n.substring(0, n.length() - 8);
                 criteria = x -> !x.isNull() && x.asString().startsWith((v.asString()));
-            } else if (n.endsWith("__ENDS")) {
+            } else if (n.endsWith("..ENDS")) {
                 realname = n.substring(0, n.length() - 6);
                 criteria = x -> !x.isNull() && x.asString().endsWith((v.asString()));
            } else if (n.endsWith(".KEY")) {
@@ -151,11 +151,11 @@ public class Storage {
             }
             
             // PROJECTION
-            if (!n.contains("__")) {
+            if (!n.contains("..")) {
                 entries.add(new Entry(n, val.get(realname)));
             }
             // FILTER
-            if (!realname.contains("__") && !v.isNull()) {
+            if (!realname.contains("..") && !v.isNull()) {
                 if (!criteria.test(val.get(realname))) {
                     return null; // out
                 }

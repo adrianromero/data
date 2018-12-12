@@ -104,7 +104,7 @@ public abstract class Sentence {
             Variant p = param.get(name);
             if ("COLLECTION.KEY".equals(name)) {
                 l.add(new Entry(name, p));
-            } else if (!name.contains("__")) { // Is a field
+            } else if (!name.contains("..")) { // Is a field
                 SQLResults sqlresults = new SQLResults(resultset, name);
                 Variant newv = p.getKind().read(sqlresults);
                 l.add(new Entry(name, newv));

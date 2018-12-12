@@ -59,7 +59,7 @@ public class QueryTests {
                         new Entry("ID.KEY", VariantString.NULL),
                         new Entry("NAME", VariantString.NULL),
                         new Entry("CODECARD", VariantString.NULL),
-                        new Entry("__ORDERBY", "NAME$DESC")));
+                        new Entry("..ORDERBY", "NAME$DESC")));
 
         Assert.assertEquals(3, result.size());
         Assert.assertEquals("manager", result.get(0).getString("NAME"));
@@ -114,10 +114,10 @@ public class QueryTests {
                         new Entry("COLLECTION.KEY", "USERNAME"),
                         new Entry("ID.KEY", VariantString.NULL),
                         new Entry("NAME", VariantString.NULL),
-                        new Entry("NAME__CONTAINS", "a"),
+                        new Entry("NAME..CONTAINS", "a"),
                         new Entry("VISIBLE", VariantBoolean.NULL),
                         new Entry("CODECARD", VariantString.NULL),
-                        new Entry("__ORDERBY", "NAME")));
+                        new Entry("..ORDERBY", "NAME")));
         Assert.assertEquals(2, result4.size());
         Assert.assertEquals("admin", result4.get(0).getString("NAME"));
         Assert.assertEquals("manager", result4.get(1).getString("NAME"));

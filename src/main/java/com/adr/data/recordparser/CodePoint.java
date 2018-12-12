@@ -31,7 +31,7 @@ public final class CodePoint {
         return Character.isAlphabetic(cp);
     }
     public static final boolean isInitIdentifier(int cp) {
-        return Character.isUnicodeIdentifierStart(cp) || cp == '_';
+        return Character.isUnicodeIdentifierStart(cp) || cp == '.';
     }
     public static final boolean isIdentifier(int cp) {
         return Character.isUnicodeIdentifierPart(cp) || cp == '.';

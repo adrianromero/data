@@ -65,8 +65,8 @@ public class Authorizer {
         // Valid login, load user details.
         Record subjectsquery = new Record(
                 new Entry("COLLECTION.KEY", "SUBJECT_ROLE"),
-                new Entry("ROLE__PARAM", role),
-                new Entry("SUBJECT__PARAM", resource),
+                new Entry("ROLE..PARAM", role),
+                new Entry("SUBJECT..PARAM", resource),
                 new Entry("NAME", VariantString.NULL),
                 new Entry("DISPLAYNAME", VariantString.NULL));
         return link.find(subjectsquery) != null;
