@@ -25,6 +25,7 @@ import com.adr.data.var.VariantBoolean;
 import com.adr.data.var.VariantString;
 import java.io.IOException;
 import java.util.List;
+import org.junit.Assert;
 
 /**
  *
@@ -88,9 +89,12 @@ public class RecordsTests {
                                 new Entry("VISIBLE", VariantBoolean.NULL),
                                 new Entry("ACTIVE", VariantBoolean.NULL)));     
             
-            System.out.println("-->");
-            System.out.println(RecordsSerializer.writeList(result));
-            System.out.println("<--");
+            
+            Assert.assertEquals("(COLLECTION.KEY: \"USERNAME\", ID.KEY: \"admin\", NAME: \"admin\", DISPLAYNAME: \"Administrator\", CODECARD: \"123457\", ROLE_ID: \"a\", VISIBLE: true, ACTIVE: true)\n" +
+                                "(COLLECTION.KEY: \"USERNAME\", ID.KEY: \"guest\", NAME: \"guest\", DISPLAYNAME: \"Guest\", CODECARD: \"11111111\", ROLE_ID: \"g\", VISIBLE: true, ACTIVE: true)\n" +
+                                "(COLLECTION.KEY: \"USERNAME\", ID.KEY: \"manager\", NAME: \"manager\", DISPLAYNAME: \"Manager\", CODECARD: \"22121\", ROLE_ID: \"m\", VISIBLE: true, ACTIVE: true)\n" +
+                                "(COLLECTION.KEY: \"USERNAME\", ID.KEY: \"developer\", NAME: \"developer\", DISPLAYNAME: \"Developer\", CODECARD: \"666666\", ROLE_ID: \"m\", VISIBLE: false, ACTIVE: true)", 
+                    RecordsSerializer.writeList(result));
            
             List<Record> result2 = SourceLink.getQueryLink().query(
                         new Record(
@@ -102,15 +106,10 @@ public class RecordsTests {
                                 new Entry("ROLE_ID", VariantString.NULL),
                                 new Entry("VISIBLE", VariantBoolean.NULL),
                                 new Entry("ACTIVE", VariantBoolean.NULL)));     
-            
-            System.out.println("-->");
-            System.out.println(RecordsSerializer.writeList(result2));
-            System.out.println("<--");
-                       
-            
-//            Assert.assertEquals("newuser", r.getString("NAME"));
-//            Assert.assertEquals("New User", r.getString("DISPLAYNAME"));
-//            Assert.assertEquals(Boolean.TRUE, r.getBoolean("VISIBLE"));
+
+            Assert.assertEquals("(COLLECTION.KEY: \"USERNAME\", ID.KEY: \"guest\", NAME: \"guest\", DISPLAYNAME: \"Guest\", CODECARD: \"11111111\", ROLE_ID: \"g\", VISIBLE: true, ACTIVE: true)",
+                    RecordsSerializer.writeList(result2));
+
 
         } finally {
             SourceLink.destroyDataQueryLink();
