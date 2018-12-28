@@ -48,6 +48,11 @@ public class VariantString extends Variant {
     }
 
     @Override
+    public Object asObject() {
+        return value;
+    }
+    
+    @Override
     public int hashCode() {
         int hash = 3;
         hash = 83 * hash + Objects.hashCode(this.value);

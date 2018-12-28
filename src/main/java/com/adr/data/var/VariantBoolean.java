@@ -49,6 +49,11 @@ public class VariantBoolean extends Variant {
     public Boolean asBoolean() {
         return value;
     }
+    
+    @Override
+    public Object asObject() {
+        return value;
+    }
 
     @Override
     public int hashCode() {

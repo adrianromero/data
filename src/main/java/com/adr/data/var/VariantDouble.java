@@ -68,6 +68,11 @@ public class VariantDouble extends Variant {
     }
     
     @Override
+    public Object asObject() {
+        return value;
+    }
+    
+    @Override
     public int hashCode() {
         int hash = 7;
         hash = 67 * hash + Objects.hashCode(this.value);

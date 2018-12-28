@@ -46,7 +46,12 @@ public class VariantBytes extends Variant {
     public byte[] asBytes() {
         return value;
     }
-
+    
+    @Override
+    public Object asObject() {
+        return value;
+    }
+    
     @Override
     public int hashCode() {
         int hash = 7;

@@ -49,6 +49,11 @@ public class VariantLocalDateTime extends Variant {
     }
 
     @Override
+    public Object asObject() {
+        return value;
+    }
+    
+    @Override
     public int hashCode() {
         int hash = 3;
         hash = 41 * hash + Objects.hashCode(this.value);
