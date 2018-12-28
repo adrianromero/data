@@ -17,6 +17,7 @@
 
 package com.adr.data.mem;
 
+import com.adr.data.FilterBuilderMethods;
 import com.adr.data.record.Entry;
 import com.adr.data.record.Record;
 import com.adr.data.record.Records;
@@ -28,7 +29,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
-import java.util.function.Predicate;
+import com.adr.data.FilterBuilder;
 
 /**
  *
@@ -36,7 +37,7 @@ import java.util.function.Predicate;
  */
 public class Storage {
     
-    private LinkedHashMap<String, Record> collection = new LinkedHashMap<String, Record>();
+    private final LinkedHashMap<String, Record> collection = new LinkedHashMap<>();
     private final ReentrantReadWriteLock rwl = new ReentrantReadWriteLock();
     private final Lock r = rwl.readLock();
     private final Lock w = rwl.writeLock();    
@@ -72,8 +73,8 @@ public class Storage {
     public void put(List<Record> records) throws IOException {  
         w.lock();
         try {
-            for (Record r : records) {
-                put(r);
+            for (Record record : records) {
+                put(record);
             }            
         } finally {
             w.unlock();
@@ -86,9 +87,14 @@ public class Storage {
         int limit = Records.getLimit(filter);
         int offset = Records.getOffset(filter);       
         try {
+            
             List<Record> result = new ArrayList<>();
-            for (Record r : collection.values()) {
-                Record p = project(filter, r);
+            StorageBuilder builder = new StorageBuilder();
+            FilterBuilderMethods.build(builder, filter);
+            
+            for (Record record : collection.values()) {
+                // Record p = project(filter, r);
+                Record p = builder.filterAndProject(record, filter);
                 if (p != null) {
                     // Matches...
                     if (offset > 0) {
@@ -107,60 +113,109 @@ public class Storage {
             r.unlock();
         }
     }
-    
-    private Record project(Record filter, Record val) {
-        List<Entry> entries = new ArrayList<>();
-        String realname;
-        Predicate<Variant> criteria;
-        for (String n : filter.getNames()) {
-            Variant v = filter.get(n);
-            
-            if (n.endsWith("..EQUAL")) {
-                realname = n.substring(0, n.length() - 7);
-                criteria = x -> x.equals(v);
-            } else if (n.endsWith("..DISTINCT")) {
-                realname = n.substring(0, n.length() - 10);
-                criteria = x -> !x.equals(v);
-           } else if (n.endsWith("..GREATER")) {
-                realname = n.substring(0, n.length() - 9);
-                criteria = x -> !x.isNull() && x.asDouble() > v.asDouble();
-           } else if (n.endsWith("..GREATEROREQUAL")) {
-                realname = n.substring(0, n.length() - 16);
-                criteria = x -> !x.isNull() && x.asDouble() >= v.asDouble();
-           } else if (n.endsWith("..LESS")) {
-                realname = n.substring(0, n.length() - 6);
-                criteria = x -> !x.isNull() && x.asDouble() < v.asDouble();
-           } else if (n.endsWith("..LESSOREQUAL")) {
-                realname = n.substring(0, n.length() - 13);
-                criteria = x -> !x.isNull() && x.asDouble() <= v.asDouble();
-            } else if (n.endsWith("..CONTAINS")) {
-                realname = n.substring(0, n.length() - 10);
-                criteria = x -> !x.isNull() && x.asString().contains((v.asString()));
-            } else if (n.endsWith("..STARTS")) {
-                realname = n.substring(0, n.length() - 8);
-                criteria = x -> !x.isNull() && x.asString().startsWith((v.asString()));
-            } else if (n.endsWith("..ENDS")) {
-                realname = n.substring(0, n.length() - 6);
-                criteria = x -> !x.isNull() && x.asString().endsWith((v.asString()));
-           } else if (n.endsWith(".KEY")) {
-                realname = n.substring(0, n.length() - 4);
-                criteria = x -> x.equals(v);
-            } else {
-                realname = n;
-                criteria = x -> v.equals(x);
-            }
-            
-            // PROJECTION
-            if (!n.contains("..")) {
-                entries.add(new Entry(n, val.get(realname)));
-            }
-            // FILTER
-            if (!realname.contains("..") && !v.isNull()) {
-                if (!criteria.test(val.get(realname))) {
-                    return null; // out
-                }
-            }
+
+    private static class StorageName {
+        public final String name;
+        public final String realname;
+        public StorageName(String name, String realname) {
+            this.name = name;
+            this.realname = realname;
         }
-        return new Record(entries);
+    }
+    
+    private static class StorageBuilder implements FilterBuilder {
+
+        private List<StorageName> names = new ArrayList<>();
+        private PredicateFilter p = (r, filter) -> true;
+        
+        public Record filterAndProject(Record r, Record filter) {           
+            if (p.test(r, filter)) {
+                List<Entry> entries = new ArrayList<>();
+                for (StorageName n : names) {
+                    entries.add(new Entry(n.name, r.get(n.realname)));
+                }
+                return new Record(entries);
+            } else {
+                return null;
+            }
+        }     
+
+        @Override
+        public void project(String name, String realname) {
+            names.add(new StorageName(name, realname));
+        }
+
+        @Override
+        public void filterEqual(String name, String realname) {
+            p = p.and((r, filter) -> r.get(realname).equals(filter.get(name)));
+        }
+
+        @Override
+        public void filterDistinct(String name, String realname) {
+            p = p.and((r, filter) -> !r.get(realname).equals(filter.get(name)));
+        }
+
+        @Override
+        public void filterGreater(String name, String realname) {
+            p = p.and((r, filter) -> {
+                Variant v = filter.get(name);
+                Variant x = r.get(realname);
+                return !x.isNull() && x.asDouble() > v.asDouble();
+            });
+        }
+
+        @Override
+        public void filterGreaterOrEqual(String name, String realname) {
+            p = p.and((r, filter) -> {
+                Variant v = filter.get(name);
+                Variant x = r.get(realname);
+                return !x.isNull() && x.asDouble() >= v.asDouble();
+            });
+        }
+
+        @Override
+        public void filterLess(String name, String realname) {
+            p = p.and((r, filter) -> {
+                Variant v = filter.get(name);
+                Variant x = r.get(realname);
+                return !x.isNull() && x.asDouble() < v.asDouble();
+            });
+        }
+
+        @Override
+        public void filterLessOrEqual(String name, String realname) {
+            p = p.and((r, filter) -> {
+                Variant v = filter.get(name);
+                Variant x = r.get(realname);
+                return !x.isNull() && x.asDouble() <= v.asDouble();
+            });
+        }
+
+        @Override
+        public void filterContains(String name, String realname) {
+            p = p.and((r, filter) -> {
+                Variant v = filter.get(name);
+                Variant x = r.get(realname);
+                return !x.isNull() && x.asString().contains((v.asString()));
+            });
+        }
+
+        @Override
+        public void filterStarts(String name, String realname) {
+            p = p.and((r, filter) -> {
+                Variant v = filter.get(name);
+                Variant x = r.get(realname);
+                return !x.isNull() && x.asString().startsWith((v.asString()));
+            });
+        }
+
+        @Override
+        public void filterEnds(String name, String realname) {
+            p = p.and((r, filter) -> {
+                Variant v = filter.get(name);
+                Variant x = r.get(realname);
+                return !x.isNull() && x.asString().endsWith((v.asString()));
+            });
+        }
     }
 }

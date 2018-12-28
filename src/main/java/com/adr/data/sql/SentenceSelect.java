@@ -1,5 +1,5 @@
 //     Data Access is a Java library to store data
-//     Copyright (C) 2016 Adrián Romero Corchado.
+//     Copyright (C) 2016-2018 Adrián Romero Corchado.
 //
 //     This file is part of Data Access
 //
@@ -18,9 +18,11 @@
 package com.adr.data.sql;
 
 import com.adr.data.DataException;
+import com.adr.data.FilterBuilderMethods;
 import java.util.ArrayList;
 import java.util.List;
 import com.adr.data.record.Record;
+import com.adr.data.FilterBuilder;
 
 /**
  *
@@ -33,12 +35,10 @@ public abstract class SentenceSelect extends SentenceQRY {
     @Override
     public CommandSQL build(SQLEngine engine, Record record) throws DataException {
 
-        SentenceSelect.SentenceBuilder builder = new SentenceSelect.SentenceBuilder(engine);
+        SentenceSelect.SentenceBuilder builder = new SentenceSelect.SentenceBuilder(engine);       
+        FilterBuilderMethods.build(builder, record);
+ 
         StringBuilder sqlsent = new StringBuilder();
-
-        for (String f : record.getNames()) {
-            builder.add(record, f);
-        }
         sqlsent.append("SELECT ");
         sqlsent.append(builder.getSqlsent());
         sqlsent.append(" FROM ");
@@ -48,11 +48,10 @@ public abstract class SentenceSelect extends SentenceQRY {
         
         SentenceQRY.addQueryOptions(sqlsent, engine, record);     
 
-        // build statement
         return new CommandSQL(sqlsent.toString(), builder.getFieldsList());
     }
     
-    private static class SentenceBuilder {
+    private static class SentenceBuilder implements FilterBuilder {
         
         private final SQLEngine engine;
 
@@ -66,75 +65,6 @@ public abstract class SentenceSelect extends SentenceQRY {
             this.engine = engine;
         }
 
-        public void add(Record v, String n) {
-            // FILTERING THINGS
-            String realname;
-            String criteria;
-
-            if (n.equals("COLLECTION.KEY")) {
-                return;
-            }
-
-            if (n.endsWith("..EQUAL")) {
-                realname = n.substring(0, n.length() - 7);
-                criteria = " = ?";
-            } else if (n.endsWith("..DISTINCT")) {
-                realname = n.substring(0, n.length() - 10);
-                criteria = " <> ?";
-           } else if (n.endsWith("..GREATER")) {
-               realname = n.substring(0, n.length() - 9);
-               criteria = " > ?";
-           } else if (n.endsWith("..GREATEROREQUAL")) {
-               realname = n.substring(0, n.length() - 16);
-               criteria = " >= ?";
-           } else if (n.endsWith("..LESS")) {
-               realname = n.substring(0, n.length() - 6);
-               criteria = " < ?";
-           } else if (n.endsWith("..LESSOREQUAL")) {
-               realname = n.substring(0, n.length() - 13);
-               criteria = " <= ?";
-            } else if (n.endsWith("..CONTAINS")) {
-               realname = n.substring(0, n.length() - 10);
-               criteria = engine.getContainsExpression();
-            } else if (n.endsWith("..STARTS")) {
-               realname = n.substring(0, n.length() - 8);
-               criteria = engine.getStartsExpression();
-            } else if (n.endsWith("..ENDS")) {
-               realname = n.substring(0, n.length() - 6);
-               criteria = engine.getEndsExpression();
-           } else if (n.endsWith(".KEY")) {
-               realname = n.substring(0, n.length() - 4);
-               criteria = " = ?";
-           } else {
-               realname = n;
-               criteria = " = ?";
-           }
-           // PROJECTION
-           if (!n.contains("..")) {
-               if (comma) {
-                   sqlsent.append(", ");
-               } else {
-                   comma = true;
-               }
-               sqlsent.append(realname);
-               sqlsent.append(" AS \"");
-               sqlsent.append(n);
-               sqlsent.append("\"");
-           }
-           // FILTER
-           if (!realname.contains("..") && !v.get(n).isNull()) {
-               if (commafilter) {
-                   sqlfilter.append(" AND ");
-               } else {
-                   sqlfilter.append(" WHERE ");
-                   commafilter = true;
-               }
-               sqlfilter.append(realname);
-               sqlfilter.append(criteria);
-               fieldslist.add(n);
-           }
-        }
-
         public StringBuilder getSqlsent() {
             return sqlsent;
         }
@@ -145,6 +75,86 @@ public abstract class SentenceSelect extends SentenceQRY {
 
         public String[] getFieldsList() {
             return fieldslist.stream().toArray(String[]::new);
+        }
+        
+        private void filterCriteria(String name, String realname, String criteria) {
+            
+            if (name.equals("COLLECTION.KEY")) {
+                return;
+            }
+            
+            if (commafilter) {
+                sqlfilter.append(" AND ");
+            } else {
+                sqlfilter.append(" WHERE ");
+                commafilter = true;
+            }    
+            sqlfilter.append(realname);
+            sqlfilter.append(criteria);
+            fieldslist.add(name);            
+        }
+
+        @Override
+        public void project(String name, String realname) {
+            
+            if (name.equals("COLLECTION.KEY")) {
+                return;
+            }
+             
+            if (comma) {
+                sqlsent.append(", ");
+            } else {
+                comma = true;
+            }
+            sqlsent.append(realname);
+            sqlsent.append(" AS \"");
+            sqlsent.append(name);
+            sqlsent.append("\"");
+        }
+
+        @Override
+        public void filterEqual(String name, String realname) {
+            filterCriteria(name, realname, " = ?");     
+        }
+
+        @Override
+        public void filterDistinct(String name, String realname) {
+            filterCriteria(name, realname, " <> ?");     
+        }
+
+        @Override
+        public void filterGreater(String name, String realname) {
+            filterCriteria(name, realname, " > ?");     
+        }
+
+        @Override
+        public void filterGreaterOrEqual(String name, String realname) {
+            filterCriteria(name, realname, " >= ?");     
+        }
+
+        @Override
+        public void filterLess(String name, String realname) {
+            filterCriteria(name, realname, " < ?");     
+        }
+
+        @Override
+        public void filterLessOrEqual(String name, String realname) {
+            filterCriteria(name, realname, " <= ?");     
+        }
+
+        @Override
+        public void filterContains(String name, String realname) {
+            filterCriteria(name, realname, engine.getContainsExpression());     
+        }
+
+        @Override
+        public void filterStarts(String name, String realname) {
+            filterCriteria(name, realname, engine.getStartsExpression());     
+        }
+
+        @Override
+        public void filterEnds(String name, String realname) {
+            filterCriteria(name, realname, engine.getEndsExpression());     
         }
     }   
 }
