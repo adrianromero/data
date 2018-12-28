@@ -30,6 +30,7 @@ import org.junit.runners.Suite;
 //    SuiteH2.class,
     SuiteMYSQL.class,
     SuitePostgreSQL.class,
+    SuiteMongo.class,
 
     // HTTP suite
     SuiteHTTP.class,
