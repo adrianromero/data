@@ -35,6 +35,7 @@ import com.mongodb.client.model.Projections;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.regex.Pattern;
 import org.bson.BsonDocument;
 import org.bson.Document;
 import org.bson.conversions.Bson;
@@ -184,17 +185,23 @@ public class MongoQueryLink implements QueryLink {
 
         @Override
         public void filterContains(String name, String realname) {
-            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+            filterCriteria(name, realname, (filters, r) -> {
+                filters.add(Filters.regex(realname, ".*" + Pattern.quote(r.get(realname).asString()) + ".*"));
+            });
         }
 
         @Override
         public void filterStarts(String name, String realname) {
-            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+            filterCriteria(name, realname, (filters, r) -> {
+                filters.add(Filters.regex(realname, Pattern.quote(r.get(realname).asString()) + ".*"));
+            });
         }
 
         @Override
         public void filterEnds(String name, String realname) {
-            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+            filterCriteria(name, realname, (filters, r) -> {
+                filters.add(Filters.regex(realname, ".*" + Pattern.quote(r.get(realname).asString())));
+            });
         }
     }
 }
