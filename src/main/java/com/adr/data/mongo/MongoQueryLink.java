@@ -32,6 +32,7 @@ import com.mongodb.client.MongoCursor;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.Filters;
 import com.mongodb.client.model.Projections;
+import com.mongodb.client.model.Sorts;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -63,6 +64,7 @@ public class MongoQueryLink implements QueryLink {
         FilterBuilderMethods.build(builder, filter);
         FindIterable<Document> iter = collection
                 .find(builder.getFilterFor(filter))
+                .sort(orderBy(filter))
                 .skip(offset)
                 .limit(limit)
                 .projection(builder.getProjection());
@@ -74,6 +76,26 @@ public class MongoQueryLink implements QueryLink {
             }
         }
         return result;
+    }
+    
+    protected static Bson orderBy(Record record) throws DataException {
+        String[] orderby = Records.getOrderBy(record);
+        if (orderby.length > 0) {
+            List<Bson> sorts = new ArrayList<>();
+            for (int i = 0; i < orderby.length; i++) {
+                String s = orderby[i];
+                if (s.endsWith("$ASC")) {
+                    sorts.add(Sorts.ascending(s.substring(0, s.length() - 4)));
+                } else if (s.endsWith("$DESC")) {
+                    sorts.add(Sorts.descending(s.substring(0, s.length() - 5)));                
+                } else {
+                    sorts.add(Sorts.ascending(s));    
+                }
+            }
+            return Sorts.orderBy(sorts);
+        } else {
+            return new BsonDocument();
+        }      
     }
 
     protected static List<Entry> read(Document d, Record param) throws DataException {
