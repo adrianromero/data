@@ -144,63 +144,63 @@ public class MongoQueryLink implements QueryLink {
         @Override
         public void filterEqual(String name, String realname) {
             filterCriteria(name, realname, (filters, r) -> {
-                filters.add(Filters.eq(realname, r.get(realname).asObject()));
+                filters.add(Filters.eq(realname, r.get(name).asObject()));
             });
         }
 
         @Override
         public void filterDistinct(String name, String realname) {
             filterCriteria(name, realname, (filters, r) -> {
-                filters.add(Filters.ne(realname, r.get(realname).asObject()));
+                filters.add(Filters.ne(realname, r.get(name).asObject()));
             });
         }
 
         @Override
         public void filterGreater(String name, String realname) {
             filterCriteria(name, realname, (filters, r) -> {
-                filters.add(Filters.gt(realname, r.get(realname).asDouble()));
+                filters.add(Filters.gt(realname, r.get(name).asDouble()));
             });
         }
 
         @Override
         public void filterGreaterOrEqual(String name, String realname) {
             filterCriteria(name, realname, (filters, r) -> {
-                filters.add(Filters.gte(realname, r.get(realname).asDouble()));
+                filters.add(Filters.gte(realname, r.get(name).asDouble()));
             });
         }
 
         @Override
         public void filterLess(String name, String realname) {
             filterCriteria(name, realname, (filters, r) -> {
-                filters.add(Filters.lt(realname, r.get(realname).asDouble()));
+                filters.add(Filters.lt(realname, r.get(name).asDouble()));
             });
         }
 
         @Override
         public void filterLessOrEqual(String name, String realname) {
             filterCriteria(name, realname, (filters, r) -> {
-                filters.add(Filters.lte(realname, r.get(realname).asDouble()));
+                filters.add(Filters.lte(realname, r.get(name).asDouble()));
             });
         }
 
         @Override
         public void filterContains(String name, String realname) {
             filterCriteria(name, realname, (filters, r) -> {
-                filters.add(Filters.regex(realname, ".*" + Pattern.quote(r.get(realname).asString()) + ".*"));
+                filters.add(Filters.regex(realname, ".*" + Pattern.quote(r.get(name).asString()) + ".*"));
             });
         }
 
         @Override
         public void filterStarts(String name, String realname) {
             filterCriteria(name, realname, (filters, r) -> {
-                filters.add(Filters.regex(realname, Pattern.quote(r.get(realname).asString()) + ".*"));
+                filters.add(Filters.regex(realname, Pattern.quote(r.get(name).asString()) + ".*"));
             });
         }
 
         @Override
         public void filterEnds(String name, String realname) {
             filterCriteria(name, realname, (filters, r) -> {
-                filters.add(Filters.regex(realname, ".*" + Pattern.quote(r.get(realname).asString())));
+                filters.add(Filters.regex(realname, ".*" + Pattern.quote(r.get(name).asString())));
             });
         }
     }
