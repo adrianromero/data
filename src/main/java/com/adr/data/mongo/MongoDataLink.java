@@ -54,24 +54,38 @@ public class MongoDataLink implements DataLink {
         for (Record r : records) {
             String entity = Records.getCollection(r);
             MongoCollection<Document> collection = database.getCollection(entity);
-
-            Document doc = new Document();
+            
             List<Bson> filters = new ArrayList<>();
-            for (String f : r.getNames()) {
-                String realname;
-                if (!f.equals("COLLECTION.KEY") && !f.contains("..")) {
-                    Variant v = r.get(f);
-                    if (f.endsWith(".KEY")) {
-                        realname = f.substring(0, f.length() - 4);
-                        filters.add(Filters.eq(realname, v.asObject()));
-                    } else {
-                        realname = f;
+            if (Records.isDeleteSentence(r)) {
+                for (String f : r.getNames()) {
+                    String realname;
+                    if (!f.equals("COLLECTION.KEY") && !f.contains("..")) {
+                        Variant v = r.get(f);
+                        if (f.endsWith(".KEY")) {
+                            realname = f.substring(0, f.length() - 4);
+                            filters.add(Filters.eq(realname, v.asObject()));
+                        }
                     }
-                    Parameters p = new DocumentParameters(doc, realname);
-                    v.getKind().write(p, v);
+                }                
+                collection.deleteOne(Filters.and(filters));
+            } else {
+                Document doc = new Document();            
+                for (String f : r.getNames()) {
+                    String realname;
+                    if (!f.equals("COLLECTION.KEY") && !f.contains("..")) {
+                        Variant v = r.get(f);
+                        if (f.endsWith(".KEY")) {
+                            realname = f.substring(0, f.length() - 4);
+                            filters.add(Filters.eq(realname, v.asObject()));
+                        } else {
+                            realname = f;
+                        }
+                        Parameters p = new DocumentParameters(doc, realname);
+                        v.getKind().write(p, v);
+                    }
                 }
-            }
-            collection.replaceOne(Filters.and(filters), doc, UPSERT);
+                collection.replaceOne(Filters.and(filters), doc, UPSERT);
+            } 
         }
     }
 }
