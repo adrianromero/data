@@ -1,5 +1,5 @@
 //     Data Access is a Java library to store data
-//     Copyright (C) 2016 Adrián Romero Corchado.
+//     Copyright (C) 2016-2018 Adrián Romero Corchado.
 //
 //     This file is part of Data Access
 //
@@ -28,7 +28,7 @@ public class SecureCommands {
     public final static Sentence[] QUERIES = new Sentence[]{
         new SentenceQuery(
         "ROLE_SUBJECT", //OK
-        "SELECT R.NAME AS ROLE, S.NAME AS SUBJECT, S.DISPLAYNAME AS SUBJECTNAME FROM PERMISSION P JOIN SUBJECT S ON P.SUBJECT_ID = S.ID JOIN ROLE R ON P.ROLE_ID = R.ID WHERE R.NAME = ? AND S.NAME = ?", "ROLE..PARAM", "SUBJECT..PARAM"),
+        "SELECT R.NAME AS ROLE, S.NAME AS SUBJECT, S.DISPLAYNAME AS SUBJECTNAME FROM PERMISSION P JOIN SUBJECT S ON P.SUBJECT_ID = S.ID JOIN ROLE R ON P.ROLE_ID = R.ID WHERE R.NAME = ? AND S.NAME = ?", "ROLE", "SUBJECT"),
         new SentenceQuery(
         "USERNAME_BYNAME", // OK
         "SELECT U.NAME, U.DISPLAYNAME, R.NAME AS ROLE, R.DISPLAYNAME AS DISPLAYROLE, U.PASSWORD "
