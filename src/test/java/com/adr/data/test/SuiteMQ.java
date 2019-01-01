@@ -17,6 +17,7 @@
 package com.adr.data.test;
 
 import com.adr.data.rabbitmq.RabbitServer;
+import com.adr.data.test.persist.DataTests;
 import com.adr.data.testlinks.DataQueryLinkBuilder;
 import com.adr.data.testlinks.DataQueryLinkMQ;
 import com.adr.data.testlinks.DataQueryLinkSQL;

@@ -14,7 +14,7 @@
 //     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //     See the License for the specific language governing permissions and
 //     limitations under the License.
-package com.adr.data.test;
+package com.adr.data.test.persist;
 
 import com.adr.data.DataException;
 import com.adr.data.QueryLink;
@@ -26,6 +26,7 @@ import com.adr.data.var.VariantString;
 import org.junit.Assert;
 import org.junit.Test;
 import com.adr.data.record.Record;
+import com.adr.data.test.SourceLink;
 
 /**
  *

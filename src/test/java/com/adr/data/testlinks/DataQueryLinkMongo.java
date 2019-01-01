@@ -20,11 +20,25 @@ import com.adr.data.DataLink;
 import com.adr.data.QueryLink;
 import com.adr.data.mongo.MongoDataLink;
 import com.adr.data.mongo.MongoQueryLink;
+import com.adr.data.route.ReducerDataIdentity;
+import com.adr.data.route.ReducerDataLink;
+import com.adr.data.route.ReducerQueryIdentity;
+import com.adr.data.route.ReducerQueryLink;
+import com.adr.data.security.jwt.ReducerDataJWTAuthorization;
+import com.adr.data.security.jwt.ReducerDataJWTVerify;
+import com.adr.data.security.jwt.ReducerJWTCurrentUser;
+import com.adr.data.security.jwt.ReducerJWTLogin;
+import com.adr.data.security.jwt.ReducerQueryJWTAuthorization;
+import com.adr.data.security.jwt.ReducerQueryJWTVerify;
 import com.mongodb.ConnectionString;
 import com.mongodb.MongoClientSettings;
+import com.mongodb.MongoCredential;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoDatabase;
+import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.logging.Logger;
 
 /**
@@ -35,24 +49,41 @@ public class DataQueryLinkMongo implements DataQueryLinkBuilder {
     
     private static final Logger LOG = Logger.getLogger(DataQueryLinkMongo.class.getName());  
 
-    private MongoClient mongoclient;
+    private final MongoClient mongoclient;
+
     private QueryLink querylink;
     private DataLink datalink;
+    
+    public DataQueryLinkMongo() {
+        mongoclient = MongoClients.create(MongoClientSettings.builder()
+                .applyConnectionString(new ConnectionString("mongodb://localhost"))
+                .credential(MongoCredential.createCredential("myuser", "myuser", "mysecret".toCharArray())).build());       
+    }
 
     @Override
-    public void create() {
-        mongoclient = MongoClients.create(MongoClientSettings.builder().applyConnectionString(new ConnectionString("mongodb://localhost")).build());
+    public void create() {    
+        MongoDatabase database = mongoclient.getDatabase("myuser");
         
-        MongoDatabase database = mongoclient.getDatabase("testdb");       
-        datalink = new MongoDataLink(database);
-        querylink = new MongoQueryLink(database);
+        QueryLink mongoquerylink = new MongoQueryLink(database);
+        DataLink mongodatalink = new MongoDataLink(database);
+
+        querylink = new ReducerQueryLink(
+                new ReducerQueryJWTVerify("secret".getBytes(StandardCharsets.UTF_8)),
+                new ReducerJWTLogin(mongoquerylink, "secret".getBytes(StandardCharsets.UTF_8), 5000),
+                new ReducerJWTCurrentUser(),
+                new ReducerQueryJWTAuthorization(mongoquerylink, new HashSet<>(Arrays.asList("ANONYMOUS_VISIBLE_QUERY")), new HashSet<>(Arrays.asList("AUTHENTICATED_VISIBLE_QUERY"))),
+                new ReducerQueryIdentity(mongoquerylink));
+        
+        datalink = new ReducerDataLink(
+                new ReducerDataJWTVerify("secret".getBytes(StandardCharsets.UTF_8)),
+                new ReducerDataJWTAuthorization(mongoquerylink, new HashSet<>(Arrays.asList("ANONYMOUS_VISIBLE_QUERY")), new HashSet<>(Arrays.asList("AUTHENTICATED_VISIBLE_QUERY"))),
+                new ReducerDataIdentity(mongodatalink));       
     }
     
     @Override
     public void destroy() {
         datalink = null;
         querylink = null;       
-        mongoclient.close();
     }    
 
     @Override

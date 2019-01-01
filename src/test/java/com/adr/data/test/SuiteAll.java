@@ -27,7 +27,7 @@ import org.junit.runners.Suite;
     ParserTests.class,
     // Database suites
     SuiteMem.class,
-//    SuiteH2.class,
+    // SuiteH2.class,
     SuiteMYSQL.class,
     SuitePostgreSQL.class,
     SuiteMongo.class,

@@ -16,6 +16,7 @@
 //     limitations under the License.
 package com.adr.data.test;
 
+import com.adr.data.test.persist.DataTests;
 import com.adr.data.testlinks.DataQueryLinkMongo;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -28,7 +29,9 @@ import org.junit.runners.Suite;
  */
 @RunWith(Suite.class)
 @Suite.SuiteClasses({
-    RecordsTests.class
+    QueryTests.class, 
+    DataTests.class, 
+    SecurityTests.class
 })
 public class SuiteMongo {
 

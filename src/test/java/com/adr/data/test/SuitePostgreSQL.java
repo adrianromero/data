@@ -16,6 +16,7 @@
 //     limitations under the License.
 package com.adr.data.test;
 
+import com.adr.data.test.persist.DataTests;
 import com.adr.data.testlinks.DataQueryLinkSQL;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -25,7 +26,7 @@ import org.junit.runners.Suite;
 /**
  *
  * @author adrian
- */
+ */ 
 @RunWith(Suite.class)
 @Suite.SuiteClasses({
     QueryTests.class, 
