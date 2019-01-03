@@ -16,7 +16,6 @@
 //     limitations under the License.
 package com.adr.data.test;
 
-import com.adr.data.test.persist.DataTests;
 import com.adr.data.testlinks.DataQueryLinkMem;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
