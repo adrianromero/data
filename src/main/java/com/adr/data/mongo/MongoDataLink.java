@@ -43,16 +43,22 @@ public class MongoDataLink implements DataLink {
     private final static ReplaceOptions UPSERT = new ReplaceOptions().upsert(true);
 
     private final MongoDatabase database;
+    private final String defaultcollection;
 
     public MongoDataLink(MongoDatabase database) {
+        this(database, "default_collection");
+    }
+    
+    public MongoDataLink(MongoDatabase database, String defaultcollection) {
         this.database = database;
+        this.defaultcollection = defaultcollection;
     }
 
     @Override
     public void execute(Header headers, List<Record> records) throws DataException {
 
         for (Record r : records) {
-            String entity = Records.getCollection(r);
+            String entity = Records.getCollection(r, defaultcollection);
             MongoCollection<Document> collection = database.getCollection(entity);
             
             List<Bson> filters = new ArrayList<>();

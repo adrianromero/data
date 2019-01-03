@@ -33,6 +33,14 @@ public class Records {
         }
         return collectionkey.asString();
     }    
+   
+    public static String getCollection(Record record, String defaultcollection) throws DataException {
+        Variant collectionkey = record.get("COLLECTION.KEY");
+        if (collectionkey.isNull()) {
+            return defaultcollection;
+        }
+        return collectionkey.asString();
+    }    
     
     public static boolean isDeleteSentence(Record val) {
         for (String name : val.getNames()) {

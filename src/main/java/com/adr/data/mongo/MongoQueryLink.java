@@ -48,16 +48,21 @@ import org.bson.conversions.Bson;
 public class MongoQueryLink implements QueryLink {
 
     private final MongoDatabase database;
+    private final String defaultcollection;
 
     public MongoQueryLink(MongoDatabase database) {
+        this(database, "default_collection");
+    }
+    public MongoQueryLink(MongoDatabase database, String defaultcollection) {
         this.database = database;
+        this.defaultcollection = defaultcollection;
     }
 
     @Override
     public List<Record> query(Header headers, Record filter) throws DataException {
         int limit = Records.getLimit(filter);
         int offset = Records.getOffset(filter);
-        String entity = Records.getCollection(filter);
+        String entity = Records.getCollection(filter, defaultcollection);
         MongoCollection<Document> collection = database.getCollection(entity);
 
         MongoBuilder builder = new MongoBuilder();
