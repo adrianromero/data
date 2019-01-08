@@ -42,10 +42,6 @@ public class ResponseExecuteError extends ResponseExecute {
     public ResponseExecuteError(Throwable ex) {
         this.ex = ex;
     }
-    
-    public Throwable getException() {
-        return ex;
-    }
 
     @Override
     public String getType() {
@@ -62,7 +58,7 @@ public class ResponseExecuteError extends ResponseExecute {
     }
 
     @Override
-    public void asSuccess() throws DataException {
+    public void getResult() throws DataException {
         if (ex instanceof DataException) {
             throw (DataException) ex;
         } else if (ex instanceof RuntimeException) {

@@ -1,5 +1,5 @@
 //     Data Access is a Java library to store data
-//     Copyright (C) 2017 Adrián Romero Corchado.
+//     Copyright (C) 2017-2018 Adrián Romero Corchado.
 //
 //     This file is part of Data Access
 //
@@ -31,7 +31,7 @@ public abstract class ResponseExecute {
     
     public abstract void write(Writer w) throws IOException;
     
-    public abstract void asSuccess() throws DataException;    
+    public abstract void getResult() throws DataException;    
     
     public final String write() throws IOException {
         StringWriter writer = new StringWriter();

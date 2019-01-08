@@ -58,7 +58,7 @@ public class CacheProviderMem implements CacheProvider {
             if (cachedresult == null) {
                 return null;
             } else {
-                return ResponseQuery.read(cachedresult).getAsListRecord();
+                return ResponseQuery.read(cachedresult).getResult();
             }
         } catch (IOException e) {
             throw new DataException(e);

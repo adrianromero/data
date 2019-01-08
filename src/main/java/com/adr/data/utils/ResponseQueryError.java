@@ -43,10 +43,6 @@ public class ResponseQueryError extends ResponseQuery {
         this.ex = ex;
     }
 
-    public Throwable getException() {
-        return ex;
-    }
-
     @Override
     public String getType() {
         return NAME;
@@ -62,7 +58,7 @@ public class ResponseQueryError extends ResponseQuery {
     }
 
     @Override
-    public List<Record> getAsListRecord() throws DataException {
+    public List<Record> getResult() throws DataException {
         if (ex instanceof DataException) {
             throw (DataException) ex;
         } else if (ex instanceof RuntimeException) {

@@ -44,19 +44,11 @@ import java.util.logging.Logger;
 public class RequestExecute {
     
     private final Header headers;
-    private final List<Record> list;
+    private final List<Record> records;
     
-    public RequestExecute(Header headers, List<Record> list) {
+    public RequestExecute(Header headers, List<Record> records) {
         this.headers = headers;
-        this.list = list;
-    }
-    
-    public Header getHeaders() {
-        return headers;
-    }
-    
-    public List<Record> getListRecord() {
-        return list;
+        this.records = records;
     }
     
     public String write() throws IOException {
@@ -68,7 +60,7 @@ public class RequestExecute {
     public void write(Writer w) throws IOException {
         RecordsSerializer.write(headers.getRecord(), w);
         w.append('\n');
-        RecordsSerializer.writeList(list, w);
+        RecordsSerializer.writeList(records, w);
     }
     
     public static RequestExecute read(String value) throws IOException {
@@ -102,7 +94,7 @@ public class RequestExecute {
         logger.log(Level.CONFIG, "Processing Execute: {0}.", new Object[]{message});
 
         try {
-            link.execute(request.getHeaders(), request.getListRecord());
+            link.execute(request.headers, request.records);
             return new ResponseExecuteSuccess().write();
         } catch (DataException ex) {
             logger.log(Level.SEVERE, "Cannot execute request.", ex);

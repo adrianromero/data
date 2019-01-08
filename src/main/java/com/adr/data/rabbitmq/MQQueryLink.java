@@ -55,7 +55,7 @@ public class MQQueryLink implements QueryLink {
             byte[] request = new RequestQuery(headers, filter).write().getBytes(StandardCharsets.UTF_8);
             byte[] response = client.primitiveCall(request);
             ResponseQuery envelope = ResponseQuery.read(new String(response, StandardCharsets.UTF_8));
-            return envelope.getAsListRecord();
+            return envelope.getResult();
         } catch (IOException | ShutdownSignalException | TimeoutException ex) {
             throw new DataException(ex);
         }

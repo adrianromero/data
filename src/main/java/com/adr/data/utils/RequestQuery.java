@@ -48,14 +48,6 @@ public class RequestQuery {
         this.filter = filter;
     }
     
-    public Record getFilter() {
-        return filter;
-    }
-    
-    public Header getHeaders() {
-        return headers;
-    }
-    
     public String write() throws IOException {
         StringWriter writer = new StringWriter();
         write(writer);
@@ -93,7 +85,7 @@ public class RequestQuery {
         logger.log(Level.CONFIG, "Processing Query: {0}.", new Object[]{message});
 
         try {
-            return new ResponseQueryListRecord(link.query(request.getHeaders(), request.getFilter())).write();
+            return new ResponseQueryListRecord(link.query(request.headers, request.filter)).write();
         } catch (DataException ex) {
             logger.log(Level.SEVERE, "Cannot execute query request.", ex);
             return new ResponseExecuteError(ex).write();

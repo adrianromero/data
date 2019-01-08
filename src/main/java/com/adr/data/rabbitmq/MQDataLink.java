@@ -53,9 +53,9 @@ public class MQDataLink implements DataLink {
         
         try {
             byte[] request = new RequestExecute(headers, l).write().getBytes(StandardCharsets.UTF_8);
-            byte[] response = client.primitiveCall(request);
-            
-            ResponseExecute.read(new String(response, StandardCharsets.UTF_8));
+            byte[] response = client.primitiveCall(request);            
+            ResponseExecute envelope = ResponseExecute.read(new String(response, StandardCharsets.UTF_8));            
+            envelope.getResult();
         } catch (IOException | ShutdownSignalException | TimeoutException ex) {
             throw new DataException(ex);
         }

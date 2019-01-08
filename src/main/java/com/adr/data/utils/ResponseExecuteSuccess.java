@@ -42,7 +42,7 @@ public class ResponseExecuteSuccess extends ResponseExecute {
     }
     
     @Override
-    public void asSuccess() throws DataException {
+    public void getResult() throws DataException {
     }
     
     public static ResponseExecute readData(Loader loader) throws IOException {

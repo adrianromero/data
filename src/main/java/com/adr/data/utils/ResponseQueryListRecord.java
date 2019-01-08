@@ -42,10 +42,6 @@ public class ResponseQueryListRecord extends ResponseQuery {
         this.result = result;
     }
 
-    public List<Record> getResult() {
-        return result;
-    }
-
     @Override
     public String getType() {
         return NAME;
@@ -59,7 +55,7 @@ public class ResponseQueryListRecord extends ResponseQuery {
     }
 
     @Override
-    public List<Record> getAsListRecord() throws DataException {
+    public List<Record> getResult() throws DataException {
         return result;
     }
     

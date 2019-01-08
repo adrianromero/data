@@ -68,7 +68,8 @@ public class WebDataLink implements DataLink {
                 throw new DataException("Unexpected result code: " + response);
             }
 
-            ResponseExecute.read(response.body().string());
+            ResponseExecute envelope = ResponseExecute.read(response.body().string());
+            envelope.getResult();
         } catch (IOException ex) {
             throw new DataException(ex);
         }

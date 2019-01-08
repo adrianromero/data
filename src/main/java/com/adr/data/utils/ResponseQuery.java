@@ -32,7 +32,7 @@ public abstract class ResponseQuery {
     
     public abstract String getType();
     
-    public abstract List<Record> getAsListRecord() throws DataException;
+    public abstract List<Record> getResult() throws DataException;
     
     public abstract void write(Writer w) throws IOException;
     

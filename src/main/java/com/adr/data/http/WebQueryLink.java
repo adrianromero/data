@@ -70,7 +70,7 @@ public class WebQueryLink implements QueryLink {
             }
 
             ResponseQuery envelope = ResponseQuery.read(response.body().string());
-            return envelope.getAsListRecord();
+            return envelope.getResult();
         } catch (IOException ex) {
             throw new DataException(ex);
         }
