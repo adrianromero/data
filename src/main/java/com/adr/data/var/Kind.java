@@ -37,7 +37,6 @@ public abstract class Kind {
     public final static Kind LOCALDATE = new KindLocalDate(); 
     public final static Kind LOCALTIME = new KindLocalTime();  
     public final static Kind BYTES = new KindBytes(); 
-    public final static Kind OBJECT = new KindObject();
     public final static Kind VOID = new KindVoid();
    
     public abstract Variant read(Results read) throws DataException;
@@ -57,7 +56,6 @@ public abstract class Kind {
         put(Kind.LOCALDATE);
         put(Kind.LOCALTIME);
         put(Kind.BYTES);
-        put(Kind.OBJECT);
         put(Kind.VOID);
     }
     
