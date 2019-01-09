@@ -1,5 +1,5 @@
 //     Data Access is a Java library to store data
-//     Copyright (C) 2017-2018 Adrián Romero Corchado.
+//     Copyright (C) 2017-2019 Adrián Romero Corchado.
 //
 //     This file is part of Data Access
 //
@@ -100,9 +100,8 @@ public class RecordsSerializer {
     
     public static final void write(Record r, Writer writer) throws IOException {
         writer.write('(');
-        String[] names = r.getNames();
         boolean comma = false;
-        for (String n : names) {
+        for (String n : r.getNames()) {
             if (comma) {
                 writer.write(", ");
             } else {
@@ -137,14 +136,14 @@ public class RecordsSerializer {
         writer.write(')');
     }
     
-    private final static boolean hasQuotes(Kind kind) {
+    private static boolean hasQuotes(Kind kind) {
         return kind != Kind.BOOLEAN && 
                kind != Kind.DECIMAL && 
                kind != Kind.INT && 
                kind != Kind.LONG &&
                kind != Kind.DOUBLE;
     }
-    private final static boolean isDefaulted(Kind kind) {
+    private static boolean isDefaulted(Kind kind) {
         return kind == Kind.BOOLEAN || 
                kind == Kind.INT ||
                kind == Kind.DOUBLE ||
