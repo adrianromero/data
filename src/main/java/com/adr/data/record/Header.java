@@ -1,5 +1,5 @@
 //     Data Access is a Java library to store data
-//     Copyright (C) 2016-2018 Adrián Romero Corchado.
+//     Copyright (C) 2016-2019 Adrián Romero Corchado.
 //
 //     This file is part of Data Access
 //
@@ -27,6 +27,9 @@ public final class Header {
     private final Record record;
     
     public Header(Record record) {
+        if (record == null) {
+            throw new NullPointerException();
+        }
         this.record = record;
     }
     
