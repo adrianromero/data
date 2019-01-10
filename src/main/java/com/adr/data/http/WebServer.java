@@ -16,9 +16,9 @@
 //     limitations under the License.
 package com.adr.data.http;
 
-import com.adr.data.DataLink;
 import com.adr.data.QueryLink;
 import spark.Service;
+import com.adr.data.CommandLink;
 
 /**
  *
@@ -29,16 +29,16 @@ public class WebServer {
     private Service http;
     private final int port;
 
-    private final String contextdata;
-    private final DataLink datalink;
+    private final String contextcommand;
+    private final CommandLink commandlink;
     private final String contextquery;
     private final QueryLink querylink;
 
-    public WebServer(int port, String contextdata, String contextquery, DataLink datalink, QueryLink querylink) {
+    public WebServer(int port, String contextcommand, String contextquery, CommandLink commandlink, QueryLink querylink) {
         this.port = port;
-        this.contextdata = contextdata;
+        this.contextcommand = contextcommand;
         this.contextquery = contextquery;
-        this.datalink = datalink;
+        this.commandlink = commandlink;
         this.querylink = querylink;
     }
 
@@ -50,8 +50,8 @@ public class WebServer {
 
     public void start() {
         http = connect(port);
-        http.post(contextdata, new WebServerData(datalink));
-        http.post(contextquery, new WebServerQuery(querylink));
+        http.post(contextcommand, new WebCommandServer(commandlink));
+        http.post(contextquery, new WebQueryServer(querylink));
         http.awaitInitialization();
     }
 

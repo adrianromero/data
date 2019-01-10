@@ -14,34 +14,36 @@
 //     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //     See the License for the specific language governing permissions and
 //     limitations under the License.
-package com.adr.data.test;
+package com.adr.data.route;
 
-import com.adr.data.test.persist.DataTests;
-import com.adr.data.testlinks.CommandQueryLinkMongo;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
+import com.adr.data.DataException;
+import com.adr.data.record.Header;
+import java.util.List;
+import com.adr.data.record.Record;
+import com.adr.data.CommandLink;
 
 /**
  *
  * @author adrian
  */
-@RunWith(Suite.class)
-@Suite.SuiteClasses({
-    QueryTests.class, 
-    DataTests.class, 
-    SecurityTests.class
-})
-public class SuiteMongo {
+public class FailOverCommandLink implements CommandLink {
 
-    @BeforeClass
-    public static void setUpClass() throws Exception {
-        SourceLink.setBuilder(new CommandQueryLinkMongo());
+    private final CommandLink[] commandlinks;
+
+    public FailOverCommandLink(CommandLink... commandlinks) {
+        this.commandlinks = commandlinks;
     }
-
-    @AfterClass
-    public static void tearDownClass() throws Exception {
-        SourceLink.setBuilder(null);
+    
+    @Override
+    public void execute(Header headers, List<Record> l) throws DataException {
+        for(CommandLink d : commandlinks) {
+            try {
+                d.execute(headers, l);
+                return;
+            } catch (DataException e) {
+                // Ignore and go to next
+            }
+        }
+        throw new DataException("Failed all CommandLinks");
     }
 }

@@ -20,7 +20,6 @@ package com.adr.data.security.jwt;
 import com.adr.data.DataException;
 import com.adr.data.QueryLink;
 import com.adr.data.record.Header;
-import com.adr.data.route.ReducerData;
 import com.adr.data.security.SecurityDataException;
 import com.adr.data.var.Variant;
 import com.auth0.jwt.JWT;
@@ -28,12 +27,13 @@ import java.util.List;
 import java.util.Set;
 import com.adr.data.record.Record;
 import com.adr.data.record.Records;
+import com.adr.data.route.ReducerCommand;
 
 /**
  *
  * @author adrian
  */
-public class ReducerDataJWTAuthorization implements ReducerData {
+public class ReducerDataJWTAuthorization implements ReducerCommand {
     
     private final QueryLink querylink;
     private final Authorizer authorizer;

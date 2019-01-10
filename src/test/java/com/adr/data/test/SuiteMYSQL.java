@@ -17,7 +17,7 @@
 package com.adr.data.test;
 
 import com.adr.data.test.persist.DataTests;
-import com.adr.data.testlinks.DataQueryLinkSQL;
+import com.adr.data.testlinks.CommandQueryLinkSQL;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.runner.RunWith;
@@ -37,7 +37,7 @@ public class SuiteMYSQL {
 
     @BeforeClass
     public static void setUpClass() throws Exception {      
-        SourceLink.setBuilder(new DataQueryLinkSQL("mysql"));
+        SourceLink.setBuilder(new CommandQueryLinkSQL("mysql"));
     }
 
     @AfterClass

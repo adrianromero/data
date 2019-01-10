@@ -1,5 +1,5 @@
 //     Data Access is a Java library to store data
-//     Copyright (C) 2016 Adrián Romero Corchado.
+//     Copyright (C) 2018 Adrián Romero Corchado.
 //
 //     This file is part of Data Access
 //
@@ -14,34 +14,33 @@
 //     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //     See the License for the specific language governing permissions and
 //     limitations under the License.
-package com.adr.data.test;
 
-import com.adr.data.test.persist.DataTests;
-import com.adr.data.testlinks.CommandQueryLinkSQL;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
+package com.adr.data.mem;
+
+import com.adr.data.DataException;
+import com.adr.data.record.Header;
+import com.adr.data.record.Record;
+import java.io.IOException;
+import java.util.List;
+import com.adr.data.CommandLink;
 
 /**
  *
  * @author adrian
  */
-@RunWith(Suite.class)
-@Suite.SuiteClasses({
-    QueryTests.class, 
-    DataTests.class, 
-    SecurityTests.class,
-})
-public class SuiteH2 {
+public class MemCommandLink implements CommandLink {
+    private final Storage storage;
 
-    @BeforeClass
-    public static void setUpClass() throws Exception {
-        SourceLink.setBuilder(new CommandQueryLinkSQL("h2"));
+    public MemCommandLink(Storage storage) {
+        this.storage = storage;
     }
 
-    @AfterClass
-    public static void tearDownClass() throws Exception {
-        SourceLink.setBuilder(null);
-    }       
+    @Override
+    public void execute(Header headers, List<Record> records) throws DataException {
+        try {
+            storage.put(records);
+        } catch (IOException ex) {
+            throw new DataException(ex);
+        }
+    } 
 }

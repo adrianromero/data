@@ -12,32 +12,29 @@
 //     Unless required by applicable law or agreed to in writing, software
 //     distributed under the License is distributed on an "AS IS" BASIS,
 //     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-//     See the License for the specific language governing permissions and
-//     limitations under the License.
-
-package com.adr.data.security.jwt;
+package com.adr.data.route;
 
 import com.adr.data.DataException;
 import com.adr.data.record.Header;
 import java.util.List;
 import com.adr.data.record.Record;
-import com.adr.data.route.ReducerCommand;
+import com.adr.data.CommandLink;
 
 /**
  *
  * @author adrian
  */
-public class ReducerDataJWTVerify implements ReducerCommand {
+public class ReducerCommandIdentity implements ReducerCommand {
     
-    private final TokenVerifier verifier;
+    private final CommandLink commandlink;
     
-    public ReducerDataJWTVerify(byte[] secret) {
-        verifier = new TokenVerifier(secret);
+    public ReducerCommandIdentity(CommandLink commandlink) {
+        this.commandlink = commandlink;
     }
 
     @Override
     public boolean execute(Header headers, List<Record> l) throws DataException {
-        verifier.verify(headers);      
-        return false;
-    } 
+        commandlink.execute(headers, l);
+        return true;
+    }
 }

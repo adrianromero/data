@@ -18,34 +18,37 @@
 package com.adr.data.utils;
 
 import com.adr.data.DataException;
-import com.adr.data.QueryLink;
 import com.adr.data.record.Header;
 import com.adr.data.recordparser.RecordsSerializer;
+
+import java.io.IOException;
+import java.io.Writer;
+import java.util.List;
 import com.adr.data.record.Record;
 import com.adr.data.recordparser.CodePoint;
 import com.adr.data.recordparser.Loader;
 import com.adr.data.recordparser.RecordParsers;
 import com.adr.data.recordparser.StreamLoader;
-import java.io.IOException;
 import java.io.Reader;
 import java.io.StringReader;
 import java.io.StringWriter;
-import java.io.Writer;
+import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import com.adr.data.CommandLink;
 
 /**
  *
  * @author adrian
  */
-public class RequestQuery {
+public class RequestCommand {
     
     private final Header headers;
-    private final Record filter;
+    private final List<Record> records;
     
-    public RequestQuery(Header headers, Record filter) {
+    public RequestCommand(Header headers, List<Record> records) {
         this.headers = headers;
-        this.filter = filter;
+        this.records = records;
     }
     
     public String write() throws IOException {
@@ -57,37 +60,44 @@ public class RequestQuery {
     public void write(Writer w) throws IOException {
         RecordsSerializer.write(headers.getRecord(), w);
         w.append('\n');
-        RecordsSerializer.write(filter, w);
+        RecordsSerializer.writeList(records, w);
     }
     
-    public static RequestQuery read(String value) throws IOException {
+    public static RequestCommand read(String value) throws IOException {
         return read(new StringReader(value));
-    }    
+    }
     
-    public static RequestQuery read(Reader r) throws IOException {
+    public static RequestCommand read(Reader r) throws IOException {
         Loader loader = new StreamLoader(r);
         loader.next();
         loader.skipBlanks();
         Header header = new Header(RecordParsers.parseRecord(loader));
         loader.skipBlanks();
-        Record filter = RecordParsers.parseRecord(loader);
-        loader.skipBlanks();
-        if (CodePoint.isEOF(loader.getCP())) {
-            return new RequestQuery(header, filter);
-        } else {
-            throw new IOException(loader.messageExpected(-1));
+        List<Record> recordsList = new ArrayList<>();
+        for (;;) {
+            if (loader.getCP() == '(') {
+                recordsList.add(RecordParsers.parseRecord(loader));
+                loader.skipBlanks();
+            } else if (CodePoint.isEOF(loader.getCP())) {
+                break;
+            } else {
+                throw new IOException(loader.messageExpected(-1));
+            }
         }
-    } 
+        return new RequestCommand(header, recordsList);
+    }
     
-    public static String serverQueryProcess(QueryLink link, String message, Logger logger) throws IOException {
+    public static String serverDataProcess(CommandLink link, String message, Logger logger) throws IOException {
 
-        RequestQuery request = RequestQuery.read(message);
-        logger.log(Level.CONFIG, "Processing Query: {0}.", new Object[]{message});
+        RequestCommand request = RequestCommand.read(message);
+
+        logger.log(Level.CONFIG, "Processing Execute: {0}.", new Object[]{message});
 
         try {
-            return new ResponseQueryListRecord(link.query(request.headers, request.filter)).write();
+            link.execute(request.headers, request.records);
+            return new ResponseCommandSuccess().write();
         } catch (DataException ex) {
-            logger.log(Level.SEVERE, "Cannot execute query request.", ex);
+            logger.log(Level.SEVERE, "Cannot execute request.", ex);
             return new ResponseCommandError(ex).write();
         }
     }    

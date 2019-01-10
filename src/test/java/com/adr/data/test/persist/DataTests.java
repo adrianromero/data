@@ -37,7 +37,7 @@ public class DataTests {
     @Test
     public void testSomeUpdates() throws DataException {
 
-        SourceLink.createDataQueryLink();
+        SourceLink.createCommandQueryLink();
         try {
 
             // Login
@@ -45,7 +45,7 @@ public class DataTests {
             Header header = new Header(new Record(new Entry("AUTHORIZATION", authorization)));
 
             // Insert
-            SourceLink.getDataLink().execute(
+            SourceLink.getCommandLink().execute(
                     header,
                     new Record[]{
                         new Record(
@@ -63,7 +63,7 @@ public class DataTests {
             Assert.assertEquals(Boolean.TRUE, r.getBoolean("VISIBLE"));
 
             // update
-            SourceLink.getDataLink().execute(
+            SourceLink.getCommandLink().execute(
                     header,
                     new Record[]{
                         new Record(
@@ -82,7 +82,7 @@ public class DataTests {
             Assert.assertEquals(Boolean.TRUE, r.getBoolean("VISIBLE"));
 
             // Delete newid
-            SourceLink.getDataLink().execute(
+            SourceLink.getCommandLink().execute(
                     header,
                     new Record[]{
                         new Record(
@@ -93,7 +93,7 @@ public class DataTests {
             Assert.assertNull(r);
 
         } finally {
-            SourceLink.destroyDataQueryLink();
+            SourceLink.destroyCommandQueryLink();
         }
     }
 

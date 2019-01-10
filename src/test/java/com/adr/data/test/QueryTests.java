@@ -126,7 +126,7 @@ public class QueryTests {
     @Test
     public void testSomeQueries() throws DataException {
 
-        SourceLink.createDataQueryLink();
+        SourceLink.createCommandQueryLink();
         try {
             // Login
             String authorization = ReducerLogin.login(SourceLink.getQueryLink(), "admin", "admin");
@@ -139,7 +139,7 @@ public class QueryTests {
             testSentenceTable(SourceLink.getQueryLink(), header);
             testSentenceTableContains(SourceLink.getQueryLink(), header);
         } finally {
-            SourceLink.destroyDataQueryLink();
+            SourceLink.destroyCommandQueryLink();
         }
     }
 }

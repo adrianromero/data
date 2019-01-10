@@ -1,5 +1,5 @@
 //     Data Access is a Java library to store data
-//     Copyright (C) 2016 Adrián Romero Corchado.
+//     Copyright (C) 2017-2018 Adrián Romero Corchado.
 //
 //     This file is part of Data Access
 //
@@ -14,34 +14,31 @@
 //     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //     See the License for the specific language governing permissions and
 //     limitations under the License.
-package com.adr.data.test;
+package com.adr.data.mock;
 
-import com.adr.data.test.persist.DataTests;
-import com.adr.data.testlinks.CommandQueryLinkSQL;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
+import com.adr.data.DataException;
+import com.adr.data.record.Header;
+import java.util.List;
+import java.util.function.Predicate;
+import com.adr.data.record.Record;
+import com.adr.data.CommandLink;
 
 /**
  *
  * @author adrian
  */
-@RunWith(Suite.class)
-@Suite.SuiteClasses({
-    QueryTests.class, 
-    DataTests.class, 
-    SecurityTests.class,
-})
-public class SuiteH2 {
+public class MockCommandLink implements CommandLink {
 
-    @BeforeClass
-    public static void setUpClass() throws Exception {
-        SourceLink.setBuilder(new CommandQueryLinkSQL("h2"));
+    private final Predicate<? super Record> fail;
+
+    public MockCommandLink(Predicate<? super Record> fail) {
+        this.fail = fail;
     }
 
-    @AfterClass
-    public static void tearDownClass() throws Exception {
-        SourceLink.setBuilder(null);
-    }       
+    @Override
+    public void execute(Header headers, List<Record> l) throws DataException {
+        if (l.stream().anyMatch(fail)) {
+            throw new DataException("Fail condition reached");
+        }
+    }
 }

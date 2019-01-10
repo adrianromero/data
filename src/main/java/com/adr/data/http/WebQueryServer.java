@@ -1,5 +1,5 @@
 //     Data Access is a Java library to store data
-//     Copyright (C) 2016-2017 Adrián Romero Corchado.
+//     Copyright (C) 2016-2019 Adrián Romero Corchado.
 //
 //     This file is part of Data Access
 //
@@ -14,38 +14,32 @@
 //     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //     See the License for the specific language governing permissions and
 //     limitations under the License.
-
-package com.adr.data.test;
+package com.adr.data.http;
 
 import com.adr.data.QueryLink;
-import com.adr.data.CommandLink;
-import com.adr.data.testlinks.CommandQueryLinkBuilder;
+import com.adr.data.utils.RequestQuery;
+import java.util.logging.Logger;
+import spark.Request;
+import spark.Response;
+import spark.Route;
 
 /**
  *
- * @author Eva
+ * @author adrian
  */
-public class SourceLink {
-     
-    private static CommandQueryLinkBuilder builder;
+public class WebQueryServer implements Route {
 
-    public static void setBuilder(CommandQueryLinkBuilder b) {
-        builder = b;
-    }
-    
-    public static void createCommandQueryLink() {
-        builder.create();
-    }
-    
-    public static void destroyCommandQueryLink() {
-        builder.destroy();
-    }
-    
-    public static QueryLink getQueryLink() {
-        return builder.getQueryLink();
+    private static final Logger LOG = Logger.getLogger(WebQueryServer.class.getName());
+
+    private final QueryLink querylink;
+
+    public WebQueryServer(QueryLink querylink) {
+        this.querylink = querylink;
     }
 
-    public static CommandLink getCommandLink() {
-        return builder.getCommandLink();
-    }    
+    @Override
+    public Object handle(Request request, Response response) throws Exception {
+        response.type("application/json; charset=utf-8");
+        return RequestQuery.serverQueryProcess(querylink, request.body(), LOG);
+    }
 }

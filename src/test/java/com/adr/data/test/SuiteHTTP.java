@@ -18,13 +18,13 @@ package com.adr.data.test;
 
 import com.adr.data.http.WebServer;
 import com.adr.data.test.persist.DataTests;
-import com.adr.data.testlinks.DataQueryLinkBuilder;
-import com.adr.data.testlinks.DataQueryLinkHTTP;
-import com.adr.data.testlinks.DataQueryLinkSQL;
+import com.adr.data.testlinks.CommandQueryLinkHTTP;
+import com.adr.data.testlinks.CommandQueryLinkSQL;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
+import com.adr.data.testlinks.CommandQueryLinkBuilder;
 
 /**
  *
@@ -43,15 +43,15 @@ public class SuiteHTTP {
     private static final String url = "http://localhost:" + Integer.toString(PORT);
     private static final String SQLNAME = "postgresql";
     
-    private static final DataQueryLinkBuilder builder=  new DataQueryLinkSQL(SQLNAME);
+    private static final CommandQueryLinkBuilder builder=  new CommandQueryLinkSQL(SQLNAME);
     private static WebServer myserver;    
 
     @BeforeClass
     public static void setUpClass() throws Exception {
         builder.create();
-        myserver = new WebServer(PORT, CONTEXTDATA, CONTEXTQUERY, builder.getDataLink(), builder.getQueryLink());
+        myserver = new WebServer(PORT, CONTEXTDATA, CONTEXTQUERY, builder.getCommandLink(), builder.getQueryLink());
         myserver.start();                
-        SourceLink.setBuilder(new DataQueryLinkHTTP(url + CONTEXTDATA, url + CONTEXTQUERY));
+        SourceLink.setBuilder(new CommandQueryLinkHTTP(url + CONTEXTDATA, url + CONTEXTQUERY));
     }
 
     @AfterClass

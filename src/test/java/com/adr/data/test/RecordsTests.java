@@ -36,10 +36,10 @@ public class RecordsTests {
     @Test
     public void testSomeUpdates() throws DataException, IOException {
 
-        SourceLink.createDataQueryLink();
+        SourceLink.createCommandQueryLink();
         try {
             // Insert
-            SourceLink.getDataLink().execute(
+            SourceLink.getCommandLink().execute(
                     new Record[]{
                         new Record(
                                 new Entry("COLLECTION.KEY", "USERNAME"),
@@ -112,7 +112,7 @@ public class RecordsTests {
 
 
         } finally {
-            SourceLink.destroyDataQueryLink();
+            SourceLink.destroyCommandQueryLink();
         }
     }
 }

@@ -16,7 +16,7 @@
 //     limitations under the License.
 package com.adr.data.test;
 
-import com.adr.data.testlinks.DataQueryLinkMem;
+import com.adr.data.testlinks.CommandQueryLinkMem;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.runner.RunWith;
@@ -34,7 +34,7 @@ public class SuiteMem {
 
     @BeforeClass
     public static void setUpClass() throws Exception {
-        SourceLink.setBuilder(new DataQueryLinkMem());
+        SourceLink.setBuilder(new CommandQueryLinkMem());
     }
 
     @AfterClass

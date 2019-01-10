@@ -17,13 +17,13 @@
 package com.adr.data.test;
 
 import com.adr.data.rabbitmq.RabbitServer;
-import com.adr.data.testlinks.DataQueryLinkBuilder;
-import com.adr.data.testlinks.DataQueryLinkMQAsync;
-import com.adr.data.testlinks.DataQueryLinkSQL;
+import com.adr.data.testlinks.CommandQueryLinkMQQueue;
+import com.adr.data.testlinks.CommandQueryLinkSQL;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
+import com.adr.data.testlinks.CommandQueryLinkBuilder;
 
 /**
  *
@@ -46,15 +46,15 @@ public class SuiteMQAsync {
     private static final String QUEUEDATA = "mqdatalink";
     private static final String SQLNAME = "h2";
     
-    private static final DataQueryLinkBuilder builder= new DataQueryLinkSQL(SQLNAME);;
+    private static final CommandQueryLinkBuilder builder= new CommandQueryLinkSQL(SQLNAME);;
     private static RabbitServer myserver;
 
     @BeforeClass
     public static void setUpClass() throws Exception {
         builder.create();
-        myserver = new RabbitServer(HOST, PORT, USERNAME, PASSWORD, QUEUEDATA, QUEUEQUERY, builder.getDataLink(), builder.getQueryLink());
+        myserver = new RabbitServer(HOST, PORT, USERNAME, PASSWORD, QUEUEDATA, QUEUEQUERY, builder.getCommandLink(), builder.getQueryLink());
         myserver.start();
-        SourceLink.setBuilder(new DataQueryLinkMQAsync(HOST, PORT, USERNAME, PASSWORD, EXCHANGEDATA, EXCHANGEQUERY));
+        SourceLink.setBuilder(new CommandQueryLinkMQQueue(HOST, PORT, USERNAME, PASSWORD, EXCHANGEDATA, EXCHANGEQUERY));
     }
 
     @AfterClass

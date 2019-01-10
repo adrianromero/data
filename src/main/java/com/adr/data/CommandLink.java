@@ -1,5 +1,5 @@
 //     Data Access is a Java library to store data
-//     Copyright (C) 2016 Adrián Romero Corchado.
+//     Copyright (C) 2016-2019 Adrián Romero Corchado.
 //
 //     This file is part of Data Access
 //
@@ -14,34 +14,27 @@
 //     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //     See the License for the specific language governing permissions and
 //     limitations under the License.
-package com.adr.data.test;
 
-import com.adr.data.test.persist.DataTests;
-import com.adr.data.testlinks.CommandQueryLinkSQL;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
+package com.adr.data;
+
+import com.adr.data.record.Header;
+import java.util.Arrays;
+import java.util.List;
+import com.adr.data.record.Record;
 
 /**
  *
  * @author adrian
  */
-@RunWith(Suite.class)
-@Suite.SuiteClasses({
-    QueryTests.class, 
-    DataTests.class, 
-    SecurityTests.class,
-})
-public class SuiteH2 {
-
-    @BeforeClass
-    public static void setUpClass() throws Exception {
-        SourceLink.setBuilder(new CommandQueryLinkSQL("h2"));
+public interface CommandLink {
+    
+    public void execute(Header headers, List<Record> records) throws DataException; 
+    
+    public default void execute(Record... records) throws DataException {
+        execute(Header.EMPTY, Arrays.asList(records));
     }
-
-    @AfterClass
-    public static void tearDownClass() throws Exception {
-        SourceLink.setBuilder(null);
-    }       
+    
+    public default void execute(Header headers, Record... records) throws DataException {
+        execute(headers, Arrays.asList(records));
+    }
 }

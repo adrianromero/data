@@ -16,12 +16,12 @@
 //     limitations under the License.
 package com.adr.data.rabbitmq;
 
-import com.adr.data.DataLink;
 import com.adr.data.QueryLink;
 import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.ConnectionFactory;
 import java.io.IOException;
 import java.util.concurrent.TimeoutException;
+import com.adr.data.CommandLink;
 
 /**
  *
@@ -32,22 +32,22 @@ public class RabbitServer {
     private final ConnectionFactory factory;
     private final String queryqueue;
     private final String dataqueue;
-    private final DataLink datalink;
+    private final CommandLink commandlink;
     private final QueryLink querylink;
 
     private Connection connection;
-    private RabbitServerQuery serverquery;
-    private RabbitServerData serverdata;
+    private RabbitQueryServer serverquery;
+    private RabbitCommandServer serverdata;
 
-    public RabbitServer(ConnectionFactory factory, String dataqueue, String queryqueue, DataLink datalink, QueryLink querylink) {
+    public RabbitServer(ConnectionFactory factory, String dataqueue, String queryqueue, CommandLink commandlink, QueryLink querylink) {
         this.factory = factory;
         this.queryqueue = queryqueue;
         this.dataqueue = dataqueue;
-        this.datalink = datalink;
+        this.commandlink = commandlink;
         this.querylink = querylink;
     }
 
-    public RabbitServer(String host, int port, String username, String password, String dataqueue, String queryqueue, DataLink datalink, QueryLink querylink) {
+    public RabbitServer(String host, int port, String username, String password, String dataqueue, String queryqueue, CommandLink commandlink, QueryLink querylink) {
         factory = new ConnectionFactory();
         factory.setHost(host);
         factory.setPort(port);
@@ -55,23 +55,23 @@ public class RabbitServer {
         factory.setPassword(password);
         this.queryqueue = queryqueue;
         this.dataqueue = dataqueue;
-        this.datalink = datalink;
+        this.commandlink = commandlink;
         this.querylink = querylink;
     }
 
-    public RabbitServer(String host, int port, String dataqueue, String queryqueue, DataLink datalink, QueryLink querylink) {
-        this(host, port, ConnectionFactory.DEFAULT_USER, ConnectionFactory.DEFAULT_PASS, dataqueue, queryqueue, datalink, querylink);
+    public RabbitServer(String host, int port, String dataqueue, String queryqueue, CommandLink commandlink, QueryLink querylink) {
+        this(host, port, ConnectionFactory.DEFAULT_USER, ConnectionFactory.DEFAULT_PASS, dataqueue, queryqueue, commandlink, querylink);
     }
 
-    public RabbitServer(String dataqueue, String queryqueue, DataLink datalink, QueryLink querylink) {
-        this(ConnectionFactory.DEFAULT_HOST, ConnectionFactory.DEFAULT_AMQP_PORT, ConnectionFactory.DEFAULT_USER, ConnectionFactory.DEFAULT_PASS, dataqueue, queryqueue, datalink, querylink);
+    public RabbitServer(String dataqueue, String queryqueue, CommandLink commandlink, QueryLink querylink) {
+        this(ConnectionFactory.DEFAULT_HOST, ConnectionFactory.DEFAULT_AMQP_PORT, ConnectionFactory.DEFAULT_USER, ConnectionFactory.DEFAULT_PASS, dataqueue, queryqueue, commandlink, querylink);
     }
 
     public void start() throws IOException, TimeoutException {
         connection = factory.newConnection();
-        serverquery = new RabbitServerQuery(connection, queryqueue, querylink);
+        serverquery = new RabbitQueryServer(connection, queryqueue, querylink);
         serverquery.start();
-        serverdata = new RabbitServerData(connection, dataqueue, datalink);
+        serverdata = new RabbitCommandServer(connection, dataqueue, commandlink);
         serverdata.start();
     }
 

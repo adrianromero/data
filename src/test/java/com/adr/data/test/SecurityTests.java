@@ -36,7 +36,7 @@ public class SecurityTests {
     @Test
     public void testLoginLogout() throws DataException {
 
-        SourceLink.createDataQueryLink();
+        SourceLink.createCommandQueryLink();
 
         try {
             // Login
@@ -73,14 +73,14 @@ public class SecurityTests {
                 Assert.assertEquals("Role Anonymous does not have authorization to query the resource: USERNAME", ex.getMessage());
             }
         } finally {
-            SourceLink.destroyDataQueryLink();
+            SourceLink.destroyCommandQueryLink();
         }
     }
 
     @Test
     public void testLoginManager() throws DataException {
 
-        SourceLink.createDataQueryLink();
+        SourceLink.createCommandQueryLink();
 
         try {
             // Login
@@ -93,14 +93,14 @@ public class SecurityTests {
             current = ReducerLogin.current(SourceLink.getQueryLink(), Header.EMPTY);
             Assert.assertNull(current);
         } finally {
-            SourceLink.destroyDataQueryLink();
+            SourceLink.destroyCommandQueryLink();
         }
     }
 
     @Test
     public void testAnonymous() throws DataException {
 
-        SourceLink.createDataQueryLink();
+        SourceLink.createCommandQueryLink();
 
         try {
             // this query succeds because anonymous has permissions to USERNAME_VISIBLE
@@ -113,14 +113,14 @@ public class SecurityTests {
                             new Entry("DISPLAYNAME", VariantString.NULL)));
             Assert.assertEquals(3, result1.size());
         } finally {
-            SourceLink.destroyDataQueryLink();
+            SourceLink.destroyCommandQueryLink();
         }
     }
 
     @Test
     public void testAuthorizations() throws DataException {
 
-        SourceLink.createDataQueryLink();
+        SourceLink.createCommandQueryLink();
 
         try {
 
@@ -153,7 +153,7 @@ public class SecurityTests {
             Assert.assertTrue(ReducerLogin.hasAuthorization(SourceLink.getQueryLink(), header, "com/adr/hellocore/fxml/datalist?datatable=com/adr/hellocore/security/role"));
             Assert.assertTrue(ReducerLogin.hasAuthorization(SourceLink.getQueryLink(), header, "anyotherresource"));
         } finally {
-            SourceLink.destroyDataQueryLink();
+            SourceLink.destroyCommandQueryLink();
         }
     }
 }
