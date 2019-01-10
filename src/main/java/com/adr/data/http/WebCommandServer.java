@@ -25,7 +25,7 @@ import com.adr.data.CommandLink;
 
 public class WebCommandServer implements Route {
 
-    private static final Logger LOG = Logger.getLogger(WebServer.class.getName());
+    private static final Logger LOG = Logger.getLogger(WebCommandServer.class.getName());
 
     private final CommandLink commandlink;
 
