@@ -1,5 +1,5 @@
 //     Data Access is a Java library to store data
-//     Copyright (C) 2017-2018 Adrián Romero Corchado.
+//     Copyright (C) 2017-2019 Adrián Romero Corchado.
 //
 //     This file is part of Data Access
 //
@@ -26,7 +26,6 @@ import com.adr.data.recordparser.RecordsSerializer;
 
 import java.io.IOException;
 import java.io.Writer;
-import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
 /**
@@ -59,30 +58,18 @@ public class ResponseQueryError extends ResponseQuery {
 
     @Override
     public List<Record> getResult() throws DataException {
-        if (ex instanceof DataException) {
-            throw (DataException) ex;
-        } else if (ex instanceof RuntimeException) {
-            throw (RuntimeException) ex;
-        } else {
-            throw new DataException(ex.toString());
-        }
+        throw ResponseErrors.createDataException(ex);
     }
-    
+
     public static ResponseQuery readData(Loader loader) throws IOException {
         Record error = RecordParsers.parseRecord(loader);
         loader.skipBlanks();
         if (CodePoint.isEOF(loader.getCP())) {
             String name = error.getString("EXCEPTION");
             String message = error.getString("MESSAGE");
-            Throwable t;
-            try {
-                t = (Throwable) Class.forName(name).getConstructor(String.class).newInstance(message);
-            } catch (ClassCastException | ClassNotFoundException | NoSuchMethodException | SecurityException | InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException ex) {
-                t = new DataException("Exception name: " + name + ", with message: " + message);
-            }
-            return new ResponseQueryError(t);
+            return new ResponseQueryError(ResponseErrors.createException(name, message));
         } else {
             throw new IOException(loader.messageExpected(-1));
-        }   
-    }     
+        }
+    }
 }

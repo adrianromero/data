@@ -14,7 +14,6 @@
 //     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //     See the License for the specific language governing permissions and
 //     limitations under the License.
-
 package com.adr.data.utils;
 
 import com.adr.data.DataException;
@@ -27,18 +26,17 @@ import com.adr.data.recordparser.RecordsSerializer;
 
 import java.io.IOException;
 import java.io.Writer;
-import java.lang.reflect.InvocationTargetException;
 
 /**
  *
  * @author adrian
  */
 public class ResponseExecuteError extends ResponseExecute {
-     
+
     public static final String NAME = "ERROR";
-    
+
     private final Throwable ex;
-    
+
     public ResponseExecuteError(Throwable ex) {
         this.ex = ex;
     }
@@ -59,30 +57,18 @@ public class ResponseExecuteError extends ResponseExecute {
 
     @Override
     public void getResult() throws DataException {
-        if (ex instanceof DataException) {
-            throw (DataException) ex;
-        } else if (ex instanceof RuntimeException) {
-            throw (RuntimeException) ex;
-        } else {
-            throw new DataException(ex.toString());
-        } 
+        throw ResponseErrors.createDataException(ex);
     }
-    
+
     public static ResponseExecute readData(Loader loader) throws IOException {
         Record error = RecordParsers.parseRecord(loader);
         loader.skipBlanks();
         if (CodePoint.isEOF(loader.getCP())) {
             String name = error.getString("EXCEPTION");
             String message = error.getString("MESSAGE");
-            Throwable t;
-            try {
-                t = (Throwable) Class.forName(name).getConstructor(String.class).newInstance(message);
-            } catch (ClassCastException | ClassNotFoundException | NoSuchMethodException | SecurityException | InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException ex) {
-                t = new DataException("Exception name: " + name + ", with message: " + message);
-            }
-            return new ResponseExecuteError(t);
+            return new ResponseExecuteError(ResponseErrors.createException(name, message));
         } else {
             throw new IOException(loader.messageExpected(-1));
-        }   
-    }    
+        }
+    }
 }
