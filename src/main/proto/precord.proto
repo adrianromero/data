@@ -26,46 +26,22 @@ service QueryLink {
     rpc Query (PQueryLinkRequest) returns (PQueryLinkResponse);
 }
 
-service DataLink {
-    rpc Execute (PDataLinkRequest) returns (PDataLinkResponse);
-}
-
-message PEntry {
-    string name = 1;
-    string kind = 2;
-    string value = 3;
-}
-
-message PRecord {
-  repeated PEntry entry = 1;
-}
-
-message PRecordList {
-  repeated PRecord record = 1;
-}
-
-message PDataException {
-    string type = 1;
-    string message = 2;
+service CommandLink {
+    rpc Execute (PCommandLinkRequest) returns (PCommandLinkResponse);
 }
 
 message PQueryLinkRequest {
-    PRecord headers = 1;
-    PRecord filter = 2;
+    string message = 1;
 }
 
 message PQueryLinkResponse {
-    oneof response {
-        PRecordList result = 1;
-        PDataException exception = 2;
-    }
+    string message = 1;
 }
 
-message PDataLinkRequest {
-    PRecord headers = 1;
-    PRecordList records = 2;
+message PCommandLinkRequest {
+    string message = 1;
 }
 
-message PDataLinkResponse {
-    PDataException exception = 1;
+message PCommandLinkResponse {
+    string message = 1;
 }
