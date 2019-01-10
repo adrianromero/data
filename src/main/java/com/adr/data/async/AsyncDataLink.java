@@ -1,5 +1,5 @@
 //     Data Access is a Java library to store data
-//     Copyright (C) 2017-2018 Adrián Romero Corchado.
+//     Copyright (C) 2017-2019 Adrián Romero Corchado.
 //
 //     This file is part of Data Access
 //
@@ -16,62 +16,22 @@
 //     limitations under the License.
 package com.adr.data.async;
 
-import com.adr.data.DataException;
-import com.adr.data.DataLink;
 import com.adr.data.record.Header;
 import com.adr.data.record.Record;
-
+import java.util.Arrays;
 
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.CompletionException;
-import java.util.concurrent.Executor;
-import java.util.concurrent.ForkJoinPool;
 
-/**
- * Created by adrian on 4/10/17.
- */
-public class AsyncDataLink {
+public interface AsyncDataLink {
 
-    private final DataLink datalink;
-    private final Executor executor;
+    public CompletableFuture<Void> execute(Header headers, List<Record> records);
 
-    public AsyncDataLink(DataLink datalink, Executor executor) {
-        this.datalink = datalink;
-        this.executor = executor;
+    public default CompletableFuture<Void> execute(Record... records) {
+        return execute(Header.EMPTY, Arrays.asList(records));
     }
 
-    public AsyncDataLink(DataLink datalink) {
-        this(datalink, ForkJoinPool.commonPool());
-    }
-
-    public CompletableFuture<Void> execute(Header headers, List<Record> records) {
-        return CompletableFuture.runAsync(() -> {
-            try {
-                datalink.execute(headers, records);
-            } catch (DataException e) {
-                throw new CompletionException(e);
-            }
-        }, executor);
-    }
-
-    public CompletableFuture<Void> execute(Record... records) {
-        return CompletableFuture.runAsync(() -> {
-            try {
-                datalink.execute(records);
-            } catch (DataException e) {
-                throw new CompletionException(e);
-            }
-        }, executor);
-    }
-
-    public CompletableFuture<Void> execute(Header headers, Record... records) {
-        return CompletableFuture.runAsync(() -> {
-            try {
-                datalink.execute(headers, records);
-            } catch (DataException e) {
-                throw new CompletionException(e);
-            }
-        }, executor);
+    public default CompletableFuture<Void> execute(Header headers, Record... records) {
+        return execute(headers, Arrays.asList(records));
     }
 }

@@ -1,5 +1,5 @@
 //     Data Access is a Java library to store data
-//     Copyright (C) 2017-2018 Adrián Romero Corchado.
+//     Copyright (C) 2017-2019 Adrián Romero Corchado.
 //
 //     This file is part of Data Access
 //
@@ -16,71 +16,27 @@
 //     limitations under the License.
 package com.adr.data.async;
 
-import com.adr.data.DataException;
-import com.adr.data.QueryLink;
 import com.adr.data.record.Header;
 import com.adr.data.record.Record;
 
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.CompletionException;
-import java.util.concurrent.Executor;
-import java.util.concurrent.ForkJoinPool;
 
-/**
- * Created by adrian on 4/10/17.
- */
-public class AsyncQueryLink {
+public interface AsyncQueryLink {
 
-    private final QueryLink querylink;
-    private final Executor executor;
+    public CompletableFuture<List<Record>> query(Header headers, Record filter);
 
-    public AsyncQueryLink(QueryLink querylink, Executor executor) {
-        this.querylink = querylink;
-        this.executor = executor;
+    public default CompletableFuture<List<Record>> query(Record filter) {
+        return query(Header.EMPTY, filter);
     }
 
-    public AsyncQueryLink(QueryLink querylink) {
-        this(querylink, ForkJoinPool.commonPool());
+    public default CompletableFuture<Record> find(Header headers, Record filter) {
+        return query(headers, filter).thenApply((List<Record> l) -> {
+            return l.isEmpty() ? null : l.get(0);
+        });
     }
 
-    public CompletableFuture<List<Record>> query(Header headers, Record filter) {
-        return CompletableFuture.supplyAsync(() -> {
-            try {
-                return querylink.query(headers, filter);
-            } catch (DataException e) {
-                throw new CompletionException(e);
-            }
-        }, executor);
-    }
-
-    public CompletableFuture<List<Record>> query(Record filter) {
-        return CompletableFuture.supplyAsync(() -> {
-            try {
-                return querylink.query(filter);
-            } catch (DataException e) {
-                throw new CompletionException(e);
-            }
-        }, executor);
-    }
-
-    public CompletableFuture<Record> find(Header headers, Record filter) {
-        return CompletableFuture.supplyAsync(() -> {
-            try {
-                return querylink.find(headers, filter);
-            } catch (DataException e) {
-                throw new CompletionException(e);
-            }
-        }, executor);
-    }
-
-    public CompletableFuture<Record> find(Record filter) {
-        return CompletableFuture.supplyAsync(() -> {
-            try {
-                return querylink.find(filter);
-            } catch (DataException e) {
-                throw new CompletionException(e);
-            }
-        }, executor);
+    public default CompletableFuture<Record> find(Record filter) {
+        return find(Header.EMPTY, filter);
     }
 }
