@@ -1,5 +1,5 @@
 //     Data Access is a Java library to store data
-//     Copyright (C) 2016-2017 Adrián Romero Corchado.
+//     Copyright (C) 2016-2019 Adrián Romero Corchado.
 //
 //     This file is part of Data Access
 //
@@ -25,18 +25,15 @@ import spark.Service;
  * @author adrian
  */
 public class WebServer {
-   
+
     private Service http;
     private final int port;
-   
-    private final String contextdata; 
+
+    private final String contextdata;
     private final DataLink datalink;
-    private final String contextquery; 
+    private final String contextquery;
     private final QueryLink querylink;
-    
-    private WebServerData serverdata;
-    private WebServerQuery serverquery;
-    
+
     public WebServer(int port, String contextdata, String contextquery, DataLink datalink, QueryLink querylink) {
         this.port = port;
         this.contextdata = contextdata;
@@ -44,32 +41,22 @@ public class WebServer {
         this.datalink = datalink;
         this.querylink = querylink;
     }
-    
+
     protected Service connect(int port) {
         Service s = Service.ignite();
         s.port(port);
         return s;
     }
-    
+
     public void start() {
-       
         http = connect(port);
-        
-        serverdata = new WebServerData(http, contextdata, datalink);
-        serverdata.start();
-        serverquery = new WebServerQuery(http, contextquery, querylink);
-        serverquery.start();
-        
+        http.post(contextdata, new WebServerData(datalink));
+        http.post(contextquery, new WebServerQuery(querylink));
         http.awaitInitialization();
     }
-    
+
     public void stop() {
-        
-        serverdata.stop();
-        serverdata = null;
-        serverquery.stop();
-        serverquery = null;
-        
-        http.stop();        
+        http.stop();
+        http = null;
     }
 }

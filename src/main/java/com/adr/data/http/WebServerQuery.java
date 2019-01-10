@@ -1,5 +1,5 @@
 //     Data Access is a Java library to store data
-//     Copyright (C) 2016-2017 Adrián Romero Corchado.
+//     Copyright (C) 2016-2019 Adrián Romero Corchado.
 //
 //     This file is part of Data Access
 //
@@ -19,35 +19,27 @@ package com.adr.data.http;
 import com.adr.data.QueryLink;
 import com.adr.data.utils.RequestQuery;
 import java.util.logging.Logger;
-import spark.Service;
+import spark.Request;
+import spark.Response;
+import spark.Route;
 
 /**
  *
  * @author adrian
  */
-public class WebServerQuery {
+public class WebServerQuery implements Route {
 
     private static final Logger LOG = Logger.getLogger(WebServerQuery.class.getName());
 
-    private final Service http;
-    private final String context;
     private final QueryLink link;
 
-    public WebServerQuery(Service http, String context, QueryLink link) {
-        this.http = http;
-        this.context = context;
+    public WebServerQuery(QueryLink link) {
         this.link = link;
     }
 
-    public void start() {
-        http.post(context, (request, response) -> {
-            response.type("application/json; charset=utf-8");
-            return RequestQuery.serverQueryProcess(link, request.body(), LOG);
-        });
-        LOG.info("Web Query Server started.");
-    }
-
-    public void stop() {
-        LOG.info("Web Query Server stopped.");
+    @Override
+    public Object handle(Request request, Response response) throws Exception {
+        response.type("application/json; charset=utf-8");
+        return RequestQuery.serverQueryProcess(link, request.body(), LOG);
     }
 }
