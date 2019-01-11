@@ -1,5 +1,5 @@
 //     Data Access is a Java library to store data
-//     Copyright (C) 2017-2018 Adrián Romero Corchado.
+//     Copyright (C) 2017-2019 Adrián Romero Corchado.
 //
 //     This file is part of Data Access
 //
@@ -19,10 +19,6 @@ package com.adr.data.recordparser;
 import java.io.IOException;
 import java.io.StringReader;
 
-/**
- *
- * @author adrian
- */
 public class CommonParsers {
     
     public final static int TYPE_INT = 0;
@@ -51,7 +47,7 @@ public class CommonParsers {
             b.appendCodePoint(loader.getCP());
             loader.next();
         } else {       
-            throw new IOException(loader.messageExpected("Number"));
+            throw IOExceptionMessage.createExpected(loader, "Number");
         }
         
         for(;;)  {
@@ -75,7 +71,7 @@ public class CommonParsers {
             b.appendCodePoint(loader.getCP());
             loader.next();
         } else {       
-            throw new IOException(loader.messageExpected("Alphabetic"));
+            throw IOExceptionMessage.createExpected(loader, "Alphabetic");
         } 
         
         for(;;)  {
@@ -96,7 +92,7 @@ public class CommonParsers {
             b.appendCodePoint(loader.getCP());
             loader.next();
         } else {
-            throw new IOException(loader.messageExpected("Identifier"));
+            throw IOExceptionMessage.createExpected(loader, "Identifier");
         }
         
         for(;;)  {
@@ -126,7 +122,7 @@ public class CommonParsers {
             state = STRING_BODY;
             loader.next();
         } else {
-            throw new IOException(loader.messageExpected('\"'));
+            throw IOExceptionMessage.createExpected(loader, '\"');
         }
         
         for(;;)  {
@@ -141,7 +137,7 @@ public class CommonParsers {
                     b.appendCodePoint(loader.getCP());
                     loader.next();
                 } else {
-                   throw new IOException(loader.messageExpected("Non control"));
+                   throw IOExceptionMessage.createExpected(loader, "Non control");
                 }
             } else if (state == STRING_ESCAPE) {
                 if (loader.getCP() == 't') {
@@ -181,7 +177,7 @@ public class CommonParsers {
                     loader.next();
                     state = STRING_UNICODE1;
                 } else {
-                    throw new IOException(loader.messageExpected("Escape sequence"));                    
+                    throw IOExceptionMessage.createExpected(loader, "Escape sequence");                    
                 }
             } else if (state == STRING_UNICODE1) {
                 if (CodePoint.isHex(loader.getCP())) {
@@ -189,7 +185,7 @@ public class CommonParsers {
                     loader.next();
                     state = STRING_UNICODE2;
                 } else {
-                    throw new IOException(loader.messageExpected("Hexadecimal"));
+                    throw IOExceptionMessage.createExpected(loader, "Hexadecimal");
                 }
             } else if (state == STRING_UNICODE2) {
                 if (CodePoint.isHex(loader.getCP())) {
@@ -197,7 +193,7 @@ public class CommonParsers {
                     loader.next();
                     state = STRING_UNICODE3;
                 } else {
-                    throw new IOException(loader.messageExpected("Hexadecimal"));
+                    throw IOExceptionMessage.createExpected(loader, "Hexadecimal");
                 }
             } else if (state == STRING_UNICODE3) {
                 if (CodePoint.isHex(loader.getCP())) {
@@ -205,7 +201,7 @@ public class CommonParsers {
                     loader.next();
                     state = STRING_UNICODE4;
                 } else {
-                    throw new IOException(loader.messageExpected("Hexadecimal"));
+                    throw IOExceptionMessage.createExpected(loader, "Hexadecimal");
                 }   
             } else if (state == STRING_UNICODE4) {
                 if (CodePoint.isHex(loader.getCP())) {
@@ -215,10 +211,10 @@ public class CommonParsers {
                     loader.next();
                     state = STRING_BODY;
                 } else {
-                    throw new IOException(loader.messageExpected("Hexadecimal"));
+                    throw IOExceptionMessage.createExpected(loader, "Hexadecimal");
                 }                
             } else {
-                throw new IOException("Unexpected error");
+                throw IOExceptionMessage.create(loader, "Unexpected error");
             }            
         }    
     }

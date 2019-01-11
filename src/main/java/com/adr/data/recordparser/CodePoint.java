@@ -1,5 +1,5 @@
 //     Data Access is a Java library to store data
-//     Copyright (C) 2017 Adrián Romero Corchado.
+//     Copyright (C) 2017-2019 Adrián Romero Corchado.
 //
 //     This file is part of Data Access
 //
@@ -16,10 +16,6 @@
 //     limitations under the License.
 package com.adr.data.recordparser;
 
-/**
- *
- * @author adrian
- */
 public final class CodePoint {
     
     private CodePoint() {}

@@ -43,7 +43,7 @@ public class GRPCCommandServer extends CommandLinkGrpc.CommandLinkImplBase {
     public void execute(PCommandLinkRequest request, StreamObserver<PCommandLinkResponse> responseObserver) {
         
         try {
-            String result = RequestCommand.serverDataProcess(commandlink, request.getMessage(), LOG);
+            String result = RequestCommand.serverCommandProcess(commandlink, request.getMessage(), LOG);
             
             PCommandLinkResponse response = PCommandLinkResponse.newBuilder()
                     .setMessage(result)

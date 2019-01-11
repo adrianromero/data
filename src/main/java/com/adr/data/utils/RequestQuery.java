@@ -1,5 +1,5 @@
 //     Data Access is a Java library to store data
-//     Copyright (C) 2016-2018 Adrián Romero Corchado.
+//     Copyright (C) 2016-2019 Adrián Romero Corchado.
 //
 //     This file is part of Data Access
 //
@@ -17,12 +17,14 @@
 
 package com.adr.data.utils;
 
+import com.adr.data.AsyncQueryLink;
 import com.adr.data.DataException;
 import com.adr.data.QueryLink;
 import com.adr.data.record.Header;
 import com.adr.data.recordparser.RecordsSerializer;
 import com.adr.data.record.Record;
 import com.adr.data.recordparser.CodePoint;
+import com.adr.data.recordparser.IOExceptionMessage;
 import com.adr.data.recordparser.Loader;
 import com.adr.data.recordparser.RecordParsers;
 import com.adr.data.recordparser.StreamLoader;
@@ -31,13 +33,11 @@ import java.io.Reader;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.io.Writer;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CompletionException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-/**
- *
- * @author adrian
- */
 public class RequestQuery {
     
     private final Header headers;
@@ -75,7 +75,7 @@ public class RequestQuery {
         if (CodePoint.isEOF(loader.getCP())) {
             return new RequestQuery(header, filter);
         } else {
-            throw new IOException(loader.messageExpected(-1));
+            throw IOExceptionMessage.createExpected(loader, -1);
         }
     } 
     
@@ -88,7 +88,36 @@ public class RequestQuery {
             return new ResponseQueryListRecord(link.query(request.headers, request.filter)).write();
         } catch (DataException ex) {
             logger.log(Level.SEVERE, "Cannot execute query request.", ex);
-            return new ResponseCommandError(ex).write();
+            return new ResponseQueryError(ex).write();
         }
     }    
+    
+    public static CompletableFuture<String> asyncserverQueryProcess(AsyncQueryLink querylink, String message, Logger logger) {
+        return CompletableFuture.completedFuture(null)
+                .thenApply(nil -> {
+                    try {
+                        return RequestQuery.read(message);
+                    } catch (IOException ex) {
+                        throw new CompletionException(ex);
+                    }
+                })
+                .thenCompose(request -> querylink.query(request.headers, request.filter))
+                .thenApply(records -> {
+                    try {
+                        return new ResponseQueryListRecord(records).write();
+                    } catch (IOException ex) {
+                        throw new CompletionException(ex);
+                    }
+                })
+                .exceptionally(t -> {
+                    if (t instanceof DataException) {
+                        try {
+                            return new ResponseQueryError(t).write();
+                        } catch (IOException ex) {
+                            throw new CompletionException(ex);
+                        }
+                    }
+                    throw new CompletionException(t);
+                });    
+    }     
 }

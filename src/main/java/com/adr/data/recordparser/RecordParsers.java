@@ -1,5 +1,5 @@
 //     Data Access is a Java library to store data
-//     Copyright (C) 2017-2018 Adrián Romero Corchado.
+//     Copyright (C) 2017-2019 Adrián Romero Corchado.
 //
 //     This file is part of Data Access
 //
@@ -25,10 +25,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- *
- * @author adrian
- */
 public class RecordParsers {
     
     private static enum States {
@@ -52,7 +48,7 @@ public class RecordParsers {
             loader.next();
             loader.skipBlanks();
         } else {
-            throw new IOException(loader.messageExpected('{'));  
+            throw IOExceptionMessage.createExpected(loader, '{');  
         }
         
         for(;;) {
@@ -73,7 +69,7 @@ public class RecordParsers {
                     loader.skipBlanks();  
                     state = States.RECORD_DOTS;                  
                 } else {
-                    throw new IOException(loader.messageExpected("Name"));  
+                    throw IOExceptionMessage.createExpected(loader, "Name");  
                 }
             } else if (state == States.RECORD_DOTS) {
                 if (loader.getCP() == ':') {
@@ -81,7 +77,7 @@ public class RecordParsers {
                     loader.skipBlanks();                     
                     state = States.RECORD_VALUE;
                 } else {
-                    throw new IOException(loader.messageExpected(':'));  
+                    throw IOExceptionMessage.createExpected(loader, ':');  
                 }
             } else if (state == States.RECORD_VALUE) {
                 if (loader.getCP() == '\"') {
@@ -115,7 +111,7 @@ public class RecordParsers {
                     kind = Kind.STRING;
                     state = States.RECORD_DOTSKIND;
                 } else {
-                    throw new IOException(loader.messageExpected("Value"));  
+                    throw IOExceptionMessage.createExpected(loader, "Value");  
                 }
             } else if (state == States.RECORD_DOTSKIND) {
                 if (loader.getCP() == ':') {
@@ -124,12 +120,12 @@ public class RecordParsers {
                     try {
                         kind = Kind.valueOf(CommonParsers.parseWord(loader));
                     } catch (IllegalArgumentException ex) {
-                        throw new IOException(loader.messageExpected("Kind"), ex); 
+                        throw IOExceptionMessage.createExpected(loader, "Kind"); 
                     }
                     try {
                         entries.add(new Entry(name, kind.read(new ISOResults(isovalue))));
                     } catch (DataException ex) {                    
-                        throw new IOException(loader.messageGeneral("Error parsing ISO value"));  
+                        throw IOExceptionMessage.create(loader, "Error parsing ISO value");  
                     }
                     loader.skipBlanks();      
                     state = States.RECORD_END;         
@@ -137,7 +133,7 @@ public class RecordParsers {
                     try {
                         entries.add(new Entry(name, kind.read(new ISOResults(isovalue))));
                     } catch (DataException ex) {
-                        throw new IOException(loader.messageExpected("Error parsing ISO value"), ex);  
+                        throw IOExceptionMessage.create(loader, "Error parsing ISO value");  
                     }
                     state = States.RECORD_END;
                 }
@@ -150,10 +146,10 @@ public class RecordParsers {
                     loader.next();
                     return new Record(entries);                    
                 } else {
-                    throw new IOException(loader.messageExpected(','));  
+                    throw IOExceptionMessage.createExpected(loader, ',');  
                 }           
             } else {
-                throw new IOException("Unexpected error");
+                throw IOExceptionMessage.create(loader, "Unexpected error");
             }
         }
     }   

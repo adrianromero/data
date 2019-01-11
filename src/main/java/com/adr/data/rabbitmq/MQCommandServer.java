@@ -52,7 +52,7 @@ public class MQCommandServer extends RpcServer {
         try {
             // the result must be just the result: OK or exception
             String message = new String(requestBody, StandardCharsets.UTF_8);
-            return RequestCommand.serverDataProcess(commandlink, message, LOG).getBytes(StandardCharsets.UTF_8);
+            return RequestCommand.serverCommandProcess(commandlink, message, LOG).getBytes(StandardCharsets.UTF_8);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

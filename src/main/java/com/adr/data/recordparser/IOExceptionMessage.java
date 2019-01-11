@@ -1,5 +1,5 @@
 //     Data Access is a Java library to store data
-//     Copyright (C) 2017-2019 Adrián Romero Corchado.
+//     Copyright (C) 2019 Adrián Romero Corchado.
 //
 //     This file is part of Data Access
 //
@@ -18,22 +18,17 @@ package com.adr.data.recordparser;
 
 import java.io.IOException;
 
-public interface Loader {
-    
-    public int getCP();
-    public int getRow();
-    public int getColumn();
-    public void next() throws IOException;
-    public default void skipBlanks() throws IOException {
-        while (Character.isWhitespace(getCP())) {
-            next();
-        }
-        if ('#' == getCP()) {
-            next();
-            while (getCP() != '\n' && !CodePoint.isEOF(getCP())) {
-               next();
-            }
-            skipBlanks();
-        }
+public class IOExceptionMessage {
+
+    public static IOException create(Loader loader, String message) {
+        return new IOException(String.format("Syntax error. Row %1$s, column %2$s. %3$s.", loader.getRow(), loader.getColumn(), message));  
     }
+    
+    public static IOException createExpected(Loader loader, String expected) {
+        return create(loader, String.format("Expected \"%1$s\" but found \"%2$s\"", expected, CodePoint.toString(loader.getCP())));  
+    }
+    
+    public static IOException createExpected(Loader loader, int expected) {
+        return createExpected(loader, CodePoint.toString(expected));  
+    }        
 }

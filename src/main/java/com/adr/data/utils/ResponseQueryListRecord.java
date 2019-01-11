@@ -1,5 +1,5 @@
 //     Data Access is a Java library to store data
-//     Copyright (C) 2017 Adrián Romero Corchado.
+//     Copyright (C) 2017-2019 Adrián Romero Corchado.
 //
 //     This file is part of Data Access
 //
@@ -24,6 +24,7 @@ import java.io.Writer;
 import java.util.List;
 import com.adr.data.record.Record;
 import com.adr.data.recordparser.CodePoint;
+import com.adr.data.recordparser.IOExceptionMessage;
 import com.adr.data.recordparser.Loader;
 import com.adr.data.recordparser.RecordParsers;
 import java.util.ArrayList;
@@ -68,7 +69,7 @@ public class ResponseQueryListRecord extends ResponseQuery {
             } else if (CodePoint.isEOF(loader.getCP())) {
                 break;
             } else {
-                throw new IOException(loader.messageExpected(-1));
+                throw IOExceptionMessage.createExpected(loader, -1);
             }
         }
         return new ResponseQueryListRecord(recordsList);        

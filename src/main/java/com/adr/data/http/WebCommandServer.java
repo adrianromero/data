@@ -36,6 +36,6 @@ public class WebCommandServer implements Route {
     @Override
     public Object handle(Request request, Response response) throws Exception {
         response.type("application/json; charset=utf-8");
-        return RequestCommand.serverDataProcess(commandlink, request.body(), LOG);
+        return RequestCommand.serverCommandProcess(commandlink, request.body(), LOG);
     }
 }

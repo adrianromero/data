@@ -20,6 +20,7 @@ import com.adr.data.DataException;
 import com.adr.data.record.Entry;
 import com.adr.data.record.Record;
 import com.adr.data.recordparser.CodePoint;
+import com.adr.data.recordparser.IOExceptionMessage;
 import com.adr.data.recordparser.Loader;
 import com.adr.data.recordparser.RecordParsers;
 import com.adr.data.recordparser.RecordsSerializer;
@@ -69,7 +70,7 @@ public class ResponseQueryError extends ResponseQuery {
             String message = error.getString("MESSAGE");
             return new ResponseQueryError(ResponseErrors.createException(name, message));
         } else {
-            throw new IOException(loader.messageExpected(-1));
+            throw IOExceptionMessage.createExpected(loader, -1);
         }
     }
 }

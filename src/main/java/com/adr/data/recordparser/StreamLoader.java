@@ -1,5 +1,5 @@
 //     Data Access is a Java library to store data
-//     Copyright (C) 2017 Adrián Romero Corchado.
+//     Copyright (C) 2017-2019 Adrián Romero Corchado.
 //
 //     This file is part of Data Access
 //
@@ -19,10 +19,6 @@ package com.adr.data.recordparser;
 import java.io.IOException;
 import java.io.Reader;
 
-/**
- *
- * @author adrian
- */
 public class StreamLoader implements Loader {
     private final Reader reader;
     private int row;
@@ -46,12 +42,19 @@ public class StreamLoader implements Loader {
             column ++;
         }
     }   
+    
     @Override
     public final int getCP() {
         return cp;
     }
+    
     @Override
-    public final String messageGeneral(String message) {
-        return String.format("Syntax error. Row %1$s, column %2$s. %3$s.", row, column, message);  
-    }     
+    public final int getRow() {
+        return row;
+    }
+    
+    @Override
+    public final int getColumn() {
+        return column;
+    }
 }

@@ -1,5 +1,5 @@
 //     Data Access is a Java library to store data
-//     Copyright (C) 2016-2018 Adrián Romero Corchado.
+//     Copyright (C) 2016-2019 Adrián Romero Corchado.
 //
 //     This file is part of Data Access
 //
@@ -17,6 +17,7 @@
 
 package com.adr.data.utils;
 
+import com.adr.data.AsyncCommandLink;
 import com.adr.data.DataException;
 import com.adr.data.record.Header;
 import com.adr.data.recordparser.RecordsSerializer;
@@ -36,6 +37,9 @@ import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import com.adr.data.CommandLink;
+import com.adr.data.recordparser.IOExceptionMessage;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CompletionException;
 
 /**
  *
@@ -66,7 +70,7 @@ public class RequestCommand {
     public static RequestCommand read(String value) throws IOException {
         return read(new StringReader(value));
     }
-    
+ 
     public static RequestCommand read(Reader r) throws IOException {
         Loader loader = new StreamLoader(r);
         loader.next();
@@ -81,13 +85,13 @@ public class RequestCommand {
             } else if (CodePoint.isEOF(loader.getCP())) {
                 break;
             } else {
-                throw new IOException(loader.messageExpected(-1));
+                throw IOExceptionMessage.createExpected(loader, -1);
             }
         }
         return new RequestCommand(header, recordsList);
     }
     
-    public static String serverDataProcess(CommandLink link, String message, Logger logger) throws IOException {
+    public static String serverCommandProcess(CommandLink link, String message, Logger logger) throws IOException {
 
         RequestCommand request = RequestCommand.read(message);
 
@@ -100,5 +104,34 @@ public class RequestCommand {
             logger.log(Level.SEVERE, "Cannot execute request.", ex);
             return new ResponseCommandError(ex).write();
         }
-    }    
+    }
+    
+    public static CompletableFuture<String> asyncserverCommandProcess(AsyncCommandLink commandlink, String message, Logger logger) {
+        return CompletableFuture.completedFuture(null)
+                .thenApply(nil -> {
+                    try {
+                        return RequestCommand.read(message);
+                    } catch (IOException ex) {
+                        throw new CompletionException(ex);
+                    }
+                })
+                .thenCompose(request -> commandlink.execute(request.headers, request.records))
+                .thenApply(nil -> {
+                    try {
+                        return new ResponseCommandSuccess().write();
+                    } catch (IOException ex) {
+                        throw new CompletionException(ex);
+                    }
+                })
+                .exceptionally(t -> {
+                    if (t instanceof DataException) {
+                        try {
+                            return new ResponseQueryError(t).write();
+                        } catch (IOException ex) {
+                            throw new CompletionException(ex);
+                        }
+                    }
+                    throw new CompletionException(t);
+                });    
+    }     
 }

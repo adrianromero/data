@@ -1,5 +1,5 @@
 //     Data Access is a Java library to store data
-//     Copyright (C) 2017-2018 Adrián Romero Corchado.
+//     Copyright (C) 2017-2019 Adrián Romero Corchado.
 //
 //     This file is part of Data Access
 //
@@ -19,13 +19,12 @@ package com.adr.data.utils;
 
 import com.adr.data.DataException;
 import com.adr.data.recordparser.*;
+import java.io.IOException;
+import java.io.Reader;
+import java.io.StringReader;
+import java.io.StringWriter;
+import java.io.Writer;
 
-import java.io.*;
-
-/**
- *
- * @author adrian
- */
 public abstract class ResponseCommand {
     public abstract String getType();
     
@@ -53,7 +52,7 @@ public abstract class ResponseCommand {
         } else if (ResponseCommandError.NAME.equals(type)) {
             return ResponseCommandError.readData(loader);
         } else {
-            throw new IOException(loader.messageExpected("Request Execute type name"));
+            throw IOExceptionMessage.createExpected(loader, "Request Command type name");
         }
     }
 }

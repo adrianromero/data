@@ -49,7 +49,7 @@ public class RecordsSerializer {
         if (CodePoint.isEOF(loader.getCP())) {
             return record;
         } else {
-            throw new IOException(loader.messageExpected(-1));
+            throw IOExceptionMessage.createExpected(loader, -1);
         }    
     }   
 
@@ -69,7 +69,7 @@ public class RecordsSerializer {
             } else if (CodePoint.isEOF(loader.getCP())) {
                 return recordsList;    
             } else {
-                throw new IOException(loader.messageExpected(-1));
+                throw IOExceptionMessage.createExpected(loader, -1);
             }
         }
     }
@@ -89,7 +89,7 @@ public class RecordsSerializer {
                 rc = true;
             }
             RecordsSerializer.write(r, writer);
-        }  
+        }         
     }
     
     public static final String write(Record r) throws IOException {
@@ -130,7 +130,7 @@ public class RecordsSerializer {
                     }
                 }
             } catch (DataException ex) {
-                throw new IOException("Unexpected format error");
+                throw new IOException(ex);
             }
         }
         writer.write(')');
