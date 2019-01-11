@@ -1,5 +1,5 @@
 //     Data Access is a Java library to store data
-//     Copyright (C) 2017 Adrián Romero Corchado.
+//     Copyright (C) 2017-2019 Adrián Romero Corchado.
 //
 //     This file is part of Data Access
 //
@@ -17,10 +17,6 @@
 
 package com.adr.data;
 
-/**
- *
- * @author adrian
- */
 public class DataException extends Exception {
     
     private static final long serialVersionUID = 8719551478674716662L;

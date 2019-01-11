@@ -22,10 +22,6 @@ import java.util.Arrays;
 import java.util.List;
 import com.adr.data.record.Record;
 
-/**
- *
- * @author adrian
- */
 public interface CommandLink {
     
     public void execute(Header headers, List<Record> records) throws DataException; 

@@ -14,10 +14,8 @@
 //     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //     See the License for the specific language governing permissions and
 //     limitations under the License.
-package com.adr.data.async;
+package com.adr.data;
 
-import com.adr.data.DataException;
-import com.adr.data.QueryLink;
 import com.adr.data.record.Header;
 import com.adr.data.record.Record;
 
@@ -27,9 +25,6 @@ import java.util.concurrent.CompletionException;
 import java.util.concurrent.Executor;
 import java.util.concurrent.ForkJoinPool;
 
-/**
- * Created by adrian on 4/10/17.
- */
 public class BasicAsyncQueryLink {
 
     private final QueryLink querylink;
