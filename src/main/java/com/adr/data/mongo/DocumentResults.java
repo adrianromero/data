@@ -1,5 +1,5 @@
 //     Data Access is a Java library to store data
-//     Copyright (C) 2018 Adrián Romero Corchado.
+//     Copyright (C) 2018-2019 Adrián Romero Corchado.
 //
 //     This file is part of Data Access
 //
@@ -94,11 +94,5 @@ public class DocumentResults implements Results {
     @Override
     public byte[] getBytes() throws DataException {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public Object getObject() throws DataException {
-        return document.get(realname);
-    }
-    
+    } 
 }

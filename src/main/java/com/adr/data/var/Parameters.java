@@ -1,5 +1,5 @@
 //     Data Access is a Java library to store data
-//     Copyright (C) 2016-2017 Adrián Romero Corchado.
+//     Copyright (C) 2016-2019 Adrián Romero Corchado.
 //
 //     This file is part of Data Access
 //
@@ -41,5 +41,4 @@ public interface Parameters {
     public void setLocalDate(LocalDate value) throws DataException;
     public void setLocalTime(LocalTime value) throws DataException;
     public void setBytes(byte[] value) throws DataException;
-    public void setObject(Object value) throws DataException;
 }

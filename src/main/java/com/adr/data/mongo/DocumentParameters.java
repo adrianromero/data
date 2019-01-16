@@ -1,5 +1,5 @@
 //     Data Access is a Java library to store data
-//     Copyright (C) 2018 Adrián Romero Corchado.
+//     Copyright (C) 2018-2019 Adrián Romero Corchado.
 //
 //     This file is part of Data Access
 //
@@ -91,11 +91,6 @@ public class DocumentParameters implements Parameters {
 
     @Override
     public void setBytes(byte[] value) throws DataException {
-        document.append(name, value);
-    }
-
-    @Override
-    public void setObject(Object value) throws DataException {
         document.append(name, value);
     }
 }

@@ -1,5 +1,5 @@
 //     Data Access is a Java library to store data
-//     Copyright (C) 2016-2017 Adrián Romero Corchado.
+//     Copyright (C) 2016-2019 Adrián Romero Corchado.
 //
 //     This file is part of Data Access
 //
@@ -150,15 +150,6 @@ public final class SQLParameters implements Parameters {
     public void setBytes(byte[] value) throws DataException {
         try {     
             set(paramName, i -> stmt.setBytes(i, value));
-        } catch (SQLException ex) {
-            throw new DataException(ex);
-        }
-    }
-
-    @Override
-    public void setObject(Object value) throws DataException {
-        try {     
-            set(paramName, i -> stmt.setObject(i, value));
         } catch (SQLException ex) {
             throw new DataException(ex);
         }

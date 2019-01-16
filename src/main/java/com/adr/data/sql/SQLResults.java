@@ -1,5 +1,5 @@
 //     Data Access is a Java library to store data
-//     Copyright (C) 2016-2017 Adrián Romero Corchado.
+//     Copyright (C) 2016-2019 Adrián Romero Corchado.
 //
 //     This file is part of Data Access
 //
@@ -137,12 +137,4 @@ public final class SQLResults implements Results {
             throw new DataException(ex);
         }
     }
-    @Override
-    public Object getObject() throws DataException {
-        try {
-            return resultset.getObject(columnName);
-        } catch (SQLException ex) {
-            throw new DataException(ex);
-        }
-    }  
 }
