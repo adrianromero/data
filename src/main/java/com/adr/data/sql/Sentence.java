@@ -1,5 +1,5 @@
 //     Data Access is a Java library to store data
-//     Copyright (C) 2016-2018 Adrián Romero Corchado.
+//     Copyright (C) 2016-2019 Adrián Romero Corchado.
 //
 //     This file is part of Data Access
 //
@@ -17,7 +17,6 @@
 package com.adr.data.sql;
 
 import com.adr.data.DataException;
-import com.adr.data.record.Entry;
 import com.adr.data.var.Variant;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -29,7 +28,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import com.adr.data.record.Record;
 import com.adr.data.record.Records;
-import java.util.Collections;
+import com.google.common.collect.ImmutableMap;
+import java.util.Map;
 
 /**
  *
@@ -74,7 +74,7 @@ public abstract class Sentence {
 
                 int i = 0;
                 while (i < limit && resultset.next()) {
-                    r.add(new Record(read(resultset, filter)));
+                    r.add(read(resultset, filter));
                     i++;
                 }
                 return r;
@@ -88,28 +88,26 @@ public abstract class Sentence {
         if (param == null) {
             return;
         }
-        for (String name : param.getNames()) {
-            SQLParameters sqlparams = new SQLParameters(stmt, params, name);
-            Variant v = param.get(name);
-            v.getKind().write(sqlparams, v);
+        for (Map.Entry<String, Variant> entry : param.entrySet()) {
+            SQLParameters sqlparams = new SQLParameters(stmt, params, entry.getKey());
+            entry.getValue().getKind().write(sqlparams, entry.getValue());
         }
     }
 
-    protected static List<Entry> read(ResultSet resultset, Record param) throws DataException {
+    protected static Record read(ResultSet resultset, Record param) throws DataException {
         if (param == null) {
-            return Collections.emptyList();
+            return Record.EMPTY;
         }
-        List<Entry> l = new ArrayList<>();
-        for (String name : param.getNames()) {
-            Variant p = param.get(name);
-            if ("COLLECTION.KEY".equals(name)) {
-                l.add(new Entry(name, p));
-            } else if (!name.contains("..")) { // Is a field
-                SQLResults sqlresults = new SQLResults(resultset, name);
-                Variant newv = p.getKind().read(sqlresults);
-                l.add(new Entry(name, newv));
+        ImmutableMap.Builder<String, Variant> map = ImmutableMap.<String, Variant>builder();
+        for (Map.Entry<String, Variant> entry : param.entrySet()) {
+            if ("COLLECTION.KEY".equals(entry.getKey())) {
+                map.put(entry.getKey(), entry.getValue());
+            } else if (!entry.getKey().contains("..")) { // Is a field
+                SQLResults sqlresults = new SQLResults(resultset, entry.getKey());
+                Variant newv = entry.getValue().getKind().read(sqlresults);
+                map.put(entry.getKey(), newv);
             }
         }
-        return l;
+        return new Record(map.build());
     }   
 }

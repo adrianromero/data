@@ -1,5 +1,5 @@
 //     Data Access is a Java library to store data
-//     Copyright (C) 2018 Adrián Romero Corchado.
+//     Copyright (C) 2018-2019 Adrián Romero Corchado.
 //
 //     This file is part of Data Access
 //
@@ -21,11 +21,11 @@ import com.adr.data.DataException;
 import com.adr.data.FilterBuilder;
 import com.adr.data.FilterBuilderMethods;
 import com.adr.data.QueryLink;
-import com.adr.data.record.Entry;
 import com.adr.data.record.Header;
 import com.adr.data.record.Record;
 import com.adr.data.record.Records;
 import com.adr.data.var.Variant;
+import com.google.common.collect.ImmutableMap;
 import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoCursor;
@@ -34,8 +34,8 @@ import com.mongodb.client.model.Filters;
 import com.mongodb.client.model.Projections;
 import com.mongodb.client.model.Sorts;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.regex.Pattern;
 import org.bson.BsonDocument;
 import org.bson.Document;
@@ -77,7 +77,7 @@ public class MongoQueryLink implements QueryLink {
         List<Record> result = new ArrayList<>();
         try (MongoCursor<Document> cursor = iter.iterator()) {
             while (cursor.hasNext()) {
-                result.add(new Record(read(cursor.next(), filter)));
+                result.add(read(cursor.next(), filter));
             }
         }
         return result;
@@ -103,22 +103,21 @@ public class MongoQueryLink implements QueryLink {
         }      
     }
 
-    protected static List<Entry> read(Document d, Record param) throws DataException {
+    protected static Record read(Document d, Record param) throws DataException {
         if (param == null) {
-            return Collections.emptyList();
+            return Record.EMPTY;
         }
-        List<Entry> l = new ArrayList<>();
-        for (String name : param.getNames()) {
-            Variant p = param.get(name);
-            if ("COLLECTION.KEY".equals(name)) {
-                l.add(new Entry(name, p));
-            } else if (!name.contains("..")) { // Is a field
-                DocumentResults results = new DocumentResults(d, name);
-                Variant newv = p.getKind().read(results);
-                l.add(new Entry(name, newv));
+        ImmutableMap.Builder<String, Variant> entries = ImmutableMap.<String, Variant>builder();
+        for (Map.Entry<String, Variant> e : param.entrySet()) {
+            if ("COLLECTION.KEY".equals(e.getKey())) {
+                entries.put(e.getKey(), e.getValue());
+            } else if (!e.getKey().contains("..")) { // Is a field
+                DocumentResults results = new DocumentResults(d, e.getKey());
+                Variant newv = e.getValue().getKind().read(results);
+                entries.put(e.getKey(), newv);
             }
         }
-        return l;
+        return new Record(entries.build());
     }
 
     private static class MongoName {

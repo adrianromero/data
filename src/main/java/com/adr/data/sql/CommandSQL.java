@@ -1,5 +1,5 @@
 //     Data Access is a Java library to store data
-//     Copyright (C) 2016 Adrián Romero Corchado.
+//     Copyright (C) 2016-2019 Adrián Romero Corchado.
 //
 //     This file is part of Data Access
 //
@@ -21,7 +21,7 @@ package com.adr.data.sql;
  *
  * @author adrian
  */
-public class CommandSQL {
+public final class CommandSQL {
 
     private final String command;
     private final String[] paramnames;  

@@ -17,7 +17,6 @@
 package com.adr.data.utils;
 
 import com.adr.data.DataException;
-import com.adr.data.record.Entry;
 import com.adr.data.record.Record;
 import com.adr.data.recordparser.CodePoint;
 import com.adr.data.recordparser.IOExceptionMessage;
@@ -48,8 +47,8 @@ public class ResponseCommandError extends ResponseCommand {
         w.append(NAME);
         w.append('\n');
         RecordsSerializer.write(new Record(
-                new Entry("EXCEPTION", ex.getClass().getName()),
-                new Entry("MESSAGE", ex.getMessage())), w);
+                Record.entry("EXCEPTION", ex.getClass().getName()),
+                Record.entry("MESSAGE", ex.getMessage())), w);
     }
 
     @Override

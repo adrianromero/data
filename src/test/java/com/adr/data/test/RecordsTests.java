@@ -1,5 +1,5 @@
 //     Data Access is a Java library to store data
-//     Copyright (C) 2018 Adrián Romero Corchado.
+//     Copyright (C) 2019 Adrián Romero Corchado.
 //
 //     This file is part of Data Access
 //
@@ -17,7 +17,6 @@
 package com.adr.data.test;
 
 import com.adr.data.DataException;
-import com.adr.data.record.Entry;
 import org.junit.Test;
 import com.adr.data.record.Record;
 import com.adr.data.recordparser.RecordsSerializer;
@@ -42,52 +41,52 @@ public class RecordsTests {
             SourceLink.getCommandLink().execute(
                     new Record[]{
                         new Record(
-                                new Entry("COLLECTION.KEY", "USERNAME"),
-                                new Entry("ID.KEY", "admin"),
-                                new Entry("NAME", "admin"),
-                                new Entry("DISPLAYNAME", "Administrator"),
-                                new Entry("CODECARD", "123457"),
-                                new Entry("ROLE_ID", "a"),
-                                new Entry("VISIBLE", true),
-                                new Entry("ACTIVE", true)),
+                                Record.entry("COLLECTION.KEY", "USERNAME"),
+                                Record.entry("ID.KEY", "admin"),
+                                Record.entry("NAME", "admin"),
+                                Record.entry("DISPLAYNAME", "Administrator"),
+                                Record.entry("CODECARD", "123457"),
+                                Record.entry("ROLE_ID", "a"),
+                                Record.entry("VISIBLE", true),
+                                Record.entry("ACTIVE", true)),
                         new Record(
-                                new Entry("COLLECTION.KEY", "USERNAME"),
-                                new Entry("ID.KEY", "guest"),
-                                new Entry("NAME", "guest"),
-                                new Entry("DISPLAYNAME", "Guest"),
-                                new Entry("CODECARD", "11111111"),
-                                new Entry("ROLE_ID", "g"),
-                                new Entry("VISIBLE", true),
-                                new Entry("ACTIVE", true)),
+                                Record.entry("COLLECTION.KEY", "USERNAME"),
+                                Record.entry("ID.KEY", "guest"),
+                                Record.entry("NAME", "guest"),
+                                Record.entry("DISPLAYNAME", "Guest"),
+                                Record.entry("CODECARD", "11111111"),
+                                Record.entry("ROLE_ID", "g"),
+                                Record.entry("VISIBLE", true),
+                                Record.entry("ACTIVE", true)),
                         new Record(
-                                new Entry("COLLECTION.KEY", "USERNAME"),
-                                new Entry("ID.KEY", "manager"),
-                                new Entry("NAME", "manager"),
-                                new Entry("DISPLAYNAME", "Manager"),
-                                new Entry("CODECARD", "22121"),
-                                new Entry("ROLE_ID", "m"),
-                                new Entry("VISIBLE", true),
-                                new Entry("ACTIVE", true)),
+                                Record.entry("COLLECTION.KEY", "USERNAME"),
+                                Record.entry("ID.KEY", "manager"),
+                                Record.entry("NAME", "manager"),
+                                Record.entry("DISPLAYNAME", "Manager"),
+                                Record.entry("CODECARD", "22121"),
+                                Record.entry("ROLE_ID", "m"),
+                                Record.entry("VISIBLE", true),
+                                Record.entry("ACTIVE", true)),
                         new Record(
-                                new Entry("COLLECTION.KEY", "USERNAME"),
-                                new Entry("ID.KEY", "developer"),
-                                new Entry("NAME", "developer"),
-                                new Entry("DISPLAYNAME", "Developer"),
-                                new Entry("CODECARD", "666666"),
-                                new Entry("ROLE_ID", "m"),
-                                new Entry("VISIBLE", false),
-                                new Entry("ACTIVE", true))});
+                                Record.entry("COLLECTION.KEY", "USERNAME"),
+                                Record.entry("ID.KEY", "developer"),
+                                Record.entry("NAME", "developer"),
+                                Record.entry("DISPLAYNAME", "Developer"),
+                                Record.entry("CODECARD", "666666"),
+                                Record.entry("ROLE_ID", "m"),
+                                Record.entry("VISIBLE", false),
+                                Record.entry("ACTIVE", true))});
             
             List<Record> result = SourceLink.getQueryLink().query(
                         new Record(
-                                new Entry("COLLECTION.KEY", "USERNAME"),
-                                new Entry("ID.KEY", VariantString.NULL),
-                                new Entry("NAME", VariantString.NULL),
-                                new Entry("DISPLAYNAME", VariantString.NULL),
-                                new Entry("CODECARD", VariantString.NULL),
-                                new Entry("ROLE_ID", VariantString.NULL),
-                                new Entry("VISIBLE", VariantBoolean.NULL),
-                                new Entry("ACTIVE", VariantBoolean.NULL)));     
+                                Record.entry("COLLECTION.KEY", "USERNAME"),
+                                Record.entry("ID.KEY", VariantString.NULL),
+                                Record.entry("NAME", VariantString.NULL),
+                                Record.entry("DISPLAYNAME", VariantString.NULL),
+                                Record.entry("CODECARD", VariantString.NULL),
+                                Record.entry("ROLE_ID", VariantString.NULL),
+                                Record.entry("VISIBLE", VariantBoolean.NULL),
+                                Record.entry("ACTIVE", VariantBoolean.NULL)));     
             
             
             Assert.assertEquals("(COLLECTION.KEY: \"USERNAME\", ID.KEY: \"admin\", NAME: \"admin\", DISPLAYNAME: \"Administrator\", CODECARD: \"123457\", ROLE_ID: \"a\", VISIBLE: true, ACTIVE: true)\n" +
@@ -98,14 +97,14 @@ public class RecordsTests {
            
             List<Record> result2 = SourceLink.getQueryLink().query(
                         new Record(
-                                new Entry("COLLECTION.KEY", "USERNAME"),
-                                new Entry("ID.KEY", VariantString.NULL),
-                                new Entry("NAME", "guest"),
-                                new Entry("DISPLAYNAME", VariantString.NULL),
-                                new Entry("CODECARD", VariantString.NULL),
-                                new Entry("ROLE_ID", VariantString.NULL),
-                                new Entry("VISIBLE", VariantBoolean.NULL),
-                                new Entry("ACTIVE", VariantBoolean.NULL)));     
+                                Record.entry("COLLECTION.KEY", "USERNAME"),
+                                Record.entry("ID.KEY", VariantString.NULL),
+                                Record.entry("NAME", "guest"),
+                                Record.entry("DISPLAYNAME", VariantString.NULL),
+                                Record.entry("CODECARD", VariantString.NULL),
+                                Record.entry("ROLE_ID", VariantString.NULL),
+                                Record.entry("VISIBLE", VariantBoolean.NULL),
+                                Record.entry("ACTIVE", VariantBoolean.NULL)));     
 
             Assert.assertEquals("(COLLECTION.KEY: \"USERNAME\", ID.KEY: \"guest\", NAME: \"guest\", DISPLAYNAME: \"Guest\", CODECARD: \"11111111\", ROLE_ID: \"g\", VISIBLE: true, ACTIVE: true)",
                     RecordsSerializer.writeList(result2));

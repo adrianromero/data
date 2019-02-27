@@ -1,5 +1,5 @@
 //     Data Access is a Java library to store data
-//     Copyright (C) 2016-2018 Adrián Romero Corchado.
+//     Copyright (C) 2016-2019 Adrián Romero Corchado.
 //
 //     This file is part of Data Access
 //
@@ -48,6 +48,10 @@ public abstract class Variant {
     public Long asLong() {
         throw new UnsupportedOperationException("Variant cannot be converted to long.");
     }
+    
+    public Float asFloat() {
+        throw new UnsupportedOperationException("Variant cannot be converted to float.");
+    }    
     
     public Double asDouble() {
         throw new UnsupportedOperationException("Variant cannot be converted to double.");

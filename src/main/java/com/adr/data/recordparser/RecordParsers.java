@@ -17,13 +17,12 @@
 package com.adr.data.recordparser;
 
 import com.adr.data.DataException;
-import com.adr.data.record.Entry;
 import com.adr.data.record.Record;
 import com.adr.data.var.ISOResults;
 import com.adr.data.var.Kind;
+import com.adr.data.var.Variant;
+import com.google.common.collect.ImmutableMap;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
 public class RecordParsers {
     
@@ -37,7 +36,7 @@ public class RecordParsers {
     }
     
     public static Record parseRecord(Loader loader) throws IOException {
-        List<Entry> entries = new ArrayList<>();
+        ImmutableMap.Builder<String, Variant> entries = ImmutableMap.<String, Variant>builder();
         String name = null;
         String isovalue = null;
         Kind kind = null;
@@ -123,7 +122,7 @@ public class RecordParsers {
                         throw IOExceptionMessage.createExpected(loader, "Kind"); 
                     }
                     try {
-                        entries.add(new Entry(name, kind.read(new ISOResults(isovalue))));
+                        entries.put(name, kind.read(new ISOResults(isovalue)));
                     } catch (DataException ex) {                    
                         throw IOExceptionMessage.create(loader, "Error parsing ISO value");  
                     }
@@ -131,7 +130,7 @@ public class RecordParsers {
                     state = States.RECORD_END;         
                 } else {
                     try {
-                        entries.add(new Entry(name, kind.read(new ISOResults(isovalue))));
+                        entries.put(name, kind.read(new ISOResults(isovalue)));
                     } catch (DataException ex) {
                         throw IOExceptionMessage.create(loader, "Error parsing ISO value");  
                     }
@@ -144,7 +143,7 @@ public class RecordParsers {
                     state = States.RECORD_KEY;
                 } else if (loader.getCP() == ')') {
                     loader.next();
-                    return new Record(entries);                    
+                    return new Record(entries.build());                    
                 } else {
                     throw IOExceptionMessage.createExpected(loader, ',');  
                 }           

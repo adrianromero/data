@@ -59,6 +59,14 @@ public final class ISOResults implements Results {
         }             
     }
     @Override
+    public Float getFloat() throws DataException {
+        try {
+            return value == null || value.equals("") ? null : Float.parseFloat(value);
+        } catch (NumberFormatException e) {
+            throw new DataException(e);
+        }             
+    }
+    @Override
     public Double getDouble() throws DataException {
         try {
             return value == null || value.equals("") ? null : Double.parseDouble(value);

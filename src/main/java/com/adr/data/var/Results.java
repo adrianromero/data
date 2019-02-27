@@ -33,6 +33,7 @@ public interface Results {
     public String getString() throws DataException;
     public Integer getInt() throws DataException;
     public Long getLong() throws DataException;
+    public Float getFloat() throws DataException;
     public Double getDouble() throws DataException;
     public BigDecimal getBigDecimal() throws DataException;
     public Boolean getBoolean() throws DataException;

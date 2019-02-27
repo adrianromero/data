@@ -57,6 +57,12 @@ public class DocumentResults implements Results {
     }
 
     @Override
+    public Float getFloat() throws DataException {
+        Double d = document.getDouble(realname);
+        return d == null ? null : d.floatValue();
+    }
+
+    @Override
     public Double getDouble() throws DataException {
         return document.getDouble(realname);
     }

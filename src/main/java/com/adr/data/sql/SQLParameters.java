@@ -85,6 +85,14 @@ public final class SQLParameters implements Parameters {
         }
     }
     @Override
+    public void setFloat(Float value) throws DataException {
+        try {               
+            set(paramName, i -> stmt.setObject(i, value, Types.FLOAT));
+        } catch (SQLException ex) {
+            throw new DataException(ex);
+        }
+    }
+    @Override
     public void setDouble(Double value) throws DataException {
         try {               
             set(paramName, i -> stmt.setObject(i, value, Types.DOUBLE));

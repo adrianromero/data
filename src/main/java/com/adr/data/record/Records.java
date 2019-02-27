@@ -1,5 +1,5 @@
 //     Data Access is a Java library to store data
-//     Copyright (C) 2016-2018 Adrián Romero Corchado.
+//     Copyright (C) 2016-2019 Adrián Romero Corchado.
 //
 //     This file is part of Data Access
 //
@@ -43,7 +43,7 @@ public class Records {
     }    
     
     public static boolean isDeleteSentence(Record val) {
-        for (String name : val.getNames()) {
+        for (String name : val.keySet()) {
             if (!name.contains("..") && !name.endsWith(".KEY")) {
                 return false;
             }

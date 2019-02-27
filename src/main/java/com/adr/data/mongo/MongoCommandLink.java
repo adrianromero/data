@@ -1,5 +1,5 @@
 //     Data Access is a Java library to store data
-//     Copyright (C) 2018 Adrián Romero Corchado.
+//     Copyright (C) 2018-2019 Adrián Romero Corchado.
 //
 //     This file is part of Data Access
 //
@@ -33,6 +33,7 @@ import java.util.List;
 import org.bson.Document;
 import org.bson.conversions.Bson;
 import com.adr.data.CommandLink;
+import java.util.Map;
 
 /**
  *
@@ -63,31 +64,29 @@ public class MongoCommandLink implements CommandLink {
             
             List<Bson> filters = new ArrayList<>();
             if (Records.isDeleteSentence(r)) {
-                for (String f : r.getNames()) {
+                for (Map.Entry<String, Variant> entry : r.entrySet()) {
                     String realname;
-                    if (!f.equals("COLLECTION.KEY") && !f.contains("..")) {
-                        Variant v = r.get(f);
-                        if (f.endsWith(".KEY")) {
-                            realname = f.substring(0, f.length() - 4);
-                            filters.add(Filters.eq(realname, v.asObject()));
+                    if (!entry.getKey().equals("COLLECTION.KEY") && !entry.getKey().contains("..")) {
+                        if (entry.getKey().endsWith(".KEY")) {
+                            realname = entry.getKey().substring(0, entry.getKey().length() - 4);
+                            filters.add(Filters.eq(realname, entry.getValue().asObject()));
                         }
                     }
                 }                
                 collection.deleteOne(Filters.and(filters));
             } else {
                 Document doc = new Document();            
-                for (String f : r.getNames()) {
+                for (Map.Entry<String, Variant> entry : r.entrySet()) {
                     String realname;
-                    if (!f.equals("COLLECTION.KEY") && !f.contains("..")) {
-                        Variant v = r.get(f);
-                        if (f.endsWith(".KEY")) {
-                            realname = f.substring(0, f.length() - 4);
-                            filters.add(Filters.eq(realname, v.asObject()));
+                    if (!entry.getKey().equals("COLLECTION.KEY") && !entry.getKey().contains("..")) {
+                        if (entry.getKey().endsWith(".KEY")) {
+                            realname = entry.getKey().substring(0, entry.getKey().length() - 4);
+                            filters.add(Filters.eq(realname, entry.getValue().asObject()));
                         } else {
-                            realname = f;
+                            realname = entry.getKey();
                         }
                         Parameters p = new DocumentParameters(doc, realname);
-                        v.getKind().write(p, v);
+                        entry.getValue().getKind().write(p, entry.getValue());
                     }
                 }
                 collection.replaceOne(Filters.and(filters), doc, UPSERT);

@@ -23,19 +23,19 @@ import java.util.Objects;
  *
  * @author adrian
  */
-public class VariantDecimal extends Variant {
+public class VariantFloat extends Variant {
     
-    public final static VariantDecimal NULL = new VariantDecimal(null);
-     
-    private final BigDecimal value;
+    public final static VariantFloat NULL = new VariantFloat(null);
     
-    public VariantDecimal(BigDecimal value) {
+    private final Float value;
+    
+    public VariantFloat(Float value) {
         this.value = value;
     }
-
+    
     @Override
     public Kind getKind() {
-        return Kind.DECIMAL;
+        return Kind.FLOAT;
     }
     
     @Override
@@ -59,7 +59,7 @@ public class VariantDecimal extends Variant {
     
     @Override
     public Float asFloat() {
-        return value == null ? null : value.floatValue();
+        return value;
     }    
     
     @Override
@@ -69,9 +69,9 @@ public class VariantDecimal extends Variant {
     
     @Override
     public BigDecimal asBigDecimal() {
-        return value;
+        return value == null ? null : new BigDecimal(value);
     }
-
+    
     @Override
     public Object asObject() {
         return value;
@@ -79,8 +79,8 @@ public class VariantDecimal extends Variant {
     
     @Override
     public int hashCode() {
-        int hash = 7;
-        hash = 79 * hash + Objects.hashCode(this.value);
+        int hash = 3;
+        hash = 67 * hash + Objects.hashCode(this.value);
         return hash;
     }
 
@@ -95,7 +95,7 @@ public class VariantDecimal extends Variant {
         if (getClass() != obj.getClass()) {
             return false;
         }
-        final VariantDecimal other = (VariantDecimal) obj;
+        final VariantFloat other = (VariantFloat) obj;
         return Objects.equals(this.value, other.value);
     } 
 }

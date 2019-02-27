@@ -1,5 +1,5 @@
 //     Data Access is a Java library to store data
-//     Copyright (C) 2017-2018 Adrián Romero Corchado.
+//     Copyright (C) 2017-2019 Adrián Romero Corchado.
 //
 //     This file is part of Data Access
 //
@@ -18,7 +18,6 @@
 package com.adr.data.security.jwt;
 
 import com.adr.data.DataException;
-import com.adr.data.record.Entry;
 import com.adr.data.record.Header;
 import com.adr.data.route.ReducerQuery;
 import com.adr.data.security.ReducerLogin;
@@ -52,11 +51,11 @@ public class ReducerJWTCurrentUser implements ReducerQuery {
             JWT jwtauthorizaion = JWT.decode(authorization.asString());
             // Valid login, load user details.
             Record currentuser = new Record(
-                        new Entry("COLLECTION.KEY", "USERNAME_BYNAME"),
-                        new Entry("NAME", jwtauthorizaion.getSubject()),
-                        new Entry("DISPLAYNAME", jwtauthorizaion.getClaim("displayname").asString()),
-                        new Entry("ROLE", jwtauthorizaion.getClaim("role").asString()),
-                        new Entry("DISPLAYROLE", jwtauthorizaion.getClaim("displayrole").asString()));
+                    Record.entry("COLLECTION.KEY", "USERNAME_BYNAME"),
+                    Record.entry("NAME", jwtauthorizaion.getSubject()),
+                    Record.entry("DISPLAYNAME", jwtauthorizaion.getClaim("displayname").asString()),
+                    Record.entry("ROLE", jwtauthorizaion.getClaim("role").asString()),
+                    Record.entry("DISPLAYROLE", jwtauthorizaion.getClaim("displayrole").asString()));
             return Collections.singletonList(currentuser);
         }
     }

@@ -1,5 +1,5 @@
 //     Data Access is a Java library to store data
-//     Copyright (C) 2017-2018 Adrián Romero Corchado.
+//     Copyright (C) 2017-2019 Adrián Romero Corchado.
 //
 //     This file is part of Data Access
 //
@@ -18,7 +18,6 @@ package com.adr.data.security;
 
 import com.adr.data.DataException;
 import com.adr.data.QueryLink;
-import com.adr.data.record.Entry;
 import com.adr.data.record.Header;
 import com.adr.data.route.ReducerQuery;
 import com.adr.data.var.Variant;
@@ -56,16 +55,16 @@ public abstract class ReducerLogin implements ReducerQuery {
         Variant authorization = createAuthorization(username, password);
 
         Record result = new Record(
-                new Entry("COLLECTION.KEY", AUTHENTICATION_RESPONSE),
-                new Entry("AUTHORIZATION", authorization));
+                Record.entry("COLLECTION.KEY", AUTHENTICATION_RESPONSE),
+                Record.entry("AUTHORIZATION", authorization));
         return Collections.singletonList(result);
     }
 
     public static String login(QueryLink link, String user, String password) throws DataException {
         Record r = link.find(new Record(
-                    new Entry("COLLECTION.KEY", AUTHENTICATION_REQUEST),
-                    new Entry("NAME", user),
-                    new Entry("PASSWORD", password)));
+                Record.entry("COLLECTION.KEY", AUTHENTICATION_REQUEST),
+                Record.entry("NAME", user),
+                Record.entry("PASSWORD", password)));
         if (r == null) {
             throw new SecurityDataException("Invalid security request.");
         }
@@ -75,14 +74,14 @@ public abstract class ReducerLogin implements ReducerQuery {
     public static Record current(QueryLink link, Header headers) throws DataException {
         return link.find(headers,
                 new Record(
-                            new Entry("COLLECTION.KEY", AUTHENTICATION_CURRENT)));
+                        Record.entry("COLLECTION.KEY", AUTHENTICATION_CURRENT)));
     }
 
     public static boolean hasAuthorization(QueryLink link, Header headers, String resource) throws DataException {
         Record result = link.find(headers,
                 new Record(
-                        new Entry("COLLECTION.KEY", AUTHORIZATION_REQUEST),
-                        new Entry("RESOURCE", resource)));
+                        Record.entry("COLLECTION.KEY", AUTHORIZATION_REQUEST),
+                        Record.entry("RESOURCE", resource)));
         if (result == null) {
             throw new SecurityDataException("Invalid security request.");
         }

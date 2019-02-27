@@ -33,6 +33,7 @@ public interface Parameters {
     public void setString(String value) throws DataException;
     public void setInt(Integer value) throws DataException;
     public void setLong(Long value) throws DataException;
+    public void setFloat(Float value) throws DataException;
     public void setDouble(Double value) throws DataException;
     public void setBigDecimal(BigDecimal value) throws DataException;
     public void setBoolean(Boolean value) throws DataException;

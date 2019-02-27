@@ -68,6 +68,15 @@ public final class SQLResults implements Results {
         }
     }
     @Override
+    public Float getFloat() throws DataException {
+        try {
+            float value = resultset.getFloat(columnName);
+            return resultset.wasNull() ? null : value;
+        } catch (SQLException ex) {
+            throw new DataException(ex);
+        }
+    }
+    @Override
     public Double getDouble() throws DataException {
         try {
             double value = resultset.getDouble(columnName);

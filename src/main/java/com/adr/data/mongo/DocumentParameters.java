@@ -55,6 +55,11 @@ public class DocumentParameters implements Parameters {
     }
 
     @Override
+    public void setFloat(Float value) throws DataException {
+        document.append(name, value == null ? null : value.doubleValue());
+    }
+
+    @Override
     public void setDouble(Double value) throws DataException {
         document.append(name, value);
     }

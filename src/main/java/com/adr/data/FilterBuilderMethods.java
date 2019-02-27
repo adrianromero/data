@@ -1,5 +1,5 @@
 //     Data Access is a Java library to store data
-//     Copyright (C) 2018 Adrián Romero Corchado.
+//     Copyright (C) 2019 Adrián Romero Corchado.
 //
 //     This file is part of Data Access
 //
@@ -17,43 +17,45 @@
 package com.adr.data;
 
 import com.adr.data.record.Record;
+import com.adr.data.var.Variant;
+import java.util.Map;
 
 public class FilterBuilderMethods {
 
     public static void build(FilterBuilder visitor, Record r) {
-        for (String n : r.getNames()) {
-            add(visitor, r, n);
+        for (Map.Entry<String, Variant> e : r.entrySet()) {
+            add(visitor, e.getKey(), e.getValue());
         }
     }
 
-    private static void add(FilterBuilder visitor, Record filter, String n) {
+    private static void add(FilterBuilder visitor, String key, Variant value) {
 
-        if (n.endsWith("..EQUAL")) {
-            visitor.filterEqual(n, n.substring(0, n.length() - 7));
-        } else if (n.endsWith("..DISTINCT")) {
-            visitor.filterDistinct(n, n.substring(0, n.length() - 10));
-        } else if (n.endsWith("..GREATER")) {
-            visitor.filterGreater(n, n.substring(0, n.length() - 9));
-        } else if (n.endsWith("..GREATEROREQUAL")) {
-            visitor.filterGreaterOrEqual(n, n.substring(0, n.length() - 16));
-        } else if (n.endsWith("..LESS")) {
-            visitor.filterLess(n, n.substring(0, n.length() - 6));
-        } else if (n.endsWith("..LESSOREQUAL")) {
-            visitor.filterLessOrEqual(n, n.substring(0, n.length() - 13));
-        } else if (n.endsWith("..CONTAINS")) {
-            visitor.filterContains(n, n.substring(0, n.length() - 10));
-        } else if (n.endsWith("..STARTS")) {
-            visitor.filterStarts(n, n.substring(0, n.length() - 8));
-        } else if (n.endsWith("..ENDS")) {
-            visitor.filterEnds(n, n.substring(0, n.length() - 6));
-        } else if (!n.contains("..")) {
-            String realname = n.endsWith(".KEY")
-                    ? n.substring(0, n.length() - 4)
-                    : n;
-            if (!filter.get(n).isNull()) {
-                visitor.filterEqual(n, realname);
+        if (key.endsWith("..EQUAL")) {
+            visitor.filterEqual(key, key.substring(0, key.length() - 7));
+        } else if (key.endsWith("..DISTINCT")) {
+            visitor.filterDistinct(key, key.substring(0, key.length() - 10));
+        } else if (key.endsWith("..GREATER")) {
+            visitor.filterGreater(key, key.substring(0, key.length() - 9));
+        } else if (key.endsWith("..GREATEROREQUAL")) {
+            visitor.filterGreaterOrEqual(key, key.substring(0, key.length() - 16));
+        } else if (key.endsWith("..LESS")) {
+            visitor.filterLess(key, key.substring(0, key.length() - 6));
+        } else if (key.endsWith("..LESSOREQUAL")) {
+            visitor.filterLessOrEqual(key, key.substring(0, key.length() - 13));
+        } else if (key.endsWith("..CONTAINS")) {
+            visitor.filterContains(key, key.substring(0, key.length() - 10));
+        } else if (key.endsWith("..STARTS")) {
+            visitor.filterStarts(key, key.substring(0, key.length() - 8));
+        } else if (key.endsWith("..ENDS")) {
+            visitor.filterEnds(key, key.substring(0, key.length() - 6));
+        } else if (!key.contains("..")) {
+            String realname = key.endsWith(".KEY")
+                    ? key.substring(0, key.length() - 4)
+                    : key;
+            if (!value.isNull()) {
+                visitor.filterEqual(key, realname);
             }
-            visitor.project(n, realname);
+            visitor.project(key, realname);
         }
     }
 }

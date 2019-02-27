@@ -1,5 +1,5 @@
 //     Data Access is a Java library to store data
-//     Copyright (C) 2016-2017 Adrián Romero Corchado.
+//     Copyright (C) 2016-2019 Adrián Romero Corchado.
 //
 //     This file is part of Data Access
 //
@@ -32,11 +32,9 @@ import com.adr.data.security.jwt.ReducerQueryJWTVerify;
 import com.adr.data.sql.SQLCommandLink;
 import com.adr.data.sql.SQLEngine;
 import com.adr.data.sql.Sentence;
-import com.adr.data.sql.SentenceDDL;
 import com.adr.data.sql.SentenceView;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
-import java.lang.reflect.Array;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -44,6 +42,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.sql.DataSource;
 import com.adr.data.CommandLink;
+import com.google.common.collect.ObjectArrays;
 
 /**
  *
@@ -82,28 +81,26 @@ public class CommandQueryLinkSQL implements CommandQueryLinkBuilder {
             "ANONYMOUS_VISIBLE",
             "SELECT ID, NAME, DISPLAYNAME FROM USERNAME WHERE VISIBLE = TRUE AND ACTIVE = TRUE"),
         };
-        QueryLink querylink = new SQLQueryLink(cpds, engine, concatenate(SecureSentences.QUERIES, morequeries));   
+        QueryLink query = new SQLQueryLink(cpds, engine, ObjectArrays.concat(SecureSentences.QUERIES, morequeries, Sentence.class));   
 
         return new ReducerQueryLink(
                 new ReducerQueryJWTVerify("secret".getBytes(StandardCharsets.UTF_8)),
-                new ReducerJWTLogin(querylink, "secret".getBytes(StandardCharsets.UTF_8), 5000),
+                new ReducerJWTLogin(query, "secret".getBytes(StandardCharsets.UTF_8), 5000),
                 new ReducerJWTCurrentUser(),
-                new ReducerQueryJWTAuthorization(querylink, new HashSet<>(Arrays.asList("ANONYMOUS_VISIBLE_QUERY")), new HashSet<>(Arrays.asList("AUTHENTICATED_VISIBLE_QUERY"))),
-                new ReducerQueryIdentity(querylink));
+                new ReducerQueryJWTAuthorization(query, new HashSet<>(Arrays.asList("ANONYMOUS_VISIBLE_QUERY")), new HashSet<>(Arrays.asList("AUTHENTICATED_VISIBLE_QUERY"))),
+                new ReducerQueryIdentity(query));
     }
 
     private CommandLink createCommandLink() {
                                    
-        QueryLink querylink = new SQLQueryLink(cpds, engine, 
+        QueryLink query = new SQLQueryLink(cpds, engine, 
                 SecureSentences.QUERIES);
-        CommandLink commandlink = new SQLCommandLink(cpds, engine, concatenate(SecureSentences.COMMANDS, 
-                new Sentence[] {
-                    new SentenceDDL()}));
+        CommandLink command = new SQLCommandLink(cpds, engine, SecureSentences.COMMANDS);
         
         return new ReducerCommandLink(
                 new ReducerDataJWTVerify("secret".getBytes(StandardCharsets.UTF_8)),
-                new ReducerDataJWTAuthorization(querylink, new HashSet<>(Arrays.asList("ANONYMOUS_VISIBLE_QUERY")), new HashSet<>(Arrays.asList("AUTHENTICATED_VISIBLE_QUERY"))),
-                new ReducerCommandIdentity(commandlink));
+                new ReducerDataJWTAuthorization(query, new HashSet<>(Arrays.asList("ANONYMOUS_VISIBLE_QUERY")), new HashSet<>(Arrays.asList("AUTHENTICATED_VISIBLE_QUERY"))),
+                new ReducerCommandIdentity(command));
     }
 
     @Override
@@ -126,17 +123,5 @@ public class CommandQueryLinkSQL implements CommandQueryLinkBuilder {
     @Override
     public CommandLink getCommandLink() {
         return commandlink;
-    }
-    
-    private <T> T[] concatenate(T[] a, T[] b) {
-        int aLen = a.length;
-        int bLen = b.length;
-
-        @SuppressWarnings("unchecked")
-        T[] c = (T[]) Array.newInstance(a.getClass().getComponentType(), aLen + bLen);
-        System.arraycopy(a, 0, c, 0, aLen);
-        System.arraycopy(b, 0, c, aLen, bLen);
-
-        return c;
     }
 }

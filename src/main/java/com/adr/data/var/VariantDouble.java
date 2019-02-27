@@ -1,5 +1,5 @@
 //     Data Access is a Java library to store data
-//     Copyright (C) 2016-2018 Adrián Romero Corchado.
+//     Copyright (C) 2016-2019 Adrián Romero Corchado.
 //
 //     This file is part of Data Access
 //
@@ -56,6 +56,11 @@ public class VariantDouble extends Variant {
     public Long asLong() {
         return value == null ? null : value.longValue();
     }
+    
+    @Override
+    public Float asFloat() {
+        return value == null ? null : value.floatValue();
+    }    
     
     @Override
     public Double asDouble() {

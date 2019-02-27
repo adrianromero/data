@@ -1,5 +1,5 @@
 //     Data Access is a Java library to store data
-//     Copyright (C) 2018 Adrián Romero Corchado.
+//     Copyright (C) 2019 Adrián Romero Corchado.
 //
 //     This file is part of Data Access
 //
@@ -18,10 +18,8 @@
 package com.adr.data.mem;
 
 import com.adr.data.FilterBuilderMethods;
-import com.adr.data.record.Entry;
 import com.adr.data.record.Record;
 import com.adr.data.record.Records;
-import com.adr.data.recordparser.RecordsSerializer;
 import com.adr.data.var.Variant;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -30,6 +28,8 @@ import java.util.List;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 import com.adr.data.FilterBuilder;
+import com.google.common.collect.ImmutableMap;
+import java.util.Map;
 
 /**
  *
@@ -37,36 +37,32 @@ import com.adr.data.FilterBuilder;
  */
 public class Storage {
     
-    private final LinkedHashMap<String, Record> collection = new LinkedHashMap<>();
+    private final LinkedHashMap<Record, Record> collection = new LinkedHashMap<>();
     private final ReentrantReadWriteLock rwl = new ReentrantReadWriteLock();
     private final Lock r = rwl.readLock();
     private final Lock w = rwl.writeLock();    
     
     private void put(Record record) throws IOException {
-        List<Entry> entries = new ArrayList<>();
-        List<Entry> key = new ArrayList<>();
+        ImmutableMap.Builder<String, Variant> entries = ImmutableMap.<String, Variant>builder();
+        ImmutableMap.Builder<String, Variant> key = ImmutableMap.<String, Variant>builder();
         String realname;
         boolean isDelete = true;
-        for (String n : record.getNames()) {
-            if (!n.contains("..")) {
-                Variant v = record.get(n);
-                if (n.endsWith(".KEY")) {
-                    realname = n.substring(0, n.length() - 4);
-                    key.add(new Entry(realname, v));
+        for (Map.Entry<String, Variant> e : record.entrySet()) {
+            if (!e.getKey().contains("..")) {
+                if (e.getKey().endsWith(".KEY")) {
+                    realname = e.getKey().substring(0, e.getKey().length() - 4);
+                    key.put(realname, e.getValue());
                 } else {
-                    realname = n;
+                    realname = e.getKey();
                     isDelete = false;
                 }
-                entries.add(new Entry(realname, v));
+                entries.put(realname, e.getValue());
             }
         }
         if (isDelete) {
-            collection.remove(RecordsSerializer.write(
-                    new Record(key)));
+            collection.remove(new Record(key.build()));
         } else {
-            collection.put(RecordsSerializer.write(
-                    new Record(key)), 
-                    new Record(entries));
+            collection.put(new Record(key.build()), new Record(entries.build()));
         }
     }
      
@@ -130,11 +126,11 @@ public class Storage {
         
         public Record filterAndProject(Record r, Record filter) {           
             if (p.test(r, filter)) {
-                List<Entry> entries = new ArrayList<>();
+                ImmutableMap.Builder<String, Variant> entries = ImmutableMap.<String, Variant>builder();
                 for (StorageName n : names) {
-                    entries.add(new Entry(n.name, r.get(n.realname)));
+                    entries.put(n.name, r.get(n.realname));
                 }
-                return new Record(entries);
+                return new Record(entries.build());
             } else {
                 return null;
             }

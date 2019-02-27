@@ -1,5 +1,5 @@
 //     Data Access is a Java library to store data
-//     Copyright (C) 2018 Adrián Romero Corchado.
+//     Copyright (C) 2019 Adrián Romero Corchado.
 //
 //     This file is part of Data Access
 //
@@ -14,28 +14,29 @@
 //     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //     See the License for the specific language governing permissions and
 //     limitations under the License.
-package com.adr.data.sql;
+
+package com.adr.data.var;
 
 import com.adr.data.DataException;
-import com.adr.data.record.Record;
-import java.sql.Connection;
 
 /**
  *
  * @author adrian
  */
-public class SentenceDDL extends Sentence {
-
+class KindFloat extends Kind {
+    
     @Override
-    public String getName() {
-        return "SQLDDL";
-    }
-
-    @Override
-    public final void execute(Connection c, SQLEngine engine, Record val) throws DataException {
-        CommandSQL command = new CommandSQL(val.getString("SQL"), val.getNames());       
-        if (Sentence.execute(c, command, val) != 1) {
-            throw new DataException("Sentence \"" + getName() + "\" must return 1 row.");
-        }
+    public Variant read(Results read) throws DataException {
+        return new VariantFloat(read.getFloat());
     }  
+    
+    @Override
+    public void write(Parameters write, Variant v) throws DataException {
+        write.setFloat(v.asFloat());
+    }
+    
+    @Override
+    public String toString() {
+        return "FLOAT";
+    }
 }

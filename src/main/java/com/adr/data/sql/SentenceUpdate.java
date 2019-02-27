@@ -1,5 +1,5 @@
 //     Data Access is a Java library to store data
-//     Copyright (C) 2016 Adrián Romero Corchado.
+//     Copyright (C) 2016-2019 Adrián Romero Corchado.
 //
 //     This file is part of Data Access
 //
@@ -47,7 +47,7 @@ public class SentenceUpdate extends SentenceDML {
         boolean fields = false;
         boolean filters = false;
         String realname;
-        for (String f : record.getNames()) {
+        for (String f : record.keySet()) {
             if (!f.equals("COLLECTION.KEY") && !f.contains("..")) {
                 if (f.endsWith(".KEY")) {
                     realname = f.substring(0, f.length() - 4);

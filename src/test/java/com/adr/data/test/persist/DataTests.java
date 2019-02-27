@@ -1,5 +1,5 @@
 //     Data Access is a Java library to store data
-//     Copyright (C) 2016-2018 Adrián Romero Corchado.
+//     Copyright (C) 2016-2019 Adrián Romero Corchado.
 //
 //     This file is part of Data Access
 //
@@ -18,7 +18,6 @@ package com.adr.data.test.persist;
 
 import com.adr.data.DataException;
 import com.adr.data.QueryLink;
-import com.adr.data.record.Entry;
 import com.adr.data.record.Header;
 import com.adr.data.security.ReducerLogin;
 import com.adr.data.var.VariantBoolean;
@@ -42,21 +41,21 @@ public class DataTests {
 
             // Login
             String authorization = ReducerLogin.login(SourceLink.getQueryLink(), "admin", "admin");
-            Header header = new Header(new Record(new Entry("AUTHORIZATION", authorization)));
+            Header header = new Header(new Record(Record.entry("AUTHORIZATION", authorization)));
 
             // Insert
             SourceLink.getCommandLink().execute(
                     header,
                     new Record[]{
                         new Record(
-                                new Entry("COLLECTION.KEY", "USERNAME"),
-                                new Entry("ID.KEY", "newid"),
-                                new Entry("NAME", "newuser"),
-                                new Entry("DISPLAYNAME", "New User"),
-                                new Entry("CODECARD", "123457"),
-                                new Entry("ROLE_ID", "g"),
-                                new Entry("VISIBLE", true),
-                                new Entry("ACTIVE", true))});
+                                Record.entry("COLLECTION.KEY", "USERNAME"),
+                                Record.entry("ID.KEY", "newid"),
+                                Record.entry("NAME", "newuser"),
+                                Record.entry("DISPLAYNAME", "New User"),
+                                Record.entry("CODECARD", "123457"),
+                                Record.entry("ROLE_ID", "g"),
+                                Record.entry("VISIBLE", true),
+                                Record.entry("ACTIVE", true))});
             Record r = loadUser(SourceLink.getQueryLink(), header, "newid");
             Assert.assertEquals("newuser", r.getString("NAME"));
             Assert.assertEquals("New User", r.getString("DISPLAYNAME"));
@@ -67,14 +66,14 @@ public class DataTests {
                     header,
                     new Record[]{
                         new Record(
-                                new Entry("COLLECTION.KEY", "USERNAME"),
-                                new Entry("ID.KEY", "newid"),
-                                new Entry("NAME", "newuser"),
-                                new Entry("DISPLAYNAME", "New User Changed"),
-                                new Entry("CODECARD", "12345"),
-                                new Entry("ROLE_ID", "m"),
-                                new Entry("VISIBLE", true),
-                                new Entry("ACTIVE", true))});
+                                Record.entry("COLLECTION.KEY", "USERNAME"),
+                                Record.entry("ID.KEY", "newid"),
+                                Record.entry("NAME", "newuser"),
+                                Record.entry("DISPLAYNAME", "New User Changed"),
+                                Record.entry("CODECARD", "12345"),
+                                Record.entry("ROLE_ID", "m"),
+                                Record.entry("VISIBLE", true),
+                                Record.entry("ACTIVE", true))});
 
             r = loadUser(SourceLink.getQueryLink(), header, "newid");
             Assert.assertEquals("newuser", r.getString("NAME"));
@@ -86,8 +85,8 @@ public class DataTests {
                     header,
                     new Record[]{
                         new Record(
-                                new Entry("COLLECTION.KEY", "USERNAME"),
-                                new Entry("ID.KEY", "newid"))});
+                                Record.entry("COLLECTION.KEY", "USERNAME"),
+                                Record.entry("ID.KEY", "newid"))});
 
             r = loadUser(SourceLink.getQueryLink(), header, "newid");
             Assert.assertNull(r);
@@ -100,13 +99,13 @@ public class DataTests {
     private Record loadUser(QueryLink link, Header header, String id) throws DataException {
         return link.find(header,
                 new Record(
-                        new Entry("COLLECTION.KEY", "USERNAME"),
-                        new Entry("ID.KEY", id),
-                        new Entry("NAME", VariantString.NULL),
-                        new Entry("DISPLAYNAME", VariantString.NULL),
-                        new Entry("CODECARD", VariantString.NULL),
-                        new Entry("ROLE_ID", VariantString.NULL),
-                        new Entry("VISIBLE", VariantBoolean.NULL),
-                        new Entry("ACTIVE", VariantBoolean.NULL)));
+                        Record.entry("COLLECTION.KEY", "USERNAME"),
+                        Record.entry("ID.KEY", id),
+                        Record.entry("NAME", VariantString.NULL),
+                        Record.entry("DISPLAYNAME", VariantString.NULL),
+                        Record.entry("CODECARD", VariantString.NULL),
+                        Record.entry("ROLE_ID", VariantString.NULL),
+                        Record.entry("VISIBLE", VariantBoolean.NULL),
+                        Record.entry("ACTIVE", VariantBoolean.NULL)));
     }
 }

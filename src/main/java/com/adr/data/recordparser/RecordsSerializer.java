@@ -29,6 +29,7 @@ import java.io.StringWriter;
 import java.io.Writer;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  *
@@ -101,32 +102,30 @@ public class RecordsSerializer {
     public static final void write(Record r, Writer writer) throws IOException {
         writer.write('(');
         boolean comma = false;
-        for (String n : r.getNames()) {
+        for (Map.Entry<String, Variant> entry: r.entrySet()) {
             if (comma) {
                 writer.write(", ");
             } else {
                 comma = true;
             }
-            writer.write(CommonParsers.isIdentifier(n) ? n : CommonParsers.quote(n));
+            writer.write(CommonParsers.isIdentifier(entry.getKey()) ? entry.getKey() : CommonParsers.quote(entry.getKey()));
             writer.write(": ");
-
-            Variant v = r.get(n);
 
             // Calculate value
             try {
-                if (v.isNull()) {
+                if (entry.getValue().isNull()) {
                     writer.write("NULL");
-                    if (v.getKind() != Kind.STRING) {
+                    if (entry.getValue().getKind() != Kind.STRING) {
                         writer.write(':');
-                        writer.write(v.getKind().toString());
+                        writer.write(entry.getValue().getKind().toString());
                     }
                 } else {
                     Parameters params = new ISOParameters();
-                    v.getKind().write(params, v);
-                    writer.write(hasQuotes(v.getKind()) ? CommonParsers.quote(params.toString()) : params.toString());
-                    if (!isDefaulted(v.getKind())) {
+                    entry.getValue().getKind().write(params, entry.getValue());
+                    writer.write(hasQuotes(entry.getValue().getKind()) ? CommonParsers.quote(params.toString()) : params.toString());
+                    if (!isDefaulted(entry.getValue().getKind())) {
                         writer.write(':');
-                        writer.write(v.getKind().toString());
+                        writer.write(entry.getValue().getKind().toString());
                     }
                 }
             } catch (DataException ex) {
@@ -141,6 +140,7 @@ public class RecordsSerializer {
                kind != Kind.DECIMAL && 
                kind != Kind.INT && 
                kind != Kind.LONG &&
+               kind != Kind.FLOAT &&
                kind != Kind.DOUBLE;
     }
     private static boolean isDefaulted(Kind kind) {

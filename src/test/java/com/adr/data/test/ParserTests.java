@@ -1,5 +1,5 @@
 //     Data Access is a Java library to store data
-//     Copyright (C) 2017-2018 Adrián Romero Corchado.
+//     Copyright (C) 2017-2019 Adrián Romero Corchado.
 //
 //     This file is part of Data Access
 //
@@ -16,7 +16,6 @@
 //     limitations under the License.
 package com.adr.data.test;
 
-import com.adr.data.record.Entry;
 import com.adr.data.var.VariantString;
 
 import java.util.Arrays;
@@ -42,14 +41,14 @@ public class ParserTests {
     public void recordsSerialization1() throws IOException {
 
         Record record = new Record(
-                new Entry("id", new VariantString("1")),
-                new Entry("field", new VariantString("pepeluis")),
-                new Entry("amount", new VariantInt(32)),
-                new Entry("añejo", 32.0),
-                new Entry("unenter ito", 32),
-                new Entry("usvalid \nCon retorno", 32),
-                new Entry("unlong", new VariantLong(33L)),
-                new Entry("value", VariantString.NULL));
+                Record.entry("id", new VariantString("1")),
+                Record.entry("field", new VariantString("pepeluis")),
+                Record.entry("amount", new VariantInt(32)),
+                Record.entry("añejo", 32.0),
+                Record.entry("unenter ito", 32),
+                Record.entry("usvalid \nCon retorno", 32),
+                Record.entry("unlong", new VariantLong(33L)),
+                Record.entry("value", VariantString.NULL));
         String recordstr = "(id: \"1\", field: \"pepeluis\", amount: 32, añejo: 32.0, \"unenter ito\": 32, \"usvalid \\nCon retorno\": 32, unlong: 33:LONG, value: NULL)";
 
         Assert.assertEquals(recordstr, RecordsSerializer.write(record));
@@ -86,7 +85,7 @@ public class ParserTests {
 
     @Test
     public void recordsParseEmpty() throws IOException {
-        Assert.assertArrayEquals(new String[0], RecordsSerializer.read("()").getNames());
+        Assert.assertEquals(Record.EMPTY, RecordsSerializer.read("()"));
     }
 
     @Test
@@ -94,11 +93,11 @@ public class ParserTests {
 
         List<Record> records = Arrays.asList(
                 new Record(
-                        new Entry("id", "1"),
-                        new Entry("field", "pepeluis")),
+                        Record.entry("id", "1"),
+                        Record.entry("field", "pepeluis")),
                 new Record(
-                        new Entry("id", "2"),
-                        new Entry("field", "hilario")));
+                        Record.entry("id", "2"),
+                        Record.entry("field", "hilario")));
         String recordsstr = "(id: \"1\", field: \"pepeluis\")\n(id: \"2\", field: \"hilario\")";
 
         Assert.assertEquals(recordsstr, RecordsSerializer.writeList(records));
@@ -107,13 +106,13 @@ public class ParserTests {
     @Test
     public void recordsWithIdentifiers() throws IOException {
         Record r = new Record(
-                new Entry("COLLECTION.KEY", "USERNAME"),
-                new Entry("ID.KEY", VariantString.NULL),
-                new Entry("NAME", VariantString.NULL),
-                new Entry("NAME..CONTAINS", "a"),
-                new Entry("VISIBLE", VariantBoolean.NULL),
-                new Entry("CODECARD", VariantString.NULL),
-                new Entry("..ORDERBY", "NAME"));   
+                Record.entry("COLLECTION.KEY", "USERNAME"),
+                Record.entry("ID.KEY", VariantString.NULL),
+                Record.entry("NAME", VariantString.NULL),
+                Record.entry("NAME..CONTAINS", "a"),
+                Record.entry("VISIBLE", VariantBoolean.NULL),
+                Record.entry("CODECARD", VariantString.NULL),
+                Record.entry("..ORDERBY", "NAME"));   
         
         String s = RecordsSerializer.write(r);    
         Record r2 = RecordsSerializer.read(s);
