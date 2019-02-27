@@ -30,9 +30,9 @@ public class BasicQueryLink implements QueryLink {
     }
 
     @Override
-    public List<Record> query(Header headers, Record filter) throws DataException {
+    public List<Record> process(Header headers, List<Record> records) throws DataException {
         try {
-            return querylink.query(headers, filter).get();
+            return querylink.process(headers, records).get();
         } catch (InterruptedException ex) {
             throw new DataException(ex);
         } catch (ExecutionException ex) {

@@ -47,37 +47,31 @@ public class ReducerQueryJWTAuthorization implements ReducerQuery {
     }
         
     @Override
-    public List<Record> query(Header headers, Record filter) throws DataException {
-            
-        Variant authorization = headers.getRecord().get("AUTHORIZATION");        
-        String role;
-        String displayrole;
-        if (authorization.isNull()) {
-            role = "ANONYMOUS";
-            displayrole = "Anonymous";
-        } else {
-            JWT jwtauthorization = JWT.decode(authorization.asString());         
-            role = jwtauthorization.getClaim("role").asString();
-            displayrole = jwtauthorization.getClaim("displayrole").asString();
-        }
+    public List<Record> process(Header headers, List<Record> records) throws DataException {
+                 
+        RoleInfo roleinfo = new RoleInfo(headers);
         
-        String entity = Records.getCollection(filter);
-        if (ReducerLogin.AUTHORIZATION_REQUEST.equals(entity)) {        
-            // Request authorizer
-            String resource = filter.getString("RESOURCE");
-            Record response = new Record(
-                    Record.entry("COLLECTION.KEY", ReducerLogin.AUTHORIZATION_REQUEST),
-                    Record.entry("RESOURCE", resource),
-                    Record.entry("ROLE", role),
-                    Record.entry("RESULT", new VariantBoolean(authorizer.hasAuthorization(querylink, role, resource))));
-            return Collections.singletonList(response);             
-        } else {
-            // Normal query
-            if (authorizer.hasAuthorization(querylink, role, entity + Authorizer.ACTION_QUERY)) {
-                return null;
-            } else {
-                throw new SecurityDataException("Role " + displayrole + " does not have authorization to query the resource: " + entity);
-            }            
-        }          
+        if (records.size() == 1) {
+            Record filter = records.get(0);               
+            String entity = Records.getCollection(filter);
+            if (ReducerLogin.AUTHORIZATION_REQUEST.equals(entity)) {        
+                // Request authorizer
+                String resource = filter.getString("RESOURCE");
+                Record response = new Record(
+                        Record.entry("COLLECTION.KEY", ReducerLogin.AUTHORIZATION_REQUEST),
+                        Record.entry("RESOURCE", resource),
+                        Record.entry("ROLE", roleinfo.getRole()),
+                        Record.entry("RESULT", new VariantBoolean(authorizer.hasAuthorization(querylink, roleinfo.getRole(), resource))));
+                return Collections.singletonList(response);        
+            }
+        }
+
+        for (Record r: records) {
+            String collectionkey = Records.getCollection(r);
+            if (!authorizer.hasAuthorization(querylink, roleinfo.getRole(), collectionkey + Authorizer.ACTION_QUERY)) {
+                throw new SecurityDataException("Role " + roleinfo.getDisplayRole() + " does not have authorization to query the resource: " + collectionkey);
+            }      
+        }
+        return null;          
     }    
 }

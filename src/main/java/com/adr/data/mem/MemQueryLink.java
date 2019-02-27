@@ -1,5 +1,5 @@
 //     Data Access is a Java library to store data
-//     Copyright (C) 2018 Adrián Romero Corchado.
+//     Copyright (C) 2018-2019 Adrián Romero Corchado.
 //
 //     This file is part of Data Access
 //
@@ -21,6 +21,7 @@ import com.adr.data.DataException;
 import com.adr.data.QueryLink;
 import com.adr.data.record.Header;
 import com.adr.data.record.Record;
+import com.google.common.collect.ImmutableList;
 import java.io.IOException;
 import java.util.List;
 
@@ -36,9 +37,13 @@ public class MemQueryLink implements QueryLink {
     }
 
     @Override
-    public List<Record> query(Header headers, Record filter) throws DataException {
+    public List<Record> process(Header headers, List<Record> records) throws DataException {
         try {
-            return storage.query(filter);
+            ImmutableList.Builder<Record> result = ImmutableList.<Record>builder();
+            for (Record filter: records) {            
+                storage.query(filter, result);
+            }
+            return result.build();                
         } catch (IOException ex) {
             throw new DataException(ex);
         }

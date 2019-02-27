@@ -22,12 +22,11 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import com.adr.data.record.Record;
 import com.adr.data.record.Records;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import java.util.Map;
 
@@ -45,7 +44,7 @@ public abstract class Sentence {
         throw new UnsupportedOperationException();
     }
 
-    public List<Record> query(Connection c, SQLEngine engine, Record val) throws DataException {
+    public void query(Connection c, SQLEngine engine, Record val, ImmutableList.Builder<Record> result) throws DataException {
         throw new UnsupportedOperationException();
     }
 
@@ -60,7 +59,7 @@ public abstract class Sentence {
         }
     }
 
-    public static List<Record> query(Connection c, CommandSQL command, Record filter) throws DataException {
+    public static void query(Connection c, CommandSQL command, Record filter, ImmutableList.Builder<Record> result) throws DataException {
         String sql = command.getCommand();
         LOG.log(Level.CONFIG, "Executing SQL query: {0}", sql);
         try (PreparedStatement stmt = c.prepareStatement(sql)) {
@@ -70,14 +69,11 @@ public abstract class Sentence {
             // int offset = options.getOffset(); // offset is applied in the CommandSQL
 
             try (ResultSet resultset = stmt.executeQuery()) {
-                List<Record> r = new ArrayList<>();
-
                 int i = 0;
                 while (i < limit && resultset.next()) {
-                    r.add(read(resultset, filter));
+                    result.add(read(resultset, filter));
                     i++;
                 }
-                return r;
             }
         } catch (SQLException ex) {
             throw new DataException(ex);

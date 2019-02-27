@@ -53,10 +53,10 @@ public class WebQueryLink implements QueryLink {
     }
 
     @Override
-    public List<Record> query(Header headers, Record filter) throws DataException {
+    public List<Record> process(Header headers, List<Record> records) throws DataException {
 
         try {
-            String message = new RequestQuery(headers, filter).write();
+            String message = new RequestQuery(headers, records).write();
 
             Request request = new Request.Builder()
                     .url(url)

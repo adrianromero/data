@@ -35,7 +35,7 @@ public class ReducerQueryIdentity implements ReducerQuery {
     }
 
     @Override
-    public List<Record> query(Header headers, Record filter) throws DataException {
-        return link.query(headers, filter);
+    public List<Record> process(Header headers, List<Record> records) throws DataException {
+        return link.process(headers, records);
     }  
 }

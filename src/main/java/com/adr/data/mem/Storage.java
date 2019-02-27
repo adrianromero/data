@@ -28,6 +28,7 @@ import java.util.List;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 import com.adr.data.FilterBuilder;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import java.util.Map;
 
@@ -77,14 +78,13 @@ public class Storage {
         }
     }  
     
-    public List<Record> query(Record filter) throws IOException {
+    public void query(Record filter, ImmutableList.Builder<Record> result) throws IOException {
         r.lock();
         int i = 0;
         int limit = Records.getLimit(filter);
         int offset = Records.getOffset(filter);       
         try {
             
-            List<Record> result = new ArrayList<>();
             StorageBuilder builder = new StorageBuilder();
             FilterBuilderMethods.build(builder, filter);
             
@@ -98,13 +98,13 @@ public class Storage {
                     } else {
                         result.add(p);
                         if (--limit <= 0) {
-                            return result;
+                            return;
                         }
                     }
                     
                 }
             }
-            return result;
+            return;
         } finally {
             r.unlock();
         }

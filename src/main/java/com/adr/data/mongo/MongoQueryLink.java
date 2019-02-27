@@ -25,6 +25,7 @@ import com.adr.data.record.Header;
 import com.adr.data.record.Record;
 import com.adr.data.record.Records;
 import com.adr.data.var.Variant;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
@@ -59,28 +60,32 @@ public class MongoQueryLink implements QueryLink {
     }
 
     @Override
-    public List<Record> query(Header headers, Record filter) throws DataException {
-        int limit = Records.getLimit(filter);
-        int offset = Records.getOffset(filter);
-        String entity = Records.getCollection(filter, defaultcollection);
-        MongoCollection<Document> collection = database.getCollection(entity);
+    public List<Record> process(Header headers, List<Record> records) throws DataException {
 
-        MongoBuilder builder = new MongoBuilder();
-        FilterBuilderMethods.build(builder, filter);
-        FindIterable<Document> iter = collection
-                .find(builder.getFilterFor(filter))
-                .sort(orderBy(filter))
-                .skip(offset)
-                .limit(limit)
-                .projection(builder.getProjection());
+        ImmutableList.Builder<Record> result = ImmutableList.<Record>builder();
+        for (Record filter: records) { 
+            int limit = Records.getLimit(filter);
+            int offset = Records.getOffset(filter);
+            String entity = Records.getCollection(filter, defaultcollection);
+            MongoCollection<Document> collection = database.getCollection(entity);
 
-        List<Record> result = new ArrayList<>();
-        try (MongoCursor<Document> cursor = iter.iterator()) {
-            while (cursor.hasNext()) {
-                result.add(read(cursor.next(), filter));
+            MongoBuilder builder = new MongoBuilder();
+            FilterBuilderMethods.build(builder, filter);
+            FindIterable<Document> iter = collection
+                    .find(builder.getFilterFor(filter))
+                    .sort(orderBy(filter))
+                    .skip(offset)
+                    .limit(limit)
+                    .projection(builder.getProjection());
+
+            try (MongoCursor<Document> cursor = iter.iterator()) {
+                while (cursor.hasNext()) {
+                    result.add(read(cursor.next(), filter));
+                }
             }
         }
-        return result;
+        return result.build();
+        
     }
     
     protected static Bson orderBy(Record record) throws DataException {

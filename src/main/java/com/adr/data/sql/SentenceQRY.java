@@ -19,9 +19,9 @@ package com.adr.data.sql;
 
 import com.adr.data.DataException;
 import java.sql.Connection;
-import java.util.List;
 import com.adr.data.record.Record;
 import com.adr.data.record.Records;
+import com.google.common.collect.ImmutableList;
 
 /**
  *
@@ -32,8 +32,8 @@ public abstract class SentenceQRY extends Sentence {
     protected abstract CommandSQL build(SQLEngine engine, Record record) throws DataException;
     
     @Override
-    public List<Record> query(Connection c, SQLEngine engine, Record record) throws DataException {
-        return Sentence.query(c, build(engine, record), record);
+    public void query(Connection c, SQLEngine engine, Record record, ImmutableList.Builder<Record> result) throws DataException {
+        Sentence.query(c, build(engine, record), record, result);
     }
         
     public static void addQueryOptions(StringBuilder sqlsent, SQLEngine engine, Record record) {

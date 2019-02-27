@@ -40,6 +40,6 @@ public class ReducerCommandLink implements CommandLink {
                 return;
             }
         }
-        throw new DataException("Data cannot be found.");
+        throw new DataException("Command cannot be found.");
     }
 }

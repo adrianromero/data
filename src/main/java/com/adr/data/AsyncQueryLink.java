@@ -18,13 +18,18 @@ package com.adr.data;
 
 import com.adr.data.record.Header;
 import com.adr.data.record.Record;
+import java.util.Arrays;
 
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 public interface AsyncQueryLink {
 
-    public CompletableFuture<List<Record>> query(Header headers, Record filter);
+    public CompletableFuture<List<Record>> process(Header headers, List<Record> records);
+    
+    public default CompletableFuture<List<Record>> query(Header headers, Record filter) {
+        return process(headers, Arrays.asList(filter));
+    }
 
     public default CompletableFuture<List<Record>> query(Record filter) {
         return query(Header.EMPTY, filter);

@@ -27,5 +27,5 @@ import com.adr.data.record.Record;
  */
 public interface ReducerQuery {
     // returns null to go to next reducer
-    public List<Record> query(Header headers, Record filter) throws DataException;  
+    public List<Record> process(Header headers, List<Record> records) throws DataException;  
 }

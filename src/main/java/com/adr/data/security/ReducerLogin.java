@@ -41,23 +41,25 @@ public abstract class ReducerLogin implements ReducerQuery {
     protected abstract Variant createAuthorization(String user, String password) throws DataException;
     
     @Override
-    public List<Record> query(Header headers, Record filter) throws DataException {
+    public List<Record> process(Header headers, List<Record> records) throws DataException {
+        
+        if (records.size() == 1) {        
+            Record filter = records.get(0);
+            String entity = Records.getCollection(filter);
+            if (AUTHENTICATION_REQUEST.equals(entity)) {
+                // Filter Authentication requests logins
+                String username = filter.getString("NAME");
+                String password = filter.getString("PASSWORD");
 
-        String entity = Records.getCollection(filter);
-        if (!AUTHENTICATION_REQUEST.equals(entity)) {
-            return null;
+                Variant authorization = createAuthorization(username, password);
+
+                Record result = new Record(
+                        Record.entry("COLLECTION.KEY", AUTHENTICATION_RESPONSE),
+                        Record.entry("AUTHORIZATION", authorization));
+                return Collections.singletonList(result);
+            }
         }
-
-        // Filter Authentication requests logins
-        String username = filter.getString("NAME");
-        String password = filter.getString("PASSWORD");
-
-        Variant authorization = createAuthorization(username, password);
-
-        Record result = new Record(
-                Record.entry("COLLECTION.KEY", AUTHENTICATION_RESPONSE),
-                Record.entry("AUTHORIZATION", authorization));
-        return Collections.singletonList(result);
+        return null;
     }
 
     public static String login(QueryLink link, String user, String password) throws DataException {

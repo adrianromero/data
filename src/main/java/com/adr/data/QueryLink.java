@@ -20,10 +20,15 @@ package com.adr.data;
 import com.adr.data.record.Header;
 import java.util.List;
 import com.adr.data.record.Record;
+import java.util.Arrays;
 
 public interface QueryLink {
     
-    public List<Record> query(Header headers, Record filter) throws DataException;   
+    public List<Record> process(Header headers, List<Record> records) throws DataException;
+    
+    public default List<Record> query(Header headers, Record filter) throws DataException {
+        return process(headers, Arrays.asList(filter));
+    } 
     
     public default List<Record> query(Record filter) throws DataException {
         return query(Header.EMPTY, filter);

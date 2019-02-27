@@ -1,5 +1,5 @@
 //     Data Access is a Java library to store data
-//     Copyright (C) 2016-2018 Adrián Romero Corchado.
+//     Copyright (C) 2016-2019 Adrián Romero Corchado.
 //
 //     This file is part of Data Access
 //
@@ -33,9 +33,9 @@ public class CachedQueryLink implements QueryLink {
     private final QueryLink link;
 
     private final CacheProvider provider;
-    private final Predicate<? super Record>  selector;
+    private final Predicate<? super List<Record>>  selector;
 
-    public CachedQueryLink(QueryLink link, CacheProvider provider, Predicate<? super Record>  selector) {
+    public CachedQueryLink(QueryLink link, CacheProvider provider, Predicate<? super List<Record>>  selector) {
         this.link = link;
         this.provider = provider;
         this.selector = selector;
@@ -52,17 +52,17 @@ public class CachedQueryLink implements QueryLink {
     }
 
     @Override
-    public List<Record> query(Header headers, Record filter) throws DataException {
+    public List<Record> process(Header headers, List<Record> records) throws DataException {
         
-        if (selector.test(filter)) {
-            List<Record> cachedresult = provider.getIfPresent(headers, filter);
+        if (selector.test(records)) {
+            List<Record> cachedresult = provider.getIfPresent(headers, records);
             if (cachedresult == null) {
-                cachedresult = link.query(headers, filter);
-                provider.put(headers, filter, cachedresult);                
+                cachedresult = link.process(headers, records);
+                provider.put(headers, records, cachedresult);                
             }
             return cachedresult;
         } else {
-            return link.query(headers, filter);
+            return link.process(headers, records);
         }
     }
 }

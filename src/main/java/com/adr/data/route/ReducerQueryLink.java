@@ -35,10 +35,10 @@ public class ReducerQueryLink implements QueryLink {
     }
 
     @Override
-    public List<Record> query(Header headers, Record filter) throws DataException {
+    public List<Record> process(Header headers, List<Record> records) throws DataException {
         List<Record> result;
         for (ReducerQuery r : reducers) {
-            result = r.query(headers, filter);
+            result = r.process(headers, records);
             if (result != null) {
                 return result;
             }

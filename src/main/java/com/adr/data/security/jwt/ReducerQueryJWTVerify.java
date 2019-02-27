@@ -36,7 +36,7 @@ public class ReducerQueryJWTVerify implements ReducerQuery {
     }
    
     @Override
-    public List<Record> query(Header headers, Record filter) throws DataException {
+    public List<Record> process(Header headers, List<Record> records) throws DataException {
         verifier.verify(headers);      
         return null;
     }

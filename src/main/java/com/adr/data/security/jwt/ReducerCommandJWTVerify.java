@@ -1,5 +1,5 @@
 //     Data Access is a Java library to store data
-//     Copyright (C) 2016 Adrián Romero Corchado.
+//     Copyright (C) 2017-2018 Adrián Romero Corchado.
 //
 //     This file is part of Data Access
 //
@@ -14,29 +14,30 @@
 //     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //     See the License for the specific language governing permissions and
 //     limitations under the License.
-package com.adr.data.route;
 
-import com.adr.data.QueryLink;
+package com.adr.data.security.jwt;
+
+import com.adr.data.DataException;
+import com.adr.data.record.Header;
+import java.util.List;
+import com.adr.data.record.Record;
+import com.adr.data.route.ReducerCommand;
 
 /**
  *
  * @author adrian
  */
-public class FederatedEntry {
-
-    private final QueryLink link;    
-    private final String[] keys;
-
-    public FederatedEntry(QueryLink link, String... keys) {
-        this.link = link;
-        this.keys = keys;
+public class ReducerCommandJWTVerify implements ReducerCommand {
+    
+    private final TokenVerifier verifier;
+    
+    public ReducerCommandJWTVerify(byte[] secret) {
+        verifier = new TokenVerifier(secret);
     }
 
-    public QueryLink getLink() {
-        return link;
-    }
-
-    public String[] getKeys() {
-        return keys;
-    }
+    @Override
+    public boolean execute(Header headers, List<Record> l) throws DataException {
+        verifier.verify(headers);      
+        return false;
+    } 
 }

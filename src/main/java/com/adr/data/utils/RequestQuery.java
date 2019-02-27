@@ -33,6 +33,8 @@ import java.io.Reader;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.io.Writer;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionException;
 import java.util.logging.Level;
@@ -41,11 +43,11 @@ import java.util.logging.Logger;
 public class RequestQuery {
     
     private final Header headers;
-    private final Record filter;
+    private final List<Record> records;
     
-    public RequestQuery(Header headers, Record filter) {
+    public RequestQuery(Header headers, List<Record> records) {
         this.headers = headers;
-        this.filter = filter;
+        this.records = records;
     }
     
     public String write() throws IOException {
@@ -57,7 +59,7 @@ public class RequestQuery {
     public void write(Writer w) throws IOException {
         RecordsSerializer.write(headers.getRecord(), w);
         w.append('\n');
-        RecordsSerializer.write(filter, w);
+        RecordsSerializer.writeList(records, w);
     }
     
     public static RequestQuery read(String value) throws IOException {
@@ -70,13 +72,19 @@ public class RequestQuery {
         loader.skipBlanks();
         Header header = new Header(RecordParsers.parseRecord(loader));
         loader.skipBlanks();
-        Record filter = RecordParsers.parseRecord(loader);
-        loader.skipBlanks();
-        if (CodePoint.isEOF(loader.getCP())) {
-            return new RequestQuery(header, filter);
-        } else {
-            throw IOExceptionMessage.createExpected(loader, -1);
+        List<Record> recordsList = new ArrayList<>();
+        for (;;) {
+            if (loader.getCP() == '(') {
+                recordsList.add(RecordParsers.parseRecord(loader));
+                loader.skipBlanks();
+            } else if (CodePoint.isEOF(loader.getCP())) {
+                break;
+            } else {
+                throw IOExceptionMessage.createExpected(loader, -1);
+            }
         }
+        return new RequestQuery(header, recordsList);
+
     } 
     
     public static String serverQueryProcess(QueryLink link, String message, Logger logger) throws IOException {
@@ -85,7 +93,7 @@ public class RequestQuery {
         logger.log(Level.CONFIG, "Processing Query: {0}.", new Object[]{message});
 
         try {
-            return new ResponseQueryListRecord(link.query(request.headers, request.filter)).write();
+            return new ResponseQueryListRecord(link.process(request.headers, request.records)).write();
         } catch (DataException ex) {
             logger.log(Level.SEVERE, "Cannot execute query request.", ex);
             return new ResponseQueryError(ex).write();
@@ -101,10 +109,10 @@ public class RequestQuery {
                         throw new CompletionException(ex);
                     }
                 })
-                .thenCompose(request -> querylink.query(request.headers, request.filter))
-                .thenApply(records -> {
+                .thenCompose(request -> querylink.process(request.headers, request.records))
+                .thenApply(result -> {
                     try {
-                        return new ResponseQueryListRecord(records).write();
+                        return new ResponseQueryListRecord(result).write();
                     } catch (IOException ex) {
                         throw new CompletionException(ex);
                     }

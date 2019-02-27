@@ -1,5 +1,5 @@
 //     Data Access is a Java library to store data
-//     Copyright (C) 2016-2018 Adrián Romero Corchado.
+//     Copyright (C) 2016-2019 Adrián Romero Corchado.
 //
 //     This file is part of Data Access
 //
@@ -35,10 +35,10 @@ public class FailOverQueryLink implements QueryLink {
     }
 
     @Override
-    public List<Record> query(Header headers, Record filter) throws DataException {
+    public List<Record> process(Header headers, List<Record> records) throws DataException {
         for(QueryLink q : querylinks) {
             try {
-                return q.query(headers, filter);
+                return q.process(headers, records);
             } catch (DataException e) {
                 // Ignore and go to next
             }

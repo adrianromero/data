@@ -1,5 +1,5 @@
 //     Data Access is a Java library to store data
-//     Copyright (C) 2016 Adrián Romero Corchado.
+//     Copyright (C) 2016-2019 Adrián Romero Corchado.
 //
 //     This file is part of Data Access
 //
@@ -23,6 +23,7 @@ import java.util.Set;
 import java.util.function.Predicate;
 import com.adr.data.record.Record;
 import com.adr.data.record.Records;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -30,7 +31,7 @@ import java.util.logging.Logger;
  *
  * @author adrian
  */
-public class PredicateSelectorList implements Predicate<Record> {
+public class PredicateSelectorList implements Predicate<List<Record>> {
     
     private final Set<String> names;
     
@@ -43,9 +44,14 @@ public class PredicateSelectorList implements Predicate<Record> {
     }
 
     @Override
-    public boolean test(Record v) {
+    public boolean test(List<Record> records) {
         try {
-            return names.contains(Records.getCollection(v));
+            for (Record r: records) {
+                if (!names.contains(Records.getCollection(r))) {
+                    return false;
+                }
+            }
+            return true;
         } catch (DataException ex) {
             Logger.getLogger(PredicateSelectorList.class.getName()).log(Level.FINE, ex.getMessage());
             return false;

@@ -25,7 +25,7 @@ import java.util.concurrent.CompletionException;
 import java.util.concurrent.Executor;
 import java.util.concurrent.ForkJoinPool;
 
-public class BasicAsyncQueryLink {
+public class BasicAsyncQueryLink implements AsyncQueryLink{
 
     private final QueryLink querylink;
     private final Executor executor;
@@ -38,11 +38,12 @@ public class BasicAsyncQueryLink {
     public BasicAsyncQueryLink(QueryLink querylink) {
         this(querylink, ForkJoinPool.commonPool());
     }
-
-    public CompletableFuture<List<Record>> query(Header headers, Record filter) {
+    
+    @Override
+    public CompletableFuture<List<Record>> process(Header headers, List<Record> records) {
         return CompletableFuture.supplyAsync(() -> {
             try {
-                return querylink.query(headers, filter);
+                return querylink.process(headers, records);
             } catch (DataException e) {
                 throw new CompletionException(e);
             }

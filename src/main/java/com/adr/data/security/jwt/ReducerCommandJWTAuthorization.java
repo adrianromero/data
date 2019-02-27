@@ -21,8 +21,6 @@ import com.adr.data.DataException;
 import com.adr.data.QueryLink;
 import com.adr.data.record.Header;
 import com.adr.data.security.SecurityDataException;
-import com.adr.data.var.Variant;
-import com.auth0.jwt.JWT;
 import java.util.List;
 import java.util.Set;
 import com.adr.data.record.Record;
@@ -33,12 +31,12 @@ import com.adr.data.route.ReducerCommand;
  *
  * @author adrian
  */
-public class ReducerDataJWTAuthorization implements ReducerCommand {
+public class ReducerCommandJWTAuthorization implements ReducerCommand {
     
     private final QueryLink querylink;
     private final Authorizer authorizer;
 
-    public ReducerDataJWTAuthorization(QueryLink querylink, Set<String> anonymousresources, Set<String> authenticatedresources) {
+    public ReducerCommandJWTAuthorization(QueryLink querylink, Set<String> anonymousresources, Set<String> authenticatedresources) {
         this.querylink = querylink;
         authorizer = new Authorizer(anonymousresources, authenticatedresources);
     }
@@ -46,22 +44,12 @@ public class ReducerDataJWTAuthorization implements ReducerCommand {
     @Override
     public boolean execute(Header headers, List<Record> l) throws DataException {
 
-        Variant authorization = headers.getRecord().get("AUTHORIZATION");        
-        String role;
-        String displayrole;
-        if (authorization.isNull()) {
-            role = "ANONYMOUS";
-            displayrole = "Anonymous";
-        } else {
-            JWT jwtauthorization = JWT.decode(authorization.asString());         
-            role = jwtauthorization.getClaim("role").asString();
-            displayrole = jwtauthorization.getClaim("displayrole").asString();
-        }
+        RoleInfo roleinfo = new RoleInfo(headers);
         
         for (Record r: l) {
             String collectionkey = Records.getCollection(r);
-            if (!authorizer.hasAuthorization(querylink, role, collectionkey + Authorizer.ACTION_EXECUTE)) {
-                throw new SecurityDataException("Role " + displayrole + " does not have authorization to execute the resource: " + collectionkey);
+            if (!authorizer.hasAuthorization(querylink, roleinfo.getRole(), collectionkey + Authorizer.ACTION_EXECUTE)) {
+                throw new SecurityDataException("Role " + roleinfo.getDisplayRole() + " does not have authorization to execute the resource: " + collectionkey);
             }
         }
         return false;

@@ -1,5 +1,5 @@
 //     Data Access is a Java library to store data
-//     Copyright (C) 2016-2018 Adrián Romero Corchado.
+//     Copyright (C) 2016-2019 Adrián Romero Corchado.
 //
 //     This file is part of Data Access
 //
@@ -28,6 +28,7 @@ import java.util.Map;
 import javax.sql.DataSource;
 import com.adr.data.record.Record;
 import com.adr.data.record.Records;
+import com.google.common.collect.ImmutableList;
 
 /**
  *
@@ -56,14 +57,18 @@ public class SQLQueryLink implements QueryLink {
     }
     
     @Override
-    public List<Record> query(Header headers, Record filter) throws DataException {
+    public List<Record> process(Header headers, List<Record> records) throws DataException {
         try (Connection c = ds.getConnection()) {
-            String entity = Records.getCollection(filter);
-            Sentence s = queries.get(entity);
-            if (s == null) {
-                s = table;
-            }              
-            return s.query(c, engine, filter);
+            ImmutableList.Builder<Record> result = ImmutableList.<Record>builder();
+            for (Record filter: records) {
+                String entity = Records.getCollection(filter);
+                Sentence s = queries.get(entity);
+                if (s == null) {
+                    s = table;
+                }              
+                s.query(c, engine, filter, result);
+            }
+            return result.build();
         } catch (SQLException ex) {
             throw new DataException(ex);
         }

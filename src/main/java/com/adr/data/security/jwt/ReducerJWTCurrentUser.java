@@ -36,27 +36,28 @@ public class ReducerJWTCurrentUser implements ReducerQuery {
 
     
     @Override
-    public List<Record> query(Header headers, Record filter) throws DataException {
+    public List<Record> process(Header headers, List<Record> records) throws DataException {
         
-        String entity = Records.getCollection(filter);
-        if (!ReducerLogin.AUTHENTICATION_CURRENT.equals(entity)) {          
-            return null;
-        }
-        
-        Variant authorization = headers.getRecord().get("AUTHORIZATION");        
-        
-        if (authorization.isNull()) {
-            return Collections.emptyList(); // anonymous
-        } else {
-            JWT jwtauthorizaion = JWT.decode(authorization.asString());
-            // Valid login, load user details.
-            Record currentuser = new Record(
-                    Record.entry("COLLECTION.KEY", "USERNAME_BYNAME"),
-                    Record.entry("NAME", jwtauthorizaion.getSubject()),
-                    Record.entry("DISPLAYNAME", jwtauthorizaion.getClaim("displayname").asString()),
-                    Record.entry("ROLE", jwtauthorizaion.getClaim("role").asString()),
-                    Record.entry("DISPLAYROLE", jwtauthorizaion.getClaim("displayrole").asString()));
-            return Collections.singletonList(currentuser);
-        }
+        if (records.size() == 1) {
+            Record filter = records.get(0);               
+            String entity = Records.getCollection(filter);
+            if (ReducerLogin.AUTHENTICATION_CURRENT.equals(entity)) {          
+                Variant authorization = headers.getRecord().get("AUTHORIZATION");        
+                if (authorization.isNull()) {
+                    return Collections.emptyList(); // anonymous
+                } else {
+                    JWT jwtauthorizaion = JWT.decode(authorization.asString());
+                    // Valid login, load user details.
+                    Record currentuser = new Record(
+                            Record.entry("COLLECTION.KEY", "USERNAME_BYNAME"),
+                            Record.entry("NAME", jwtauthorizaion.getSubject()),
+                            Record.entry("DISPLAYNAME", jwtauthorizaion.getClaim("displayname").asString()),
+                            Record.entry("ROLE", jwtauthorizaion.getClaim("role").asString()),
+                            Record.entry("DISPLAYROLE", jwtauthorizaion.getClaim("displayrole").asString()));
+                    return Collections.singletonList(currentuser);
+                }
+            }
+        }      
+        return null;
     }
 }

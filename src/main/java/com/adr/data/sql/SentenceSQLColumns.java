@@ -19,11 +19,10 @@ package com.adr.data.sql;
 import com.adr.data.DataException;
 import com.adr.data.record.Record;
 import com.adr.data.var.Variant;
+import com.google.common.collect.ImmutableList;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  *
@@ -36,7 +35,7 @@ public class SentenceSQLColumns extends Sentence {
     }
     
     @Override
-    public List<Record> query(Connection c, SQLEngine engine, Record val) throws DataException {
+    public void query(Connection c, SQLEngine engine, Record val, ImmutableList.Builder<Record> result) throws DataException {
         
         //    TABLE_CAT String => table catalog (may be null)
         //    TABLE_SCHEM String => table schema (may be null)
@@ -90,11 +89,9 @@ public class SentenceSQLColumns extends Sentence {
         String columnname = varcolumnname.isNull() ? null : varcolumnname.asString();
 
         try (ResultSet resultset = c.getMetaData().getColumns(cat, schem, name, columnname)) {
-            List<Record> r = new ArrayList<>();
             while (resultset.next()) {
-                r.add(read(resultset, val));
+                result.add(read(resultset, val));
             }
-            return r;      
         } catch (SQLException ex) {
             throw new DataException(ex);
         }
