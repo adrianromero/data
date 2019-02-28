@@ -1,5 +1,5 @@
 //     Data Access is a Java library to store data
-//     Copyright (C) 2016-2018 Adrián Romero Corchado.
+//     Copyright (C) 2016-2019 Adrián Romero Corchado.
 //
 //     This file is part of Data Access
 //
@@ -48,22 +48,22 @@ repositories {
 }
 
 dependencies {
-    compile group: 'org.slf4j', name: 'slf4j-simple', version: '1.7.25'
-    compile group: 'com.google.guava', name: 'guava', version: '19.0'
-    compile group: 'com.rabbitmq', name: 'amqp-client', version: '3.6.2'
-    compile group: 'org.mongodb', name: 'mongo-java-driver', version: '3.9.1'
-    compile group: 'com.squareup.okhttp3', name: 'okhttp', version: '3.3.1'
-    compile group: 'com.squareup.okhttp3', name: 'okhttp-urlconnection', version: '3.3.1'
-    compile group: 'com.sparkjava', name: 'spark-core', version: '2.5'
-    compile group: 'io.grpc', name: 'grpc-all', version: '1.17.1'
-    compile group: 'com.auth0', name: 'java-jwt', version: '3.1.0'
+    compile group: 'org.slf4j', name: 'slf4j-simple', version: '1.7.26'
+    compile group: 'com.google.guava', name: 'guava', version: '23.0'
+    compile group: 'com.rabbitmq', name: 'amqp-client', version: '5.6.0'
+    compile group: 'org.mongodb', name: 'mongo-java-driver', version: '3.10.1'
+    compile group: 'com.squareup.okhttp3', name: 'okhttp', version: '3.13.1'
+    compile group: 'com.squareup.okhttp3', name: 'okhttp-urlconnection', version: '3.13.1'
+    compile group: 'com.sparkjava', name: 'spark-core', version: '2.8.0'
+    compile group: 'io.grpc', name: 'grpc-all', version: '1.19.0'
+    compile group: 'com.auth0', name: 'java-jwt', version: '3.7.0'
 
-    testCompile group: 'junit', name: 'junit', version: '4.11'
-    testCompile group: 'com.zaxxer', name: 'HikariCP', version: '2.5.1'
+    testCompile group: 'junit', name: 'junit', version: '4.12'
+    testCompile group: 'com.zaxxer', name: 'HikariCP', version: '3.3.1'
     
-    testCompile group: 'org.postgresql', name: 'postgresql', version: '9.4.1212'
-    testCompile group: 'com.h2database', name: 'h2', version: '1.4.192'
-    testCompile group: 'mysql', name: 'mysql-connector-java', version: '8.0.13'
+    testCompile group: 'org.postgresql', name: 'postgresql', version: '42.2.5'
+    testCompile group: 'com.h2database', name: 'h2', version: '1.4.198'
+    testCompile group: 'mysql', name: 'mysql-connector-java', version: '8.0.15'
 }
 
 protobuf {
@@ -72,7 +72,7 @@ protobuf {
     }
     plugins {
         grpc {
-            artifact = 'io.grpc:protoc-gen-grpc-java:1.17.1'
+            artifact = 'io.grpc:protoc-gen-grpc-java:1.19.0'
         }
     }
     generateProtoTasks {

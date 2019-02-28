@@ -19,6 +19,7 @@ package com.adr.data.security.jwt;
 import com.adr.data.record.Header;
 import com.adr.data.var.Variant;
 import com.auth0.jwt.JWT;
+import com.auth0.jwt.interfaces.DecodedJWT;
 
 /**
  *
@@ -35,7 +36,7 @@ public class RoleInfo {
             role = "ANONYMOUS";
             displayrole = "Anonymous";
         } else {
-            JWT jwtauthorization = JWT.decode(authorization.asString());         
+            DecodedJWT jwtauthorization = JWT.decode(authorization.asString());         
             role = jwtauthorization.getClaim("role").asString();
             displayrole = jwtauthorization.getClaim("displayrole").asString();
         }        

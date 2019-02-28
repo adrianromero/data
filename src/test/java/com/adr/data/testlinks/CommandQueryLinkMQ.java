@@ -26,6 +26,7 @@ import java.util.concurrent.TimeoutException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import com.adr.data.Link;
+import com.rabbitmq.client.RpcClientParams;
 
 /**
  *
@@ -36,19 +37,20 @@ public class CommandQueryLinkMQ implements CommandQueryLinkBuilder {
     private static final Logger LOG = Logger.getLogger(CommandQueryLinkMQ.class.getName());  
 
     private final String queryexchange;
-    private final String dataexchange;
+    private final String commandexchange;
     private final Connection connection;
 
-    private Channel channelquery = null;
-    private RpcClient clientquery = null;
+    private Channel querychannel = null;
+    private RpcClient queryclient = null;
     private Link querylink;
-    private Channel channeldata = null;
-    private RpcClient clientdata = null;
+    
+    private Channel commandchannel = null;
+    private RpcClient commandclient = null;
     private Link commandlink;
     
-    public CommandQueryLinkMQ(String host, int port, String username, String password, String dataexchange, String queryexchange) {
+    public CommandQueryLinkMQ(String host, int port, String username, String password, String commandexchange, String queryexchange) {
 
-        this.dataexchange = dataexchange;
+        this.commandexchange = commandexchange;
         this.queryexchange = queryexchange;
 
         try {
@@ -67,12 +69,27 @@ public class CommandQueryLinkMQ implements CommandQueryLinkBuilder {
     @Override
     public void create() {
         try {
-            channelquery = connection.createChannel();
-            clientquery = new RpcClient(channelquery, queryexchange, "", 2500);
-            querylink = new MQLink(clientquery);
-            channeldata = connection.createChannel();
-            clientdata = new RpcClient(channeldata, dataexchange, "", 2500);
-            commandlink = new MQLink(clientdata);
+            querychannel = connection.createChannel();
+            RpcClientParams queryparams = new RpcClientParams()
+                .channel(querychannel)
+                .exchange(queryexchange)
+                .routingKey("")
+                .replyTo("amq.rabbitmq.reply-to")
+                .timeout(2500)
+                .useMandatory(false);            
+            queryclient = new RpcClient(queryparams);
+            querylink = new MQLink(queryclient);
+            
+            commandchannel = connection.createChannel();
+            RpcClientParams commandparams = new RpcClientParams()
+                .channel(commandchannel)
+                .exchange(commandexchange)
+                .routingKey("")
+                .replyTo("amq.rabbitmq.reply-to")
+                .timeout(2500)
+                .useMandatory(false);            
+            commandclient = new RpcClient(commandparams);            
+            commandlink = new MQLink(commandclient);
         } catch (IOException ex) {
             LOG.log(Level.SEVERE, null, ex);
             throw new RuntimeException(ex);
@@ -82,11 +99,11 @@ public class CommandQueryLinkMQ implements CommandQueryLinkBuilder {
     @Override
     public void destroy() {
         try {
-            clientdata.close();
-            channeldata.close();
+            commandclient.close();
+            commandchannel.close();
             commandlink = null;
-            clientquery.close();
-            channelquery.close();
+            queryclient.close();
+            querychannel.close();
             querylink = null;
         } catch (IOException | TimeoutException ex) {
             LOG.log(Level.SEVERE, null, ex);

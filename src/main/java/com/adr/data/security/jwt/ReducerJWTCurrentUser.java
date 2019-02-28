@@ -27,6 +27,7 @@ import java.util.List;
 import com.adr.data.record.Record;
 import com.adr.data.record.Records;
 import com.adr.data.route.Reducer;
+import com.auth0.jwt.interfaces.DecodedJWT;
 
 /**
  *
@@ -46,7 +47,7 @@ public class ReducerJWTCurrentUser implements Reducer {
                 if (authorization.isNull()) {
                     return Collections.emptyList(); // anonymous
                 } else {
-                    JWT jwtauthorizaion = JWT.decode(authorization.asString());
+                    DecodedJWT jwtauthorizaion = JWT.decode(authorization.asString());
                     // Valid login, load user details.
                     Record currentuser = new Record(
                             Record.entry("COLLECTION.KEY", "USERNAME_BYNAME"),
