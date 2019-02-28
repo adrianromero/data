@@ -20,7 +20,7 @@ import com.adr.data.mongo.MongoCommandLink;
 import com.adr.data.mongo.MongoQueryLink;
 import com.adr.data.route.ReducerIdentity;
 import com.adr.data.route.ReducerLink;
-import com.adr.data.security.jwt.ReducerCommandJWTVerify;
+import com.adr.data.security.jwt.ReducerJWTVerify;
 import com.adr.data.security.jwt.ReducerJWTCurrentUser;
 import com.adr.data.security.jwt.ReducerJWTLogin;
 import com.adr.data.security.jwt.ReducerJWTAuthorization;
@@ -63,14 +63,14 @@ public class CommandQueryLinkMongo implements CommandQueryLinkBuilder {
         Link mongocommandlink = new MongoCommandLink(database);
 
         querylink = new ReducerLink(
-                new ReducerCommandJWTVerify("secret".getBytes(StandardCharsets.UTF_8)),
+                new ReducerJWTVerify("secret".getBytes(StandardCharsets.UTF_8)),
                 new ReducerJWTLogin(mongoquerylink, "secret".getBytes(StandardCharsets.UTF_8), 5000),
                 new ReducerJWTCurrentUser(),
                 new ReducerJWTAuthorization(mongoquerylink, "QUERY", new HashSet<>(Arrays.asList("ANONYMOUS_VISIBLE_QUERY")), new HashSet<>(Arrays.asList("AUTHENTICATED_VISIBLE_QUERY"))),
                 new ReducerIdentity(mongoquerylink));
         
         commandlink = new ReducerLink(
-                new ReducerCommandJWTVerify("secret".getBytes(StandardCharsets.UTF_8)),
+                new ReducerJWTVerify("secret".getBytes(StandardCharsets.UTF_8)),
                 new ReducerJWTAuthorization(mongoquerylink, "EXECUTE", new HashSet<>(Arrays.asList("ANONYMOUS_VISIBLE_QUERY")), new HashSet<>(Arrays.asList("AUTHENTICATED_VISIBLE_QUERY"))),
                 new ReducerIdentity(mongocommandlink));       
     }

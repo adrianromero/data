@@ -20,7 +20,7 @@ import com.adr.data.route.ReducerIdentity;
 import com.adr.data.route.ReducerLink;
 import com.adr.data.sql.SQLQueryLink;
 import com.adr.data.security.SecureSentences;
-import com.adr.data.security.jwt.ReducerCommandJWTVerify;
+import com.adr.data.security.jwt.ReducerJWTVerify;
 import com.adr.data.security.jwt.ReducerJWTAuthorization;
 import com.adr.data.security.jwt.ReducerJWTCurrentUser;
 import com.adr.data.security.jwt.ReducerJWTLogin;
@@ -79,7 +79,7 @@ public class CommandQueryLinkSQL implements CommandQueryLinkBuilder {
         Link query = new SQLQueryLink(cpds, engine, ObjectArrays.concat(SecureSentences.QUERIES, morequeries, Sentence.class));   
 
         return new ReducerLink(
-                new ReducerCommandJWTVerify("secret".getBytes(StandardCharsets.UTF_8)),
+                new ReducerJWTVerify("secret".getBytes(StandardCharsets.UTF_8)),
                 new ReducerJWTLogin(query, "secret".getBytes(StandardCharsets.UTF_8), 5000),
                 new ReducerJWTCurrentUser(),
                 new ReducerJWTAuthorization(query, "QUERY", new HashSet<>(Arrays.asList("ANONYMOUS_VISIBLE_QUERY")), new HashSet<>(Arrays.asList("AUTHENTICATED_VISIBLE_QUERY"))),
@@ -93,7 +93,7 @@ public class CommandQueryLinkSQL implements CommandQueryLinkBuilder {
         Link command = new SQLCommandLink(cpds, engine, SecureSentences.COMMANDS);
         
         return new ReducerLink(
-                new ReducerCommandJWTVerify("secret".getBytes(StandardCharsets.UTF_8)),
+                new ReducerJWTVerify("secret".getBytes(StandardCharsets.UTF_8)),
                 new ReducerJWTAuthorization(query, "EXECUTE", new HashSet<>(Arrays.asList("ANONYMOUS_VISIBLE_QUERY")), new HashSet<>(Arrays.asList("AUTHENTICATED_VISIBLE_QUERY"))),
                 new ReducerIdentity(command));
     }

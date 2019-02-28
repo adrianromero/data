@@ -27,11 +27,11 @@ import com.adr.data.route.Reducer;
  *
  * @author adrian
  */
-public class ReducerCommandJWTVerify implements Reducer {
+public class ReducerJWTVerify implements Reducer {
     
     private final TokenVerifier verifier;
     
-    public ReducerCommandJWTVerify(byte[] secret) {
+    public ReducerJWTVerify(byte[] secret) {
         verifier = new TokenVerifier(secret);
     }
 
