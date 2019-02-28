@@ -19,7 +19,6 @@ package com.adr.data.security.jwt;
 
 import com.adr.data.DataException;
 import com.adr.data.record.Header;
-import com.adr.data.route.ReducerQuery;
 import com.adr.data.security.ReducerLogin;
 import com.adr.data.var.Variant;
 import com.auth0.jwt.JWT;
@@ -27,12 +26,13 @@ import java.util.Collections;
 import java.util.List;
 import com.adr.data.record.Record;
 import com.adr.data.record.Records;
+import com.adr.data.route.Reducer;
 
 /**
  *
  * @author adrian
  */
-public class ReducerJWTCurrentUser implements ReducerQuery {
+public class ReducerJWTCurrentUser implements Reducer {
 
     
     @Override

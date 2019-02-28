@@ -17,7 +17,6 @@
 package com.adr.data.security.jwt;
 
 import com.adr.data.DataException;
-import com.adr.data.QueryLink;
 import com.adr.data.security.CryptUtils;
 import com.adr.data.security.ReducerLogin;
 import com.adr.data.security.SecurityDataException;
@@ -28,6 +27,7 @@ import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTCreationException;
 import java.util.Date;
 import com.adr.data.record.Record;
+import com.adr.data.Link;
 
 /**
  *
@@ -35,14 +35,14 @@ import com.adr.data.record.Record;
  */
 public class ReducerJWTLogin extends ReducerLogin {
 
-    private final QueryLink link;
+    private final Link querylink;
     private final Algorithm algorithm;
     private final long validtime;
 
-    public ReducerJWTLogin(QueryLink link, byte[] secret, long validtime) {
+    public ReducerJWTLogin(Link querylink, byte[] secret, long validtime) {
         
         try {
-            this.link = link;
+            this.querylink = querylink;
             this.algorithm = Algorithm.HMAC256(secret);
             this.validtime = validtime;
         } catch (IllegalArgumentException ex) {
@@ -60,7 +60,7 @@ public class ReducerJWTLogin extends ReducerLogin {
                 Record.entry("DISPLAYROLE", VariantString.NULL),
                 Record.entry("PASSWORD", VariantString.NULL));
 
-        Record userauthentication = link.find(userauthenticationquery);
+        Record userauthentication = querylink.find(userauthenticationquery);
 
         if (userauthentication == null || !CryptUtils.validatePassword(password, userauthentication.getString("PASSWORD"))) {
             // Invalid login

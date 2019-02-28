@@ -1,5 +1,5 @@
 //     Data Access is a Java library to store data
-//     Copyright (C) 2018-2019 Adrián Romero Corchado.
+//     Copyright (C) 2017-2019 Adrián Romero Corchado.
 //
 //     This file is part of Data Access
 //
@@ -14,38 +14,32 @@
 //     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //     See the License for the specific language governing permissions and
 //     limitations under the License.
-
-package com.adr.data.mem;
+package com.adr.data.mock;
 
 import com.adr.data.DataException;
 import com.adr.data.record.Header;
-import com.adr.data.record.Record;
-import com.google.common.collect.ImmutableList;
-import java.io.IOException;
 import java.util.List;
+import java.util.function.Predicate;
+import com.adr.data.record.Record;
 import com.adr.data.Link;
 
 /**
  *
  * @author adrian
  */
-public class MemQueryLink implements Link {
-    private final Storage storage;
+public class MockLink implements Link {
 
-    public MemQueryLink(Storage storage) {
-        this.storage = storage;
+    private final Predicate<? super List<Record>> fail;    
+    
+    public MockLink(Predicate<? super List<Record>> fail) {
+        this.fail = fail;
     }
-
     @Override
     public List<Record> process(Header headers, List<Record> records) throws DataException {
-        try {
-            ImmutableList.Builder<Record> result = ImmutableList.<Record>builder();
-            for (Record filter: records) {            
-                storage.query(filter, result);
-            }
-            return result.build();                
-        } catch (IOException ex) {
-            throw new DataException(ex);
+        if (fail.test(records)) {
+            throw new DataException("Fail condition reached");
+        } else {
+            throw new UnsupportedOperationException();
         }
     }
 }

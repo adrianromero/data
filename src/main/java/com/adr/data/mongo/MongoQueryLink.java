@@ -20,7 +20,6 @@ package com.adr.data.mongo;
 import com.adr.data.DataException;
 import com.adr.data.FilterBuilder;
 import com.adr.data.FilterBuilderMethods;
-import com.adr.data.QueryLink;
 import com.adr.data.record.Header;
 import com.adr.data.record.Record;
 import com.adr.data.record.Records;
@@ -41,12 +40,13 @@ import java.util.regex.Pattern;
 import org.bson.BsonDocument;
 import org.bson.Document;
 import org.bson.conversions.Bson;
+import com.adr.data.Link;
 
 /**
  *
  * @author adrian
  */
-public class MongoQueryLink implements QueryLink {
+public class MongoQueryLink implements Link {
 
     private final MongoDatabase database;
     private final String defaultcollection;

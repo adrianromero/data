@@ -1,5 +1,5 @@
 //     Data Access is a Java library to store data
-//     Copyright (C) 2016-2018 Adrián Romero Corchado.
+//     Copyright (C) 2016-2019 Adrián Romero Corchado.
 //
 //     This file is part of Data Access
 //
@@ -16,7 +16,7 @@
 //     limitations under the License.
 package com.adr.data.test;
 
-import com.adr.data.rabbitmq.RabbitServer;
+import com.adr.data.rabbitmq.MQServer;
 import com.adr.data.test.persist.DataTests;
 import com.adr.data.testlinks.CommandQueryLinkMQ;
 import com.adr.data.testlinks.CommandQueryLinkSQL;
@@ -49,12 +49,12 @@ public class SuiteMQ {
     private static final String SQLNAME = "postgresql";
     
     private static final CommandQueryLinkBuilder builder= new CommandQueryLinkSQL(SQLNAME);
-    private static RabbitServer myserver;
+    private static MQServer myserver;
 
     @BeforeClass
     public static void setUpClass() throws Exception {
         builder.create();
-        myserver = new RabbitServer(HOST, PORT, USERNAME, PASSWORD, QUEUEDATA, QUEUEQUERY, builder.getCommandLink(), builder.getQueryLink());
+        myserver = new MQServer(HOST, PORT, USERNAME, PASSWORD, QUEUEDATA, QUEUEQUERY, builder.getCommandLink(), builder.getQueryLink());
         myserver.start();
         SourceLink.setBuilder(new CommandQueryLinkMQ(HOST, PORT, USERNAME, PASSWORD, EXCHANGEDATA, EXCHANGEQUERY));
     }

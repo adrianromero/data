@@ -1,5 +1,5 @@
 //     Data Access is a Java library to store data
-//     Copyright (C) 2018-2019 Adrián Romero Corchado.
+//     Copyright (C) 2019 Adrián Romero Corchado.
 //
 //     This file is part of Data Access
 //
@@ -14,37 +14,40 @@
 //     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //     See the License for the specific language governing permissions and
 //     limitations under the License.
-
-package com.adr.data.mem;
+package com.adr.data.grpc;
 
 import com.adr.data.DataException;
 import com.adr.data.record.Header;
 import com.adr.data.record.Record;
-import com.google.common.collect.ImmutableList;
+import com.adr.data.utils.RequestLink;
+import com.adr.data.utils.ResponseLink;
 import java.io.IOException;
 import java.util.List;
 import com.adr.data.Link;
+import com.adr.data.proto.LinkGrpc;
+import com.adr.data.proto.PRequestLink;
+import com.adr.data.proto.PResponseLink;
 
-/**
- *
- * @author adrian
- */
-public class MemQueryLink implements Link {
-    private final Storage storage;
+public class GRPCLink implements Link {
 
-    public MemQueryLink(Storage storage) {
-        this.storage = storage;
+    private final LinkGrpc.LinkBlockingStub stub;
+
+    public GRPCLink(LinkGrpc.LinkBlockingStub stub) {
+        this.stub = stub;
     }
 
     @Override
     public List<Record> process(Header headers, List<Record> records) throws DataException {
         try {
-            ImmutableList.Builder<Record> result = ImmutableList.<Record>builder();
-            for (Record filter: records) {            
-                storage.query(filter, result);
-            }
-            return result.build();                
-        } catch (IOException ex) {
+            String message = new RequestLink(headers, records).write();
+            PRequestLink request = PRequestLink.newBuilder()
+                    .setMessage(message).build();
+
+            PResponseLink response = stub.query(request);
+
+            ResponseLink envelope = ResponseLink.read(response.getMessage());
+            return envelope.getResult();
+        } catch (IOException | RuntimeException ex) {
             throw new DataException(ex);
         }
     }

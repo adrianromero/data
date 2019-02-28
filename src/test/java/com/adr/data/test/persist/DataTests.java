@@ -17,7 +17,6 @@
 package com.adr.data.test.persist;
 
 import com.adr.data.DataException;
-import com.adr.data.QueryLink;
 import com.adr.data.record.Header;
 import com.adr.data.security.ReducerLogin;
 import com.adr.data.var.VariantBoolean;
@@ -26,6 +25,7 @@ import org.junit.Assert;
 import org.junit.Test;
 import com.adr.data.record.Record;
 import com.adr.data.test.SourceLink;
+import com.adr.data.Link;
 
 /**
  *
@@ -96,8 +96,8 @@ public class DataTests {
         }
     }
 
-    private Record loadUser(QueryLink link, Header header, String id) throws DataException {
-        return link.find(header,
+    private Record loadUser(Link querylink, Header header, String id) throws DataException {
+        return querylink.find(header,
                 new Record(
                         Record.entry("COLLECTION.KEY", "USERNAME"),
                         Record.entry("ID.KEY", id),

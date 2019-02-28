@@ -1,5 +1,5 @@
 //     Data Access is a Java library to store data
-//     Copyright (C) 2016-2018 Adrián Romero Corchado.
+//     Copyright (C) 2016-2019 Adrián Romero Corchado.
 //
 //     This file is part of Data Access
 //
@@ -27,13 +27,15 @@ import java.util.Map;
 import javax.sql.DataSource;
 import com.adr.data.record.Record;
 import com.adr.data.record.Records;
-import com.adr.data.CommandLink;
+import com.adr.data.var.VariantInt;
+import com.google.common.collect.ImmutableList;
+import com.adr.data.Link;
 
 /**
  *
  * @author adrian
  */
-public class SQLCommandLink implements CommandLink {
+public class SQLCommandLink implements Link {
 
     private final DataSource ds;
     private final SQLEngine engine;
@@ -52,7 +54,7 @@ public class SQLCommandLink implements CommandLink {
     }
 
     @Override
-    public void execute(Header headers, List<Record> l) throws DataException {
+    public List<Record> process(Header headers, List<Record> l) throws DataException {
         try (Connection c = ds.getConnection()) {
             c.setAutoCommit(false);
             for (Record r : l) {
@@ -63,6 +65,8 @@ public class SQLCommandLink implements CommandLink {
                 s.execute(c, engine, r);
             }
             c.commit();
+            return ImmutableList.of(new Record(
+                    Record.entry("PROCESSED", new VariantInt(l.size()))));
         } catch (SQLException ex) {
             throw new DataException(ex);
         }

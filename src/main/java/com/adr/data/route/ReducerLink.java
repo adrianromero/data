@@ -1,5 +1,5 @@
 //     Data Access is a Java library to store data
-//     Copyright (C) 2018-2019 Adrián Romero Corchado.
+//     Copyright (C) 2017-2019 Adrián Romero Corchado.
 //
 //     This file is part of Data Access
 //
@@ -12,40 +12,36 @@
 //     Unless required by applicable law or agreed to in writing, software
 //     distributed under the License is distributed on an "AS IS" BASIS,
 //     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-//     See the License for the specific language governing permissions and
-//     limitations under the License.
-
-package com.adr.data.mem;
+//     See the License for the specific 
+package com.adr.data.route;
 
 import com.adr.data.DataException;
 import com.adr.data.record.Header;
-import com.adr.data.record.Record;
-import com.google.common.collect.ImmutableList;
-import java.io.IOException;
 import java.util.List;
+import com.adr.data.record.Record;
 import com.adr.data.Link;
 
 /**
  *
  * @author adrian
  */
-public class MemQueryLink implements Link {
-    private final Storage storage;
+public class ReducerLink implements Link {
 
-    public MemQueryLink(Storage storage) {
-        this.storage = storage;
+    private final Reducer[] reducers;
+
+    public ReducerLink(Reducer... reducers) {
+        this.reducers = reducers;
     }
-
+   
     @Override
     public List<Record> process(Header headers, List<Record> records) throws DataException {
-        try {
-            ImmutableList.Builder<Record> result = ImmutableList.<Record>builder();
-            for (Record filter: records) {            
-                storage.query(filter, result);
+        List<Record> result;
+        for (Reducer r : reducers) {
+            result = r.process(headers, records);
+            if (result != null) {
+                return result;
             }
-            return result.build();                
-        } catch (IOException ex) {
-            throw new DataException(ex);
         }
+        throw new DataException("Link cannot be found.");        
     }
 }

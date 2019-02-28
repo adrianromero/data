@@ -32,14 +32,16 @@ import java.util.ArrayList;
 import java.util.List;
 import org.bson.Document;
 import org.bson.conversions.Bson;
-import com.adr.data.CommandLink;
+import com.adr.data.var.VariantInt;
+import com.google.common.collect.ImmutableList;
 import java.util.Map;
+import com.adr.data.Link;
 
 /**
  *
  * @author adrian
  */
-public class MongoCommandLink implements CommandLink {
+public class MongoCommandLink implements Link {
 
     private final static ReplaceOptions UPSERT = new ReplaceOptions().upsert(true);
 
@@ -56,7 +58,7 @@ public class MongoCommandLink implements CommandLink {
     }
 
     @Override
-    public void execute(Header headers, List<Record> records) throws DataException {
+    public List<Record> process(Header headers, List<Record> records) throws DataException {
 
         for (Record r : records) {
             String entity = Records.getCollection(r, defaultcollection);
@@ -92,5 +94,7 @@ public class MongoCommandLink implements CommandLink {
                 collection.replaceOne(Filters.and(filters), doc, UPSERT);
             } 
         }
+        return ImmutableList.of(new Record(
+                Record.entry("PROCESSED", new VariantInt(records.size()))));        
     }
 }

@@ -16,19 +16,14 @@
 //     limitations under the License.
 package com.adr.data.testlinks;
 
-import com.adr.data.QueryLink;
-import com.adr.data.route.ReducerCommandIdentity;
-import com.adr.data.route.ReducerCommandLink;
-import com.adr.data.route.ReducerQueryIdentity;
-import com.adr.data.route.ReducerQueryLink;
+import com.adr.data.route.ReducerIdentity;
+import com.adr.data.route.ReducerLink;
 import com.adr.data.sql.SQLQueryLink;
 import com.adr.data.security.SecureSentences;
-import com.adr.data.security.jwt.ReducerCommandJWTAuthorization;
 import com.adr.data.security.jwt.ReducerCommandJWTVerify;
-import com.adr.data.security.jwt.ReducerQueryJWTAuthorization;
+import com.adr.data.security.jwt.ReducerJWTAuthorization;
 import com.adr.data.security.jwt.ReducerJWTCurrentUser;
 import com.adr.data.security.jwt.ReducerJWTLogin;
-import com.adr.data.security.jwt.ReducerQueryJWTVerify;
 import com.adr.data.sql.SQLCommandLink;
 import com.adr.data.sql.SQLEngine;
 import com.adr.data.sql.Sentence;
@@ -41,8 +36,8 @@ import java.util.HashSet;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.sql.DataSource;
-import com.adr.data.CommandLink;
 import com.google.common.collect.ObjectArrays;
+import com.adr.data.Link;
 
 /**
  *
@@ -55,8 +50,8 @@ public class CommandQueryLinkSQL implements CommandQueryLinkBuilder {
     private final DataSource cpds;
     private final SQLEngine engine;
     
-    private QueryLink querylink;
-    private CommandLink commandlink;
+    private Link querylink;
+    private Link commandlink;
     
     public CommandQueryLinkSQL(String enginename) {
 
@@ -72,7 +67,7 @@ public class CommandQueryLinkSQL implements CommandQueryLinkBuilder {
         LOG.log(Level.INFO, "Database engine = {0}", engine.toString());
     }
 
-    private QueryLink createQueryLink() {
+    private Link createQueryLink() {
         Sentence[] morequeries = new Sentence[]{
             new SentenceView(
             "TEST_USERNAME_VIEW",
@@ -81,26 +76,26 @@ public class CommandQueryLinkSQL implements CommandQueryLinkBuilder {
             "ANONYMOUS_VISIBLE",
             "SELECT ID, NAME, DISPLAYNAME FROM USERNAME WHERE VISIBLE = TRUE AND ACTIVE = TRUE"),
         };
-        QueryLink query = new SQLQueryLink(cpds, engine, ObjectArrays.concat(SecureSentences.QUERIES, morequeries, Sentence.class));   
+        Link query = new SQLQueryLink(cpds, engine, ObjectArrays.concat(SecureSentences.QUERIES, morequeries, Sentence.class));   
 
-        return new ReducerQueryLink(
-                new ReducerQueryJWTVerify("secret".getBytes(StandardCharsets.UTF_8)),
+        return new ReducerLink(
+                new ReducerCommandJWTVerify("secret".getBytes(StandardCharsets.UTF_8)),
                 new ReducerJWTLogin(query, "secret".getBytes(StandardCharsets.UTF_8), 5000),
                 new ReducerJWTCurrentUser(),
-                new ReducerQueryJWTAuthorization(query, new HashSet<>(Arrays.asList("ANONYMOUS_VISIBLE_QUERY")), new HashSet<>(Arrays.asList("AUTHENTICATED_VISIBLE_QUERY"))),
-                new ReducerQueryIdentity(query));
+                new ReducerJWTAuthorization(query, "QUERY", new HashSet<>(Arrays.asList("ANONYMOUS_VISIBLE_QUERY")), new HashSet<>(Arrays.asList("AUTHENTICATED_VISIBLE_QUERY"))),
+                new ReducerIdentity(query));
     }
 
-    private CommandLink createCommandLink() {
+    private Link createCommandLink() {
                                    
-        QueryLink query = new SQLQueryLink(cpds, engine, 
+        Link query = new SQLQueryLink(cpds, engine, 
                 SecureSentences.QUERIES);
-        CommandLink command = new SQLCommandLink(cpds, engine, SecureSentences.COMMANDS);
+        Link command = new SQLCommandLink(cpds, engine, SecureSentences.COMMANDS);
         
-        return new ReducerCommandLink(
+        return new ReducerLink(
                 new ReducerCommandJWTVerify("secret".getBytes(StandardCharsets.UTF_8)),
-                new ReducerCommandJWTAuthorization(query, new HashSet<>(Arrays.asList("ANONYMOUS_VISIBLE_QUERY")), new HashSet<>(Arrays.asList("AUTHENTICATED_VISIBLE_QUERY"))),
-                new ReducerCommandIdentity(command));
+                new ReducerJWTAuthorization(query, "EXECUTE", new HashSet<>(Arrays.asList("ANONYMOUS_VISIBLE_QUERY")), new HashSet<>(Arrays.asList("AUTHENTICATED_VISIBLE_QUERY"))),
+                new ReducerIdentity(command));
     }
 
     @Override
@@ -116,12 +111,12 @@ public class CommandQueryLinkSQL implements CommandQueryLinkBuilder {
     }
 
     @Override
-    public QueryLink getQueryLink() {
+    public Link getQueryLink() {
         return querylink;
     }
 
     @Override
-    public CommandLink getCommandLink() {
+    public Link getCommandLink() {
         return commandlink;
     }
 }

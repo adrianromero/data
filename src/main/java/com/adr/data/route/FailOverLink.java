@@ -1,5 +1,5 @@
 //     Data Access is a Java library to store data
-//     Copyright (C) 2018-2019 Adrián Romero Corchado.
+//     Copyright (C) 2016-2019 Adrián Romero Corchado.
 //
 //     This file is part of Data Access
 //
@@ -14,38 +14,35 @@
 //     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //     See the License for the specific language governing permissions and
 //     limitations under the License.
-
-package com.adr.data.mem;
+package com.adr.data.route;
 
 import com.adr.data.DataException;
 import com.adr.data.record.Header;
-import com.adr.data.record.Record;
-import com.google.common.collect.ImmutableList;
-import java.io.IOException;
 import java.util.List;
+import com.adr.data.record.Record;
 import com.adr.data.Link;
 
 /**
  *
  * @author adrian
  */
-public class MemQueryLink implements Link {
-    private final Storage storage;
+public class FailOverLink implements Link {
 
-    public MemQueryLink(Storage storage) {
-        this.storage = storage;
+    private final Link[] commandlinks;
+
+    public FailOverLink(Link... commandlinks) {
+        this.commandlinks = commandlinks;
     }
-
+    
     @Override
-    public List<Record> process(Header headers, List<Record> records) throws DataException {
-        try {
-            ImmutableList.Builder<Record> result = ImmutableList.<Record>builder();
-            for (Record filter: records) {            
-                storage.query(filter, result);
+    public List<Record> process(Header headers, List<Record> l) throws DataException {
+        for(Link d : commandlinks) {
+            try {
+                return d.process(headers, l);
+            } catch (DataException e) {
+                // Ignore and go to next
             }
-            return result.build();                
-        } catch (IOException ex) {
-            throw new DataException(ex);
         }
+        throw new DataException("Failed all CommandLinks");
     }
 }

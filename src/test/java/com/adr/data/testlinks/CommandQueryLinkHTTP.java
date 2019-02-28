@@ -1,5 +1,5 @@
 //     Data Access is a Java library to store data
-//     Copyright (C) 2016-2017 Adrián Romero Corchado.
+//     Copyright (C) 2016-2019 Adrián Romero Corchado.
 //
 //     This file is part of Data Access
 //
@@ -16,11 +16,9 @@
 //     limitations under the License.
 package com.adr.data.testlinks;
 
-import com.adr.data.QueryLink;
-import com.adr.data.http.WebCommandLink;
-import com.adr.data.http.WebQueryLink;
+import com.adr.data.http.WebLink;
 import okhttp3.OkHttpClient;
-import com.adr.data.CommandLink;
+import com.adr.data.Link;
 
 /**
  *
@@ -31,8 +29,8 @@ public class CommandQueryLinkHTTP implements CommandQueryLinkBuilder {
     private final String urldata;
     private final String urlquery;
     
-    private QueryLink querylink;
-    private CommandLink commandlink;
+    private Link querylink;
+    private Link commandlink;
     
     public CommandQueryLinkHTTP(String urldata, String urlquery) {
         this.urldata = urldata;
@@ -42,8 +40,8 @@ public class CommandQueryLinkHTTP implements CommandQueryLinkBuilder {
     @Override
     public void create() {
         OkHttpClient client = new OkHttpClient.Builder().build();      
-        querylink = new WebQueryLink(urlquery, client);
-        commandlink = new WebCommandLink(urldata, client);
+        querylink = new WebLink(urlquery, client);
+        commandlink = new WebLink(urldata, client);
     }
 
     @Override
@@ -53,12 +51,12 @@ public class CommandQueryLinkHTTP implements CommandQueryLinkBuilder {
     }
 
     @Override
-    public QueryLink getQueryLink() {
+    public Link getQueryLink() {
         return querylink;
     }
 
     @Override
-    public CommandLink getCommandLink() {
+    public Link getCommandLink() {
         return commandlink;
     }
 }

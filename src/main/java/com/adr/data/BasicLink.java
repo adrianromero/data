@@ -1,51 +1,46 @@
 //     Data Access is a Java library to store data
-//     Copyright (C) 2018-2019 Adrián Romero Corchado.
+//     Copyright (C) 2019 Adrián Romero Corchado.
 //
 //     This file is part of Data Access
 //
 //     Licensed under the Apache License, Version 2.0 (the "License");
 //     you may not use this file except in compliance with the License.
 //     You may obtain a copy of the License at
-//     
+//
 //         http://www.apache.org/licenses/LICENSE-2.0
-//     
+//
 //     Unless required by applicable law or agreed to in writing, software
 //     distributed under the License is distributed on an "AS IS" BASIS,
 //     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //     See the License for the specific language governing permissions and
 //     limitations under the License.
+package com.adr.data;
 
-package com.adr.data.mem;
-
-import com.adr.data.DataException;
 import com.adr.data.record.Header;
 import com.adr.data.record.Record;
-import com.google.common.collect.ImmutableList;
-import java.io.IOException;
 import java.util.List;
-import com.adr.data.Link;
+import java.util.concurrent.ExecutionException;
 
-/**
- *
- * @author adrian
- */
-public class MemQueryLink implements Link {
-    private final Storage storage;
+public class BasicLink implements Link {
 
-    public MemQueryLink(Storage storage) {
-        this.storage = storage;
+    private final AsyncLink link;
+
+    public BasicLink(AsyncLink link) {
+        this.link = link;
     }
 
     @Override
     public List<Record> process(Header headers, List<Record> records) throws DataException {
         try {
-            ImmutableList.Builder<Record> result = ImmutableList.<Record>builder();
-            for (Record filter: records) {            
-                storage.query(filter, result);
-            }
-            return result.build();                
-        } catch (IOException ex) {
+            return link.process(headers, records).get();
+        } catch (InterruptedException ex) {
             throw new DataException(ex);
+        } catch (ExecutionException ex) {
+            if (ex.getCause() instanceof DataException) {
+                throw (DataException) ex.getCause();
+            } else {
+                throw new DataException(ex);
+            }
         }
     }
 }

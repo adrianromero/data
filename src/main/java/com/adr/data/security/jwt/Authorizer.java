@@ -17,19 +17,16 @@
 package com.adr.data.security.jwt;
 
 import com.adr.data.DataException;
-import com.adr.data.QueryLink;
 import com.adr.data.var.VariantString;
 import java.util.Set;
 import com.adr.data.record.Record;
+import com.adr.data.Link;
 
 /**
  *
  * @author adrian
  */
 public class Authorizer {
-
-    public final static String ACTION_QUERY = "_QUERY";
-    public final static String ACTION_EXECUTE = "_EXECUTE";
 
     private final Set<String> anonymousresources; // resources everybody logged or not has access
     private final Set<String> authenticatedresources; // resources everybody logged has access
@@ -39,7 +36,7 @@ public class Authorizer {
         this.authenticatedresources = authenticatedresources;
     }
 
-    public boolean hasAuthorization(QueryLink link, String role, String resource) throws DataException {
+    public boolean hasAuthorization(Link querylink, String role, String resource) throws DataException {
 
         // Everybody logged or not has access to anonymous resources
         if (anonymousresources.contains(resource)) {
@@ -67,6 +64,6 @@ public class Authorizer {
                 Record.entry("ROLE", role),
                 Record.entry("SUBJECT", resource),
                 Record.entry("SUBJECTNAME", VariantString.NULL));
-        return link.find(subjectsquery) != null;
+        return querylink.find(subjectsquery) != null;
     }
 }

@@ -22,8 +22,8 @@ import java.util.Map;
 
 public class FilterBuilderMethods {
 
-    public static void build(FilterBuilder visitor, Record r) {
-        for (Map.Entry<String, Variant> e : r.entrySet()) {
+    public static void build(FilterBuilder visitor, Record filter) {
+        for (Map.Entry<String, Variant> e : filter.entrySet()) {
             add(visitor, e.getKey(), e.getValue());
         }
     }

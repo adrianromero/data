@@ -22,13 +22,15 @@ import com.adr.data.record.Header;
 import com.adr.data.record.Record;
 import java.io.IOException;
 import java.util.List;
-import com.adr.data.CommandLink;
+import com.adr.data.var.VariantInt;
+import com.google.common.collect.ImmutableList;
+import com.adr.data.Link;
 
 /**
  *
  * @author adrian
  */
-public class MemCommandLink implements CommandLink {
+public class MemCommandLink implements Link {
     private final Storage storage;
 
     public MemCommandLink(Storage storage) {
@@ -36,9 +38,11 @@ public class MemCommandLink implements CommandLink {
     }
 
     @Override
-    public void execute(Header headers, List<Record> records) throws DataException {
+    public List<Record> process(Header headers, List<Record> records) throws DataException {
         try {
             storage.put(records);
+            return ImmutableList.of(new Record(
+                    Record.entry("PROCESSED", new VariantInt(records.size()))));            
         } catch (IOException ex) {
             throw new DataException(ex);
         }

@@ -1,5 +1,5 @@
 //     Data Access is a Java library to store data
-//     Copyright (C) 2018 Adrián Romero Corchado.
+//     Copyright (C) 2018-2019 Adrián Romero Corchado.
 //
 //     This file is part of Data Access
 //
@@ -16,19 +16,14 @@
 //     limitations under the License.
 package com.adr.data.testlinks;
 
-import com.adr.data.QueryLink;
 import com.adr.data.mongo.MongoCommandLink;
 import com.adr.data.mongo.MongoQueryLink;
-import com.adr.data.route.ReducerCommandIdentity;
-import com.adr.data.route.ReducerCommandLink;
-import com.adr.data.route.ReducerQueryIdentity;
-import com.adr.data.route.ReducerQueryLink;
-import com.adr.data.security.jwt.ReducerCommandJWTAuthorization;
+import com.adr.data.route.ReducerIdentity;
+import com.adr.data.route.ReducerLink;
 import com.adr.data.security.jwt.ReducerCommandJWTVerify;
 import com.adr.data.security.jwt.ReducerJWTCurrentUser;
 import com.adr.data.security.jwt.ReducerJWTLogin;
-import com.adr.data.security.jwt.ReducerQueryJWTAuthorization;
-import com.adr.data.security.jwt.ReducerQueryJWTVerify;
+import com.adr.data.security.jwt.ReducerJWTAuthorization;
 import com.mongodb.ConnectionString;
 import com.mongodb.MongoClientSettings;
 import com.mongodb.MongoCredential;
@@ -39,7 +34,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.logging.Logger;
-import com.adr.data.CommandLink;
+import com.adr.data.Link;
 
 /**
  *
@@ -51,8 +46,8 @@ public class CommandQueryLinkMongo implements CommandQueryLinkBuilder {
 
     private final MongoClient mongoclient;
 
-    private QueryLink querylink;
-    private CommandLink commandlink;
+    private Link querylink;
+    private Link commandlink;
     
     public CommandQueryLinkMongo() {
         mongoclient = MongoClients.create(MongoClientSettings.builder()
@@ -64,20 +59,20 @@ public class CommandQueryLinkMongo implements CommandQueryLinkBuilder {
     public void create() {    
         MongoDatabase database = mongoclient.getDatabase("myuser");
         
-        QueryLink mongoquerylink = new MongoQueryLink(database);
-        CommandLink mongocommandlink = new MongoCommandLink(database);
+        Link mongoquerylink = new MongoQueryLink(database);
+        Link mongocommandlink = new MongoCommandLink(database);
 
-        querylink = new ReducerQueryLink(
-                new ReducerQueryJWTVerify("secret".getBytes(StandardCharsets.UTF_8)),
+        querylink = new ReducerLink(
+                new ReducerCommandJWTVerify("secret".getBytes(StandardCharsets.UTF_8)),
                 new ReducerJWTLogin(mongoquerylink, "secret".getBytes(StandardCharsets.UTF_8), 5000),
                 new ReducerJWTCurrentUser(),
-                new ReducerQueryJWTAuthorization(mongoquerylink, new HashSet<>(Arrays.asList("ANONYMOUS_VISIBLE_QUERY")), new HashSet<>(Arrays.asList("AUTHENTICATED_VISIBLE_QUERY"))),
-                new ReducerQueryIdentity(mongoquerylink));
+                new ReducerJWTAuthorization(mongoquerylink, "QUERY", new HashSet<>(Arrays.asList("ANONYMOUS_VISIBLE_QUERY")), new HashSet<>(Arrays.asList("AUTHENTICATED_VISIBLE_QUERY"))),
+                new ReducerIdentity(mongoquerylink));
         
-        commandlink = new ReducerCommandLink(
+        commandlink = new ReducerLink(
                 new ReducerCommandJWTVerify("secret".getBytes(StandardCharsets.UTF_8)),
-                new ReducerCommandJWTAuthorization(mongoquerylink, new HashSet<>(Arrays.asList("ANONYMOUS_VISIBLE_QUERY")), new HashSet<>(Arrays.asList("AUTHENTICATED_VISIBLE_QUERY"))),
-                new ReducerCommandIdentity(mongocommandlink));       
+                new ReducerJWTAuthorization(mongoquerylink, "EXECUTE", new HashSet<>(Arrays.asList("ANONYMOUS_VISIBLE_QUERY")), new HashSet<>(Arrays.asList("AUTHENTICATED_VISIBLE_QUERY"))),
+                new ReducerIdentity(mongocommandlink));       
     }
     
     @Override
@@ -87,12 +82,12 @@ public class CommandQueryLinkMongo implements CommandQueryLinkBuilder {
     }    
 
     @Override
-    public QueryLink getQueryLink() {
+    public Link getQueryLink() {
         return querylink;
     }
 
     @Override
-    public CommandLink getCommandLink() {
+    public Link getCommandLink() {
         return commandlink;
     }
 }

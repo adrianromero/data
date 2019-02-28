@@ -1,5 +1,5 @@
 //     Data Access is a Java library to store data
-//     Copyright (C) 2018 Adrián Romero Corchado.
+//     Copyright (C) 2018-2019 Adrián Romero Corchado.
 //
 //     This file is part of Data Access
 //
@@ -16,12 +16,11 @@
 //     limitations under the License.
 package com.adr.data.testlinks;
 
-import com.adr.data.QueryLink;
 import com.adr.data.mem.MemCommandLink;
 import com.adr.data.mem.MemQueryLink;
 import com.adr.data.mem.Storage;
 import java.util.logging.Logger;
-import com.adr.data.CommandLink;
+import com.adr.data.Link;
 
 /**
  *
@@ -31,8 +30,8 @@ public class CommandQueryLinkMem implements CommandQueryLinkBuilder {
     
     private static final Logger LOG = Logger.getLogger(CommandQueryLinkMem.class.getName());  
 
-    private QueryLink querylink;
-    private CommandLink commandlink;
+    private Link querylink;
+    private Link commandlink;
     
     public CommandQueryLinkMem() {      
     }
@@ -51,12 +50,12 @@ public class CommandQueryLinkMem implements CommandQueryLinkBuilder {
     }    
 
     @Override
-    public QueryLink getQueryLink() {
+    public Link getQueryLink() {
         return querylink;
     }
 
     @Override
-    public CommandLink getCommandLink() {
+    public Link getCommandLink() {
         return commandlink;
     }
 }

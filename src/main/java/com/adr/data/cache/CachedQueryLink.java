@@ -17,37 +17,37 @@
 package com.adr.data.cache;
 
 import com.adr.data.DataException;
-import com.adr.data.QueryLink;
 import com.adr.data.record.Header;
 import com.adr.data.utils.PredicateSelectorList;
 import java.util.List;
 import java.util.function.Predicate;
 import com.adr.data.record.Record;
+import com.adr.data.Link;
 
 /**
  *
  * @author adrian
  */
-public class CachedQueryLink implements QueryLink {
+public class CachedQueryLink implements Link {
 
-    private final QueryLink link;
+    private final Link querylink;
 
     private final CacheProvider provider;
     private final Predicate<? super List<Record>>  selector;
 
-    public CachedQueryLink(QueryLink link, CacheProvider provider, Predicate<? super List<Record>>  selector) {
-        this.link = link;
+    public CachedQueryLink(Link querylink, CacheProvider provider, Predicate<? super List<Record>>  selector) {
+        this.querylink = querylink;
         this.provider = provider;
         this.selector = selector;
     }
 
-    public CachedQueryLink(QueryLink link, CacheProvider provider) {
-        this.link = link;
+    public CachedQueryLink(Link link, CacheProvider provider) {
+        this.querylink = link;
         this.provider = provider;
         this.selector = r -> true;
     }
 
-    public CachedQueryLink(QueryLink link, String... entities) {
+    public CachedQueryLink(Link link, String... entities) {
         this(link, new CacheProviderMem(), new PredicateSelectorList(entities));
     }
 
@@ -57,12 +57,12 @@ public class CachedQueryLink implements QueryLink {
         if (selector.test(records)) {
             List<Record> cachedresult = provider.getIfPresent(headers, records);
             if (cachedresult == null) {
-                cachedresult = link.process(headers, records);
+                cachedresult = querylink.process(headers, records);
                 provider.put(headers, records, cachedresult);                
             }
             return cachedresult;
         } else {
-            return link.process(headers, records);
+            return querylink.process(headers, records);
         }
     }
 }

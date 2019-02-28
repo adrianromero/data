@@ -69,7 +69,7 @@ public class SecurityTests {
                                 Record.entry("CODECARD", VariantString.NULL)));
                 Assert.fail();
             } catch (SecurityDataException ex) {
-                Assert.assertEquals("Role Anonymous does not have authorization to query the resource: USERNAME", ex.getMessage());
+                Assert.assertEquals("Role Anonymous does not have authorization to process the action \"QUERY\" on the resource \"USERNAME\"", ex.getMessage());
             }
         } finally {
             SourceLink.destroyCommandQueryLink();

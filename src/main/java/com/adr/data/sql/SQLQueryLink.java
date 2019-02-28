@@ -18,7 +18,6 @@
 package com.adr.data.sql;
 
 import com.adr.data.DataException;
-import com.adr.data.QueryLink;
 import com.adr.data.record.Header;
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -29,12 +28,13 @@ import javax.sql.DataSource;
 import com.adr.data.record.Record;
 import com.adr.data.record.Records;
 import com.google.common.collect.ImmutableList;
+import com.adr.data.Link;
 
 /**
  *
  * @author adrian
  */
-public class SQLQueryLink implements QueryLink {
+public class SQLQueryLink implements Link {
 
     private DataSource ds = null;
     private final SQLEngine engine;
