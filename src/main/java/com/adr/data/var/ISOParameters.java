@@ -1,5 +1,5 @@
 //     Data Access is a Java library to store data
-//     Copyright (C) 2017 Adrián Romero Corchado.
+//     Copyright (C) 2017-2019 Adrián Romero Corchado.
 //
 //     This file is part of Data Access
 //
@@ -19,7 +19,6 @@ package com.adr.data.var;
 
 import com.adr.data.DataException;
 import java.math.BigDecimal;
-import java.io.IOException;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -32,7 +31,7 @@ import java.util.Base64;
  */
 public final class ISOParameters implements Parameters {
     
-    private String iso = "";
+    private String iso;
 
     public ISOParameters() {
     }  
@@ -53,6 +52,10 @@ public final class ISOParameters implements Parameters {
     @Override
     public void setString(String value) throws DataException {
         iso = value;
+    }
+    @Override
+    public void setFloat(Float value) throws DataException {
+        iso = value == null ? null : value.toString();
     }
     @Override
     public void setDouble(Double value) throws DataException {
@@ -91,15 +94,5 @@ public final class ISOParameters implements Parameters {
     @Override
     public void setBytes(byte[] value) throws DataException {
         iso = value == null ? null : Base64.getEncoder().encodeToString(value);
-    }
-
-    @Override
-    public void setObject(Object value) throws DataException {
-        try {
-            iso = value == null ? null : Serializer.serialize(value);
-        } catch (IOException ex) {
-            iso = null;
-            throw new DataException(ex);
-        }
     }
 }
