@@ -1,5 +1,6 @@
 # build application files
 target/
+src/generated/
 /nbproject/
 /.gradle/
 /.nb-gradle/
