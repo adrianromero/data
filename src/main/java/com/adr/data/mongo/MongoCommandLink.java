@@ -21,7 +21,7 @@ import com.adr.data.DataException;
 import com.adr.data.record.Header;
 import com.adr.data.record.Record;
 import com.adr.data.record.Records;
-import com.adr.data.var.Parameters;
+import com.adr.data.varrw.Parameters;
 import com.adr.data.var.Variant;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
@@ -36,6 +36,7 @@ import com.adr.data.var.VariantInt;
 import com.google.common.collect.ImmutableList;
 import java.util.Map;
 import com.adr.data.Link;
+import com.adr.data.varrw.Variants;
 
 /**
  *
@@ -88,7 +89,7 @@ public class MongoCommandLink implements Link {
                             realname = entry.getKey();
                         }
                         Parameters p = new DocumentParameters(doc, realname);
-                        entry.getValue().getKind().write(p, entry.getValue());
+                        Variants.write(p, entry.getValue());
                     }
                 }
                 collection.replaceOne(Filters.and(filters), doc, UPSERT);

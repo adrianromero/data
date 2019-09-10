@@ -22,7 +22,6 @@ import com.adr.data.var.VariantBoolean;
 import com.adr.data.var.VariantDouble;
 import com.adr.data.var.VariantInt;
 import com.adr.data.var.VariantString;
-import com.adr.data.var.VariantVoid;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import java.math.BigDecimal;
@@ -55,7 +54,7 @@ public final class Record {
         return map.entrySet();
     }
     public Variant get(String name) {
-        return map.getOrDefault(name, VariantVoid.INSTANCE);
+        return map.get(name);
     }
     public String getString(String name) {
         return get(name).asString();    
@@ -75,7 +74,7 @@ public final class Record {
     public BigDecimal getBigDecimal(String name) {
         return get(name).asBigDecimal();
     }
-    public Boolean getBoolean(String name) {
+    public boolean getBoolean(String name) {
         return get(name).asBoolean();
     }
     public byte[] getBytes(String name) {
@@ -121,6 +120,9 @@ public final class Record {
         private final Variant value;
         
         private Entry(String key, Variant value) {
+            if (key == null || value == null) {
+                throw new NullPointerException();
+            }
             this.key = key;
             this.value = value;
         } 

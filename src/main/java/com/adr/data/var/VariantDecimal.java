@@ -79,9 +79,7 @@ public class VariantDecimal extends Variant {
     
     @Override
     public int hashCode() {
-        int hash = 7;
-        hash = 79 * hash + Objects.hashCode(this.value);
-        return hash;
+        return 73 + Objects.hashCode(this.value);
     }
 
     @Override

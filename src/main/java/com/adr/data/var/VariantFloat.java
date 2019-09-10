@@ -79,9 +79,7 @@ public class VariantFloat extends Variant {
     
     @Override
     public int hashCode() {
-        int hash = 3;
-        hash = 67 * hash + Objects.hashCode(this.value);
-        return hash;
+        return 75 + Objects.hashCode(this.value);
     }
 
     @Override

@@ -19,6 +19,7 @@ package com.adr.data.sql;
 import com.adr.data.DataException;
 import com.adr.data.record.Record;
 import com.adr.data.var.Variant;
+import com.adr.data.varrw.Variants;
 import com.google.common.collect.ImmutableList;
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -77,16 +78,16 @@ public class SentenceSQLColumns extends Sentence {
         // (COLLECTION.KEY: "SQLCOLUMNS", TABLE_CAT: NULL, TABLE_SCHEM: null, TABLE_NAME: "username", COLUMN_NAME: NULL, DATA_TYPE: NULL, TYPE_NAME: NULL)
         
         Variant varcat = val.get("TABLE_CAT");
-        String cat = varcat.isNull() ? null : varcat.asString();
+        String cat = Variants.isNull(varcat) ? null : varcat.asString();
         
         Variant varschem = val.get("TABLE_SCHEM");
-        String schem = varschem.isNull() ? null : varschem.asString();
+        String schem = Variants.isNull(varschem) ? null : varschem.asString();
         
         Variant varname = val.get("TABLE_NAME");
-        String name = varname.isNull() ? null : varname.asString();
+        String name = Variants.isNull(varname) ? null : varname.asString();
         
         Variant varcolumnname = val.get("COLUMN_NAME");
-        String columnname = varcolumnname.isNull() ? null : varcolumnname.asString();
+        String columnname = Variants.isNull(varcolumnname) ? null : varcolumnname.asString();
 
         try (ResultSet resultset = c.getMetaData().getColumns(cat, schem, name, columnname)) {
             while (resultset.next()) {

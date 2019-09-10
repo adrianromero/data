@@ -27,6 +27,7 @@ import java.util.List;
 import com.adr.data.record.Record;
 import com.adr.data.record.Records;
 import com.adr.data.route.Reducer;
+import com.adr.data.varrw.Variants;
 import com.auth0.jwt.interfaces.DecodedJWT;
 
 /**
@@ -44,7 +45,7 @@ public class ReducerJWTCurrentUser implements Reducer {
             String entity = Records.getCollection(filter);
             if (ReducerLogin.AUTHENTICATION_CURRENT.equals(entity)) {          
                 Variant authorization = headers.getRecord().get("AUTHORIZATION");        
-                if (authorization.isNull()) {
+                if (Variants.isNull(authorization)) {
                     return Collections.emptyList(); // anonymous
                 } else {
                     DecodedJWT jwtauthorizaion = JWT.decode(authorization.asString());

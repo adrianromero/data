@@ -15,7 +15,7 @@
 //     See the License for the specific language governing permissions and
 //     limitations under the License.
 
-package com.adr.data.var;
+package com.adr.data.varrw;
 
 import com.adr.data.DataException;
 import java.math.BigDecimal;
@@ -28,18 +28,18 @@ import java.time.LocalTime;
  *
  * @author  adrian
  */
-public interface Parameters {
+public interface Results {
 
-    public void setString(String value) throws DataException;
-    public void setInt(Integer value) throws DataException;
-    public void setLong(Long value) throws DataException;
-    public void setFloat(Float value) throws DataException;
-    public void setDouble(Double value) throws DataException;
-    public void setBigDecimal(BigDecimal value) throws DataException;
-    public void setBoolean(Boolean value) throws DataException;
-    public void setInstant(Instant value) throws DataException;
-    public void setLocalDateTime(LocalDateTime value) throws DataException;
-    public void setLocalDate(LocalDate value) throws DataException;
-    public void setLocalTime(LocalTime value) throws DataException;
-    public void setBytes(byte[] value) throws DataException;
+    public String getString() throws DataException;
+    public Integer getInt() throws DataException;
+    public Long getLong() throws DataException;
+    public Float getFloat() throws DataException;
+    public Double getDouble() throws DataException;
+    public BigDecimal getBigDecimal() throws DataException;
+    public Boolean getBoolean() throws DataException;
+    public Instant getInstant() throws DataException;
+    public LocalDateTime getLocalDateTime() throws DataException;
+    public LocalDate getLocalDate() throws DataException;
+    public LocalTime getLocalTime() throws DataException;
+    public byte[] getBytes() throws DataException;
 }

@@ -17,12 +17,13 @@
 package com.adr.data.mongo;
 
 import com.adr.data.DataException;
-import com.adr.data.var.Parameters;
+import com.adr.data.varrw.Parameters;
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.Base64;
 import org.bson.Document;
 
 /**
@@ -96,6 +97,6 @@ public class DocumentParameters implements Parameters {
 
     @Override
     public void setBytes(byte[] value) throws DataException {
-        document.append(name, value);
+        document.append(name, name == null ? null : Base64.getEncoder().encodeToString(value));
     }
 }

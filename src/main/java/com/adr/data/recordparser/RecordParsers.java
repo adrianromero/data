@@ -18,9 +18,10 @@ package com.adr.data.recordparser;
 
 import com.adr.data.DataException;
 import com.adr.data.record.Record;
-import com.adr.data.var.ISOResults;
+import com.adr.data.varrw.ISOResults;
 import com.adr.data.var.Kind;
 import com.adr.data.var.Variant;
+import com.adr.data.varrw.Variants;
 import com.google.common.collect.ImmutableMap;
 import java.io.IOException;
 
@@ -122,7 +123,7 @@ public class RecordParsers {
                         throw IOExceptionMessage.createExpected(loader, "Kind"); 
                     }
                     try {
-                        entries.put(name, kind.read(new ISOResults(isovalue)));
+                        entries.put(name, Variants.read(new ISOResults(isovalue), kind));
                     } catch (DataException ex) {                    
                         throw IOExceptionMessage.create(loader, "Error parsing ISO value");  
                     }
@@ -130,7 +131,7 @@ public class RecordParsers {
                     state = States.RECORD_END;         
                 } else {
                     try {
-                        entries.put(name, kind.read(new ISOResults(isovalue)));
+                        entries.put(name, Variants.read(new ISOResults(isovalue), kind));
                     } catch (DataException ex) {
                         throw IOExceptionMessage.create(loader, "Error parsing ISO value");  
                     }

@@ -15,7 +15,7 @@
 //     See the License for the specific language governing permissions and
 //     limitations under the License.
 
-package com.adr.data.var;
+package com.adr.data.varrw;
 
 import com.adr.data.DataException;
 import java.math.BigDecimal;
@@ -45,7 +45,7 @@ public final class ISOResults implements Results {
     @Override
     public Integer getInt() throws DataException {
         try {
-            return value == null || value.equals("") ? null : Integer.parseInt(value);
+            return value == null || value.isEmpty() ? null : Integer.parseInt(value);
         } catch (NumberFormatException e) {
             throw new DataException(e);
         }             
@@ -53,7 +53,7 @@ public final class ISOResults implements Results {
     @Override
     public Long getLong() throws DataException {
         try {
-            return value == null || value.equals("") ? null : Long.parseLong(value);
+            return value == null || value.isEmpty() ? null : Long.parseLong(value);
         } catch (NumberFormatException e) {
             throw new DataException(e);
         }             
@@ -61,7 +61,7 @@ public final class ISOResults implements Results {
     @Override
     public Float getFloat() throws DataException {
         try {
-            return value == null || value.equals("") ? null : Float.parseFloat(value);
+            return value == null || value.isEmpty() ? null : Float.parseFloat(value);
         } catch (NumberFormatException e) {
             throw new DataException(e);
         }             
@@ -69,7 +69,7 @@ public final class ISOResults implements Results {
     @Override
     public Double getDouble() throws DataException {
         try {
-            return value == null || value.equals("") ? null : Double.parseDouble(value);
+            return value == null || value.isEmpty() ? null : Double.parseDouble(value);
         } catch (NumberFormatException e) {
             throw new DataException(e);
         }             
@@ -77,7 +77,7 @@ public final class ISOResults implements Results {
     @Override
     public BigDecimal getBigDecimal() throws DataException {
         try {
-            return value == null || value.equals("") ? null : new BigDecimal(value);
+            return value == null || value.isEmpty() ? null : new BigDecimal(value);
         } catch (IllegalArgumentException e) {
             throw new DataException(e);
         }             
@@ -98,7 +98,7 @@ public final class ISOResults implements Results {
     @Override
     public Instant getInstant() throws DataException {
         try {
-            return value == null || value.equals("") ? null : Instant.parse(value);  
+            return value == null || value.isEmpty() ? null : Instant.parse(value);  
         } catch (DateTimeParseException e) {
             throw new DataException(e);
         }
@@ -106,7 +106,7 @@ public final class ISOResults implements Results {
     @Override
     public LocalDateTime getLocalDateTime() throws DataException {
         try {
-            return value == null || value.equals("") ? null : LocalDateTime.parse(value);  
+            return value == null || value.isEmpty() ? null : LocalDateTime.parse(value);  
         } catch (DateTimeParseException e) {
             throw new DataException(e);
         }
@@ -114,7 +114,7 @@ public final class ISOResults implements Results {
     @Override
     public LocalDate getLocalDate() throws DataException {
         try {
-            return value == null || value.equals("") ? null : LocalDate.parse(value);  
+            return value == null || value.isEmpty() ? null : LocalDate.parse(value);  
         } catch (DateTimeParseException e) {
             throw new DataException(e);
         } 
@@ -122,7 +122,7 @@ public final class ISOResults implements Results {
     @Override
     public LocalTime getLocalTime() throws DataException {
         try {
-            return value == null || value.equals("") ? null : LocalTime.parse(value);  
+            return value == null || value.isEmpty() ? null : LocalTime.parse(value);  
         } catch (DateTimeParseException e) {
             throw new DataException(e);
         }

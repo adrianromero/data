@@ -54,9 +54,7 @@ public class VariantBytes extends Variant {
     
     @Override
     public int hashCode() {
-        int hash = 7;
-        hash = 89 * hash + Arrays.hashCode(this.value);
-        return hash;
+        return 72 + Arrays.hashCode(this.value);
     }
 
     @Override

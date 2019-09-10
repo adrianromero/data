@@ -26,6 +26,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import com.adr.data.record.Record;
 import com.adr.data.record.Records;
+import com.adr.data.varrw.Variants;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import java.util.Map;
@@ -86,7 +87,7 @@ public abstract class Sentence {
         }
         for (Map.Entry<String, Variant> entry : param.entrySet()) {
             SQLParameters sqlparams = new SQLParameters(stmt, params, entry.getKey());
-            entry.getValue().getKind().write(sqlparams, entry.getValue());
+            Variants.write(sqlparams, entry.getValue());
         }
     }
 
@@ -100,7 +101,7 @@ public abstract class Sentence {
                 map.put(entry.getKey(), entry.getValue());
             } else if (!entry.getKey().contains("..")) { // Is a field
                 SQLResults sqlresults = new SQLResults(resultset, entry.getKey());
-                Variant newv = entry.getValue().getKind().read(sqlresults);
+                Variant newv = Variants.read(sqlresults, entry.getValue().getKind());
                 map.put(entry.getKey(), newv);
             }
         }

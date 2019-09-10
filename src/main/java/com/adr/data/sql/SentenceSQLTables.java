@@ -19,6 +19,7 @@ package com.adr.data.sql;
 import com.adr.data.DataException;
 import com.adr.data.record.Record;
 import com.adr.data.var.Variant;
+import com.adr.data.varrw.Variants;
 import com.google.common.collect.ImmutableList;
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -53,16 +54,16 @@ public class SentenceSQLTables extends Sentence {
         // (COLLECTION.KEY: "SQLTABLES", TABLE_CAT: NULL, TABLE_SCHEM: null, TABLE_NAME: NULL, TABLE_TYPE: NULL)
         
         Variant varcat = val.get("TABLE_CAT");
-        String cat = varcat.isNull() ? null : varcat.asString();
+        String cat = Variants.isNull(varcat) ? null : varcat.asString();
         
         Variant varschem = val.get("TABLE_SCHEM");
-        String schem = varschem.isNull() ? null : varschem.asString();
+        String schem = Variants.isNull(varschem) ? null : varschem.asString();
         
         Variant varname = val.get("TABLE_NAME");
-        String name = varname.isNull() ? null : varname.asString();
+        String name = Variants.isNull(varname) ? null : varname.asString();
         
         Variant vartype = val.get("TABLE_TYPE");
-        String[] tabletypes = vartype.isNull() ? TABLE_TYPES : new String[]{ vartype.asString() };
+        String[] tabletypes = Variants.isNull(vartype) ? TABLE_TYPES : new String[]{ vartype.asString() };
 
         try (ResultSet resultset = c.getMetaData().getTables(cat, schem, name, tabletypes)) {
             while (resultset.next()) {

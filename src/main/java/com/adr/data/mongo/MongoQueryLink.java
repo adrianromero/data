@@ -41,6 +41,7 @@ import org.bson.BsonDocument;
 import org.bson.Document;
 import org.bson.conversions.Bson;
 import com.adr.data.Link;
+import com.adr.data.varrw.Variants;
 
 /**
  *
@@ -118,7 +119,7 @@ public class MongoQueryLink implements Link {
                 entries.put(e.getKey(), e.getValue());
             } else if (!e.getKey().contains("..")) { // Is a field
                 DocumentResults results = new DocumentResults(d, e.getKey());
-                Variant newv = e.getValue().getKind().read(results);
+                Variant newv = Variants.read(results, e.getValue().getKind());
                 entries.put(e.getKey(), newv);
             }
         }

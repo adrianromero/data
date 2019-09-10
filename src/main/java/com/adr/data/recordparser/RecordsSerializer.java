@@ -18,10 +18,11 @@ package com.adr.data.recordparser;
 
 import com.adr.data.DataException;
 import com.adr.data.record.Record;
-import com.adr.data.var.ISOParameters;
+import com.adr.data.varrw.ISOParameters;
 import com.adr.data.var.Kind;
-import com.adr.data.var.Parameters;
+import com.adr.data.varrw.Parameters;
 import com.adr.data.var.Variant;
+import com.adr.data.varrw.Variants;
 import java.io.IOException;
 import java.io.Reader;
 import java.io.StringReader;
@@ -121,7 +122,7 @@ public class RecordsSerializer {
                     }
                 } else {
                     Parameters params = new ISOParameters();
-                    entry.getValue().getKind().write(params, entry.getValue());
+                    Variants.write(params, entry.getValue());
                     writer.write(hasQuotes(entry.getValue().getKind()) ? CommonParsers.quote(params.toString()) : params.toString());
                     if (!isDefaulted(entry.getValue().getKind())) {
                         writer.write(':');

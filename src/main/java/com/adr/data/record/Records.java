@@ -19,6 +19,7 @@ package com.adr.data.record;
 
 import com.adr.data.DataException;
 import com.adr.data.var.Variant;
+import com.adr.data.varrw.Variants;
 
 /**
  *
@@ -28,7 +29,7 @@ public class Records {
    
     public static String getCollection(Record record) throws DataException {
         Variant collectionkey = record.get("COLLECTION.KEY");
-        if (collectionkey.isNull()) {
+        if (Variants.isNull(collectionkey)) {
             throw new DataException("COLLECTION.KEY does not exists for record.");
         }
         return collectionkey.asString();
@@ -36,7 +37,7 @@ public class Records {
    
     public static String getCollection(Record record, String defaultcollection) throws DataException {
         Variant collectionkey = record.get("COLLECTION.KEY");
-        if (collectionkey.isNull()) {
+        if (Variants.isNull(collectionkey)) {
             return defaultcollection;
         }
         return collectionkey.asString();
@@ -53,16 +54,16 @@ public class Records {
     
     public static int getLimit(Record record) {
         Variant v = record.get("..LIMIT");
-        return v.isNull() ? Integer.MAX_VALUE : v.asInteger();
+        return Variants.isNull(v) ? Integer.MAX_VALUE : v.asInteger();
     }
     
     public static int getOffset(Record record) {
         Variant v = record.get("..OFFSET");
-        return v.isNull() ? 0 : v.asInteger();
+        return Variants.isNull(v) ? 0 : v.asInteger();
     }
     
     public static String[] getOrderBy(Record record) {
         Variant v = record.get("..ORDERBY");
-        return v.isNull() ? new String[0] : v.asString().split("\\s+");
+        return Variants.isNull(v) ? new String[0] : v.asString().split("\\s+");
     }
 }

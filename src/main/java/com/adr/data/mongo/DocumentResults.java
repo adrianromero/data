@@ -17,12 +17,14 @@
 package com.adr.data.mongo;
 
 import com.adr.data.DataException;
-import com.adr.data.var.Results;
+import com.adr.data.varrw.Results;
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.format.DateTimeParseException;
+import java.util.Base64;
 import org.bson.Document;
 
 /**
@@ -69,7 +71,8 @@ public class DocumentResults implements Results {
 
     @Override
     public BigDecimal getBigDecimal() throws DataException {
-        return new BigDecimal(document.getString(realname));
+        String value = document.getString(realname);
+        return value == null ? null : new BigDecimal(value);
     }
 
     @Override
@@ -79,26 +82,47 @@ public class DocumentResults implements Results {
 
     @Override
     public Instant getInstant() throws DataException {
-        return Instant.ofEpochMilli(document.getLong(realname));
+        Long value = document.getLong(realname);            
+        return value == null ? null : Instant.ofEpochMilli(value);
     }
 
     @Override
     public LocalDateTime getLocalDateTime() throws DataException {
-        return LocalDateTime.parse(document.getString(realname));
+        try {
+            String value = document.getString(realname);
+            return value == null || value.equals("") ? null : LocalDateTime.parse(value);  
+        } catch (DateTimeParseException e) {
+            throw new DataException(e);
+        }
     }
 
     @Override
     public LocalDate getLocalDate() throws DataException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        try {
+            String value = document.getString(realname);
+            return value == null || value.equals("") ? null : LocalDate.parse(value);  
+        } catch (DateTimeParseException e) {
+            throw new DataException(e);
+        } 
     }
 
     @Override
     public LocalTime getLocalTime() throws DataException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        try {
+            String value = document.getString(realname);
+            return value == null || value.equals("") ? null : LocalTime.parse(value);  
+        } catch (DateTimeParseException e) {
+            throw new DataException(e);
+        }
     }
 
     @Override
     public byte[] getBytes() throws DataException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    } 
+        try {
+            String value = document.getString(realname);
+            return value == null ? null : Base64.getDecoder().decode(value);
+        } catch(IllegalArgumentException e) {
+            throw new DataException(e);
+        }              
+     } 
 }

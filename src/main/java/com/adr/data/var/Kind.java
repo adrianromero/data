@@ -17,59 +17,18 @@
 
 package com.adr.data.var;
 
-import com.adr.data.DataException;
-import java.util.HashMap;
-import java.util.Map;
-
-/**
- *
- * @author adrian
- */
-public abstract class Kind {
-    public final static Kind INT = new KindInt();
-    public final static Kind LONG = new KindLong();
-    public final static Kind STRING = new KindString(); 
-    public final static Kind FLOAT = new KindFloat(); 
-    public final static Kind DOUBLE = new KindDouble(); 
-    public final static Kind DECIMAL = new KindDecimal(); 
-    public final static Kind BOOLEAN = new KindBoolean(); 
-    public final static Kind INSTANT = new KindInstant(); 
-    public final static Kind LOCALDATETIME = new KindLocalDateTime(); 
-    public final static Kind LOCALDATE = new KindLocalDate(); 
-    public final static Kind LOCALTIME = new KindLocalTime();  
-    public final static Kind BYTES = new KindBytes(); 
-    public final static Kind VOID = new KindVoid(); // Only used in record.get to return when no entry exists
-   
-    public abstract Variant read(Results read) throws DataException;
-    public abstract void write(Parameters write, Variant v) throws DataException;
-     
-    private static final Map<String, Kind> valuesof = new HashMap<>();
-    
-    static { 
-        put(Kind.INT);
-        put(Kind.LONG);
-        put(Kind.STRING);
-        put(Kind.FLOAT);
-        put(Kind.DOUBLE);
-        put(Kind.DECIMAL);
-        put(Kind.BOOLEAN);
-        put(Kind.INSTANT);
-        put(Kind.LOCALDATETIME);
-        put(Kind.LOCALDATE);
-        put(Kind.LOCALTIME);
-        put(Kind.BYTES);
-        put(Kind.VOID);
-    }
-    
-    private static void put(Kind kind) {
-        valuesof.put(kind.toString(), kind);
-    }
-    
-    public static final Kind valueOf(String value) {
-        Kind kind = valuesof.get(value);
-        if (kind == null) {
-            throw new IllegalArgumentException("Kind not found: " + value);
-        }
-        return kind;
-    }        
+public enum Kind {
+    STRING,
+    INT,
+    LONG, 
+    FLOAT,
+    DOUBLE,
+    DECIMAL,
+    BOOLEAN,
+    INSTANT,
+    LOCALDATETIME,
+    LOCALDATE,
+    LOCALTIME,
+    BYTES,
+    // VOID; // Only used in record.get to return when no entry exists     
 }

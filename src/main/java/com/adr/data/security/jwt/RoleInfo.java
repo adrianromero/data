@@ -18,6 +18,7 @@ package com.adr.data.security.jwt;
 
 import com.adr.data.record.Header;
 import com.adr.data.var.Variant;
+import com.adr.data.varrw.Variants;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.interfaces.DecodedJWT;
 
@@ -32,7 +33,7 @@ public class RoleInfo {
     
     public RoleInfo(Header headers) {
         Variant authorization = headers.getRecord().get("AUTHORIZATION");        
-        if (authorization.isNull()) {
+        if (Variants.isNull(authorization)) {
             role = "ANONYMOUS";
             displayrole = "Anonymous";
         } else {

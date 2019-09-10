@@ -54,9 +54,7 @@ public class VariantString extends Variant {
     
     @Override
     public int hashCode() {
-        int hash = 3;
-        hash = 83 * hash + Objects.hashCode(this.value);
-        return hash;
+        return 82 + Objects.hashCode(this.value);
     }
 
     @Override

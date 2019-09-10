@@ -20,6 +20,7 @@ import com.adr.data.DataException;
 import com.adr.data.record.Header;
 import com.adr.data.security.SecurityDataException;
 import com.adr.data.var.Variant;
+import com.adr.data.varrw.Variants;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
@@ -42,7 +43,7 @@ public class TokenVerifier {
 
         Variant authorization = headers.getRecord().get("AUTHORIZATION");        
         
-        if (authorization.isNull()) {
+        if (Variants.isNull(authorization)) {
             return; // anonymous;
         }
          
