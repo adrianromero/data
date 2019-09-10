@@ -21,7 +21,6 @@ import com.adr.data.record.Header;
 import com.adr.data.security.ReducerLogin;
 import com.adr.data.var.VariantBoolean;
 import com.adr.data.var.VariantString;
-import com.adr.data.var.VariantVoid;
 import java.util.List;
 import org.junit.Assert;
 import org.junit.Test;
@@ -47,8 +46,8 @@ public class QueryTests {
         Assert.assertEquals("USERNAME", result.get(0).getString("COLLECTION.KEY"));
         Assert.assertEquals("admin", result.get(0).getString("ID.KEY"));
         Assert.assertEquals("admin", result.get(0).getString("NAME"));
-        Assert.assertEquals(null, result.get(0).getString("CODECARD"));
-        Assert.assertEquals(VariantVoid.INSTANCE, result.get(0).get("IMAGE"));
+        Assert.assertNull(result.get(0).getString("CODECARD"));
+        Assert.assertNull(result.get(0).get("IMAGE"));
     }
 
     private void testQueryOrder(Link querylink, Header header) throws DataException {
@@ -104,7 +103,7 @@ public class QueryTests {
         Assert.assertEquals(1, result3.size());
         Assert.assertEquals("manager", result3.get(0).getString("NAME"));
         Assert.assertEquals(null, result3.get(0).getString("CODECARD"));
-        Assert.assertEquals(VariantVoid.INSTANCE, result3.get(0).get("IMAGE"));
+        Assert.assertNull(result3.get(0).get("IMAGE"));
     }
 
     private void testSentenceTableContains(Link querylink, Header header) throws DataException {
