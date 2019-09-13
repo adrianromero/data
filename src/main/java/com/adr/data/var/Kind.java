@@ -29,6 +29,5 @@ public enum Kind {
     LOCALDATETIME,
     LOCALDATE,
     LOCALTIME,
-    BYTES,
-    // VOID; // Only used in record.get to return when no entry exists     
+    BYTES   
 }
