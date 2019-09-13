@@ -89,7 +89,7 @@ public class MongoCommandLink implements Link {
                             realname = entry.getKey();
                         }
                         Parameters p = new DocumentParameters(doc, realname);
-                        Variants.write(p, entry.getValue());
+                        Variants.write(p, entry.getValue().getKind(), entry.getValue());
                     }
                 }
                 collection.replaceOne(Filters.and(filters), doc, UPSERT);

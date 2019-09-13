@@ -122,7 +122,7 @@ public class RecordsSerializer {
                     }
                 } else {
                     Parameters params = new ISOParameters();
-                    Variants.write(params, entry.getValue());
+                    Variants.write(params, entry.getValue().getKind(), entry.getValue());
                     writer.write(hasQuotes(entry.getValue().getKind()) ? CommonParsers.quote(params.toString()) : params.toString());
                     if (!isDefaulted(entry.getValue().getKind())) {
                         writer.write(':');

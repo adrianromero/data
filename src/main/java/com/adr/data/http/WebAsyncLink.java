@@ -65,8 +65,8 @@ public class WebAsyncLink implements AsyncLink {
             
             Request request = new Request.Builder()
                 .url(url)
-                // .header("User-Agent", USERAGENT)
-                .post(RequestBody.create(MEDIA_TYPE_JSON, message))
+                // .header("User-Agent", USERAGENT)               
+                .post(RequestBody.create(message, MEDIA_TYPE_JSON))
                 .build();
             
             client.newCall(request).enqueue(new Callback() {

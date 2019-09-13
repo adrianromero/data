@@ -60,7 +60,7 @@ public class WebLink implements Link {
             Request request = new Request.Builder()
                 .url(url)
                 // .header("User-Agent", USERAGENT)
-                .post(RequestBody.create(MEDIA_TYPE_JSON, message))
+                .post(RequestBody.create(message,MEDIA_TYPE_JSON))
                 .build();
 
             Response response = client.newCall(request).execute();

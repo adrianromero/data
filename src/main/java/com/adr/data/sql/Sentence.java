@@ -87,7 +87,7 @@ public abstract class Sentence {
         }
         for (Map.Entry<String, Variant> entry : param.entrySet()) {
             SQLParameters sqlparams = new SQLParameters(stmt, params, entry.getKey());
-            Variants.write(sqlparams, entry.getValue());
+            Variants.write(sqlparams, entry.getValue().getKind(), entry.getValue());
         }
     }
 

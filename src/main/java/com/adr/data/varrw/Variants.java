@@ -56,8 +56,8 @@ public class Variants {
         }
     }
 
-    public static void write(Parameters write, Variant v) throws DataException {
-        switch (v.getKind()) {
+    public static void write(Parameters write, Kind kind, Variant v) throws DataException {
+        switch (kind) {
         case STRING: write.setString(v.asString()); break;
         case INT: write.setInt(v.asInteger()); break;
         case LONG: write.setLong(v.asLong()); break;
