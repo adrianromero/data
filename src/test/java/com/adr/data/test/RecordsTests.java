@@ -40,75 +40,79 @@ public class RecordsTests {
             // Insert
             SourceLink.getCommandLink().execute(
                     new Record[]{
-                        new Record(
-                                Record.entry("COLLECTION.KEY", "USERNAME"),
-                                Record.entry("ID.KEY", "admin"),
-                                Record.entry("NAME", "admin"),
-                                Record.entry("DISPLAYNAME", "Administrator"),
-                                Record.entry("CODECARD", "123457"),
-                                Record.entry("ROLE_ID", "a"),
-                                Record.entry("VISIBLE", true),
-                                Record.entry("ACTIVE", true)),
-                        new Record(
-                                Record.entry("COLLECTION.KEY", "USERNAME"),
-                                Record.entry("ID.KEY", "guest"),
-                                Record.entry("NAME", "guest"),
-                                Record.entry("DISPLAYNAME", "Guest"),
-                                Record.entry("CODECARD", "11111111"),
-                                Record.entry("ROLE_ID", "g"),
-                                Record.entry("VISIBLE", true),
-                                Record.entry("ACTIVE", true)),
-                        new Record(
-                                Record.entry("COLLECTION.KEY", "USERNAME"),
-                                Record.entry("ID.KEY", "manager"),
-                                Record.entry("NAME", "manager"),
-                                Record.entry("DISPLAYNAME", "Manager"),
-                                Record.entry("CODECARD", "22121"),
-                                Record.entry("ROLE_ID", "m"),
-                                Record.entry("VISIBLE", true),
-                                Record.entry("ACTIVE", true)),
-                        new Record(
-                                Record.entry("COLLECTION.KEY", "USERNAME"),
-                                Record.entry("ID.KEY", "developer"),
-                                Record.entry("NAME", "developer"),
-                                Record.entry("DISPLAYNAME", "Developer"),
-                                Record.entry("CODECARD", "666666"),
-                                Record.entry("ROLE_ID", "m"),
-                                Record.entry("VISIBLE", false),
-                                Record.entry("ACTIVE", true))});
-            
+                        Record.builder()
+                                .entry("COLLECTION.KEY", "USERNAME")
+                                .entry("ID.KEY", "admin")
+                                .entry("NAME", "admin")
+                                .entry("DISPLAYNAME", "Administrator")
+                                .entry("CODECARD", "123457")
+                                .entry("ROLE_ID", "a")
+                                .entry("VISIBLE", true)
+                                .entry("ACTIVE", true)
+                                .build(),
+                        Record.builder()
+                                .entry("COLLECTION.KEY", "USERNAME")
+                                .entry("ID.KEY", "guest")
+                                .entry("NAME", "guest")
+                                .entry("DISPLAYNAME", "Guest")
+                                .entry("CODECARD", "11111111")
+                                .entry("ROLE_ID", "g")
+                                .entry("VISIBLE", true)
+                                .entry("ACTIVE", true)
+                                .build(),
+                        Record.builder()
+                                .entry("COLLECTION.KEY", "USERNAME")
+                                .entry("ID.KEY", "manager")
+                                .entry("NAME", "manager")
+                                .entry("DISPLAYNAME", "Manager")
+                                .entry("CODECARD", "22121")
+                                .entry("ROLE_ID", "m")
+                                .entry("VISIBLE", true)
+                                .entry("ACTIVE", true)
+                                .build(),
+                        Record.builder()
+                                .entry("COLLECTION.KEY", "USERNAME")
+                                .entry("ID.KEY", "developer")
+                                .entry("NAME", "developer")
+                                .entry("DISPLAYNAME", "Developer")
+                                .entry("CODECARD", "666666")
+                                .entry("ROLE_ID", "m")
+                                .entry("VISIBLE", false)
+                                .entry("ACTIVE", true)
+                                .build()});
+
             List<Record> result = SourceLink.getQueryLink().query(
-                        new Record(
-                                Record.entry("COLLECTION.KEY", "USERNAME"),
-                                Record.entry("ID.KEY", VariantString.NULL),
-                                Record.entry("NAME", VariantString.NULL),
-                                Record.entry("DISPLAYNAME", VariantString.NULL),
-                                Record.entry("CODECARD", VariantString.NULL),
-                                Record.entry("ROLE_ID", VariantString.NULL),
-                                Record.entry("VISIBLE", VariantBoolean.NULL),
-                                Record.entry("ACTIVE", VariantBoolean.NULL)));     
-            
-            
-            Assert.assertEquals("(COLLECTION.KEY: \"USERNAME\", ID.KEY: \"admin\", NAME: \"admin\", DISPLAYNAME: \"Administrator\", CODECARD: \"123457\", ROLE_ID: \"a\", VISIBLE: true, ACTIVE: true)\n" +
-                                "(COLLECTION.KEY: \"USERNAME\", ID.KEY: \"guest\", NAME: \"guest\", DISPLAYNAME: \"Guest\", CODECARD: \"11111111\", ROLE_ID: \"g\", VISIBLE: true, ACTIVE: true)\n" +
-                                "(COLLECTION.KEY: \"USERNAME\", ID.KEY: \"manager\", NAME: \"manager\", DISPLAYNAME: \"Manager\", CODECARD: \"22121\", ROLE_ID: \"m\", VISIBLE: true, ACTIVE: true)\n" +
-                                "(COLLECTION.KEY: \"USERNAME\", ID.KEY: \"developer\", NAME: \"developer\", DISPLAYNAME: \"Developer\", CODECARD: \"666666\", ROLE_ID: \"m\", VISIBLE: false, ACTIVE: true)", 
+                    Record.builder()
+                            .entry("COLLECTION.KEY", "USERNAME")
+                            .entry("ID.KEY", VariantString.NULL)
+                            .entry("NAME", VariantString.NULL)
+                            .entry("DISPLAYNAME", VariantString.NULL)
+                            .entry("CODECARD", VariantString.NULL)
+                            .entry("ROLE_ID", VariantString.NULL)
+                            .entry("VISIBLE", VariantBoolean.NULL)
+                            .entry("ACTIVE", VariantBoolean.NULL)
+                            .build());
+
+            Assert.assertEquals("(COLLECTION.KEY: \"USERNAME\", ID.KEY: \"admin\", NAME: \"admin\", DISPLAYNAME: \"Administrator\", CODECARD: \"123457\", ROLE_ID: \"a\", VISIBLE: true, ACTIVE: true)\n"
+                    + "(COLLECTION.KEY: \"USERNAME\", ID.KEY: \"guest\", NAME: \"guest\", DISPLAYNAME: \"Guest\", CODECARD: \"11111111\", ROLE_ID: \"g\", VISIBLE: true, ACTIVE: true)\n"
+                    + "(COLLECTION.KEY: \"USERNAME\", ID.KEY: \"manager\", NAME: \"manager\", DISPLAYNAME: \"Manager\", CODECARD: \"22121\", ROLE_ID: \"m\", VISIBLE: true, ACTIVE: true)\n"
+                    + "(COLLECTION.KEY: \"USERNAME\", ID.KEY: \"developer\", NAME: \"developer\", DISPLAYNAME: \"Developer\", CODECARD: \"666666\", ROLE_ID: \"m\", VISIBLE: false, ACTIVE: true)",
                     RecordsSerializer.writeList(result));
-           
+
             List<Record> result2 = SourceLink.getQueryLink().query(
-                        new Record(
-                                Record.entry("COLLECTION.KEY", "USERNAME"),
-                                Record.entry("ID.KEY", VariantString.NULL),
-                                Record.entry("NAME", "guest"),
-                                Record.entry("DISPLAYNAME", VariantString.NULL),
-                                Record.entry("CODECARD", VariantString.NULL),
-                                Record.entry("ROLE_ID", VariantString.NULL),
-                                Record.entry("VISIBLE", VariantBoolean.NULL),
-                                Record.entry("ACTIVE", VariantBoolean.NULL)));     
+                    Record.builder()
+                            .entry("COLLECTION.KEY", "USERNAME")
+                            .entry("ID.KEY", VariantString.NULL)
+                            .entry("NAME", "guest")
+                            .entry("DISPLAYNAME", VariantString.NULL)
+                            .entry("CODECARD", VariantString.NULL)
+                            .entry("ROLE_ID", VariantString.NULL)
+                            .entry("VISIBLE", VariantBoolean.NULL)
+                            .entry("ACTIVE", VariantBoolean.NULL)
+                            .build());
 
             Assert.assertEquals("(COLLECTION.KEY: \"USERNAME\", ID.KEY: \"guest\", NAME: \"guest\", DISPLAYNAME: \"Guest\", CODECARD: \"11111111\", ROLE_ID: \"g\", VISIBLE: true, ACTIVE: true)",
                     RecordsSerializer.writeList(result2));
-
 
         } finally {
             SourceLink.destroyCommandQueryLink();

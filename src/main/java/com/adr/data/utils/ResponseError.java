@@ -23,7 +23,6 @@ import com.adr.data.recordparser.IOExceptionMessage;
 import com.adr.data.recordparser.Loader;
 import com.adr.data.recordparser.RecordParsers;
 import com.adr.data.recordparser.RecordsSerializer;
-
 import java.io.IOException;
 import java.io.Writer;
 import java.lang.reflect.InvocationTargetException;
@@ -52,9 +51,10 @@ public class ResponseError extends ResponseLink {
     public void write(Writer w) throws IOException {
         w.append(NAME);
         w.append('\n');
-        RecordsSerializer.write(new Record(
-                Record.entry("EXCEPTION", ex.getClass().getName()),
-                Record.entry("MESSAGE", ex.getMessage())), w);
+        RecordsSerializer.write(Record.builder()
+                .entry("EXCEPTION", ex.getClass().getName())
+                .entry("MESSAGE", ex.getMessage())
+                .build(), w);
     }
 
     @Override
@@ -73,7 +73,7 @@ public class ResponseError extends ResponseLink {
             throw IOExceptionMessage.createExpected(loader, -1);
         }
     }
-    
+
     public final static Throwable createException(String name, String message) {
         try {
             return (Throwable) Class.forName(name).getConstructor(String.class).newInstance(message);
@@ -90,5 +90,5 @@ public class ResponseError extends ResponseLink {
         } else {
             return new DataException(ex.toString());
         }
-    }    
+    }
 }

@@ -14,7 +14,6 @@
 //     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //     See the License for the specific language governing permissions and
 //     limitations under the License.
-
 package com.adr.data.security.jwt;
 
 import com.adr.data.DataException;
@@ -35,43 +34,44 @@ import com.adr.data.route.Reducer;
  * @author adrian
  */
 public class ReducerJWTAuthorization implements Reducer {
-    
+
     private final Link querylink;
     private final Authorizer authorizer;
     private final String action;
 
-    public ReducerJWTAuthorization(Link querylink, String action, Set<String> anonymousresources, Set<String> authenticatedresources) {        
+    public ReducerJWTAuthorization(Link querylink, String action, Set<String> anonymousresources, Set<String> authenticatedresources) {
         this.querylink = querylink;
         this.action = action;
         authorizer = new Authorizer(anonymousresources, authenticatedresources);
     }
-        
+
     @Override
     public List<Record> process(Header headers, List<Record> records) throws DataException {
-                 
+
         RoleInfo roleinfo = new RoleInfo(headers);
-        
+
         if (records.size() == 1) {
-            Record filter = records.get(0);               
+            Record filter = records.get(0);
             String entity = Records.getCollection(filter);
-            if (ReducerLogin.AUTHORIZATION_REQUEST.equals(entity)) {        
+            if (ReducerLogin.AUTHORIZATION_REQUEST.equals(entity)) {
                 // Request authorizer
                 String resource = filter.getString("RESOURCE");
-                Record response = new Record(
-                        Record.entry("COLLECTION.KEY", ReducerLogin.AUTHORIZATION_REQUEST),
-                        Record.entry("RESOURCE", resource),
-                        Record.entry("ROLE", roleinfo.getRole()),
-                        Record.entry("RESULT", new VariantBoolean(authorizer.hasAuthorization(querylink, roleinfo.getRole(), resource))));
-                return Collections.singletonList(response);        
+                Record response = Record.builder()
+                        .entry("COLLECTION.KEY", ReducerLogin.AUTHORIZATION_REQUEST)
+                        .entry("RESOURCE", resource)
+                        .entry("ROLE", roleinfo.getRole())
+                        .entry("RESULT", new VariantBoolean(authorizer.hasAuthorization(querylink, roleinfo.getRole(), resource)))
+                        .build();
+                return Collections.singletonList(response);
             }
         }
 
-        for (Record r: records) {
+        for (Record r : records) {
             String collectionkey = Records.getCollection(r);
             if (!authorizer.hasAuthorization(querylink, roleinfo.getRole(), collectionkey + "_" + action)) {
-                throw new SecurityDataException("Role " + roleinfo.getDisplayRole() + " does not have authorization to process the action \"" + action +"\" on the resource \"" + collectionkey + "\"");
-            }      
+                throw new SecurityDataException("Role " + roleinfo.getDisplayRole() + " does not have authorization to process the action \"" + action + "\" on the resource \"" + collectionkey + "\"");
+            }
         }
-        return null;          
-    }    
+        return null;
+    }
 }

@@ -21,7 +21,6 @@ import com.adr.data.record.Header;
 import java.util.List;
 import java.util.function.Predicate;
 import com.adr.data.record.Record;
-import com.adr.data.var.VariantInt;
 import com.google.common.collect.ImmutableList;
 import com.adr.data.Link;
 
@@ -30,32 +29,31 @@ import com.adr.data.Link;
  * @author adrian
  */
 public class AnyMatchLink implements Link {
-    
+
     private final Link link;
     private final Predicate<? super Record> p;
     private final boolean iffailex;
 
-    public AnyMatchLink(Link link,  Predicate<? super Record> p, boolean iffailex) {
+    public AnyMatchLink(Link link, Predicate<? super Record> p, boolean iffailex) {
         this.link = link;
         this.p = p;
         this.iffailex = iffailex;
     }
 
-    public AnyMatchLink(Link link,  Predicate<? super Record> p) {
+    public AnyMatchLink(Link link, Predicate<? super Record> p) {
         this.link = link;
         this.p = p;
         this.iffailex = false;
     }
-    
+
     @Override
     public List<Record> process(Header headers, List<Record> l) throws DataException {
         if (l.stream().anyMatch(p)) {
             return link.process(headers, l);
-        } 
+        }
         if (iffailex) {
             throw new DataException("Not matched condition");
         }
-        return ImmutableList.of(new Record(
-                Record.entry("PROCESSED", new VariantInt(0))));           
+        return ImmutableList.of(new Record("PROCESSED", 0));
     }
 }

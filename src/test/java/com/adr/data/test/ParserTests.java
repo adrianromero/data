@@ -17,10 +17,8 @@
 package com.adr.data.test;
 
 import com.adr.data.var.VariantString;
-
 import java.util.Arrays;
 import java.util.List;
-
 import org.junit.Test;
 import com.adr.data.record.Record;
 import com.adr.data.recordparser.RecordsSerializer;
@@ -28,7 +26,6 @@ import com.adr.data.var.Kind;
 import com.adr.data.var.VariantBoolean;
 import com.adr.data.var.VariantInt;
 import com.adr.data.var.VariantLong;
-
 import java.io.IOException;
 import org.junit.Assert;
 
@@ -40,15 +37,16 @@ public class ParserTests {
     @Test
     public void recordsSerialization1() throws IOException {
 
-        Record record = new Record(
-                Record.entry("id", new VariantString("1")),
-                Record.entry("field", new VariantString("pepeluis")),
-                Record.entry("amount", new VariantInt(32)),
-                Record.entry("añejo", 32.0),
-                Record.entry("unenter ito", 32),
-                Record.entry("usvalid \nCon retorno", 32),
-                Record.entry("unlong", new VariantLong(33L)),
-                Record.entry("value", VariantString.NULL));
+        Record record = Record.builder()
+                .entry("id", new VariantString("1"))
+                .entry("field", new VariantString("pepeluis"))
+                .entry("amount", new VariantInt(32))
+                .entry("añejo", 32.0)
+                .entry("unenter ito", 32)
+                .entry("usvalid \nCon retorno", 32)
+                .entry("unlong", new VariantLong(33L))
+                .entry("value", VariantString.NULL)
+                .build();
         String recordstr = "(id: \"1\", field: \"pepeluis\", amount: 32, añejo: 32.0, \"unenter ito\": 32, \"usvalid \\nCon retorno\": 32, unlong: 33:LONG, value: NULL)";
 
         Assert.assertEquals(recordstr, RecordsSerializer.write(record));
@@ -92,29 +90,32 @@ public class ParserTests {
     public void recordsSerializationList() throws IOException {
 
         List<Record> records = Arrays.asList(
-                new Record(
-                        Record.entry("id", "1"),
-                        Record.entry("field", "pepeluis")),
-                new Record(
-                        Record.entry("id", "2"),
-                        Record.entry("field", "hilario")));
+                Record.builder()
+                        .entry("id", "1")
+                        .entry("field", "pepeluis")
+                        .build(),
+                Record.builder()
+                        .entry("id", "2")
+                        .entry("field", "hilario")
+                        .build());
         String recordsstr = "(id: \"1\", field: \"pepeluis\")\n(id: \"2\", field: \"hilario\")";
 
         Assert.assertEquals(recordsstr, RecordsSerializer.writeList(records));
     }
-    
+
     @Test
     public void recordsWithIdentifiers() throws IOException {
-        Record r = new Record(
-                Record.entry("COLLECTION.KEY", "USERNAME"),
-                Record.entry("ID.KEY", VariantString.NULL),
-                Record.entry("NAME", VariantString.NULL),
-                Record.entry("NAME..CONTAINS", "a"),
-                Record.entry("VISIBLE", VariantBoolean.NULL),
-                Record.entry("CODECARD", VariantString.NULL),
-                Record.entry("..ORDERBY", "NAME"));   
-        
-        String s = RecordsSerializer.write(r);    
+        Record r = Record.builder()
+                .entry("COLLECTION.KEY", "USERNAME")
+                .entry("ID.KEY", VariantString.NULL)
+                .entry("NAME", VariantString.NULL)
+                .entry("NAME..CONTAINS", "a")
+                .entry("VISIBLE", VariantBoolean.NULL)
+                .entry("CODECARD", VariantString.NULL)
+                .entry("..ORDERBY", "NAME")
+                .build();
+
+        String s = RecordsSerializer.write(r);
         Record r2 = RecordsSerializer.read(s);
         String s2 = RecordsSerializer.write(r2);
         Assert.assertEquals(s, s2);

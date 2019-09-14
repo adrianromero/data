@@ -17,15 +17,15 @@
 package com.adr.data.test.persist;
 
 import com.adr.data.DataException;
+import com.adr.data.Link;
 import com.adr.data.record.Header;
 import com.adr.data.security.ReducerLogin;
-import com.adr.data.var.VariantBoolean;
-import com.adr.data.var.VariantString;
 import org.junit.Assert;
 import org.junit.Test;
 import com.adr.data.record.Record;
 import com.adr.data.test.SourceLink;
-import com.adr.data.Link;
+import com.adr.data.var.VariantBoolean;
+import com.adr.data.var.VariantString;
 
 /**
  *
@@ -41,21 +41,21 @@ public class DataTests {
 
             // Login
             String authorization = ReducerLogin.login(SourceLink.getQueryLink(), "admin", "admin");
-            Header header = new Header(new Record(Record.entry("AUTHORIZATION", authorization)));
+            Header header = new Header(new Record("AUTHORIZATION", authorization));
 
             // Insert
             SourceLink.getCommandLink().execute(
                     header,
                     new Record[]{
-                        new Record(
-                                Record.entry("COLLECTION.KEY", "USERNAME"),
-                                Record.entry("ID.KEY", "newid"),
-                                Record.entry("NAME", "newuser"),
-                                Record.entry("DISPLAYNAME", "New User"),
-                                Record.entry("CODECARD", "123457"),
-                                Record.entry("ROLE_ID", "g"),
-                                Record.entry("VISIBLE", true),
-                                Record.entry("ACTIVE", true))});
+                        Record.builder()
+                                .entry("COLLECTION.KEY", "USERNAME")
+                                .entry("ID.KEY", "newid")
+                                .entry("NAME", "newuser")
+                                .entry("DISPLAYNAME", "New User")
+                                .entry("CODECARD", "123457")
+                                .entry("ROLE_ID", "g")
+                                .entry("VISIBLE", true)
+                                .entry("ACTIVE", true).build()});
             Record r = loadUser(SourceLink.getQueryLink(), header, "newid");
             Assert.assertEquals("newuser", r.getString("NAME"));
             Assert.assertEquals("New User", r.getString("DISPLAYNAME"));
@@ -65,15 +65,16 @@ public class DataTests {
             SourceLink.getCommandLink().execute(
                     header,
                     new Record[]{
-                        new Record(
-                                Record.entry("COLLECTION.KEY", "USERNAME"),
-                                Record.entry("ID.KEY", "newid"),
-                                Record.entry("NAME", "newuser"),
-                                Record.entry("DISPLAYNAME", "New User Changed"),
-                                Record.entry("CODECARD", "12345"),
-                                Record.entry("ROLE_ID", "m"),
-                                Record.entry("VISIBLE", true),
-                                Record.entry("ACTIVE", true))});
+                        Record.builder()
+                                .entry("COLLECTION.KEY", "USERNAME")
+                                .entry("ID.KEY", "newid")
+                                .entry("NAME", "newuser")
+                                .entry("DISPLAYNAME", "New User Changed")
+                                .entry("CODECARD", "12345")
+                                .entry("ROLE_ID", "m")
+                                .entry("VISIBLE", true)
+                                .entry("ACTIVE", true)
+                                .build()});
 
             r = loadUser(SourceLink.getQueryLink(), header, "newid");
             Assert.assertEquals("newuser", r.getString("NAME"));
@@ -84,9 +85,10 @@ public class DataTests {
             SourceLink.getCommandLink().execute(
                     header,
                     new Record[]{
-                        new Record(
-                                Record.entry("COLLECTION.KEY", "USERNAME"),
-                                Record.entry("ID.KEY", "newid"))});
+                        Record.builder()
+                                .entry("COLLECTION.KEY", "USERNAME")
+                                .entry("ID.KEY", "newid")
+                                .build()});
 
             r = loadUser(SourceLink.getQueryLink(), header, "newid");
             Assert.assertNull(r);
@@ -97,15 +99,15 @@ public class DataTests {
     }
 
     private Record loadUser(Link querylink, Header header, String id) throws DataException {
-        return querylink.find(header,
-                new Record(
-                        Record.entry("COLLECTION.KEY", "USERNAME"),
-                        Record.entry("ID.KEY", id),
-                        Record.entry("NAME", VariantString.NULL),
-                        Record.entry("DISPLAYNAME", VariantString.NULL),
-                        Record.entry("CODECARD", VariantString.NULL),
-                        Record.entry("ROLE_ID", VariantString.NULL),
-                        Record.entry("VISIBLE", VariantBoolean.NULL),
-                        Record.entry("ACTIVE", VariantBoolean.NULL)));
+        return querylink.find(header, Record.builder()
+                .entry("COLLECTION.KEY", "USERNAME")
+                .entry("ID.KEY", id)
+                .entry("NAME", VariantString.NULL)
+                .entry("DISPLAYNAME", VariantString.NULL)
+                .entry("CODECARD", VariantString.NULL)
+                .entry("ROLE_ID", VariantString.NULL)
+                .entry("VISIBLE", VariantBoolean.NULL)
+                .entry("ACTIVE", VariantBoolean.NULL)
+                .build());
     }
 }

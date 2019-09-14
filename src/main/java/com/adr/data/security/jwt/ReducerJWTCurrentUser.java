@@ -14,7 +14,6 @@
 //     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //     See the License for the specific language governing permissions and
 //     limitations under the License.
-
 package com.adr.data.security.jwt;
 
 import com.adr.data.DataException;
@@ -30,36 +29,32 @@ import com.adr.data.route.Reducer;
 import com.adr.data.varrw.Variants;
 import com.auth0.jwt.interfaces.DecodedJWT;
 
-/**
- *
- * @author adrian
- */
 public class ReducerJWTCurrentUser implements Reducer {
 
-    
     @Override
     public List<Record> process(Header headers, List<Record> records) throws DataException {
-        
+
         if (records.size() == 1) {
-            Record filter = records.get(0);               
+            Record filter = records.get(0);
             String entity = Records.getCollection(filter);
-            if (ReducerLogin.AUTHENTICATION_CURRENT.equals(entity)) {          
-                Variant authorization = headers.getRecord().get("AUTHORIZATION");        
+            if (ReducerLogin.AUTHENTICATION_CURRENT.equals(entity)) {
+                Variant authorization = headers.getRecord().get("AUTHORIZATION");
                 if (Variants.isNull(authorization)) {
                     return Collections.emptyList(); // anonymous
                 } else {
                     DecodedJWT jwtauthorizaion = JWT.decode(authorization.asString());
                     // Valid login, load user details.
-                    Record currentuser = new Record(
-                            Record.entry("COLLECTION.KEY", "USERNAME_BYNAME"),
-                            Record.entry("NAME", jwtauthorizaion.getSubject()),
-                            Record.entry("DISPLAYNAME", jwtauthorizaion.getClaim("displayname").asString()),
-                            Record.entry("ROLE", jwtauthorizaion.getClaim("role").asString()),
-                            Record.entry("DISPLAYROLE", jwtauthorizaion.getClaim("displayrole").asString()));
+                    Record currentuser = Record.builder()
+                            .entry("COLLECTION.KEY", "USERNAME_BYNAME")
+                            .entry("NAME", jwtauthorizaion.getSubject())
+                            .entry("DISPLAYNAME", jwtauthorizaion.getClaim("displayname").asString())
+                            .entry("ROLE", jwtauthorizaion.getClaim("role").asString())
+                            .entry("DISPLAYROLE", jwtauthorizaion.getClaim("displayrole").asString())
+                            .build();
                     return Collections.singletonList(currentuser);
                 }
             }
-        }      
+        }
         return null;
     }
 }

@@ -28,7 +28,6 @@ import com.adr.data.record.Record;
 import com.adr.data.record.Records;
 import com.adr.data.varrw.Variants;
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
 import java.util.Map;
 
 /**
@@ -95,16 +94,16 @@ public abstract class Sentence {
         if (param == null) {
             return Record.EMPTY;
         }
-        ImmutableMap.Builder<String, Variant> map = ImmutableMap.<String, Variant>builder();
+        Record.Builder fields = Record.builder();
         for (Map.Entry<String, Variant> entry : param.entrySet()) {
             if ("COLLECTION.KEY".equals(entry.getKey())) {
-                map.put(entry.getKey(), entry.getValue());
+                fields.entry(entry.getKey(), entry.getValue());
             } else if (!entry.getKey().contains("..")) { // Is a field
                 SQLResults sqlresults = new SQLResults(resultset, entry.getKey());
                 Variant newv = Variants.read(sqlresults, entry.getValue().getKind());
-                map.put(entry.getKey(), newv);
+                fields.entry(entry.getKey(), newv);
             }
         }
-        return new Record(map.build());
-    }   
+        return fields.build();
+    }
 }

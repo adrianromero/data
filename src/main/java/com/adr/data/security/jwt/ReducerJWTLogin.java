@@ -40,7 +40,7 @@ public class ReducerJWTLogin extends ReducerLogin {
     private final long validtime;
 
     public ReducerJWTLogin(Link querylink, byte[] secret, long validtime) {
-        
+
         try {
             this.querylink = querylink;
             this.algorithm = Algorithm.HMAC256(secret);
@@ -52,13 +52,14 @@ public class ReducerJWTLogin extends ReducerLogin {
 
     @Override
     protected Variant createAuthorization(String username, String password) throws DataException {
-        Record userauthenticationquery = new Record(
-                Record.entry("COLLECTION.KEY", "USERNAME_BYNAME"),
-                Record.entry("NAME", username),
-                Record.entry("DISPLAYNAME", VariantString.NULL),
-                Record.entry("ROLE", VariantString.NULL),
-                Record.entry("DISPLAYROLE", VariantString.NULL),
-                Record.entry("PASSWORD", VariantString.NULL));
+        Record userauthenticationquery = Record.builder()
+                .entry("COLLECTION.KEY", "USERNAME_BYNAME")
+                .entry("NAME", username)
+                .entry("DISPLAYNAME", VariantString.NULL)
+                .entry("ROLE", VariantString.NULL)
+                .entry("DISPLAYROLE", VariantString.NULL)
+                .entry("PASSWORD", VariantString.NULL)
+                .build();
 
         Record userauthentication = querylink.find(userauthenticationquery);
 

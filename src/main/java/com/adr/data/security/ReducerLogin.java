@@ -39,11 +39,11 @@ public abstract class ReducerLogin implements Reducer {
     public final static String AUTHORIZATION_REQUEST = "AUTHORIZATION_REQUEST";
 
     protected abstract Variant createAuthorization(String user, String password) throws DataException;
-    
+
     @Override
     public List<Record> process(Header headers, List<Record> records) throws DataException {
-        
-        if (records.size() == 1) {        
+
+        if (records.size() == 1) {
             Record filter = records.get(0);
             String entity = Records.getCollection(filter);
             if (AUTHENTICATION_REQUEST.equals(entity)) {
@@ -53,9 +53,10 @@ public abstract class ReducerLogin implements Reducer {
 
                 Variant authorization = createAuthorization(username, password);
 
-                Record result = new Record(
-                        Record.entry("COLLECTION.KEY", AUTHENTICATION_RESPONSE),
-                        Record.entry("AUTHORIZATION", authorization));
+                Record result = Record.builder()
+                        .entry("COLLECTION.KEY", AUTHENTICATION_RESPONSE)
+                        .entry("AUTHORIZATION", authorization)
+                        .build();
                 return Collections.singletonList(result);
             }
         }
@@ -63,10 +64,11 @@ public abstract class ReducerLogin implements Reducer {
     }
 
     public static String login(Link link, String user, String password) throws DataException {
-        Record r = link.find(new Record(
-                Record.entry("COLLECTION.KEY", AUTHENTICATION_REQUEST),
-                Record.entry("NAME", user),
-                Record.entry("PASSWORD", password)));
+        Record r = link.find(Record.builder()
+                .entry("COLLECTION.KEY", AUTHENTICATION_REQUEST)
+                .entry("NAME", user)
+                .entry("PASSWORD", password)
+                .build());
         if (r == null) {
             throw new SecurityDataException("Invalid security request.");
         }
@@ -75,15 +77,14 @@ public abstract class ReducerLogin implements Reducer {
 
     public static Record current(Link link, Header headers) throws DataException {
         return link.find(headers,
-                new Record(
-                        Record.entry("COLLECTION.KEY", AUTHENTICATION_CURRENT)));
+                new Record("COLLECTION.KEY", AUTHENTICATION_CURRENT));
     }
 
     public static boolean hasAuthorization(Link link, Header headers, String resource) throws DataException {
-        Record result = link.find(headers,
-                new Record(
-                        Record.entry("COLLECTION.KEY", AUTHORIZATION_REQUEST),
-                        Record.entry("RESOURCE", resource)));
+        Record result = link.find(headers, Record.builder()
+                .entry("COLLECTION.KEY", AUTHORIZATION_REQUEST)
+                .entry("RESOURCE", resource)
+                .build());
         if (result == null) {
             throw new SecurityDataException("Invalid security request.");
         }

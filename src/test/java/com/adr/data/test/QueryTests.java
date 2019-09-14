@@ -36,11 +36,12 @@ public class QueryTests {
     private void testQueryByKey(Link querylink, Header header) throws DataException {
         List<Record> result = querylink.query(
                 header,
-                new Record(
-                        Record.entry("COLLECTION.KEY", "USERNAME"),
-                        Record.entry("ID.KEY", "admin"),
-                        Record.entry("NAME", VariantString.NULL),
-                        Record.entry("CODECARD", VariantString.NULL)));
+                Record.builder()
+                        .entry("COLLECTION.KEY", "USERNAME")
+                        .entry("ID.KEY", "admin")
+                        .entry("NAME", VariantString.NULL)
+                        .entry("CODECARD", VariantString.NULL)
+                        .build());
 
         Assert.assertEquals(1, result.size());
         Assert.assertEquals("USERNAME", result.get(0).getString("COLLECTION.KEY"));
@@ -51,13 +52,15 @@ public class QueryTests {
     }
 
     private void testQueryOrder(Link querylink, Header header) throws DataException {
-        List<Record> result = querylink.query(header,
-                new Record(
-                        Record.entry("COLLECTION.KEY", "USERNAME"),
-                        Record.entry("ID.KEY", VariantString.NULL),
-                        Record.entry("NAME", VariantString.NULL),
-                        Record.entry("CODECARD", VariantString.NULL),
-                        Record.entry("..ORDERBY", "NAME$DESC")));
+        List<Record> result = querylink.query(
+                header,
+                Record.builder()
+                        .entry("COLLECTION.KEY", "USERNAME")
+                        .entry("ID.KEY", VariantString.NULL)
+                        .entry("NAME", VariantString.NULL)
+                        .entry("CODECARD", VariantString.NULL)
+                        .entry("..ORDERBY", "NAME$DESC")
+                        .build());
 
         Assert.assertEquals(3, result.size());
         Assert.assertEquals("manager", result.get(0).getString("NAME"));
@@ -66,15 +69,16 @@ public class QueryTests {
     }
 
     private void testSentenceQuery(Link querylink, Header header) throws DataException {
-        Record result = querylink.find(header,
-                new Record(
-                        Record.entry("COLLECTION.KEY", "USERNAME_BYNAME"),
-                        Record.entry("NAME", "guest"),
-                        Record.entry("DISPLAYNAME", VariantString.NULL),
-                        Record.entry("ROLE", VariantString.NULL),
-                        Record.entry("DISPLAYROLE", VariantString.NULL),
-                        Record.entry("PASSWORD", VariantString.NULL)
-                ));
+        Record result = querylink.find(
+                header,
+                Record.builder()
+                        .entry("COLLECTION.KEY", "USERNAME_BYNAME")
+                        .entry("NAME", "guest")
+                        .entry("DISPLAYNAME", VariantString.NULL)
+                        .entry("ROLE", VariantString.NULL)
+                        .entry("DISPLAYROLE", VariantString.NULL)
+                        .entry("PASSWORD", VariantString.NULL)
+                        .build());
 
         Assert.assertEquals("Guest", result.getString("DISPLAYNAME"));
         Assert.assertEquals("GUEST", result.getString("ROLE"));
@@ -82,24 +86,28 @@ public class QueryTests {
     }
 
     private void testSentenceView(Link querylink, Header header) throws DataException {
-        Record result = querylink.find(header,
-                new Record(
-                        Record.entry("COLLECTION.KEY", "TEST_USERNAME_VIEW"),
-                        Record.entry("ID.KEY", VariantString.NULL),
-                        Record.entry("NAME", "guest"),
-                        Record.entry("DISPLAYNAME", VariantString.NULL)));
+        Record result = querylink.find(
+                header,
+                Record.builder()
+                        .entry("COLLECTION.KEY", "TEST_USERNAME_VIEW")
+                        .entry("ID.KEY", VariantString.NULL)
+                        .entry("NAME", "guest")
+                        .entry("DISPLAYNAME", VariantString.NULL)
+                        .build());
 
         Assert.assertEquals("Guest", result.getString("DISPLAYNAME"));
     }
 
     private void testSentenceTable(Link querylink, Header header) throws DataException {
-        List<Record> result3 = querylink.query(header,
-                new Record(
-                        Record.entry("COLLECTION.KEY", "USERNAME"),
-                        Record.entry("ID.KEY", VariantString.NULL),
-                        Record.entry("NAME", "manager"),
-                        Record.entry("VISIBLE", VariantBoolean.NULL),
-                        Record.entry("CODECARD", VariantString.NULL)));
+        List<Record> result3 = querylink.query(
+                header,
+                Record.builder()
+                        .entry("COLLECTION.KEY", "USERNAME")
+                        .entry("ID.KEY", VariantString.NULL)
+                        .entry("NAME", "manager")
+                        .entry("VISIBLE", VariantBoolean.NULL)
+                        .entry("CODECARD", VariantString.NULL)
+                        .build());
         Assert.assertEquals(1, result3.size());
         Assert.assertEquals("manager", result3.get(0).getString("NAME"));
         Assert.assertEquals(null, result3.get(0).getString("CODECARD"));
@@ -107,15 +115,17 @@ public class QueryTests {
     }
 
     private void testSentenceTableContains(Link querylink, Header header) throws DataException {
-        List<Record> result4 = querylink.query(header,
-                new Record(
-                        Record.entry("COLLECTION.KEY", "USERNAME"),
-                        Record.entry("ID.KEY", VariantString.NULL),
-                        Record.entry("NAME", VariantString.NULL),
-                        Record.entry("NAME..CONTAINS", "a"),
-                        Record.entry("VISIBLE", VariantBoolean.NULL),
-                        Record.entry("CODECARD", VariantString.NULL),
-                        Record.entry("..ORDERBY", "NAME")));
+        List<Record> result4 = querylink.query(
+                header,
+                Record.builder()
+                        .entry("COLLECTION.KEY", "USERNAME")
+                        .entry("ID.KEY", VariantString.NULL)
+                        .entry("NAME", VariantString.NULL)
+                        .entry("NAME..CONTAINS", "a")
+                        .entry("VISIBLE", VariantBoolean.NULL)
+                        .entry("CODECARD", VariantString.NULL)
+                        .entry("..ORDERBY", "NAME")
+                        .build());
         Assert.assertEquals(2, result4.size());
         Assert.assertEquals("admin", result4.get(0).getString("NAME"));
         Assert.assertEquals("manager", result4.get(1).getString("NAME"));
@@ -128,7 +138,7 @@ public class QueryTests {
         try {
             // Login
             String authorization = ReducerLogin.login(SourceLink.getQueryLink(), "admin", "admin");
-            Header header = new Header(new Record(Record.entry("AUTHORIZATION", authorization)));
+            Header header = new Header(new Record("AUTHORIZATION", authorization));
 
             testQueryByKey(SourceLink.getQueryLink(), header);
             testQueryOrder(SourceLink.getQueryLink(), header);

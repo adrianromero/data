@@ -14,7 +14,6 @@
 //     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //     See the License for the specific language governing permissions and
 //     limitations under the License.
-
 package com.adr.data.mem;
 
 import com.adr.data.DataException;
@@ -22,7 +21,6 @@ import com.adr.data.record.Header;
 import com.adr.data.record.Record;
 import java.io.IOException;
 import java.util.List;
-import com.adr.data.var.VariantInt;
 import com.google.common.collect.ImmutableList;
 import com.adr.data.Link;
 
@@ -31,6 +29,7 @@ import com.adr.data.Link;
  * @author adrian
  */
 public class MemCommandLink implements Link {
+
     private final Storage storage;
 
     public MemCommandLink(Storage storage) {
@@ -41,10 +40,9 @@ public class MemCommandLink implements Link {
     public List<Record> process(Header headers, List<Record> records) throws DataException {
         try {
             storage.put(records);
-            return ImmutableList.of(new Record(
-                    Record.entry("PROCESSED", new VariantInt(records.size()))));            
+            return ImmutableList.of(new Record("PROCESSED", records.size()));
         } catch (IOException ex) {
             throw new DataException(ex);
         }
-    } 
+    }
 }

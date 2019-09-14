@@ -14,7 +14,6 @@
 //     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //     See the License for the specific language governing permissions and
 //     limitations under the License.
-
 package com.adr.data.mem;
 
 import com.adr.data.FilterBuilderMethods;
@@ -29,65 +28,60 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 import com.adr.data.FilterBuilder;
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
 import java.util.Map;
 
-/**
- *
- * @author adrian
- */
 public class Storage {
-    
+
     private final LinkedHashMap<Record, Record> collection = new LinkedHashMap<>();
     private final ReentrantReadWriteLock rwl = new ReentrantReadWriteLock();
     private final Lock r = rwl.readLock();
-    private final Lock w = rwl.writeLock();    
-    
+    private final Lock w = rwl.writeLock();
+
     private void put(Record record) throws IOException {
-        ImmutableMap.Builder<String, Variant> entries = ImmutableMap.<String, Variant>builder();
-        ImmutableMap.Builder<String, Variant> key = ImmutableMap.<String, Variant>builder();
+        Record.Builder fields = Record.builder();
+        Record.Builder key = Record.builder();
         String realname;
         boolean isDelete = true;
         for (Map.Entry<String, Variant> e : record.entrySet()) {
             if (!e.getKey().contains("..")) {
                 if (e.getKey().endsWith(".KEY")) {
                     realname = e.getKey().substring(0, e.getKey().length() - 4);
-                    key.put(realname, e.getValue());
+                    key.entry(realname, e.getValue());
                 } else {
                     realname = e.getKey();
                     isDelete = false;
                 }
-                entries.put(realname, e.getValue());
+                fields.entry(realname, e.getValue());
             }
         }
         if (isDelete) {
-            collection.remove(new Record(key.build()));
+            collection.remove(key.build());
         } else {
-            collection.put(new Record(key.build()), new Record(entries.build()));
+            collection.put(key.build(), fields.build());
         }
     }
-     
-    public void put(List<Record> records) throws IOException {  
+
+    public void put(List<Record> records) throws IOException {
         w.lock();
         try {
             for (Record record : records) {
                 put(record);
-            }            
+            }
         } finally {
             w.unlock();
         }
-    }  
-    
+    }
+
     public void query(Record filter, ImmutableList.Builder<Record> result) throws IOException {
         r.lock();
         int i = 0;
         int limit = Records.getLimit(filter);
-        int offset = Records.getOffset(filter);       
+        int offset = Records.getOffset(filter);
         try {
-            
+
             StorageBuilder builder = new StorageBuilder();
             FilterBuilderMethods.build(builder, filter);
-            
+
             for (Record record : collection.values()) {
                 // Record p = project(filter, r);
                 Record p = builder.filterAndProject(record, filter);
@@ -101,40 +95,41 @@ public class Storage {
                             return;
                         }
                     }
-                    
+
                 }
             }
-            return;
         } finally {
             r.unlock();
         }
     }
 
     private static class StorageName {
+
         public final String name;
         public final String realname;
+
         public StorageName(String name, String realname) {
             this.name = name;
             this.realname = realname;
         }
     }
-    
+
     private static class StorageBuilder implements FilterBuilder {
 
         private List<StorageName> names = new ArrayList<>();
         private PredicateFilter p = (r, filter) -> true;
-        
-        public Record filterAndProject(Record r, Record filter) {           
+
+        public Record filterAndProject(Record r, Record filter) {
             if (p.test(r, filter)) {
-                ImmutableMap.Builder<String, Variant> entries = ImmutableMap.<String, Variant>builder();
+                Record.Builder fields = Record.builder();
                 for (StorageName n : names) {
-                    entries.put(n.name, r.get(n.realname));
+                    fields.entry(n.name, r.get(n.realname));
                 }
-                return new Record(entries.build());
+                return fields.build();
             } else {
                 return null;
             }
-        }     
+        }
 
         @Override
         public void project(String name, String realname) {

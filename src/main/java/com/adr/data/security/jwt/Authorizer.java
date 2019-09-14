@@ -59,11 +59,12 @@ public class Authorizer {
         }
 
         // Valid login, load user details.
-        Record subjectsquery = new Record(
-                Record.entry("COLLECTION.KEY", "ROLE_SUBJECT"),
-                Record.entry("ROLE", role),
-                Record.entry("SUBJECT", resource),
-                Record.entry("SUBJECTNAME", VariantString.NULL));
+        Record subjectsquery = Record.builder()
+                .entry("COLLECTION.KEY", "ROLE_SUBJECT")
+                .entry("ROLE", role)
+                .entry("SUBJECT", resource)
+                .entry("SUBJECTNAME", VariantString.NULL)
+                .build();
         return querylink.find(subjectsquery) != null;
     }
 }

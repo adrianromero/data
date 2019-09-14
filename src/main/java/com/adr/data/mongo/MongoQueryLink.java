@@ -25,7 +25,6 @@ import com.adr.data.record.Record;
 import com.adr.data.record.Records;
 import com.adr.data.var.Variant;
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
 import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoCursor;
@@ -113,17 +112,17 @@ public class MongoQueryLink implements Link {
         if (param == null) {
             return Record.EMPTY;
         }
-        ImmutableMap.Builder<String, Variant> entries = ImmutableMap.<String, Variant>builder();
+        Record.Builder fields = Record.builder();
         for (Map.Entry<String, Variant> e : param.entrySet()) {
             if ("COLLECTION.KEY".equals(e.getKey())) {
-                entries.put(e.getKey(), e.getValue());
+                fields.entry(e.getKey(), e.getValue());
             } else if (!e.getKey().contains("..")) { // Is a field
                 DocumentResults results = new DocumentResults(d, e.getKey());
                 Variant newv = Variants.read(results, e.getValue().getKind());
-                entries.put(e.getKey(), newv);
+                fields.entry(e.getKey(), newv);
             }
         }
-        return new Record(entries.build());
+        return fields.build();
     }
 
     private static class MongoName {

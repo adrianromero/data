@@ -23,7 +23,6 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import com.adr.data.record.Record;
-import com.adr.data.var.VariantInt;
 import com.google.common.collect.ImmutableList;
 import com.adr.data.Link;
 
@@ -52,7 +51,6 @@ public class MapLink implements Link {
         if (ifemptyex) {
             throw new DataException("Empty List to execute.");
         }
-        return ImmutableList.of(new Record(
-                Record.entry("PROCESSED", new VariantInt(0))));        
+        return ImmutableList.of(new Record("PROCESSED", 0));        
     }
 }

@@ -14,73 +14,87 @@
 //     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //     See the License for the specific language governing permissions and
 //     limitations under the License.
-
 package com.adr.data.record;
 
 import com.adr.data.var.Variant;
 import com.adr.data.var.VariantBoolean;
+import com.adr.data.var.VariantDecimal;
 import com.adr.data.var.VariantDouble;
+import com.adr.data.var.VariantFloat;
 import com.adr.data.var.VariantInt;
+import com.adr.data.var.VariantLong;
 import com.adr.data.var.VariantString;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import java.math.BigDecimal;
-import java.util.Arrays;
 import java.util.Map;
 
-/**
- *
- * @author adrian
- */
 public final class Record {
 
-    public final static Record EMPTY = new Record();
-    
-    private ImmutableMap<String, Variant> map;
-    
-    public Record(ImmutableMap<String, Variant> record) { 
+    public final static Record EMPTY = new Record(ImmutableMap.of());
+
+    private final ImmutableMap<String, Variant> map;
+
+    private Record(ImmutableMap<String, Variant> record) {
         map = record;
     }
-    public Record(Record.Entry ... record) {
-        this(ImmutableMap.<String, Variant>builder()
-            .putAll(Arrays.asList(record))
-            .build());
+
+    public Record(String key, Variant value) {
+        map = ImmutableMap.of(key, value);
     }
-    
+
+    public Record(String key, String value) {
+        map = ImmutableMap.of(key, new VariantString(value));
+    }
+
+    public Record(String key, Integer value) {
+        map = ImmutableMap.of(key, new VariantInt(value));
+    }
+
     public ImmutableSet<String> keySet() {
         return map.keySet();
     }
+
     public ImmutableSet<Map.Entry<String, Variant>> entrySet() {
         return map.entrySet();
     }
+
     public Variant get(String name) {
         return map.get(name);
     }
+
     public String getString(String name) {
-        return get(name).asString();    
+        return get(name).asString();
     }
+
     public int getInteger(String name) {
-        return get(name).asInteger(); 
+        return get(name).asInteger();
     }
+
     public long getLong(String name) {
-        return get(name).asLong(); 
+        return get(name).asLong();
     }
+
     public float getFloat(String name) {
         return get(name).asFloat();
     }
+
     public double getDouble(String name) {
         return get(name).asDouble();
     }
+
     public BigDecimal getBigDecimal(String name) {
         return get(name).asBigDecimal();
     }
+
     public boolean getBoolean(String name) {
         return get(name).asBoolean();
     }
+
     public byte[] getBytes(String name) {
         return get(name).asBytes();
-    }    
-    
+    }
+
     @Override
     public boolean equals(Object o) {
         if (o == null || !(o instanceof Record)) {
@@ -88,58 +102,65 @@ public final class Record {
         }
         return map.equals(((Record) o).map);
     }
-    
+
     @Override
     public int hashCode() {
         return map.hashCode() + 2;
     }
-    
-    public final static Record.Entry entry(String name, String value) {
-        return new Record.Entry(name, new VariantString(value));
-    }
-    
-    public final static Record.Entry entry(String name, Integer value) {
-        return new Record.Entry(name, new VariantInt(value));
-    }
-    
-    public final static Record.Entry entry(String name, Boolean value) {
-        return new Record.Entry(name, new VariantBoolean(value));
-    }
-    
-    public final static Record.Entry entry(String name, Double value) {
-        return new Record.Entry(name, new VariantDouble(value));
-    }
-    
-    public final static Record.Entry entry(String name, Variant value) {
-        return new Record.Entry(name, value);
-    }    
-    
-    public static class Entry implements Map.Entry<String, Variant> {
-        
-        private final String key;
-        private final Variant value;
-        
-        private Entry(String key, Variant value) {
-            if (key == null || value == null) {
-                throw new NullPointerException();
-            }
-            this.key = key;
-            this.value = value;
-        } 
 
-        @Override
-        public String getKey() {
-            return key;
+    public static Builder builder() {
+        return new Builder();
+    }
+
+    public static class Builder {
+
+        private final ImmutableMap.Builder<String, Variant> builder = ImmutableMap.builder();
+
+        private Builder() {
         }
 
-        @Override
-        public Variant getValue() {
-            return value;
+        public Builder entry(String name, Variant value) {
+            builder.put(name, value);
+            return this;
         }
 
-        @Override
-        public Variant setValue(Variant value) {
-            throw new UnsupportedOperationException(); 
-        }    
+        public Builder entry(String name, String value) {
+            builder.put(name, new VariantString(value));
+            return this;
+        }
+
+        public Builder entry(String name, Boolean value) {
+            builder.put(name, new VariantBoolean(value));
+            return this;
+        }
+
+        public Builder entry(String name, Integer value) {
+            builder.put(name, new VariantInt(value));
+            return this;
+        }
+
+        public Builder entry(String name, Long value) {
+            builder.put(name, new VariantLong(value));
+            return this;
+        }
+
+        public Builder entry(String name, Float value) {
+            builder.put(name, new VariantFloat(value));
+            return this;
+        }
+
+        public Builder entry(String name, Double value) {
+            builder.put(name, new VariantDouble(value));
+            return this;
+        }
+
+        public Builder entry(String name, BigDecimal value) {
+            builder.put(name, new VariantDecimal(value));
+            return this;
+        }
+
+        public Record build() {
+            return new Record(builder.build());
+        }
     }
 }

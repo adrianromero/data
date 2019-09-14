@@ -14,7 +14,6 @@
 //     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //     See the License for the specific language governing permissions and
 //     limitations under the License.
-
 package com.adr.data.sql;
 
 import com.adr.data.DataException;
@@ -27,7 +26,6 @@ import java.util.Map;
 import javax.sql.DataSource;
 import com.adr.data.record.Record;
 import com.adr.data.record.Records;
-import com.adr.data.var.VariantInt;
 import com.google.common.collect.ImmutableList;
 import com.adr.data.Link;
 
@@ -40,13 +38,13 @@ public class SQLCommandLink implements Link {
     private final DataSource ds;
     private final SQLEngine engine;
     private final Map<String, Sentence> sentences = new HashMap<>();
-    
+
     public SQLCommandLink(DataSource ds, SQLEngine engine, Sentence... sentences) {
         this.ds = ds;
         this.engine = engine;
         for (Sentence s : sentences) {
             this.sentences.put(s.getName(), s);
-        }      
+        }
     }
 
     public SQLCommandLink(DataSource ds, Sentence... sentences) {
@@ -59,14 +57,13 @@ public class SQLCommandLink implements Link {
             c.setAutoCommit(false);
             for (Record r : l) {
                 Sentence s = sentences.get(Records.getCollection(r));
-                if (s == null) {  
+                if (s == null) {
                     s = engine.getPutSentence();
-                }   
+                }
                 s.execute(c, engine, r);
             }
             c.commit();
-            return ImmutableList.of(new Record(
-                    Record.entry("PROCESSED", new VariantInt(l.size()))));
+            return ImmutableList.of(new Record("PROCESSED", l.size()));
         } catch (SQLException ex) {
             throw new DataException(ex);
         }

@@ -32,7 +32,6 @@ import java.util.ArrayList;
 import java.util.List;
 import org.bson.Document;
 import org.bson.conversions.Bson;
-import com.adr.data.var.VariantInt;
 import com.google.common.collect.ImmutableList;
 import java.util.Map;
 import com.adr.data.Link;
@@ -52,7 +51,7 @@ public class MongoCommandLink implements Link {
     public MongoCommandLink(MongoDatabase database) {
         this(database, "default_collection");
     }
-    
+
     public MongoCommandLink(MongoDatabase database, String defaultcollection) {
         this.database = database;
         this.defaultcollection = defaultcollection;
@@ -64,7 +63,7 @@ public class MongoCommandLink implements Link {
         for (Record r : records) {
             String entity = Records.getCollection(r, defaultcollection);
             MongoCollection<Document> collection = database.getCollection(entity);
-            
+
             List<Bson> filters = new ArrayList<>();
             if (Records.isDeleteSentence(r)) {
                 for (Map.Entry<String, Variant> entry : r.entrySet()) {
@@ -75,10 +74,10 @@ public class MongoCommandLink implements Link {
                             filters.add(Filters.eq(realname, entry.getValue().asObject()));
                         }
                     }
-                }                
+                }
                 collection.deleteOne(Filters.and(filters));
             } else {
-                Document doc = new Document();            
+                Document doc = new Document();
                 for (Map.Entry<String, Variant> entry : r.entrySet()) {
                     String realname;
                     if (!entry.getKey().equals("COLLECTION.KEY") && !entry.getKey().contains("..")) {
@@ -93,9 +92,8 @@ public class MongoCommandLink implements Link {
                     }
                 }
                 collection.replaceOne(Filters.and(filters), doc, UPSERT);
-            } 
+            }
         }
-        return ImmutableList.of(new Record(
-                Record.entry("PROCESSED", new VariantInt(records.size()))));        
+        return ImmutableList.of(new Record("PROCESSED", records.size()));
     }
 }

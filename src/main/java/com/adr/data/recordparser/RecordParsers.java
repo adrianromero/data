@@ -20,13 +20,11 @@ import com.adr.data.DataException;
 import com.adr.data.record.Record;
 import com.adr.data.varrw.ISOResults;
 import com.adr.data.var.Kind;
-import com.adr.data.var.Variant;
 import com.adr.data.varrw.Variants;
-import com.google.common.collect.ImmutableMap;
 import java.io.IOException;
 
 public class RecordParsers {
-    
+
     private static enum States {
         RECORD_START,
         RECORD_KEY,
@@ -35,23 +33,23 @@ public class RecordParsers {
         RECORD_DOTSKIND,
         RECORD_END
     }
-    
+
     public static Record parseRecord(Loader loader) throws IOException {
-        ImmutableMap.Builder<String, Variant> entries = ImmutableMap.<String, Variant>builder();
+        Record.Builder fields = Record.builder();
         String name = null;
         String isovalue = null;
         Kind kind = null;
         States state;
-        
+
         if (loader.getCP() == '(') {
             state = States.RECORD_START;
             loader.next();
             loader.skipBlanks();
         } else {
-            throw IOExceptionMessage.createExpected(loader, '{');  
+            throw IOExceptionMessage.createExpected(loader, '{');
         }
-        
-        for(;;) {
+
+        for (;;) {
             if (state == States.RECORD_START) {
                 if (loader.getCP() == ')') {
                     loader.next();
@@ -66,26 +64,26 @@ public class RecordParsers {
                     state = States.RECORD_DOTS;
                 } else if (CodePoint.isInitIdentifier(loader.getCP())) {
                     name = CommonParsers.parseIdentifier(loader);
-                    loader.skipBlanks();  
-                    state = States.RECORD_DOTS;                  
+                    loader.skipBlanks();
+                    state = States.RECORD_DOTS;
                 } else {
-                    throw IOExceptionMessage.createExpected(loader, "Name");  
+                    throw IOExceptionMessage.createExpected(loader, "Name");
                 }
             } else if (state == States.RECORD_DOTS) {
                 if (loader.getCP() == ':') {
                     loader.next();
-                    loader.skipBlanks();                     
+                    loader.skipBlanks();
                     state = States.RECORD_VALUE;
                 } else {
-                    throw IOExceptionMessage.createExpected(loader, ':');  
+                    throw IOExceptionMessage.createExpected(loader, ':');
                 }
             } else if (state == States.RECORD_VALUE) {
                 if (loader.getCP() == '\"') {
                     isovalue = CommonParsers.parseString(loader);
                     kind = Kind.STRING;
                     loader.skipBlanks();
-                    state = States.RECORD_DOTSKIND;    
-                } else if (CodePoint.isInitNumber(loader.getCP())) {             
+                    state = States.RECORD_DOTSKIND;
+                } else if (CodePoint.isInitNumber(loader.getCP())) {
                     CommonParsers.Numeric n = CommonParsers.parseNumber(loader);
                     isovalue = n.getValue();
                     if (n.getType() == CommonParsers.TYPE_INT) {
@@ -111,7 +109,7 @@ public class RecordParsers {
                     kind = Kind.STRING;
                     state = States.RECORD_DOTSKIND;
                 } else {
-                    throw IOExceptionMessage.createExpected(loader, "Value");  
+                    throw IOExceptionMessage.createExpected(loader, "Value");
                 }
             } else if (state == States.RECORD_DOTSKIND) {
                 if (loader.getCP() == ':') {
@@ -120,20 +118,20 @@ public class RecordParsers {
                     try {
                         kind = Kind.valueOf(CommonParsers.parseWord(loader));
                     } catch (IllegalArgumentException ex) {
-                        throw IOExceptionMessage.createExpected(loader, "Kind"); 
+                        throw IOExceptionMessage.createExpected(loader, "Kind");
                     }
                     try {
-                        entries.put(name, Variants.read(new ISOResults(isovalue), kind));
-                    } catch (DataException ex) {                    
-                        throw IOExceptionMessage.create(loader, "Error parsing ISO value");  
+                        fields.entry(name, Variants.read(new ISOResults(isovalue), kind));
+                    } catch (DataException ex) {
+                        throw IOExceptionMessage.create(loader, "Error parsing ISO value");
                     }
-                    loader.skipBlanks();      
-                    state = States.RECORD_END;         
+                    loader.skipBlanks();
+                    state = States.RECORD_END;
                 } else {
                     try {
-                        entries.put(name, Variants.read(new ISOResults(isovalue), kind));
+                        fields.entry(name, Variants.read(new ISOResults(isovalue), kind));
                     } catch (DataException ex) {
-                        throw IOExceptionMessage.create(loader, "Error parsing ISO value");  
+                        throw IOExceptionMessage.create(loader, "Error parsing ISO value");
                     }
                     state = States.RECORD_END;
                 }
@@ -144,13 +142,13 @@ public class RecordParsers {
                     state = States.RECORD_KEY;
                 } else if (loader.getCP() == ')') {
                     loader.next();
-                    return new Record(entries.build());                    
+                    return fields.build();
                 } else {
-                    throw IOExceptionMessage.createExpected(loader, ',');  
-                }           
+                    throw IOExceptionMessage.createExpected(loader, ',');
+                }
             } else {
                 throw IOExceptionMessage.create(loader, "Unexpected error");
             }
         }
-    }   
+    }
 }
